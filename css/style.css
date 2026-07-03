@@ -3,7 +3,7 @@
    ========================= */
 
 body {
-    background-image: url("images/background.jpg");
+    background-image: url("../images/background/background.jpg");
     background-attachment: fixed;
     text-align: center;
 }
@@ -20,7 +20,7 @@ h3 {
     color: #22F2EF;
     text-align: center;
 
-    background-image: url("./images/bg.jpg");
+    background-image: url("../images/background/bg.jpg");
     background-position: center;
     background-size: cover;
 
@@ -80,7 +80,10 @@ button {
    ========================= */
 
 img {
-    position: relative;
+    position: relative;    
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
 }
 
 #logo {
