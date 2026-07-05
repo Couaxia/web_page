@@ -1,0 +1,33 @@
+#page_histoire0,
+#page_histoire1,
+#page_histoire3,
+#page_annexe_chp1,
+#page_annexe_chp2 {
+    font-size: 3em;
+}
+
+/* =========================
+   Classes
+   ========================= */
+
+.follow {
+    color: #F22245;
+}
+
+.important {
+    font-weight: 700;
+}
+
+.history1 {
+    font-style: italic;
+}
+
+.natsu {
+    color: black;
+}
+
+.couaxia {
+    color: aquamarine;
+}
+
+

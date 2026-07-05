@@ -1,31 +1,11 @@
 /* =========================
-   body pages
-   ========================= */
-
-body {
-    background-image: url("../images/background/background.jpg");
-    background-attachment: fixed;
-    text-align: center;
-}
-
-p {
-    font-family: "Lucida Sans", "Lucida Sans Regular",
-                 "Lucida Grande", "Lucida Sans Unicode",
-                 Geneva, Verdana, sans-serif;
-    font-size: 1em;
-      color: #6D00A3;
-    font-style: italic;
-}
-
-
-/* ===========================
    SECTION CREDITS
-=========================== */
+========================= */
 
-#credits{
-    width:90%;
-    margin:auto;
-    padding:40px 0;
+#credits {
+    width: 90%;
+    margin: auto;
+    padding: 40px 0;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -33,122 +13,128 @@ p {
 }
 
 #credits h2 {
-    margin-bottom: 40px;
     width: 100%;
+    margin-bottom: 40px;
 }
 
-.artist-card{
-    display:flex;
-    align-items:center;
-    gap:30px;
-    padding:25px;
-    margin-bottom:35px;
-    background:rgba(255, 0, 166, 0.85);
-    border:2px solid #6D00A3;
-    border-radius:20px;
-    width: 30%;
-    height: 50%;
+/* =========================
+   CARTES
+========================= */
+
+.artist-card {
     position: relative;
-    transition: all 0.35s ease;
-    transform: scale(0.92);
-    filter: blur(2px);
-    opacity: 0.45;
+    display: flex;
+    align-items: center;
+    width: 30%;
+    min-width: 380px;
+    height: 250px;
+    padding: 25px;
+    gap: 30px;
+    overflow: hidden;
+    background: rgba(255, 0, 166, .85);
+    border: 2px solid #6D00A3;
+    border-radius: 20px;
+    transition: .35s;
 }
 
-
-
-.artist-card:hover{ 
-    transform:translateY(-6px); 
-    border-color:#22F2EF; 
-    box-shadow:0 0 20px #22F2EF; 
-    transform: scale(1.07); 
-    box-shadow: 0 0 25px #22F2EF; 
-    z-index: 100; 
-    filter: blur(0);
-    opacity: 1;
+.artist-card:hover {
+    transform: scale(1.03);
+    border-color: #22F2EF;
+    box-shadow: 0 0 20px #22F2EF;
 }
 
-.artist-card img{
- width: 180px;
+/* =========================
+   IMAGE / VIDEO
+========================= */
+
+.image-container {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    flex-shrink: 0;
+    overflow: hidden;
     border-radius: 15px;
-    transition: transform .35s ease;
-    user-select: none;
-    -webkit-user-drag: none;
-    -webkit-user-select: none;
-}
-.artist-card video{
- width: 180px;
-    border-radius: 15px;
-    transition: transform .35s ease;
-    user-select: none;
-    -webkit-user-drag: none;
-    -webkit-user-select: none;
-}
-.artist-card:hover img{
-
-    transform:scale(1.05);
-    
+    cursor: zoom-in;
+    transition: all .45s ease;
+    z-index: 5;
 }
 
-.artist-content{
-
-    text-align:left;
-}
-
-.artist-content h3{
-
-    color:#22F2EF;
-
-    margin-bottom:10px;
-}
-
-.artist-role{
-
-    color:#2809f5;
-
-    font-weight:bold;
-
-    margin-bottom:15px;
-}
-
-.artist-description{
-
-    color:white;
-    
-    line-height:1.6;
-}
-
-.artist-btn{
-
-    display:inline-block;
-
-    margin-top:20px;
-
-    padding:12px 20px;
-
-    background:#6D00A3;
-
-    color:white;
-
-    text-decoration:none;
-
-    border-radius:10px;
-
-    transition:.3s;
-}
-
-.artist-btn:hover{
-
-    background:#22F2EF;
-
-    color:black;
-}
-
-img {
-    position: relative;    
-    user-select: none;
-    -webkit-user-drag: none;
-    -webkit-user-select: none;
-    width: 50%;
+.image-container img,
+.image-container video {
+    display: block;
+    width: 100%;
     height: 100%;
+    object-fit: contain;
+    transition: transform .45s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+}
+
+/* =========================
+   TEXTE
+========================= */
+
+.artist-content {
+    text-align: left;
+    transition: opacity .25s ease;
+    z-index: 2;
+}
+
+.artist-content h3 {
+    color: #22F2EF;
+    margin-bottom: 10px;
+}
+
+.artist-role {
+    color: #2809f5;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.artist-description {
+    color: white;
+    line-height: 1.6;
+}
+
+/* =========================
+   BOUTON
+========================= */
+
+.artist-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: #6D00A3;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: .3s;
+}
+
+.artist-btn:hover {
+    background: #22F2EF;
+    color: black;
+}
+
+/* =========================
+   ZOOM UNIQUEMENT SUR IMAGE / VIDEO
+========================= */
+
+.image-container:hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 20px;
+    z-index: 50;
+    cursor: zoom-out;
+}
+
+.image-container:hover img,
+.image-container:hover video {
+    transform: scale(1.08);
 }
