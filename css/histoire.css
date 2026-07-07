@@ -7,27 +7,289 @@
 }
 
 /* =========================
-   Classes
-   ========================= */
+   BULLES DE DIALOGUE
+========================= */
 
+.dialogue {
+    max-width: 75%;
+    margin: 25px 0;
+    padding: 18px 22px;
+    border-radius: 22px;
+    font-style: italic;
+    position: relative;
+    box-shadow: 0 0 18px rgba(0, 0, 0, 0.25);
+}
+
+.dialogue span {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.dialogue p {
+    margin: 0;
+    padding: 0;
+
+    background: none;
+    border: none;
+
+    font-size: 1.15rem;
+    line-height: 1.7;
+}
+/* =========================
+   COUAXIA
+========================= */
+
+.couaxia {
+
+    background: rgba(255, 3, 179, 0.15);
+    border-left: 6px solid #6D00A3;
+}
+
+.couaxia span {
+
+    color: #6D00A3;
+}
+
+.couaxia p {
+
+    color: #00ffff;
+}
+
+/* =========================
+   NATSU
+========================= */
+
+.natsu {
+
+    background: rgba(17, 48, 158, .12);
+    border-left: 6px solid #000000;
+}
+
+.natsu span {
+
+    color: #000000;
+}
+
+.natsu p {
+
+    color: #000000;
+}
 .follow {
     color: #F22245;
+    font-weight: bold;
 }
 
 .important {
     font-weight: 700;
+    font-weight: bold;
 }
 
 .history1 {
     font-style: italic;
 }
 
-.natsu {
+
+/* Transition page livre */
+.page-turn {
+    animation: turnPage 0.6s ease forwards;
+    transform-origin: left center;
+}
+
+@keyframes turnPage {
+    0% {
+        opacity: 1;
+        transform: perspective(1000px) rotateY(0deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform: perspective(1000px) rotateY(-90deg);
+    }
+}
+
+/* =========================
+   TITRE
+========================= */
+
+
+
+@keyframes titleAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* =========================
+   TEXTE HISTOIRE
+========================= */
+
+.history1,.page_histoire1 {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 35px;
+    color: #f8f1ff;
+    font-size: 1.15rem;
+    line-height: 1.9;
+    text-align: justify;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 240, 255, 0.90),
+            rgba(218, 190, 255, 0.85)
+        );
+    font-family: "Lucida Sans", "Lucida Sans Regular",
+    "Lucida Grande", "Lucida Sans Unicode",
+    Geneva, Verdana, sans-serif;
+    color: #0011ff;
+    border: 3px solid #6D00A3;
+    border-radius: 25px;
+
+    box-shadow:
+        0 0 25px rgba(34, 242, 239, 0.6),
+        inset 0 0 30px rgba(109, 0, 163, 0.25);
+
+    position: relative;
+
+    animation: pageTurn 0.9s ease forwards;
+    transform-origin: left center;
+}
+
+/* Effet page de livre */
+
+@keyframes pageTurn {
+    from {
+        opacity: 0;
+        transform: perspective(900px) rotateY(-18deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: perspective(900px) rotateY(0);
+    }
+}
+
+/* Petit effet papier */
+
+.history1::before {
+    content: "";
+
+    position: absolute;
+    inset: 12px;
+
+    border: 1px solid rgba(109, 0, 163, 0.35);
+    border-radius: 18px;
+
+    pointer-events: none;
+}
+
+/* Mots importants */
+
+.important {
+    color: #6D00A3;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(34, 242, 239, 0.8);
+}
+
+/* =========================
+   IMAGE
+========================= */
+
+body > img {
+    display: block;
+
+    max-width: 650px;
+    width: 80%;
+    height: auto;
+
+    margin: 45px auto;
+
+    border: 4px solid #22F2EF;
+    border-radius: 25px;
+
+    box-shadow:
+        0 0 25px #22F2EF,
+        0 0 45px #6D00A3;
+
+    animation: floatingImage 5s ease-in-out infinite;
+
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+@keyframes floatingImage {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+/* =========================
+   BOUTONS
+========================= */
+
+button {
+    margin: 10px;
+    padding: 0;
+
+    background: none;
+    border: none;
+}
+
+button a {
+    display: inline-block;
+
+    padding: 13px 22px;
+
+    background: #6D00A3;
+    color: white;
+
+    text-decoration: none;
+
+    border: 2px solid #22F2EF;
+    border-radius: 15px;
+
+    transition: 0.3s;
+}
+
+button a:hover {
+    background: #22F2EF;
     color: black;
+
+    transform: scale(1.08);
+
+    box-shadow: 0 0 20px #22F2EF;
 }
 
-.couaxia {
-    color: aquamarine;
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 700px) {
+    #page_histoire0 {
+        font-size: 1.8rem;
+        padding: 15px 25px;
+    }
+
+    .history1 {
+        padding: 25px;
+        font-size: 1rem;
+        text-align: left;
+    }
+
+    body > img {
+        width: 95%;
+    }
 }
-
-
