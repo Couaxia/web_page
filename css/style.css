@@ -12,20 +12,41 @@ body {
    Titles
    ========================= */
 
+
 h1,
-h2{
+h2 {
+    display: block;
+    width: 90%;
+    max-width: 1050px;
+    margin: 30px auto;
+    padding: 30px 60px;
+    box-sizing: border-box;
     font-family: "Courier New", Courier, monospace;
+    font-size: clamp(1.6rem, 4vw, 3rem);
     color: #00ffc8;
     text-align: center;
+    line-height: 1.25;
     background-image: url("../images/background/bg.jpg");
     background-position: center;
-    background-size: cover;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     border: 4px solid #373B44;
-    border-radius: 47% 53% 69% 31% / 41% 100% 0% 59%;
+    border-radius: 50% 50% 8% 8% / 45% 45% 12% 12%;
     box-shadow: 6px 6px 15px #bd24a8;
     text-shadow: 6px 6px 15px #8400ff;
-    padding: 15px 40px; 
+    white-space: normal;
+    overflow-wrap: break-word;
 }
+h1::after,
+h2::after {
+    content: "";
+    display: block;
+    width: 55%;
+    height: 3px;
+    margin: 12px auto 0;
+    background: linear-gradient(to right, transparent, #00ffc8, transparent);
+    box-shadow: 0 0 12px #8400ff;
+} 
 
 /* =========================
    BOUTONS
