@@ -2,15 +2,16 @@
    TITRE
 =========================== */
 
-h3{
-    color:#22F2EF;
-    font-size:3rem;
-    text-shadow:0 0 15px #6D00A3;
+h3 {
+    color: #22F2EF;
+    font-size: 3rem;
+    text-shadow: 0 0 15px #6D00A3;
 }
 
 .intro {
     max-width: 800px;
     margin: 30px auto;
+
     color: white;
     font-size: 1.2rem;
 }
@@ -22,78 +23,320 @@ h3{
 .codex {
     width: 90%;
     max-width: 1100px;
+
     margin: 40px auto;
+
     display: grid;
     gap: 35px;
 }
 
 .codex-card {
+    position: relative;
+    isolation: isolate;
+
     display: grid;
     grid-template-columns: 260px 1fr;
     gap: 30px;
+
     padding: 25px;
-    background: rgba(255, 0, 166, 0.78);
+
+    overflow: hidden;
+
     border: 3px solid #6D00A3;
     border-radius: 25px;
+
     box-shadow: 0 0 25px rgba(34, 242, 239, 0.5);
-    transition: 0.3s;
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 .codex-card:hover {
     transform: translateY(-8px);
+
     border-color: #22F2EF;
+
     box-shadow: 0 0 30px #22F2EF;
 }
 
-.codex-image img {
+/* ===========================
+   VIDÉO DE FOND
+=========================== */
+
+.card-video {
+    position: absolute;
+    inset: 0;
+
     width: 100%;
-    max-height: 320px;
-    object-fit: contain;
-    border-radius: 18px;
-    background: rgba(0, 0, 0, 0.35);
-    border: 2px solid #22F2EF;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    z-index: -3;
+
+    transition: transform 1.5s ease;
+
+    pointer-events: none;
 }
 
+.codex-card:hover .card-video {
+    transform: scale(1.08);
+}
+
+/* Voile sombre au-dessus de la vidéo */
+
+.card-overlay {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(20, 5, 40, 0.82),
+            rgba(20, 5, 40, 0.58)
+        );
+
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+
+    z-index: -2;
+
+    pointer-events: none;
+}
+
+/* Légère lumière colorée sur la carte */
+
+.codex-card::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(34, 242, 239, 0.16),
+            transparent 40%
+        ),
+        radial-gradient(
+            circle at bottom right,
+            rgba(242, 34, 146, 0.18),
+            transparent 45%
+        );
+
+    z-index: -1;
+
+    pointer-events: none;
+}
+
+/* ===========================
+   PORTRAIT
+=========================== */
+
+.codex-image {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.codex-image img {
+    display: block;
+
+    width: 100%;
+    max-height: 320px;
+
+    object-fit: contain;
+
+    border: 2px solid #22F2EF;
+    border-radius: 18px;
+
+    background: rgba(0, 0, 0, 0.4);
+
+    box-shadow:
+        0 0 18px rgba(34, 242, 239, 0.65),
+        inset 0 0 20px rgba(109, 0, 163, 0.35);
+
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+
+    transition: transform 0.35s ease;
+}
+
+.codex-card:hover .codex-image img {
+    transform: scale(1.03);
+}
+
+/* ===========================
+   CONTENU
+=========================== */
+
 .codex-content {
+    position: relative;
+    z-index: 2;
+
     text-align: left;
 }
 
-.codex-content h2 {
-    color: #22F2EF;
+.codex-content h3 {
     margin-top: 0;
+    margin-bottom: 15px;
+
+    color: #22F2EF;
     font-size: 2rem;
-    text-shadow: 0 0 12px #8400ff;
+
+    text-shadow:
+        0 0 8px #8400ff,
+        0 0 16px rgba(34, 242, 239, 0.5);
 }
+
+/* ===========================
+   INFORMATIONS
+=========================== */
 
 .codex-info {
     display: grid;
     grid-template-columns: repeat(2, minmax(180px, 1fr));
     gap: 12px;
+
     margin: 20px 0;
 }
 
 .codex-info p {
     margin: 0;
     padding: 12px 15px;
+
     color: white;
-    background: rgba(109, 0, 163, 0.7);
+
+    background: rgba(109, 0, 163, 0.72);
+
     border: 1px solid #22F2EF;
     border-radius: 15px;
+
+    box-shadow: 0 0 10px rgba(34, 242, 239, 0.15);
 }
 
 .codex-info strong {
     color: #22F2EF;
 }
 
-.codex-description {
+/* Première apparition cliquable */
+
+.codex-info a {
     color: white;
-    line-height: 1.7;
-    font-size: 1.05rem;
+    text-decoration: none;
+
+    transition: color 0.25s ease;
 }
+
+.codex-info a:hover {
+    color: #22F2EF;
+    text-decoration: underline;
+}
+
+/* ===========================
+   DESCRIPTION
+=========================== */
+
+.codex-description {
+    margin-top: 20px;
+    padding: 18px;
+
+    color: white;
+
+    font-size: 1.05rem;
+    line-height: 1.7;
+
+    background: rgba(0, 0, 0, 0.35);
+
+    border-left: 5px solid #F22292;
+    border-radius: 14px;
+
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+}
+
+/* =========================
+   CAPACITÉS
+========================= */
+
+.codex-skills {
+    margin-top: 25px;
+    padding: 20px;
+
+    background: rgba(17, 48, 158, 0.35);
+
+    border: 2px solid #11309E;
+    border-radius: 18px;
+
+    box-shadow: 0 0 15px rgba(17, 48, 158, 0.4);
+}
+
+.codex-skills h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+
+    color: #22F2EF;
+
+    text-align: center;
+    font-size: 1.3rem;
+
+    text-shadow: 0 0 10px #11309E;
+}
+
+.codex-skills ul {
+    list-style: none;
+
+    margin: 15px 0 0;
+    padding: 0;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+.codex-skills li {
+    padding: 10px 18px;
+
+    background: rgba(109, 0, 163, 0.78);
+
+    color: white;
+
+    border: 1px solid #22F2EF;
+    border-radius: 25px;
+
+    transition:
+        transform 0.3s ease,
+        background 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.codex-skills li:hover {
+    transform: scale(1.05);
+
+    background: #22F2EF;
+    color: black;
+
+    box-shadow: 0 0 15px #22F2EF;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
 
 @media (max-width: 800px) {
     .codex-card {
         grid-template-columns: 1fr;
+
+        padding: 20px;
+
         text-align: center;
     }
 
@@ -104,76 +347,72 @@ h3{
     .codex-info {
         grid-template-columns: 1fr;
     }
-}
-/* =========================
-   CAPACITÉS
-========================= */
 
-.codex-skills {
+    .codex-image img {
+        max-width: 320px;
+        margin: auto;
+    }
 
-    margin-top: 25px;
-
-    padding: 20px;
-
-    background: rgba(17, 48, 158, 0.20);
-
-    border: 2px solid #11309E;
-
-    border-radius: 18px;
+    .codex-description {
+        text-align: left;
+    }
 }
 
-.codex-skills h3 {
+@media (max-width: 500px) {
+    h3 {
+        font-size: 2rem;
+    }
 
-    margin-top: 0;
+    .intro {
+        font-size: 1rem;
+    }
 
-    color: #22F2EF;
+    .codex {
+        width: 95%;
+    }
 
-    text-align: center;
+    .codex-card {
+        gap: 20px;
+        padding: 16px;
+    }
 
-    font-size: 1.3rem;
+    .codex-content h2 {
+        font-size: 1.6rem;
+    }
 
-    text-shadow: 0 0 10px #11309E;
+    .codex-info p {
+        padding: 10px 12px;
+    }
+
+    .codex-description {
+        padding: 14px;
+        font-size: 1rem;
+    }
+
+    .codex-skills {
+        padding: 15px;
+    }
+
+    .codex-skills li {
+        width: 100%;
+        box-sizing: border-box;
+    }
 }
 
-.codex-skills ul {
+/* Réduit les animations pour les personnes qui le demandent */
 
-    list-style: none;
+@media (prefers-reduced-motion: reduce) {
+    .codex-card,
+    .card-video,
+    .codex-image img,
+    .codex-skills li {
+        transition: none;
+    }
 
-    margin: 15px 0 0;
-
-    padding: 0;
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 12px;
-
-    justify-content: center;
-}
-
-.codex-skills li {
-
-    padding: 10px 18px;
-
-    background: rgba(109,0,163,.75);
-
-    color: white;
-
-    border: 1px solid #22F2EF;
-
-    border-radius: 25px;
-
-    transition: .3s;
-}
-
-.codex-skills li:hover {
-
-    transform: scale(1.05);
-
-    background: #22F2EF;
-
-    color: black;
-
-    box-shadow: 0 0 15px #22F2EF;
+    .codex-card:hover,
+    .codex-card:hover .card-video,
+    .codex-card:hover .codex-image img,
+    .codex-skills li:hover {
+        transform: none;
+    }
 }
