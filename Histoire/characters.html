@@ -6,6 +6,25 @@
     <link href="../css/style.css" rel="stylesheet">
     <link href="../css/characters.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="../images/logo/Logo Transparents 2.png">
+
+    <nav class="navbar">
+
+            <a class="navbar-logo">
+                <img src="../images/logo/Logo Transparents 2.png" alt="Accueil Couaxia">
+            </a>
+            <div class="navbar-links">
+                <a href="../accueil.html">🏠 Accueil</a>
+                <a href="../a-propos.html">👤 Mes informations</a>
+                <a href="../reseaux.html">🌐 Mes réseaux</a>
+                <a href="../Histoire/debut_histoire.html">📖 Mon histoire</a>
+                <a href="../Histoire/characters.html">🐙 Codex</a>
+                <a href="../credits.html">🎨 Crédits</a>
+            </div>
+                <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Activer le mode nuit" title="Changer le thème">
+                    <span class="theme-icon" aria-hidden="true">🌙</span>
+                    <span class="theme-text">Mode nuit</span>
+                </button>
+        </nav>
 </head>
         <body>
             <h1 id="page_characters">📖 Les Personnages</h1>
@@ -225,12 +244,18 @@
                         <button><a href="./chapitre2.html#page_histoire2" class="page-link"> Chapitre 2</a></button>
                         <button><a href="./chapitre3.html#page_histoire3" class="page-link">Chapitre 3</a></button>
                     </p>
-                    <p>
-                     <button><a href="../A-propos.html">Mes informations</a></button>
-                     <button><a href="../reseaux.html">Mes réseaux</a></button>
-                     <button><a href="../accueil.html">Retour à l'accueil</a></button>
-                     <button><a href="../credits.html">Retour à l'accueil</a></button>
-                    </p>  
+
+         <div class="mascotte-widget">
+                <div class="mascotte-bulle" id="mascotte-bulle" role="status" aria-live="polite">
+                    Bienvenue dans mon univers !
+                </div>
+                 <button class="mascotte-button" id="mascotte-button" type="button" aria-label="Parler avec Couaxia">
+                    <img src="../images/mascotte/Discord-reactive-Mute.gif" data-idle-src="../images/mascotte/Discord-reactive-Mute.gif" 
+                    data-talking-src="../images/mascotte/Discord-reactive-Talk.gif" alt="Mascotte Couaxia" class="mascotte" id="mascotte-image" draggable="false">
+                 </button>
+            </div>
+                <script src="../js/mascotte.js"></script>    
+                <script src="../js/theme.js"></script>    
                 <script src="../js/protection.js"></script> 
                 <script src="../js/transition.js"></script> 
         </body> 

@@ -7,20 +7,52 @@
          <link rel="icon" type="image/png" href="./images/logo/Logo Transparents 2.png">
          <link href="./css/style.css" rel="stylesheet">
          <link href="./css/style.css" rel="stylesheet">
+
+        <nav class="navbar">
+
+            <a class="navbar-logo">
+                <img src="./images/logo/Logo Transparents 2.png" alt="Accueil Couaxia">
+            </a>
+            <div class="navbar-links">
+                <a href="./accueil.html">🏠 Accueil</a>
+                <a href="./a-propos.html">👤 Mes informations</a>
+                <a href="./reseaux.html">🌐 Mes réseaux</a>
+                <a href="./Histoire/debut_histoire.html">📖 Mon histoire</a>
+                <a href="./Histoire/characters.html">🐙 Codex</a>
+                <a href="./credits.html">🎨 Crédits</a>
+            </div>
+                <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Activer le mode nuit" title="Changer le thème">
+                    <span class="theme-icon" aria-hidden="true">🌙</span>
+                    <span class="theme-text">Mode nuit</span>
+                </button>
+        </nav>
+
 </head>
          <body>
-             <h1><u>Bienvenue !</u></H1>
+             <h1><u>Couaxia</u></H1>
                  <p>Tu cherches des informations sur <strong>Couaxia</strong> ? Tu es au bon endroit !</p>
+                 <p><em>Streameuse Vtubeuse française de 26 ans, connue pour son multi-gaming, son humour et sa joie 
+                 de vivre ! N'hésitez pas à la rejoindre sur Twitch !</em></p>
+        
+                 <p><strong><span class="follow">794 follows !!</span></strong></p>
+
      
-   <img src="./images/anniversaire_couaxia.png" 
-   alt="Ceci est la description de l'image !" width="50%" height="50%"/> 
-                 <p>
-                     <button><a href="./a-propos.html">Mes informations</a></button>
-                     <button><a href="./reseaux.html">Mes réseaux</a></button>
-                     <button><a href="./Histoire/debut_histoire.html">Mon histoire</a></button>
-                     <button><a href="./credits.html"> Crédits</a></button>
-                 </p>   
+            <div class="mascotte-widget">
+
+                        <div class="mascotte-bulle" id="mascotte-bulle" role="status" aria-live="polite">
+                            Bienvenue dans mon univers !
+                        </div>
+
+                        <button class="mascotte-button" id="mascotte-button" type="button" aria-label="Parler avec Couaxia">
+                            <img src="./images/mascotte/Swing.gif" data-idle-src="./images/mascotte/Swing.gif" 
+                             data-talking-src="./images/mascotte/Swing.gif" alt="Mascotte Couaxia" class="mascotte" id="mascotte-image" draggable="false">
+                        </button>
+            </div>
+                 <script src="./js/mascotte.js"></script>
+                 <script src="./js/protection.js"></script>
+                 <script src="./js/theme.js"></script>
+                 <script src="./js/artist.js"></script>
          </body> 
-         <script src="./js/protection.js"></script>
+         
 </HTML>
 

@@ -1,12 +1,162 @@
+/* =========================
+   VARIABLES — MODE JOUR
+========================= */
+
+:root {
+    --history-background:
+        linear-gradient(
+            135deg,
+            rgba(255, 240, 255, 0.94),
+            rgba(218, 190, 255, 0.90)
+        );
+
+    --history-text: #0011aa;
+    --history-border: #6D00A3;
+
+    --history-inner-border: rgba(109, 0, 163, 0.35);
+
+    --history-shadow:
+        0 0 25px rgba(109, 0, 163, 0.45),
+        inset 0 0 30px rgba(109, 0, 163, 0.18);
+
+    --important-color: #6D00A3;
+
+    --image-border: #6D00A3;
+
+    --image-shadow:
+        0 0 25px rgba(109, 0, 163, 0.65),
+        0 0 45px rgba(242, 34, 146, 0.4);
+
+    --dialogue-shadow: rgba(109, 0, 163, 0.25);
+
+    /* Couaxia */
+
+    --couaxia-background: rgba(255, 3, 179, 0.16);
+    --couaxia-border: #6D00A3;
+    --couaxia-name: #6D00A3;
+    --couaxia-text: #005f70;
+
+    /* Natsu */
+
+    --natsu-background: rgba(17, 48, 158, 0.12);
+    --natsu-border: #161616;
+    --natsu-name: #161616;
+    --natsu-text: #161616;
+
+    /* Myo */
+
+    --myo-background: rgba(255, 238, 130, 0.30);
+    --myo-border: #d99700;
+    --myo-name: #a96b00;
+    --myo-text: #9c4700;
+
+    /* Avadora */
+
+    --avadora-background: rgba(43, 217, 49, 0.15);
+    --avadora-border: #317812;
+    --avadora-name: #317812;
+    --avadora-text: #20560d;
+
+    /* Cita */
+
+    --cita-background: rgba(226, 220, 254, 0.90);
+    --cita-border: #6751e8;
+    --cita-name: #087d88;
+    --cita-text: #315a79;
+
+    /* Hylda */
+
+    --hylda-background: rgba(248, 204, 244, 0.90);
+    --hylda-border: #d981c8;
+    --hylda-name: #6765b7;
+    --hylda-text: #79516f;
+}
+
+/* =========================
+   VARIABLES — MODE NUIT
+========================= */
+
+html[data-theme="dark"] {
+    --history-background:
+        linear-gradient(
+            135deg,
+            rgba(22, 8, 48, 0.95),
+            rgba(68, 12, 89, 0.92)
+        );
+
+    --history-text: #f8f1ff;
+    --history-border: #22F2EF;
+
+    --history-inner-border: rgba(34, 242, 239, 0.30);
+
+    --history-shadow:
+        0 0 25px rgba(34, 242, 239, 0.48),
+        0 0 45px rgba(132, 0, 255, 0.25),
+        inset 0 0 30px rgba(109, 0, 163, 0.32);
+
+    --important-color: #ff83d4;
+
+    --image-border: #22F2EF;
+
+    --image-shadow:
+        0 0 25px rgba(34, 242, 239, 0.75),
+        0 0 45px rgba(109, 0, 163, 0.85);
+
+    --dialogue-shadow: rgba(0, 0, 0, 0.55);
+
+    /* Couaxia */
+
+    --couaxia-background: rgba(242, 34, 146, 0.20);
+    --couaxia-border: #ff4fc3;
+    --couaxia-name: #ff83d4;
+    --couaxia-text: #7fffff;
+
+    /* Natsu */
+
+    --natsu-background: rgba(15, 20, 42, 0.78);
+    --natsu-border: #8fa8ff;
+    --natsu-name: #b7c5ff;
+    --natsu-text: #edf1ff;
+
+    /* Myo */
+
+    --myo-background: rgba(246, 205, 1, 0.15);
+    --myo-border: #fff584;
+    --myo-name: #ffe164;
+    --myo-text: #ffbc53;
+
+    /* Avadora */
+
+    --avadora-background: rgba(43, 217, 49, 0.14);
+    --avadora-border: #6bde2d;
+    --avadora-name: #8eff50;
+    --avadora-text: #c3ffa6;
+
+    /* Cita */
+
+    --cita-background: rgba(89, 69, 170, 0.32);
+    --cita-border: #a899ff;
+    --cita-name: #63e8ef;
+    --cita-text: #d5eaff;
+
+    /* Hylda */
+
+    --hylda-background: rgba(184, 102, 177, 0.30);
+    --hylda-border: #f2b1e6;
+    --hylda-name: #d4d3ff;
+    --hylda-text: #fff0c9;
+}
+
+/* =========================
+   TITRES DES CHAPITRES
+========================= */
+
 #page_histoire0,
 #page_histoire1,
 #page_histoire3,
 #page_annexe_chp1,
 #page_annexe_chp2 {
-    font-size: 3em;
-}
-h1{
-    
+    font-size: clamp(1.8rem, 4vw, 3rem);
 }
 
 /* =========================
@@ -14,158 +164,183 @@ h1{
 ========================= */
 
 .dialogue {
+    position: relative;
+
     width: fit-content;
     max-width: min(75%, 700px);
+
     margin: 25px 0;
     padding: 18px 22px;
+
     border-radius: 22px;
+
     font-style: italic;
-    position: relative;
-    box-shadow: 0 0 18px rgba(0, 0, 0, 0.25);
+
+    box-shadow: 0 0 18px var(--dialogue-shadow);
+
+    transition:
+        color 0.35s ease,
+        background-color 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease;
 }
 
 .dialogue span {
     display: block;
+
     margin-bottom: 8px;
-    font-weight: bold;
+
     font-size: 0.9rem;
+    font-weight: bold;
     letter-spacing: 2px;
+    text-align: center;
     text-transform: uppercase;
 }
 
 .dialogue p {
     margin: 0;
     padding: 0;
+
+    color: inherit;
     background: none;
     border: none;
+
     font-size: 1.15rem;
     line-height: 1.7;
+    text-align: center;
+
+    overflow-wrap: break-word;
 }
+
 /* =========================
    COUAXIA
 ========================= */
 
-.couaxia {
+.dialogue.couaxia {
     margin-right: auto;
-    background: rgba(255, 3, 179, 0.15);
-    border-left: 6px solid #6D00A3;
-    border:2px solid #6D00A3;
+
+    background: var(--couaxia-background);
+
+    border: 2px solid var(--couaxia-border);
+    border-left-width: 6px;
 }
 
-.couaxia span {
-
-    color: #6D00A3;
+.dialogue.couaxia span {
+    color: var(--couaxia-name);
 }
 
-.couaxia p {
-
-    color: #00ffff;
+.dialogue.couaxia p {
+    color: var(--couaxia-text);
 }
 
 /* =========================
    NATSU
 ========================= */
 
-.natsu {
+.dialogue.natsu {
     margin-left: auto;
-    background: rgba(17, 48, 158, .12);
-    border-right: 6px solid #000000;
-    border: 2px solid  #000000;
+
+    background: var(--natsu-background);
+
+    border: 2px solid var(--natsu-border);
+    border-right-width: 6px;
 }
 
-.natsu span {
-
-    color: #000000;
+.dialogue.natsu span {
+    color: var(--natsu-name);
 }
 
-.natsu p {
-
-    color: #000000;
+.dialogue.natsu p {
+    color: var(--natsu-text);
 }
+
 /* =========================
-   Myo
+   MYO
 ========================= */
 
-.myo {
-    margin-left: auto;  
-    background: rgba(246, 205, 1, 0.12);
-    border-left: 6px solid #fff584;
-     border: 2px solid #fff584;
+.dialogue.myo {
+    margin-left: auto;
+
+    background: var(--myo-background);
+
+    border: 2px solid var(--myo-border);
+    border-left-width: 6px;
 }
 
-.myo span {
-
-    color: #f3ba3e;
+.dialogue.myo span {
+    color: var(--myo-name);
 }
 
-.myo p {
-
-    color: #ff7b00;
+.dialogue.myo p {
+    color: var(--myo-text);
 }
 
 /* =========================
    AVADORA
 ========================= */
 
-.avadora {
+.dialogue.avadora {
     margin-right: auto;
-    background: rgba(43, 217, 49, 0.15);
-    border-left: 6px solid #40ac42;
-     border: 2px solid #40ac42;
+
+    background: var(--avadora-background);
+
+    border: 2px solid var(--avadora-border);
+    border-left-width: 6px;
 }
 
-.avadora span {
-
-    color: #6bde2d;
+.dialogue.avadora span {
+    color: var(--avadora-name);
 }
 
-.avadora p {
-
-    color: #317812;
+.dialogue.avadora p {
+    color: var(--avadora-text);
 }
 
 /* =========================
-   Cita
+   CITA
 ========================= */
 
-.cita {
+.dialogue.cita {
     margin-left: auto;
-    background: rgba(226, 220, 254);
-    border-left: 6px solid #8674fc;
-    border: 2px solid #8674fc;
+
+    background: var(--cita-background);
+
+    border: 2px solid var(--cita-border);
+    border-left-width: 6px;
 }
 
-.cita span {
-
-    color: #21c4cd;
+.dialogue.cita span {
+    color: var(--cita-name);
 }
 
-.cita p {
-
-    color: #8cb1ce;
+.dialogue.cita p {
+    color: var(--cita-text);
 }
 
 /* =========================
-   Hylda
+   HYLDA
 ========================= */
 
-.hylda {
+.dialogue.hylda {
     margin-right: auto;
-    background: rgba(248, 204, 244);
-    border-right: 6px solid #f2b1e6;
-    border: 2px solid #f2b1e6;
+
+    background: var(--hylda-background);
+
+    border: 2px solid var(--hylda-border);
+    border-right-width: 6px;
 }
 
-.hylda span {
-
-    color: #a9a8e3;
+.dialogue.hylda span {
+    color: var(--hylda-name);
 }
 
-.hylda p {
-
-    color: #fde8b2;
+.dialogue.hylda p {
+    color: var(--hylda-text);
 }
-/* ========================= */
+
+/* =========================
+   CLASSES DE TEXTE
+========================= */
 
 .follow {
     color: #F22245;
@@ -173,16 +348,20 @@ h1{
 }
 
 .important {
+    color: var(--important-color);
     font-weight: 700;
-    font-weight: bold;
+
+    text-shadow: 0 0 8px rgba(34, 242, 239, 0.55);
 }
 
 .history1 {
     font-style: italic;
 }
 
+/* =========================
+   TRANSITION ENTRE LES PAGES
+========================= */
 
-/* Transition page livre */
 .page-turn {
     animation: turnPage 0.6s ease forwards;
     transform-origin: left center;
@@ -191,119 +370,153 @@ h1{
 @keyframes turnPage {
     0% {
         opacity: 1;
-        transform: perspective(1000px) rotateY(0deg);
+
+        transform:
+            perspective(1000px)
+            rotateY(0deg);
     }
 
     100% {
         opacity: 0;
-        transform: perspective(1000px) rotateY(-90deg);
+
+        transform:
+            perspective(1000px)
+            rotateY(-90deg);
     }
 }
 
 /* =========================
-   TITRE
+   ANIMATION DU TITRE
 ========================= */
-
-
 
 @keyframes titleAppear {
     from {
         opacity: 0;
-        transform: translateY(-30px) scale(0.95);
+
+        transform:
+            translateY(-30px)
+            scale(0.95);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+
+        transform:
+            translateY(0)
+            scale(1);
     }
 }
 
 /* =========================
-   TEXTE HISTOIRE
+   TEXTE DE L’HISTOIRE
 ========================= */
 
-.history1,.page_histoire1 {
+.history1,
+.page_histoire1 {
+    position: relative;
+
     max-width: 900px;
+
     margin: 30px auto;
     padding: 35px;
-    color: #f8f1ff;
+
+    color: var(--history-text);
+    background: var(--history-background);
+
+    border: 3px solid var(--history-border);
+    border-radius: 25px;
+
+    font-family:
+        "Lucida Sans",
+        "Lucida Sans Regular",
+        "Lucida Grande",
+        "Lucida Sans Unicode",
+        Geneva,
+        Verdana,
+        sans-serif;
+
     font-size: 1.15rem;
     line-height: 1.9;
     text-align: center;
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255, 240, 255, 0.90),
-            rgba(218, 190, 255, 0.85)
-        );
-    font-family: "Lucida Sans", "Lucida Sans Regular",
-    "Lucida Grande", "Lucida Sans Unicode",
-    Geneva, Verdana, sans-serif;
-    color: #0011ff;
-    border: 3px solid #6D00A3;
-    border-radius: 25px;
 
-    box-shadow:
-        0 0 25px rgba(34, 242, 239, 0.6),
-        inset 0 0 30px rgba(109, 0, 163, 0.25);
+    box-shadow: var(--history-shadow);
 
-    position: relative;
     animation: pageTurn 0.9s ease forwards;
     transform-origin: left center;
+
+    transition:
+        color 0.35s ease,
+        background 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease;
 }
 
-/* Effet page de livre */
+/* =========================
+   ANIMATION PAGE DE LIVRE
+========================= */
 
 @keyframes pageTurn {
     from {
         opacity: 0;
-        transform: perspective(900px) rotateY(-18deg);
+
+        transform:
+            perspective(900px)
+            rotateY(-18deg);
     }
 
     to {
         opacity: 1;
-        transform: perspective(900px) rotateY(0);
+
+        transform:
+            perspective(900px)
+            rotateY(0deg);
     }
 }
 
-/* Petit effet papier */
+/* =========================
+   BORDURE INTÉRIEURE DU PAPIER
+========================= */
 
-.history1::before {
+.history1::before,
+.page_histoire1::before {
     content: "";
 
     position: absolute;
     inset: 12px;
 
-    border: 1px solid rgba(109, 0, 163, 0.35);
+    border: 1px solid var(--history-inner-border);
     border-radius: 18px;
 
     pointer-events: none;
 }
 
-/* Mots importants */
+/* Les éléments doivent rester au-dessus
+   de la bordure intérieure */
 
-.important {
-    color: #6D00A3;
-    font-weight: bold;
-    text-shadow: 0 0 8px rgba(34, 242, 239, 0.8);
+.history1 > *,
+.page_histoire1 > * {
+    position: relative;
+    z-index: 1;
 }
 
 /* =========================
-   IMAGE
+   IMAGE DE L’HISTOIRE
 ========================= */
 
 body > img {
     display: block;
-    max-width: 650px;
     width: 80%;
+    max-width: 650px;
     height: auto;
     margin: 45px auto;
-    border: 4px solid #22F2EF;
+    border: 4px solid var(--image-border);
     border-radius: 25px;
-    box-shadow:        0 0 25px #22F2EF,        0 0 45px #6D00A3;
+    box-shadow: var(--image-shadow);
     animation: floatingImage 5s ease-in-out infinite;
     user-select: none;
+    -webkit-user-select: none;
     -webkit-user-drag: none;
+    transition:        border-color 0.35s ease,        box-shadow 0.35s ease;
     -webkit-border-radius: 25px;
     -moz-border-radius: 25px;
     -ms-border-radius: 25px;
@@ -311,17 +524,17 @@ body > img {
 }
 
 @keyframes floatingImage {
-    0%, 100% {
+    0%,
+    100% {
         transform: translateY(0);
     }
-
     50% {
         transform: translateY(-12px);
     }
 }
 
 /* =========================
-   BOUTONS
+   BOUTONS DE L’HISTOIRE
 ========================= */
 
 button {
@@ -334,24 +547,33 @@ button {
 
 button a {
     display: inline-block;
+
     padding: 13px 22px;
-    background: #6D00A3;
-    color: white;
-    text-decoration: none;
-    border: 2px solid #22F2EF;
+
+    color: var(--button-text, #ffffff);
+    background: var(--button-background, #6D00A3);
+
+    border: 2px solid var(--accent-color, #22F2EF);
     border-radius: 15px;
-    transition: 0.3s;
+
+    text-decoration: none;
+
+    transition:
+        color 0.3s ease,
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 button a:hover {
-    background: #22F2EF;
-    color: black;
+    color: #000000;
+    background: var(--accent-color, #22F2EF);
+
     transform: scale(1.08);
-    box-shadow: 0 0 20px #22F2EF;
-    -webkit-transform: scale(1.08);
-    -moz-transform: scale(1.08);
-    -ms-transform: scale(1.08);
-    -o-transform: scale(1.08);
+
+    box-shadow:
+        0 0 20px var(--accent-color, #22F2EF);
 }
 
 /* =========================
@@ -359,18 +581,88 @@ button a:hover {
 ========================= */
 
 @media (max-width: 700px) {
-    #page_histoire0 {
-        font-size: 1.8rem;
+    #page_histoire0,
+    #page_histoire1,
+    #page_histoire3,
+    #page_annexe_chp1,
+    #page_annexe_chp2 {
         padding: 15px 25px;
+
+        font-size: 1.8rem;
     }
 
-    .history1 {
-        padding: 25px;
+    .history1,
+    .page_histoire1 {
+        width: 94%;
+
+        padding: 25px 20px;
+
         font-size: 1rem;
         text-align: left;
     }
 
+    .dialogue {
+        width: fit-content;
+        max-width: 92%;
+
+        padding: 15px 18px;
+    }
+
+    .dialogue p {
+        font-size: 1rem;
+        text-align: center;
+    }
+
     body > img {
         width: 95%;
+    }
+}
+
+@media (max-width: 450px) {
+    .history1,
+    .page_histoire1 {
+        width: 96%;
+
+        padding: 22px 16px;
+
+        line-height: 1.75;
+    }
+
+    .history1::before,
+    .page_histoire1::before {
+        inset: 7px;
+    }
+
+    .dialogue {
+        max-width: 100%;
+    }
+
+    button a {
+        width: 100%;
+    }
+}
+
+/* =========================
+   ACCESSIBILITÉ
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .page-turn,
+    .history1,
+    .page_histoire1,
+    body > img {
+        animation: none;
+    }
+
+    .dialogue,
+    .history1,
+    .page_histoire1,
+    body > img,
+    button a {
+        transition: none;
+    }
+
+    button a:hover {
+        transform: none;
     }
 }

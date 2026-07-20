@@ -6,6 +6,25 @@
     <link href="./css/credits.css" rel="stylesheet">
     <link href="./css/style.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="./images/logo/Logo Transparents 2.png">
+
+    <nav class="navbar">
+
+            <a class="navbar-logo">
+                <img src="./images/logo/Logo Transparents 2.png" alt="Accueil Couaxia">
+            </a>
+            <div class="navbar-links">
+                <a href="./accueil.html">🏠 Accueil</a>
+                <a href="./a-propos.html">👤 Mes informations</a>
+                <a href="./reseaux.html">🌐 Mes réseaux</a>
+                <a href="./Histoire/debut_histoire.html">📖 Mon histoire</a>
+                <a href="./Histoire/characters.html">🐙 Codex</a>
+                <a href="./credits.html">🎨 Crédits</a>
+            </div>
+                <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Activer le mode nuit" title="Changer le thème">
+                    <span class="theme-icon" aria-hidden="true">🌙</span>
+                    <span class="theme-text">Mode nuit</span>
+                </button>
+        </nav>
 </head>
          <body>
             <section id="credits">
@@ -638,17 +657,22 @@
                             </a>
                         </div>
                     </div>
-                  
+            <div class="mascotte-widget">
+
+                        <div class="mascotte-bulle" id="mascotte-bulle" role="status" aria-live="polite">
+                            Bienvenue dans mon univers !
+                        </div>
+                        <button class="mascotte-button" id="mascotte-button" type="button" aria-label="Parler avec Couaxia">
+                            <img src="./images/mascotte/YCH_Dance_V2.gif" data-idle-src="./images/mascotte/YCH_Dance_V2.gif" 
+                            data-talking-src="./images/mascotte/YCH_Dance_V1.gif" alt="Mascotte Couaxia" class="mascotte" id="mascotte-image" draggable="false">
+                        </button>
+            </div>
                     
 </section>
-                <p> 
-                     <button><a href="./a-propos.html">Mes informations</a></button>
-                     <button><a href="./accueil.html">Retour à l'accueil</a></button>
-                     <button><a href="./reseaux.html">Mes réseaux</a></button>
-                     <button><a href="./Histoire/debut_histoire.html">Mon histoire</a></button>
-                </p>
+                <script src="./js/mascotte.js"></script>
                 <script src="./js/protection.js"></script>
                 <script src="./js/artist.js"></script>
+                <script src="./js/theme.js"></script>
          </body>
 </HTML>
 
