@@ -28,6 +28,19 @@
 </head>
          <body>
              <h1 id="page_histoire0">Chapitre 0 : Le départ</H1>
+
+                <nav class="history-navigation" aria-label="Navigation des chapitres">
+                    <a href="./characters.html#page_characters" class="history-nav-button page-link"
+                        data-messages="Tu veux rencontrer mes compagnons ?|Le Codex contient les fiches de tous les personnages !
+                        |Certains personnages cachent encore bien des secrets…">
+                        📜 Personnages
+                    </a>
+                    <a href="./chapitre1.html#Page_histoire1" class="history-nav-button page-link"
+                        data-messages="Notre aventure continue !|Tourne la page…|Ce chapitre risque de te surprendre !">
+                        Chapitre suivant ►
+                    </a>
+                </nav>
+
                 <div class="history1">
                          Couaxia vivait sur une planète lointaine nommée <span class="important">SAPHIRA.</span> 
                          Un monde fascinant où coexistaient de nombreuses espèces venues des profondeurs cosmiques.
@@ -80,13 +93,45 @@
                         Et c'est ainsi que Couaxia, Hylda et Cita continuèrent leur voyage à travers les étoiles, prêtes à découvrir de nouveaux mondes et à vivre des aventures extraordinaires.
                         Couaxia appris les bases de la navigation spatiale à sa soeur et son amie, et elles devinrent rapidement des équipières compétentes.</p>
                   </div>  
-                 <p>
-                        <button><a href="./characters.html#page_characters" class="page-link">Page Personnages</a></button>
-                        <button><a href="./chapitre1.html#Page_histoire1" class="page-link">Page Suivante ></a></button>   
-                </p> 
-     
-   <img src="../images/anniversaire_couaxia.png" 
-   alt="Ceci est la description de l'image !" width="50%" height="50%"/> 
+                 <nav class="history-navigation" aria-label="Navigation des chapitres">
+                    <a href="./characters.html#page_characters" class="history-nav-button page-link"
+                        data-messages="Tu veux rencontrer mes compagnons ?|Le Codex contient les fiches de tous les personnages !
+                        |Certains personnages cachent encore bien des secrets…">
+                        📜 Personnages
+                    </a>
+                    <a href="./chapitre1.html#Page_histoire1" class="history-nav-button page-link"
+                        data-messages="Notre aventure continue !|Tourne la page…|Ce chapitre risque de te surprendre !">
+                        Chapitre suivant ►
+                    </a>
+                </nav>
+
+        <div class="mascotte-widget">
+                <div class="mascotte-bulle" id="mascotte-bulle" role="status" aria-live="polite">
+                    Bienvenue dans mon univers !
+                </div>
+                 <button class="mascotte-button" id="mascotte-button" type="button" aria-label="Parler avec Couaxia">
+                    <img src="../images/mascotte/Discord-reactive-Mute.gif" data-idle-src="../images/mascotte/Discord-reactive-Mute.gif" 
+                    data-talking-src="../images/mascotte/Discord-reactive-Talk.gif" alt="Mascotte Couaxia" class="mascotte" id="mascotte-image" draggable="false">
+                 </button>
+        </div>
+                <div class="scroll-page-controls" aria-label="Navigation rapide dans la page">
+                    <button type="button" class="scroll-page-button" id="scrollTopButton"
+                        aria-label="Remonter en haut de la page" title="Remonter en haut">
+                        <span aria-hidden="true">↑</span>
+                    </button>
+
+                    <button type="button" class="scroll-page-button" id="scrollBottomButton" 
+                    aria-label="Descendre en bas de la page" title="Descendre en bas">
+                        <span aria-hidden="true">↓</span>
+                    </button>
+                </div>
+            
+                    <img src="../images/anniversaire_couaxia.png" 
+                    alt="Ceci est la description de l'image !" width="50%" height="50%"/> 
+
+                 <script src="../js/scroll-page.js"></script>   
+                 <script src="../js/mascotte.js"></script>
+                 <script src="../js/mascotte-navigation.js"></script>
                  <script src="../js/theme.js"></script>
                  <script src="../js/protection.js"></script> 
                  <script src="../js/transition.js"></script> 

@@ -28,6 +28,25 @@
 </head>
          <body>
              <h1 id="page_histoire2">Chapitre 2 : 🌍Destination : Terre</H1>
+                <nav class="history-navigation" aria-label="Navigation des chapitres">
+                    <a href="./chapitre1.html#page_histoire1" class="history-nav-button page-link"
+                    data-messages="Tu veux revenir en arrière ?|Retournons quelques instants en arrière…|Aucun problème, je t'accompagne !">
+                        ◄ Chapitre précédent
+                    </a>
+                    <a href="./characters.html#page_characters" class="history-nav-button page-link"
+                        data-messages="Tu veux rencontrer mes compagnons ?|Le Codex contient les fiches de tous les personnages !
+                        |Certains personnages cachent encore bien des secrets…">
+                        📜 Personnages
+                    </a>
+                     <a href="./annexe_chp2.html#page_annexe_chp2" class="history-nav-button page-link"
+                        data-messages="Une petite histoire annexe part ici !|Ho un peu curieux ?|">
+                        📜 Annexe 2
+                    </a>
+                    <a href="./chapitre3.html#page_histoire3" class="history-nav-button page-link"
+                        data-messages="Notre aventure continue !|Tourne la page…|Ce chapitre risque de te surprendre !">
+                        Chapitre suivant ►
+                    </a>
+            </nav> 
                <div class="history1">  
                     <p>
                         Le voyage dura <span class="important">cinq longues années</span>.
@@ -135,15 +154,54 @@
                         </div>
                         <p>Dans l'ombre des arbres, une personne était déjà en train de les observer.</p>
                 </div>    
-                    <p>
-                        <button><a href="./chapitre1.html#page_histoire1" class="page-link">< Page Précédente</a></button>
-                        <button><a href="./annexe_chp2.html#page_annexe_chp2" class="page-link">Annexe</a></button>
-                        <button><a href="./characters.html#page_characters" class="page-link">Page Personnages</a></button>
-                        <button><a href="./chapitre3.html#page_histoire3" class="page-link">Page Suivante ></a></button>
-                    </p>                   
+
+                     <div class="mascotte-widget">
+                    <div class="mascotte-bulle" id="mascotte-bulle" role="status" aria-live="polite">
+                        Bienvenue dans mon univers !
+                    </div>
+                    <button class="mascotte-button" id="mascotte-button" type="button" aria-label="Parler avec Couaxia">
+                        <img src="../images/mascotte/Discord-reactive-Mute.gif" data-idle-src="../images/mascotte/Discord-reactive-Mute.gif" 
+                        data-talking-src="../images/mascotte/Discord-reactive-Talk.gif" alt="Mascotte Couaxia" class="mascotte" id="mascotte-image" draggable="false">
+                    </button>
+            </div>
+                <div class="scroll-page-controls" aria-label="Navigation rapide dans la page">
+                    <button type="button" class="scroll-page-button" id="scrollTopButton"
+                        aria-label="Remonter en haut de la page" title="Remonter en haut">
+                        <span aria-hidden="true">↑</span>
+                    </button>
+
+                    <button type="button" class="scroll-page-button" id="scrollBottomButton" 
+                    aria-label="Descendre en bas de la page" title="Descendre en bas">
+                        <span aria-hidden="true">↓</span>
+                    </button>
+                </div>
+
+
+            <nav class="history-navigation" aria-label="Navigation des chapitres">
+                    <a href="./chapitre1.html#page_histoire1" class="history-nav-button page-link"
+                    data-messages="Tu veux revenir en arrière ?|Retournons quelques instants en arrière…|Aucun problème, je t'accompagne !">
+                        ◄ Chapitre précédent
+                    </a>
+                    <a href="./characters.html#page_characters" class="history-nav-button page-link"
+                        data-messages="Tu veux rencontrer mes compagnons ?|Le Codex contient les fiches de tous les personnages !
+                        |Certains personnages cachent encore bien des secrets…">
+                        📜 Personnages
+                    </a>
+                     <a href="./annexe_chp2.html#page_annexe_chp2" class="history-nav-button page-link"
+                        data-messages="Une petite histoire annexe part ici !|Ho un peu curieux ?|">
+                        📜 Annexe 2
+                    </a>
+                    <a href="./chapitre3.html#page_histoire3" class="history-nav-button page-link"
+                        data-messages="Notre aventure continue !|Tourne la page…|Ce chapitre risque de te surprendre !">
+                        Chapitre suivant ►
+                    </a>
+            </nav>    
+                   
      
    <img src="../images/characters/avadora.png" 
    alt="Ceci est la description de l'image !" width="50%" height="50%"/> 
+                 <script src="../js/scroll-page.js"></script>   
+                 <script src="../js/mascotte.js"></script>
                  <script src="../js/theme.js"></script>  
                  <script src="../js/protection.js"></script>
                  <script src="../js/transition.js"></script> 

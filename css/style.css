@@ -1075,33 +1075,23 @@ html[data-theme="dark"] {
 
 .mascotte {
     position: relative;
-
     z-index: 2;
-
     display: block;
-
     width: 100%;
     height: auto;
-
     margin: 0;
     padding: 0;
-
     background: transparent;
-
     user-select: none;
-
     -webkit-user-select: none;
     -webkit-user-drag: none;
-
     pointer-events: none;
-
     /*
      * Très important :
      * aucun drop-shadow sur l’image.
      */
     filter: none;
     box-shadow: none;
-
     transition:
         transform 0.25s ease,
         brightness 0.25s ease;
@@ -1158,7 +1148,6 @@ html[data-theme="dark"] {
             translateY(0)
             rotate(-2deg);
     }
-
     50% {
         transform:
             translateY(-8px)
@@ -1195,7 +1184,6 @@ html[data-theme="dark"] {
 .mascotte-button:focus-visible {
     outline: 3px solid var(--mascotte-cyan);
     outline-offset: 7px;
-
     border-radius: 30px;
 }
 
@@ -1221,9 +1209,7 @@ html[data-theme="dark"] {
 
     .mascotte-bulle {
         max-width: 250px;
-
         padding: 13px 17px;
-
         font-size: 0.9rem;
     }
 }
@@ -1237,7 +1223,6 @@ html[data-theme="dark"] {
     .mascotte-widget {
         right: 8px;
         bottom: 8px;
-
         gap: 10px;
     }
 
@@ -1248,28 +1233,22 @@ html[data-theme="dark"] {
     .mascotte-button::before {
         width: 82px;
         height: 82px;
-
         filter: blur(10px);
     }
 
     .mascotte-bulle {
         max-width: 190px;
-
         padding: 11px 13px;
-
         border-width: 2px;
         border-radius: 18px;
-
         font-size: 0.8rem;
     }
 
     .mascotte-bulle::after {
         right: 25px;
         bottom: -10px;
-
         width: 16px;
         height: 16px;
-
         border-right-width: 2px;
         border-bottom-width: 2px;
     }
@@ -1289,4 +1268,152 @@ html[data-theme="dark"] {
         animation: none;
         transition: none;
     }
+}
+
+
+/* ===========================
+   NAVIGATION HISTOIRE
+=========================== */
+
+:root{
+    --history-nav-background:linear-gradient(135deg,#8A2BE2,#6D00A3);
+    --history-nav-border:#22F2EF;
+    --history-nav-text:#FFFFFF;
+    --history-nav-shadow:
+        0 0 10px rgba(34,242,239,.35),
+        0 0 18px rgba(109,0,163,.35);
+    --history-nav-hover:linear-gradient(135deg,#F22292,#6D00A3);
+    --history-nav-hover-border:#FFFFFF;
+    --history-nav-hover-shadow:
+        0 0 14px rgba(34,242,239,.70),
+        0 0 24px rgba(242,34,146,.55);
+}
+
+html[data-theme="dark"]{
+    --history-nav-background:linear-gradient(135deg,#38115C,#220536);
+    --history-nav-border:#C56FFF;
+    --history-nav-text:#FFFFFF;
+    --history-nav-shadow:
+        0 0 12px rgba(197,111,255,.45),
+        0 0 25px rgba(20,20,40,.65);
+    --history-nav-hover:linear-gradient(135deg,#5D1E9D,#38115C);
+    --history-nav-hover-border:#22F2EF;
+    --history-nav-hover-shadow:
+        0 0 15px rgba(34,242,239,.55),
+        0 0 30px rgba(197,111,255,.45);
+}
+
+
+/* ==================================================
+   CONTENEUR DE NAVIGATION
+================================================== */
+
+.history-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: wrap;
+
+    gap: 30px;
+
+    width: min(95%, 1050px);
+
+    margin: 55px auto 70px;
+    padding: 20px;
+
+    box-sizing: border-box;
+}
+
+
+/* ==================================================
+   ONGLET DE GRIMOIRE
+================================================== */
+
+.history-navigation .history-nav-button {
+    position: relative;
+    isolation: isolate;
+
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    flex: 0 1 220px;
+
+    width: 220px;
+    min-width: 220px;
+    min-height: 60px;
+
+    padding: 16px 24px;
+
+    box-sizing: border-box;
+
+    color: var(--grimoire-nav-text);
+    background: var(--grimoire-nav-background);
+
+    border: 3px solid var(--grimoire-nav-border);
+    border-top-color: var(--grimoire-nav-border-light);
+    border-radius: 20px 20px 7px 7px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.25;
+
+    text-align: center;
+    text-decoration: none;
+
+    box-shadow: var(--grimoire-nav-shadow);
+
+    cursor: pointer;
+    overflow: hidden;
+
+    transform: translateY(0) scale(1);
+
+    transition:
+        transform 0.28s ease,
+        background 0.28s ease,
+        border-color 0.28s ease,
+        box-shadow 0.28s ease,
+        color 0.28s ease;
+}
+
+
+/* Lien déjà visité */
+
+.history-navigation .history-nav-button:visited {
+    color: var(--grimoire-nav-text);
+}
+
+
+/* Survol identique pour tous les boutons */
+
+.history-navigation .history-nav-button:hover {
+    color: var(--grimoire-nav-text);
+
+    background: var(--grimoire-nav-hover-background);
+
+    border-color: var(--grimoire-nav-border-light);
+
+    box-shadow: var(--grimoire-nav-hover-shadow);
+
+    transform:
+        translateY(-7px)
+        scale(1.04);
+}
+
+
+/* Clic */
+
+.history-navigation .history-nav-button:active {
+    transform:
+        translateY(-2px)
+        scale(0.98);
+}
+
+
+/* Clavier */
+
+.history-navigation .history-nav-button:focus-visible {
+    outline: 3px solid var(--grimoire-nav-border-light);
+    outline-offset: 6px;
 }

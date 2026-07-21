@@ -491,3 +491,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
     resetIdleTimer();
 });
+
+const historyButtons = document.querySelectorAll(
+    ".history-nav-button[data-mascotte-message]"
+);
+
+historyButtons.forEach((button) => {
+    button.addEventListener("mouseenter", () => {
+        const message = button.dataset.mascotteMessage;
+
+        if (message) {
+            showMessage(message, 3000);
+        }
+    });
+});
+historyButtons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+        const targetUrl = button.href;
+        const message = button.dataset.mascotteMessage;
+
+        if (!targetUrl || !message) {
+            return;
+        }
+
+        event.preventDefault();
+
+        showMessage(message, 1500);
+        animateMascotte();
+
+        document.body.classList.add("page-turn");
+
+        window.setTimeout(() => {
+            window.location.href = targetUrl;
+        }, 900);
+    });
+});
+
+window.showMessage = function (message, duration = 3500) {
+    const bubble = document.getElementById("mascotteBulle");
+
+    if (!bubble) {
+        return;
+    }
+
+    bubble.textContent = message;
+    bubble.classList.add("is-visible");
+
+    clearTimeout(window.mascotteBubbleTimer);
+
+    window.mascotteBubbleTimer = setTimeout(() => {
+        bubble.classList.remove("is-visible");
+    }, duration);
+};
