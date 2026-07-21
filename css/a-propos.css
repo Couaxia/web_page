@@ -1,0 +1,297 @@
+/* =========================
+   BODY
+========================= */
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 40px 20px;
+
+    background-image: url("../images/background/background.jpg");
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+
+    text-align: center;
+    font-family: "Lucida Sans", Geneva, Verdana, sans-serif;
+}
+
+/* =========================
+   TITRES
+========================= */
+
+/* =========================
+   Texte
+   ========================= */
+
+p {
+    font-family: "Lucida Sans", "Lucida Sans Regular",
+                 "Lucida Grande", "Lucida Sans Unicode",
+                 Geneva, Verdana, sans-serif;
+    color: #6D00A3;
+    font-style: italic;
+}
+h1,
+h2 {
+    
+    font-family: "Courier New", Courier, monospace;
+    color: #00ffc8;
+    text-align: center;
+    background-image: url("../images/background/bg.jpg");
+    background-position: center;
+    background-size: cover;
+    border: 4px solid #373B44;
+    border-radius: 47% 53% 69% 31% / 41% 100% 0% 59%;
+    box-shadow: 6px 6px 15px #bd24a8;
+    text-shadow: 6px 6px 15px #8400ff;
+    padding: 15px 40px;  
+}
+
+h1 {
+    font-size: 3rem;
+}
+
+h2 {
+    margin-top: 50px;
+    font-size: 2rem;
+}
+
+/* =========================
+   IMAGE PRINCIPALE
+========================= */
+
+body > img {
+    display: block;
+    max-width: 650px;
+    width: 80%;
+    height: auto;
+    margin: 30px auto;
+    border: 4px solid #6D00A3;
+    border-radius: 25px;
+    box-shadow: 0 0 30px #F22292;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* =========================
+   PARAGRAPHES
+========================= */
+
+p {
+    font-family: "Lucida Sans", "Lucida Sans Regular",
+                 "Lucida Grande", "Lucida Sans Unicode",
+                 Geneva, Verdana, sans-serif;
+    max-width: 800px;
+    margin: 15px auto;
+    color: #6D00A3;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* =========================
+   FICHE PERSONNAGE
+========================= */
+
+.infos {
+    width: 90%;
+    max-width: 1100px;
+    margin: 40px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+    gap: 20px;
+}
+
+.info-item {
+    padding: 20px;
+    background: rgba(242, 34, 146, 0.70);
+    border: 2px solid #6D00A3;
+    border-radius: 20px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: center;
+    transition: .3s;
+    box-shadow: 0 0 15px rgba(109, 0, 163, .5);
+}
+
+.info-item:hover {
+    transform: translateY(-8px) scale(1.03);
+    background: rgba(109, 0, 163, .85);
+    border-color: #22F2EF;
+    color: #22F2EF;
+    box-shadow: 0 0 25px #22F2EF;
+}
+
+.info-item span {
+    display: block;
+    color: #22F2EF;
+    font-weight: bold;
+    font-size: .95rem;
+    margin-bottom: 10px;
+}
+
+.info-item strong {
+    color: white;
+    font-size: 1.2rem;
+}
+
+/* =========================
+   PERSONNALITÉ
+========================= */
+
+.personality-card {
+    max-width: 850px;
+    margin: 30px auto;
+    padding: 30px;
+    background: rgba(109, 0, 163, 0.65);
+    border: 2px solid #F22292;
+    border-radius: 25px;
+    box-shadow: 0 0 25px rgba(242, 34, 146, 0.6);
+    transition: 0.3s;
+}
+
+.personality-card:hover {
+    transform: scale(1.02);
+    border-color: #22F2EF;
+    box-shadow: 0 0 25px #22F2EF;
+    background: rgba(242, 34, 146, 0.70);
+}
+
+.personality-card p {
+    background: none;
+    border: none;
+    padding: 0;
+    color: white;
+    font-size: 1.15rem;
+    line-height: 1.8;
+}
+
+/* =========================
+   SÉPARATEUR
+========================= */
+
+.separator {
+    margin: 40px auto;
+    text-align: center;
+    color: #00ffc8;
+    font-size: 1.8rem;
+    letter-spacing: 8px;
+    text-shadow: 0 0 10px #22F2EF;
+    user-select: none;
+}
+/* =========================
+   PRÉFÉRENCES
+========================= */
+
+.preferences {
+    width: 90%;
+    max-width: 1100px;
+    margin: 35px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.preference-item {
+    padding: 20px;
+    background: rgba(242, 34, 146, 0.70);
+    border: 2px solid #6D00A3;
+    border-radius: 20px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: center;
+    transition: .3s;
+    box-shadow: 0 0 15px rgba(109, 0, 163, .5);
+}
+
+.preference-item:hover {
+    transform: translateY(-8px) scale(1.03);
+    background: rgba(109, 0, 163, .85);
+    border-color: #22F2EF;
+    color: #22F2EF;
+    box-shadow: 0 0 25px #22F2EF;
+}
+
+/* =========================
+   BOUTONS
+========================= */
+
+button {
+    margin: 8px;
+    background: none;
+    border: none;
+}
+
+button a {
+    display: inline-block;
+    padding: 12px 25px;
+    background: #6D00A3;
+    color: white;
+    text-decoration: none;
+    border: 2px solid #22F2EF;
+    border-radius: 15px;
+    transition: .3s;
+}
+
+button a:hover {
+    background: #22F2EF;
+    color: black;
+    transform: scale(1.08);
+    box-shadow: 0 0 20px #22F2EF;
+}
+
+/* =========================
+   SÉPARATEURS
+========================= */
+
+.separator {
+    color: #22F2EF;
+    font-size: 1.4rem;
+    letter-spacing: 5px;
+    margin: 30px auto;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px){
+
+    .infos{
+        grid-template-columns: 1fr;
+    }
+
+    body > img{
+        width:95%;
+    }
+
+    h1{
+        font-size:2.4rem;
+    }
+
+    h2{
+        font-size:1.8rem;
+    }
+}
+
+@media (max-width:600px){
+
+    h1{
+        font-size:2rem;
+    }
+
+    h2{
+        font-size:1.5rem;
+    }
+
+    p,
+    li{
+        font-size:1rem;
+    }
+
+    button a{
+        display:block;
+        margin:10px auto;
+    }
+}

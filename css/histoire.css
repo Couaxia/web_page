@@ -1,0 +1,1318 @@
+/* =========================
+   VARIABLES — MODE JOUR
+========================= */
+
+:root {
+    --history-background:
+        linear-gradient(
+            135deg,
+            rgba(255, 240, 255, 0.94),
+            rgba(218, 190, 255, 0.90)
+        );
+
+    --history-text: #0011aa;
+    --history-border: #6D00A3;
+
+    --history-inner-border: rgba(109, 0, 163, 0.35);
+
+    --history-shadow:
+        0 0 25px rgba(109, 0, 163, 0.45),
+        inset 0 0 30px rgba(109, 0, 163, 0.18);
+
+    --important-color: #6D00A3;
+
+    --image-border: #6D00A3;
+
+    --image-shadow:
+        0 0 25px rgba(109, 0, 163, 0.65),
+        0 0 45px rgba(242, 34, 146, 0.4);
+
+    --dialogue-shadow: rgba(109, 0, 163, 0.25);
+
+    /* Couaxia */
+
+    --couaxia-background: rgba(255, 3, 179, 0.16);
+    --couaxia-border: #6D00A3;
+    --couaxia-name: #6D00A3;
+    --couaxia-text: #005f70;
+
+    /* Natsu */
+
+    --natsu-background: rgba(17, 48, 158, 0.12);
+    --natsu-border: #161616;
+    --natsu-name: #161616;
+    --natsu-text: #161616;
+
+    /* Myo */
+
+    --myo-background: rgba(255, 238, 130, 0.30);
+    --myo-border: #d99700;
+    --myo-name: #a96b00;
+    --myo-text: #9c4700;
+
+    /* Avadora */
+
+    --avadora-background: rgba(43, 217, 49, 0.15);
+    --avadora-border: #317812;
+    --avadora-name: #317812;
+    --avadora-text: #20560d;
+
+    /* Cita */
+
+    --cita-background: rgba(226, 220, 254, 0.90);
+    --cita-border: #6751e8;
+    --cita-name: #087d88;
+    --cita-text: #315a79;
+
+    /* Hylda */
+
+    --hylda-background: rgba(248, 204, 244, 0.90);
+    --hylda-border: #d981c8;
+    --hylda-name: #6765b7;
+    --hylda-text: #79516f;
+}
+
+/* =========================
+   VARIABLES — MODE NUIT
+========================= */
+
+html[data-theme="dark"] {
+    --history-background:
+        linear-gradient(
+            135deg,
+            rgba(22, 8, 48, 0.95),
+            rgba(68, 12, 89, 0.92)
+        );
+
+    --history-text: #f8f1ff;
+    --history-border: #22F2EF;
+
+    --history-inner-border: rgba(34, 242, 239, 0.30);
+
+    --history-shadow:
+        0 0 25px rgba(34, 242, 239, 0.48),
+        0 0 45px rgba(132, 0, 255, 0.25),
+        inset 0 0 30px rgba(109, 0, 163, 0.32);
+
+    --important-color: #ff83d4;
+
+    --image-border: #22F2EF;
+
+    --image-shadow:
+        0 0 25px rgba(34, 242, 239, 0.75),
+        0 0 45px rgba(109, 0, 163, 0.85);
+
+    --dialogue-shadow: rgba(0, 0, 0, 0.55);
+
+    /* Couaxia */
+
+    --couaxia-background: rgba(242, 34, 146, 0.20);
+    --couaxia-border: #ff4fc3;
+    --couaxia-name: #ff83d4;
+    --couaxia-text: #7fffff;
+
+    /* Natsu */
+
+    --natsu-background: rgba(15, 20, 42, 0.78);
+    --natsu-border: #8fa8ff;
+    --natsu-name: #b7c5ff;
+    --natsu-text: #edf1ff;
+
+    /* Myo */
+
+    --myo-background: rgba(246, 205, 1, 0.15);
+    --myo-border: #fff584;
+    --myo-name: #ffe164;
+    --myo-text: #ffbc53;
+
+    /* Avadora */
+
+    --avadora-background: rgba(43, 217, 49, 0.14);
+    --avadora-border: #6bde2d;
+    --avadora-name: #8eff50;
+    --avadora-text: #c3ffa6;
+
+    /* Cita */
+
+    --cita-background: rgba(89, 69, 170, 0.32);
+    --cita-border: #a899ff;
+    --cita-name: #63e8ef;
+    --cita-text: #d5eaff;
+
+    /* Hylda */
+
+    --hylda-background: rgba(184, 102, 177, 0.30);
+    --hylda-border: #f2b1e6;
+    --hylda-name: #d4d3ff;
+    --hylda-text: #fff0c9;
+}
+
+/* =========================
+   TITRES DES CHAPITRES
+========================= */
+
+#page_histoire0,
+#page_histoire1,
+#page_histoire3,
+#page_annexe_chp1,
+#page_annexe_chp2 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+}
+
+/* =========================
+   BULLES DE DIALOGUE
+========================= */
+
+.dialogue {
+    position: relative;
+
+    width: fit-content;
+    max-width: min(75%, 700px);
+
+    margin: 25px 0;
+    padding: 18px 22px;
+
+    border-radius: 22px;
+
+    font-style: italic;
+
+    box-shadow: 0 0 18px var(--dialogue-shadow);
+
+    transition:
+        color 0.35s ease,
+        background-color 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+.dialogue span {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 0.9rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.dialogue p {
+    margin: 0;
+    padding: 0;
+
+    color: inherit;
+    background: none;
+    border: none;
+
+    font-size: 1.15rem;
+    line-height: 1.7;
+    text-align: center;
+
+    overflow-wrap: break-word;
+}
+
+/* =========================
+   COUAXIA
+========================= */
+
+.dialogue.couaxia {
+    margin-right: auto;
+
+    background: var(--couaxia-background);
+
+    border: 2px solid var(--couaxia-border);
+    border-left-width: 6px;
+}
+
+.dialogue.couaxia span {
+    color: var(--couaxia-name);
+}
+
+.dialogue.couaxia p {
+    color: var(--couaxia-text);
+}
+
+/* =========================
+   NATSU
+========================= */
+
+.dialogue.natsu {
+    margin-left: auto;
+
+    background: var(--natsu-background);
+
+    border: 2px solid var(--natsu-border);
+    border-right-width: 6px;
+}
+
+.dialogue.natsu span {
+    color: var(--natsu-name);
+}
+
+.dialogue.natsu p {
+    color: var(--natsu-text);
+}
+
+/* =========================
+   MYO
+========================= */
+
+.dialogue.myo {
+    margin-left: auto;
+
+    background: var(--myo-background);
+
+    border: 2px solid var(--myo-border);
+    border-left-width: 6px;
+}
+
+.dialogue.myo span {
+    color: var(--myo-name);
+}
+
+.dialogue.myo p {
+    color: var(--myo-text);
+}
+
+/* =========================
+   AVADORA
+========================= */
+
+.dialogue.avadora {
+    margin-right: auto;
+
+    background: var(--avadora-background);
+
+    border: 2px solid var(--avadora-border);
+    border-left-width: 6px;
+}
+
+.dialogue.avadora span {
+    color: var(--avadora-name);
+}
+
+.dialogue.avadora p {
+    color: var(--avadora-text);
+}
+
+/* =========================
+   CITA
+========================= */
+
+.dialogue.cita {
+    margin-left: auto;
+
+    background: var(--cita-background);
+
+    border: 2px solid var(--cita-border);
+    border-left-width: 6px;
+}
+
+.dialogue.cita span {
+    color: var(--cita-name);
+}
+
+.dialogue.cita p {
+    color: var(--cita-text);
+}
+
+/* =========================
+   HYLDA
+========================= */
+
+.dialogue.hylda {
+    margin-right: auto;
+
+    background: var(--hylda-background);
+
+    border: 2px solid var(--hylda-border);
+    border-right-width: 6px;
+}
+
+.dialogue.hylda span {
+    color: var(--hylda-name);
+}
+
+.dialogue.hylda p {
+    color: var(--hylda-text);
+}
+
+/* =========================
+   CLASSES DE TEXTE
+========================= */
+
+.follow {
+    color: #F22245;
+    font-weight: bold;
+}
+
+.important {
+    color: var(--important-color);
+    font-weight: 700;
+
+    text-shadow: 0 0 8px rgba(34, 242, 239, 0.55);
+}
+
+.history1 {
+    font-style: italic;
+}
+
+/* =========================
+   TRANSITION ENTRE LES PAGES
+========================= */
+
+.page-turn {
+    animation: turnPage 0.6s ease forwards;
+    transform-origin: left center;
+}
+
+@keyframes turnPage {
+    0% {
+        opacity: 1;
+
+        transform:
+            perspective(1000px)
+            rotateY(0deg);
+    }
+
+    100% {
+        opacity: 0;
+
+        transform:
+            perspective(1000px)
+            rotateY(-90deg);
+    }
+}
+
+/* =========================
+   ANIMATION DU TITRE
+========================= */
+
+@keyframes titleAppear {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(-30px)
+            scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+/* =========================
+   TEXTE DE L’HISTOIRE
+========================= */
+
+.history1,
+.page_histoire1 {
+    position: relative;
+
+    max-width: 900px;
+
+    margin: 30px auto;
+    padding: 35px;
+
+    color: var(--history-text);
+    background: var(--history-background);
+
+    border: 3px solid var(--history-border);
+    border-radius: 25px;
+
+    font-family:
+        "Lucida Sans",
+        "Lucida Sans Regular",
+        "Lucida Grande",
+        "Lucida Sans Unicode",
+        Geneva,
+        Verdana,
+        sans-serif;
+
+    font-size: 1.15rem;
+    line-height: 1.9;
+    text-align: center;
+
+    box-shadow: var(--history-shadow);
+
+    animation: pageTurn 0.9s ease forwards;
+    transform-origin: left center;
+
+    transition:
+        color 0.35s ease,
+        background 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+/* =========================
+   ANIMATION PAGE DE LIVRE
+========================= */
+
+@keyframes pageTurn {
+    from {
+        opacity: 0;
+
+        transform:
+            perspective(900px)
+            rotateY(-18deg);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            perspective(900px)
+            rotateY(0deg);
+    }
+}
+
+/* =========================
+   BORDURE INTÉRIEURE DU PAPIER
+========================= */
+
+.history1::before,
+.page_histoire1::before {
+    content: "";
+
+    position: absolute;
+    inset: 12px;
+
+    border: 1px solid var(--history-inner-border);
+    border-radius: 18px;
+
+    pointer-events: none;
+}
+
+/* Les éléments doivent rester au-dessus
+   de la bordure intérieure */
+
+.history1 > *,
+.page_histoire1 > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* =========================
+   IMAGE DE L’HISTOIRE
+========================= */
+
+body > img {
+    display: block;
+    width: 80%;
+    max-width: 650px;
+    height: auto;
+    margin: 45px auto;
+    border: 4px solid var(--image-border);
+    border-radius: 25px;
+    box-shadow: var(--image-shadow);
+    animation: floatingImage 5s ease-in-out infinite;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    transition:        border-color 0.35s ease,        box-shadow 0.35s ease;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    -ms-border-radius: 25px;
+    -o-border-radius: 25px;
+}
+
+@keyframes floatingImage {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+/* =========================
+   BOUTONS DE L’HISTOIRE
+========================= */
+
+button {
+    margin: 10px;
+    padding: 0;
+
+    background: none;
+    border: none;
+}
+
+button a {
+    display: inline-block;
+
+    padding: 13px 22px;
+
+    color: var(--button-text, #ffffff);
+    background: var(--button-background, #6D00A3);
+
+    border: 2px solid var(--accent-color, #22F2EF);
+    border-radius: 15px;
+
+    text-decoration: none;
+
+    transition:
+        color 0.3s ease,
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+button a:hover {
+    color: #000000;
+    background: var(--accent-color, #22F2EF);
+
+    transform: scale(1.08);
+
+    box-shadow:
+        0 0 20px var(--accent-color, #22F2EF);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 700px) {
+    #page_histoire0,
+    #page_histoire1,
+    #page_histoire3,
+    #page_annexe_chp1,
+    #page_annexe_chp2 {
+        padding: 15px 25px;
+
+        font-size: 1.8rem;
+    }
+
+    .history1,
+    .page_histoire1 {
+        width: 94%;
+
+        padding: 25px 20px;
+
+        font-size: 1rem;
+        text-align: left;
+    }
+
+    .dialogue {
+        width: fit-content;
+        max-width: 92%;
+
+        padding: 15px 18px;
+    }
+
+    .dialogue p {
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    body > img {
+        width: 95%;
+    }
+}
+
+@media (max-width: 450px) {
+    .history1,
+    .page_histoire1 {
+        width: 96%;
+
+        padding: 22px 16px;
+
+        line-height: 1.75;
+    }
+
+    .history1::before,
+    .page_histoire1::before {
+        inset: 7px;
+    }
+
+    .dialogue {
+        max-width: 100%;
+    }
+
+    button a {
+        width: 100%;
+    }
+}
+
+/* =========================
+   ACCESSIBILITÉ
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .page-turn,
+    .history1,
+    .page_histoire1,
+    body > img {
+        animation: none;
+    }
+
+    .dialogue,
+    .history1,
+    .page_histoire1,
+    body > img,
+    button a {
+        transition: none;
+    }
+
+    button a:hover {
+        transform: none;
+    }
+}
+
+/* ==================================================
+   NAVIGATION HISTOIRE — ONGLETS DE GRIMOIRE
+   À placer tout en bas de histoire.css
+================================================== */
+
+
+/* ==================================================
+   VARIABLES — MODE JOUR
+================================================== */
+
+:root {
+    --grimoire-nav-text: #4a1f2f;
+
+    --grimoire-nav-background:
+        linear-gradient(
+            180deg,
+            #fff0c7 0%,
+            #f2d494 55%,
+            #c99a55 100%
+        );
+
+    --grimoire-nav-border: #7a4b21;
+
+    --grimoire-nav-border-light: #f6d99a;
+
+    --grimoire-nav-hover-background:
+        linear-gradient(
+            180deg,
+            #fff7da 0%,
+            #f8dca0 55%,
+            #d4a35d 100%
+        );
+
+    --grimoire-nav-shadow:
+        0 8px 0 #8e5f2e,
+        0 12px 20px rgba(42, 20, 5, 0.32),
+        0 0 16px rgba(242, 34, 146, 0.22);
+
+    --grimoire-nav-hover-shadow:
+        0 10px 0 #8e5f2e,
+        0 18px 28px rgba(42, 20, 5, 0.35),
+        0 0 20px rgba(242, 34, 146, 0.38),
+        0 0 30px rgba(34, 242, 239, 0.2);
+
+    --grimoire-rune: rgba(109, 0, 163, 0.2);
+
+    --grimoire-line: rgba(122, 75, 33, 0.22);
+}
+
+
+/* ==================================================
+   VARIABLES — MODE NUIT
+================================================== */
+
+html[data-theme="dark"] {
+    --grimoire-nav-text: #ffffff;
+
+    --grimoire-nav-background:
+        linear-gradient(
+            180deg,
+            #6b35a0 0%,
+            #3e1b62 55%,
+            #1e0b33 100%
+        );
+
+    --grimoire-nav-border: #b983ff;
+
+    --grimoire-nav-border-light: #22f2ef;
+
+    --grimoire-nav-hover-background:
+        linear-gradient(
+            180deg,
+            #8750bd 0%,
+            #54267b 55%,
+            #28113e 100%
+        );
+
+    --grimoire-nav-shadow:
+        0 8px 0 #160722,
+        0 12px 24px rgba(0, 0, 0, 0.55),
+        0 0 18px rgba(185, 131, 255, 0.35);
+
+    --grimoire-nav-hover-shadow:
+        0 10px 0 #160722,
+        0 18px 32px rgba(0, 0, 0, 0.6),
+        0 0 22px rgba(185, 131, 255, 0.65),
+        0 0 32px rgba(34, 242, 239, 0.35);
+
+    --grimoire-rune: rgba(34, 242, 239, 0.17);
+
+    --grimoire-line: rgba(255, 255, 255, 0.1);
+}
+
+
+/* ==================================================
+   CONTENEUR DE NAVIGATION
+================================================== */
+
+.history-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 30px;
+    width: min(95%, 1050px);
+    margin: 55px auto 70px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
+/* ==================================================
+   ONGLET DE GRIMOIRE
+================================================== */
+
+.history-navigation .history-nav-button {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 210px;
+    min-height: 58px;
+    padding: 16px 28px;
+    color: var(--grimoire-nav-text);
+    background: var(--grimoire-nav-background);
+    border: 3px solid var(--grimoire-nav-border);
+    border-top-color: var(--grimoire-nav-border-light);
+    border-radius: 20px 20px 7px 7px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: var(--grimoire-nav-shadow);
+    cursor: pointer;
+    overflow: hidden;
+    transform: translateY(0);
+    transition:
+        transform 0.28s ease,
+        background 0.28s ease,
+        border-color 0.28s ease,
+        box-shadow 0.28s ease,
+        color 0.28s ease;
+}
+
+/* Lien déjà visité */
+
+.history-navigation .history-nav-button:visited {
+    color: var(--grimoire-nav-text);
+}
+
+/* ==================================================
+   TEXTURE DE PAPIER / GRIMOIRE
+================================================== */
+
+.history-navigation .history-nav-button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(
+            circle at 18% 28%,
+            var(--grimoire-rune) 0 2px,
+            transparent 3px
+        ),
+        radial-gradient(
+            circle at 82% 72%,
+            var(--grimoire-rune) 0 2px,
+            transparent 3px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 6px,
+            var(--grimoire-line) 7px,
+            transparent 8px
+        );
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+
+/* ==================================================
+   DÉCOR DU BAS DE L’ONGLET
+================================================== */
+
+.history-navigation .history-nav-button::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 5px;
+    width: 58%;
+    height: 2px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--grimoire-nav-border-light),
+            transparent
+        );
+    transform: translateX(-50%);
+    opacity: 0.65;
+    pointer-events: none;
+}
+
+
+/* ==================================================
+   SURVOL
+================================================== */
+
+.history-navigation .history-nav-button:hover {
+    color: var(--grimoire-nav-text);
+    background: var(--grimoire-nav-hover-background);
+    border-color: var(--grimoire-nav-border-light);
+    box-shadow: var(--grimoire-nav-hover-shadow);
+    transform:
+        translateY(-9px)
+        scale(1.04);
+}
+
+
+/* ==================================================
+   CLIC
+================================================== */
+
+.history-navigation .history-nav-button:active {
+    transform:
+        translateY(-2px)
+        scale(0.98);
+    box-shadow:
+        0 4px 0 var(--grimoire-nav-border),
+        0 8px 14px rgba(0, 0, 0, 0.28);
+}
+
+
+/* ==================================================
+   CLAVIER
+================================================== */
+
+.history-navigation .history-nav-button:focus-visible {
+    outline: 3px solid var(--grimoire-nav-border-light);
+    outline-offset: 6px;
+}
+
+
+/* ==================================================
+   OPTION : ONGLET CENTRAL PERSONNAGES
+================================================== */
+
+.history-navigation .history-nav-button:nth-child(2) {
+    min-width: 190px;
+    font-size: 1.03rem;
+    transform: translateY(-4px);
+}
+
+.history-navigation .history-nav-button:nth-child(2):hover {
+    transform:
+        translateY(-12px)
+        scale(1.05);
+}
+
+
+/* ==================================================
+   RESPONSIVE — TABLETTE
+================================================== */
+
+@media (max-width: 850px) {
+    .history-navigation {
+        gap: 20px;
+        margin: 45px auto 60px;
+        padding: 15px;
+    }
+
+    .history-navigation .history-nav-button {
+        min-width: 185px;
+        padding: 14px 22px;
+        font-size: 0.95rem;
+    }
+}
+
+
+/* ==================================================
+   RESPONSIVE — TÉLÉPHONE
+================================================== */
+
+@media (max-width: 620px) {
+    .history-navigation {
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+        width: 100%;
+        margin: 35px auto 50px;
+        padding: 12px;
+    }
+    .history-navigation .history-nav-button,
+    .history-navigation .history-nav-button:nth-child(2) {
+        width: min(100%, 310px);
+        min-width: 0;
+        box-sizing: border-box;
+        transform: none;
+    }
+    .history-navigation .history-nav-button:hover,
+    .history-navigation .history-nav-button:nth-child(2):hover {
+        transform:
+            translateY(-5px)
+            scale(1.02);
+    }
+}
+
+
+/* ==================================================
+   ACCESSIBILITÉ
+================================================== */
+@media (prefers-reduced-motion: reduce) {
+    .history-navigation .history-nav-button {
+        transition: none;
+    }
+    .history-navigation .history-nav-button:hover,
+    .history-navigation .history-nav-button:nth-child(2):hover {
+        transform: none;
+    }
+}
+
+/* ==================================================
+   NAVIGATION RAPIDE HAUT / BAS
+   Placée à gauche de la mascotte
+================================================== */
+
+.scroll-page-controls {
+    position: fixed;
+    right: 250px;
+    bottom: 35px;
+    z-index: 9998;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+
+/* ==================================================
+   BOUTONS
+================================================== */
+
+.scroll-page-button {
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 50px;
+    height: 50px;
+
+    margin: 0;
+    padding: 0;
+
+    color: #4a1f2f;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fff0c7 0%,
+            #f2d494 55%,
+            #c99a55 100%
+        );
+
+    border: 3px solid #7a4b21;
+    border-top-color: #f6d99a;
+
+    border-radius: 50% 50% 14px 14px;
+
+    box-shadow:
+        0 6px 0 #8e5f2e,
+        0 11px 18px rgba(42, 20, 5, 0.32),
+        0 0 14px rgba(242, 34, 146, 0.2);
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    line-height: 1;
+
+    cursor: pointer;
+
+    overflow: hidden;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform:
+        translateX(15px)
+        scale(0.85);
+
+    transition:
+        opacity 0.28s ease,
+        visibility 0.28s ease,
+        transform 0.28s ease,
+        background 0.28s ease,
+        border-color 0.28s ease,
+        box-shadow 0.28s ease;
+
+    pointer-events: auto;
+}
+
+
+/* Texture de grimoire */
+
+.scroll-page-button::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at 25% 30%,
+            rgba(109, 0, 163, 0.18) 0 2px,
+            transparent 3px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 6px,
+            rgba(122, 75, 33, 0.18) 7px,
+            transparent 8px
+        );
+
+    pointer-events: none;
+}
+
+
+/* Flèche */
+
+.scroll-page-button span {
+    position: relative;
+    z-index: 1;
+}
+
+
+/* Bouton visible */
+
+.scroll-page-button.is-visible {
+    opacity: 1;
+    visibility: visible;
+
+    transform:
+        translateX(0)
+        scale(1);
+}
+
+
+/* Survol */
+
+.scroll-page-button:hover {
+    background:
+        linear-gradient(
+            180deg,
+            #fff7da 0%,
+            #f8dca0 55%,
+            #d4a35d 100%
+        );
+
+    border-color: #f22292;
+
+    box-shadow:
+        0 8px 0 #8e5f2e,
+        0 15px 24px rgba(42, 20, 5, 0.38),
+        0 0 22px rgba(242, 34, 146, 0.42),
+        0 0 28px rgba(34, 242, 239, 0.2);
+
+    transform:
+        translateY(-4px)
+        scale(1.07);
+}
+
+
+/* Clic */
+
+.scroll-page-button:active {
+    transform:
+        translateY(0)
+        scale(0.94);
+
+    box-shadow:
+        0 3px 0 #8e5f2e,
+        0 7px 12px rgba(42, 20, 5, 0.3);
+}
+
+
+/* Navigation clavier */
+
+.scroll-page-button:focus-visible {
+    outline: 3px solid #22f2ef;
+    outline-offset: 5px;
+}
+
+
+/* ==================================================
+   FORME DU BOUTON VERS LE BAS
+================================================== */
+
+#scrollBottomButton {
+    border-radius: 14px 14px 50% 50%;
+}
+
+
+/* ==================================================
+   MODE NUIT
+================================================== */
+
+html[data-theme="dark"] .scroll-page-button {
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            180deg,
+            #6b35a0 0%,
+            #3e1b62 55%,
+            #1e0b33 100%
+        );
+
+    border-color: #b983ff;
+    border-top-color: #22f2ef;
+
+    box-shadow:
+        0 6px 0 #160722,
+        0 12px 24px rgba(0, 0, 0, 0.55),
+        0 0 18px rgba(185, 131, 255, 0.35);
+}
+
+
+html[data-theme="dark"] .scroll-page-button::before {
+    background:
+        radial-gradient(
+            circle at 25% 30%,
+            rgba(34, 242, 239, 0.2) 0 2px,
+            transparent 3px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 6px,
+            rgba(255, 255, 255, 0.08) 7px,
+            transparent 8px
+        );
+}
+
+
+html[data-theme="dark"] .scroll-page-button:hover {
+    background:
+        linear-gradient(
+            180deg,
+            #8750bd 0%,
+            #54267b 55%,
+            #28113e 100%
+        );
+
+    border-color: #22f2ef;
+
+    box-shadow:
+        0 8px 0 #160722,
+        0 18px 30px rgba(0, 0, 0, 0.6),
+        0 0 24px rgba(185, 131, 255, 0.65),
+        0 0 32px rgba(34, 242, 239, 0.38);
+}
+
+
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media (max-width: 700px) {
+    .scroll-page-controls {
+        right: 125px;
+        bottom: 18px;
+
+        gap: 9px;
+    }
+
+    .scroll-page-button {
+        width: 42px;
+        height: 42px;
+
+        font-size: 1.5rem;
+    }
+}
+
+
+@media (max-width: 400px) {
+    .scroll-page-controls {
+        position: fixed;
+        right: 240px;
+        bottom: 12px;
+    }
+
+    .scroll-page-button {
+        width: 38px;
+        height: 38px;
+        font-size: 1.35rem;
+        border-width: 2px;
+    }
+}
+@media (max-width: 620px) {
+    .history-navigation {
+        flex-direction: column;
+        align-items: center;
+
+        gap: 18px;
+
+        width: 100%;
+
+        margin: 35px auto 50px;
+        padding: 12px;
+    }
+
+    .history-navigation .history-nav-button {
+        width: min(100%, 310px);
+        min-width: 0;
+
+        transform: translateY(0) scale(1);
+    }
+
+    .history-navigation .history-nav-button:hover {
+        transform:
+            translateY(-5px)
+            scale(1.02);
+    }
+}
+
+
+/* ==================================================
+   ACCESSIBILITÉ
+================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .scroll-page-button {
+        transition: none;
+    }
+}
+
+.history-navigation .history-nav-button:nth-child(n) {
+    transform: translateY(0) scale(1);
+}
+
+.history-navigation .history-nav-button:nth-child(n):hover {
+    transform:
+        translateY(-7px)
+        scale(1.04);
+}
