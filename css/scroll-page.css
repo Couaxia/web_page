@@ -1,0 +1,526 @@
+/* ==================================================
+   BOUTONS DE DÉFILEMENT — BULLES D’ÉNERGIE
+================================================== */
+
+
+/* ==================================================
+   VARIABLES — MODE JOUR
+================================================== */
+
+:root {
+    --scroll-energy-background:
+        radial-gradient(
+            circle at 35% 28%,
+            rgba(255, 255, 255, 0.88) 0%,
+            rgba(255, 255, 255, 0.28) 18%,
+            rgba(242, 34, 146, 0.2) 42%,
+            rgba(109, 0, 163, 0.45) 75%,
+            rgba(56, 7, 86, 0.72) 100%
+        );
+
+    --scroll-energy-border:
+        rgba(109, 0, 163, 0.52);
+
+    --scroll-energy-icon:
+        #ffffff;
+
+    --scroll-energy-shadow:
+        0 8px 22px rgba(75, 8, 105, 0.3),
+        0 0 12px rgba(242, 34, 146, 0.24),
+        0 0 22px rgba(34, 242, 239, 0.16),
+        inset 0 0 13px rgba(255, 255, 255, 0.26);
+
+    --scroll-energy-hover-background:
+        radial-gradient(
+            circle at 35% 28%,
+            rgba(255, 255, 255, 0.96) 0%,
+            rgba(34, 242, 239, 0.36) 20%,
+            rgba(242, 34, 146, 0.46) 48%,
+            rgba(109, 0, 163, 0.76) 76%,
+            rgba(45, 5, 76, 0.92) 100%
+        );
+
+    --scroll-energy-hover-shadow:
+        0 11px 27px rgba(61, 5, 91, 0.4),
+        0 0 14px rgba(34, 242, 239, 0.58),
+        0 0 27px rgba(242, 34, 146, 0.42),
+        0 0 38px rgba(109, 0, 163, 0.3),
+        inset 0 0 15px rgba(255, 255, 255, 0.34);
+
+    --scroll-energy-ring:
+        rgba(34, 242, 239, 0.42);
+
+    --scroll-energy-ring-secondary:
+        rgba(242, 34, 146, 0.28);
+
+    --scroll-energy-particle:
+        rgba(255, 255, 255, 0.82);
+}
+
+
+/* ==================================================
+   VARIABLES — MODE NUIT
+================================================== */
+
+html[data-theme="dark"] {
+    --scroll-energy-background:
+        radial-gradient(
+            circle at 35% 28%,
+            rgba(255, 255, 255, 0.7) 0%,
+            rgba(34, 242, 239, 0.18) 18%,
+            rgba(242, 34, 146, 0.25) 43%,
+            rgba(109, 0, 163, 0.62) 72%,
+            rgba(20, 5, 43, 0.92) 100%
+        );
+
+    --scroll-energy-border:
+        rgba(34, 242, 239, 0.45);
+
+    --scroll-energy-icon:
+        #ffffff;
+
+    --scroll-energy-shadow:
+        0 9px 23px rgba(0, 0, 0, 0.46),
+        0 0 13px rgba(34, 242, 239, 0.3),
+        0 0 24px rgba(242, 34, 146, 0.23),
+        inset 0 0 14px rgba(255, 255, 255, 0.16);
+
+    --scroll-energy-hover-background:
+        radial-gradient(
+            circle at 35% 28%,
+            rgba(255, 255, 255, 0.92) 0%,
+            rgba(34, 242, 239, 0.4) 18%,
+            rgba(242, 34, 146, 0.46) 46%,
+            rgba(109, 0, 163, 0.8) 74%,
+            rgba(16, 4, 36, 0.98) 100%
+        );
+
+    --scroll-energy-hover-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.58),
+        0 0 16px rgba(34, 242, 239, 0.7),
+        0 0 31px rgba(242, 34, 146, 0.5),
+        0 0 44px rgba(109, 0, 163, 0.42),
+        inset 0 0 18px rgba(255, 255, 255, 0.25);
+
+    --scroll-energy-ring:
+        rgba(34, 242, 239, 0.58);
+
+    --scroll-energy-ring-secondary:
+        rgba(242, 34, 146, 0.4);
+
+    --scroll-energy-particle:
+        rgba(255, 255, 255, 0.92);
+}
+
+
+/* ==================================================
+   CONTENEUR
+================================================== */
+
+.scroll-page-controls {
+    position: fixed;
+
+    right: 245px;
+    bottom: 32px;
+
+    z-index: 930;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 14px;
+
+    pointer-events: none;
+}
+
+
+/* ==================================================
+   BULLE D’ÉNERGIE
+================================================== */
+
+.scroll-page-button {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 62px;
+    height: 62px;
+
+    margin: 0;
+    padding: 0;
+
+    color: var(--scroll-energy-icon);
+    background: var(--scroll-energy-background);
+
+    border:
+        1px solid
+        var(--scroll-energy-border);
+
+    border-radius: 50%;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 1.55rem;
+    font-weight: 900;
+    line-height: 1;
+
+    box-shadow:
+        var(--scroll-energy-shadow);
+
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+
+    cursor: pointer;
+
+    overflow: visible;
+
+    opacity: 1;
+    visibility: visible;
+
+    transform:
+        translateY(0)
+        scale(1);
+
+    pointer-events: auto;
+
+    animation:
+        scrollEnergyFloat
+        3.8s
+        ease-in-out
+        infinite;
+
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease,
+        color 0.3s ease,
+        background 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.3s ease;
+}
+
+
+.scroll-page-button:nth-child(2) {
+    animation-delay: -1.9s;
+}
+
+
+/* ==================================================
+   ANNEAU D’ÉNERGIE
+================================================== */
+
+.scroll-page-button::before {
+    content: "";
+
+    position: absolute;
+
+    inset: -7px;
+
+    border:
+        1px solid
+        var(--scroll-energy-ring);
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 8px
+        rgba(
+            34,
+            242,
+            239,
+            0.2
+        );
+
+    opacity: 0.65;
+
+    transform:
+        scale(0.92)
+        rotate(0deg);
+
+    pointer-events: none;
+
+    animation:
+        scrollEnergyRing
+        5s
+        linear
+        infinite;
+
+    transition:
+        opacity 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.3s ease;
+}
+
+
+/* ==================================================
+   REFLET
+================================================== */
+
+.scroll-page-button::after {
+    content: "";
+
+    position: absolute;
+
+    top: 10px;
+    left: 14px;
+
+    width: 13px;
+    height: 8px;
+
+    background:
+        radial-gradient(
+            ellipse,
+            var(--scroll-energy-particle),
+            transparent 72%
+        );
+
+    border-radius: 50%;
+
+    opacity: 0.8;
+
+    transform:
+        rotate(-25deg);
+
+    pointer-events: none;
+}
+
+
+/* ==================================================
+   SURVOL
+================================================== */
+
+.scroll-page-button:hover {
+    color: #ffffff;
+
+    background:
+        var(--scroll-energy-hover-background);
+
+    border-color:
+        rgba(
+            34,
+            242,
+            239,
+            0.88
+        );
+
+    box-shadow:
+        var(--scroll-energy-hover-shadow);
+
+    transform:
+        translateY(-6px)
+        scale(1.1);
+
+    animation-play-state: paused;
+}
+
+
+.scroll-page-button:hover::before {
+    border-color:
+        rgba(
+            242,
+            34,
+            146,
+            0.8
+        );
+
+    box-shadow:
+        0 0 11px
+        rgba(
+            34,
+            242,
+            239,
+            0.52
+        ),
+        0 0 18px
+        rgba(
+            242,
+            34,
+            146,
+            0.32
+        );
+
+    opacity: 1;
+}
+
+
+/* ==================================================
+   CLIC
+================================================== */
+
+.scroll-page-button:active {
+    transform:
+        translateY(-1px)
+        scale(0.92);
+}
+
+
+/* ==================================================
+   BOUTON CACHÉ
+================================================== */
+
+.scroll-page-button.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+
+    transform:
+        translateY(10px)
+        scale(0.65);
+
+    pointer-events: none;
+
+    animation: none;
+}
+
+
+/* ==================================================
+   CLAVIER
+================================================== */
+
+.scroll-page-button:focus-visible {
+    outline:
+        3px solid
+        rgba(
+            34,
+            242,
+            239,
+            0.95
+        );
+
+    outline-offset: 7px;
+}
+
+
+/* ==================================================
+   ANIMATIONS
+================================================== */
+
+@keyframes scrollEnergyFloat {
+    0%,
+    100% {
+        transform:
+            translateY(0)
+            rotate(-1deg);
+    }
+
+    50% {
+        transform:
+            translateY(-7px)
+            rotate(1deg);
+    }
+}
+
+
+@keyframes scrollEnergyRing {
+    0% {
+        transform:
+            scale(0.92)
+            rotate(0deg);
+
+        border-color:
+            var(--scroll-energy-ring);
+    }
+
+    50% {
+        transform:
+            scale(1.03)
+            rotate(180deg);
+
+        border-color:
+            var(--scroll-energy-ring-secondary);
+    }
+
+    100% {
+        transform:
+            scale(0.92)
+            rotate(360deg);
+
+        border-color:
+            var(--scroll-energy-ring);
+    }
+}
+
+
+/* ==================================================
+   TABLETTE
+================================================== */
+
+@media (max-width: 1000px) {
+    .scroll-page-controls {
+        right: 175px;
+        bottom: 24px;
+
+        gap: 12px;
+    }
+
+    .scroll-page-button {
+        width: 56px;
+        height: 56px;
+
+        font-size: 1.4rem;
+    }
+}
+
+
+/* ==================================================
+   MOBILE
+================================================== */
+
+@media (max-width: 650px) {
+    .scroll-page-controls {
+        right: 125px;
+        bottom: 18px;
+
+        gap: 10px;
+    }
+
+    .scroll-page-button {
+        width: 48px;
+        height: 48px;
+
+        font-size: 1.2rem;
+    }
+}
+
+
+/* ==================================================
+   PETIT MOBILE
+================================================== */
+
+@media (max-width: 420px) {
+    .scroll-page-controls {
+        right: 105px;
+        bottom: 14px;
+    }
+
+    .scroll-page-button {
+        width: 44px;
+        height: 44px;
+
+        font-size: 1.08rem;
+    }
+}
+
+
+/* ==================================================
+   ACCESSIBILITÉ
+================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .scroll-page-button,
+    .scroll-page-button::before {
+        animation: none;
+        transition: none;
+    }
+
+    .scroll-page-button:hover,
+    .scroll-page-button:active {
+        transform: none;
+    }
+}

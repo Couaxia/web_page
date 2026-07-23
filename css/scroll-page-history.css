@@ -1,0 +1,552 @@
+/* ==================================================
+   NAVIGATION VERTICALE — HISTOIRE
+   Style parchemin enchanté
+================================================== */
+
+
+/* ==================================================
+   VARIABLES — MODE JOUR
+================================================== */
+
+:root {
+
+    --history-scroll-background:
+        linear-gradient(
+            145deg,
+            #fff5d8 0%,
+            #e2c07c 45%,
+            #9a6a36 100%
+        );
+
+    --history-scroll-border: #4b2814;
+
+    --history-scroll-text: #2d1609;
+
+    --history-scroll-shadow:
+        0 8px 22px rgba(48, 22, 5, .45),
+        0 0 10px rgba(242,207,114,.35),
+        inset 0 0 10px rgba(255,255,255,.35);
+
+    --history-scroll-hover-background:
+        linear-gradient(
+            145deg,
+            #fff9ea 0%,
+            #f0d08b 45%,
+            #b57d3b 100%
+        );
+
+    --history-scroll-hover-shadow:
+        0 10px 28px rgba(48,22,5,.55),
+        0 0 16px rgba(242,207,114,.8),
+        0 0 22px rgba(109,0,163,.35);
+
+    --history-scroll-seal-background:
+        radial-gradient(
+            circle,
+            #f22292 0%,
+            #6d00a3 70%,
+            #2b003d 100%
+        );
+
+    --history-scroll-seal-border: #f2cf72;
+
+    --history-scroll-seal-glow:
+        0 0 8px rgba(242,34,146,.55),
+        0 0 16px rgba(109,0,163,.35);
+
+}
+/* ==================================================
+   MODE NUIT
+================================================== */
+
+html[data-theme="dark"] {
+
+    --history-scroll-background:
+        linear-gradient(
+            145deg,
+            #2d1147 0%,
+            #4a1572 45%,
+            #6d00a3 100%
+        );
+
+    --history-scroll-border: #22F2EF;
+
+    --history-scroll-text: #ffffff;
+
+    --history-scroll-shadow:
+        0 10px 24px rgba(0,0,0,.65),
+        0 0 12px rgba(34,242,239,.45),
+        inset 0 0 8px rgba(255,255,255,.08);
+
+    --history-scroll-hover-background:
+        linear-gradient(
+            145deg,
+            #43166d 0%,
+            #6d00a3 50%,
+            #8d1ad3 100%
+        );
+
+    --history-scroll-hover-shadow:
+        0 12px 28px rgba(0,0,0,.75),
+        0 0 18px rgba(34,242,239,.75),
+        0 0 28px rgba(242,34,146,.55);
+
+    --history-scroll-seal-background:
+        radial-gradient(
+            circle,
+            #22F2EF 0%,
+            #6D00A3 70%,
+            #2b003d 100%
+        );
+
+    --history-scroll-seal-border: #22F2EF;
+
+    --history-scroll-seal-glow:
+        0 0 12px rgba(34,242,239,.75),
+        0 0 24px rgba(242,34,146,.55);
+
+}
+
+
+/* ==================================================
+   CONTENEUR
+================================================== */
+
+.history-scroll-controls {
+    position: fixed !important;
+
+    right: 245px !important;
+    bottom: 32px !important;
+
+    z-index: 99999 !important;
+
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 16px;
+
+    width: auto;
+    height: auto;
+
+    opacity: 1;
+    visibility: visible;
+
+    pointer-events: none;
+}
+
+
+/* ==================================================
+   BOUTONS
+================================================== */
+
+.history-scroll-button {
+    position: relative !important;
+
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+
+    width: 68px !important;
+    height: 58px !important;
+
+    min-width: 68px;
+    min-height: 58px;
+
+    margin: 0;
+    padding: 0;
+
+    color: var(--history-scroll-text) !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--history-scroll-light) 0%,
+            var(--history-scroll-main) 50%,
+            var(--history-scroll-dark) 100%
+        ) !important;
+
+    border:
+        2px solid
+        var(--history-scroll-border) !important;
+
+    border-radius: 10px 10px 15px 15px;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 1.65rem;
+    font-weight: 900;
+    line-height: 1;
+
+    text-align: center;
+
+    text-shadow:
+        0 1px 0
+        rgba(255, 255, 255, 0.45);
+
+    box-shadow:
+        0 10px 24px rgba(20, 8, 2, 0.5),
+        0 0 13px rgba(242, 207, 114, 0.4),
+        inset 0 0 10px rgba(255, 241, 173, 0.4);
+
+    opacity: 1;
+    visibility: visible;
+
+    cursor: pointer;
+
+    overflow: visible;
+
+    pointer-events: auto;
+
+    transform:
+        translateY(0)
+        scale(1);
+
+    animation:
+        historyScrollFloat
+        4s
+        ease-in-out
+        infinite;
+
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease,
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
+}
+
+
+/* Force le fond des boutons Histoire */
+
+.history-scroll-button {
+    background: var(--history-scroll-background) !important;
+    background-color: #d8b36b !important;
+
+    border: 2px solid var(--history-scroll-border) !important;
+
+    opacity: 1;
+}
+
+.history-scroll-button:hover {
+    background: var(--history-scroll-hover-background) !important;
+}
+/* Animation décalée pour le deuxième bouton */
+
+.history-scroll-button:nth-child(2) {
+    animation-delay: -2s;
+}
+
+
+/* ==================================================
+   CONTOUR INTÉRIEUR
+================================================== */
+
+.history-scroll-button::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 5px;
+
+    border:
+        1px solid
+        rgba(75, 40, 20, 0.55);
+
+    border-radius: 7px 7px 11px 11px;
+
+    box-shadow:
+        inset 0 0 7px
+        rgba(73, 37, 14, 0.25);
+
+    pointer-events: none;
+}
+
+
+/* ==================================================
+   SCEAU MAGIQUE
+================================================== */
+
+.history-scroll-button::after {
+    content: "✦";
+
+    position: absolute;
+
+    right: -8px;
+    bottom: -8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 24px;
+    height: 24px;
+
+    color: #fff1ad;
+
+    background:
+        radial-gradient(
+            circle,
+            var(--history-scroll-pink) 0%,
+            var(--history-scroll-purple) 68%,
+            #31004a 100%
+        );
+
+    border:
+        1px solid
+        var(--history-scroll-gold);
+
+    border-radius: 50%;
+
+    font-size: 0.72rem;
+
+    text-shadow:
+        0 0 5px
+        rgba(255, 255, 255, 0.9);
+
+    box-shadow:
+        0 0 9px rgba(242, 34, 146, 0.65),
+        0 0 16px rgba(109, 0, 163, 0.45);
+
+    pointer-events: none;
+
+    animation:
+        historySealPulse
+        2.8s
+        ease-in-out
+        infinite;
+}
+
+
+/* ==================================================
+   SURVOL
+================================================== */
+
+.history-scroll-button:hover {
+    border-color:
+        var(--history-scroll-gold) !important;
+
+    box-shadow:
+        0 13px 30px rgba(20, 8, 2, 0.6),
+        0 0 16px rgba(242, 207, 114, 0.75),
+        0 0 27px rgba(109, 0, 163, 0.4),
+        inset 0 0 13px rgba(255, 241, 173, 0.5);
+
+    transform:
+        translateY(-6px)
+        rotate(-2deg)
+        scale(1.08);
+
+    animation-play-state: paused;
+}
+
+
+.history-scroll-button:hover::after {
+    transform:
+        rotate(20deg)
+        scale(1.14);
+
+    box-shadow:
+        0 0 12px rgba(34, 242, 239, 0.7),
+        0 0 20px rgba(242, 34, 146, 0.65);
+}
+
+
+/* ==================================================
+   CLIC
+================================================== */
+
+.history-scroll-button:active {
+    transform:
+        translateY(-1px)
+        scale(0.94);
+}
+
+
+/* ==================================================
+   NAVIGATION AU CLAVIER
+================================================== */
+
+.history-scroll-button:focus-visible {
+    outline:
+        3px solid
+        var(--history-scroll-cyan);
+
+    outline-offset: 7px;
+}
+
+
+/* ==================================================
+   ÉTAT CACHÉ UTILISÉ PAR LE JAVASCRIPT
+================================================== */
+
+.history-scroll-button.is-hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+
+    transform:
+        translateY(12px)
+        scale(0.65);
+
+    pointer-events: none !important;
+
+    animation: none;
+}
+
+
+/* Compatibilité avec une ancienne classe */
+
+.history-scroll-button.hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+
+    pointer-events: none !important;
+
+    animation: none;
+}
+
+
+/* ==================================================
+   ANIMATIONS
+================================================== */
+
+@keyframes historyScrollFloat {
+    0%,
+    100% {
+        transform:
+            translateY(0)
+            rotate(-1deg);
+    }
+
+    50% {
+        transform:
+            translateY(-6px)
+            rotate(1deg);
+    }
+}
+
+
+@keyframes historySealPulse {
+    0%,
+    100% {
+        transform:
+            scale(1)
+            rotate(0deg);
+
+        filter:
+            brightness(1);
+    }
+
+    50% {
+        transform:
+            scale(1.12)
+            rotate(8deg);
+
+        filter:
+            brightness(1.25);
+    }
+}
+
+
+/* ==================================================
+   TABLETTE
+================================================== */
+
+@media (max-width: 1000px) {
+    .history-scroll-controls {
+        right: 175px !important;
+        bottom: 24px !important;
+
+        gap: 14px;
+    }
+
+    .history-scroll-button {
+        width: 62px !important;
+        height: 53px !important;
+
+        min-width: 62px;
+        min-height: 53px;
+
+        font-size: 1.48rem;
+    }
+
+    .history-scroll-button::after {
+        width: 22px;
+        height: 22px;
+
+        right: -7px;
+        bottom: -7px;
+    }
+}
+
+
+/* ==================================================
+   MOBILE
+================================================== */
+
+@media (max-width: 650px) {
+    .history-scroll-controls {
+        right: 125px !important;
+        bottom: 18px !important;
+
+        gap: 12px;
+    }
+
+    .history-scroll-button {
+        width: 54px !important;
+        height: 47px !important;
+
+        min-width: 54px;
+        min-height: 47px;
+
+        font-size: 1.28rem;
+    }
+
+    .history-scroll-button::after {
+        width: 19px;
+        height: 19px;
+
+        right: -6px;
+        bottom: -6px;
+
+        font-size: 0.58rem;
+    }
+}
+
+
+/* ==================================================
+   PETIT MOBILE
+================================================== */
+
+@media (max-width: 420px) {
+    .history-scroll-controls {
+        right: 105px !important;
+        bottom: 14px !important;
+    }
+
+    .history-scroll-button {
+        width: 49px !important;
+        height: 43px !important;
+
+        min-width: 49px;
+        min-height: 43px;
+
+        font-size: 1.15rem;
+    }
+}
+
+
+/* ==================================================
+   RÉDUCTION DES ANIMATIONS
+================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .history-scroll-button,
+    .history-scroll-button::after {
+        animation: none;
+    }
+}

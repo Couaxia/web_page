@@ -6,7 +6,9 @@
          <title>Couaxia</title>
          <link rel="icon" type="image/png" href="./images/logo/Logo Transparents 2.png">
          <link href="./css/style.css" rel="stylesheet">
-         <link href="./css/style.css" rel="stylesheet">
+         <link href="./css/scroll-page.css" rel="stylesheet">
+         <link href="./css/accueil.css" rel="stylesheet">
+
 
         <nav class="navbar">
             <a class="navbar-logo">
@@ -37,9 +39,16 @@
         
                  <p><strong><span class="follow">794 follows !!</span></strong></p>
 
+            <div class="scroll-page-controls" aria-label="Navigation verticale de la page">
+                    <button id="scrollTopButton" class="scroll-page-button" type="button" aria-label="Retourner en haut de la page" title="Retour en haut">
+                             ↑
+                    </button>
+                    <button id="scrollBottomButton" class="scroll-page-button" type="button" aria-label="Aller en bas de la page" title="Aller en bas">
+                        ↓
+                    </button>
+            </div>
      
             <div class="mascotte-widget">
-
                         <div class="mascotte-bulle" id="mascotte-bulle" role="status" aria-live="polite">
                             Bienvenue dans mon univers !
                         </div>
@@ -49,6 +58,7 @@
                              data-talking-src="./images/mascotte/Swing.gif" alt="Mascotte Couaxia" class="mascotte" id="mascotte-image" draggable="false">
                         </button>
             </div>
+                 <script src="./js/scroll-page.js"></script>
                  <script src="./js/mascotte.js"></script>
                  <script src="./js/protection.js"></script>
                  <script src="./js/theme.js"></script>

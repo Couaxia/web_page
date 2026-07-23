@@ -6,6 +6,7 @@
     <link rel="icon" type="image/png" href="./images/logo/Logo Transparents 2.png">
     <link href="./css/a-propos.css" rel="stylesheet">
     <link href="./css/style.css" rel="stylesheet">
+    <link href="./css/scroll-page.css" rel="stylesheet" >
 
      <nav class="navbar">
             <a class="navbar-logo">
@@ -948,7 +949,15 @@
         </section>
 
     </main>
+                <div class="scroll-page-controls" aria-label="Navigation verticale de la page">
+                    <button id="scrollTopButton" class="scroll-page-button" type="button" aria-label="Retourner en haut de la page" title="Retour en haut">
+                             ↑
+                    </button>
 
+                    <button id="scrollBottomButton" class="scroll-page-button" type="button" aria-label="Aller en bas de la page" title="Aller en bas">
+                        ↓
+                    </button>
+                </div>
 
                 <div class="mascotte-widget">
 
@@ -961,10 +970,129 @@
                             data-talking-src="./images/mascotte/YCH_cheek_puff_Slow.gif" alt="Mascotte Couaxia" class="mascotte" id="mascotte-image" draggable="false">
                         </button>
                 </div>
-         </body>
+
+            <script src="./js/scroll-page.js"></script>
             <script src="./js/mascotte.js"></script>
             <script src="./js/protection.js"></script>
             <script src="./js/theme.js"></script>
             <script src="./js/artist.js"></script>
+
+            <script>
+                "use strict";
+
+                document.addEventListener("DOMContentLoaded", () => {
+                    const colorButtons =
+                        document.querySelectorAll(".oc-color[data-color]");
+
+                    const copyMessage =
+                        document.getElementById("ocCopyMessage");
+
+                    let messageTimer = null;
+
+
+                    colorButtons.forEach((button) => {
+
+                        button.addEventListener("click", async () => {
+                            const color = button.dataset.color;
+
+                            if (!color) {
+                                return;
+                            }
+
+                            const copied = await copyColor(color);
+
+                            if (copied) {
+                                showMessage(
+                                    `La couleur ${color} a été copiée !`
+                                );
+                            } else {
+                                showMessage(
+                                    `Impossible de copier automatiquement. Code : ${color}`
+                                );
+                            }
+                        });
+
+                    });
+
+
+                    async function copyColor(color) {
+
+                        /*
+                        * Méthode moderne.
+                        * Elle fonctionne normalement sur HTTPS
+                        * et sur localhost.
+                        */
+                        if (
+                            navigator.clipboard &&
+                            window.isSecureContext
+                        ) {
+                            try {
+                                await navigator.clipboard.writeText(color);
+                                return true;
+                            } catch (error) {
+                                console.warn(
+                                    "Échec de navigator.clipboard :",
+                                    error
+                                );
+                            }
+                        }
+
+                        /*
+                        * Méthode de secours pour certains navigateurs
+                        * ou lorsqu’on ouvre directement le fichier HTML.
+                        */
+                        const temporaryInput =
+                            document.createElement("textarea");
+
+                        temporaryInput.value = color;
+                        temporaryInput.setAttribute("readonly", "");
+                        temporaryInput.setAttribute(
+                            "aria-hidden",
+                            "true"
+                        );
+
+                        temporaryInput.style.position = "fixed";
+                        temporaryInput.style.left = "-9999px";
+                        temporaryInput.style.top = "0";
+
+                        document.body.appendChild(temporaryInput);
+
+                        temporaryInput.focus();
+                        temporaryInput.select();
+
+                        let success = false;
+
+                        try {
+                            success = document.execCommand("copy");
+                        } catch (error) {
+                            console.warn(
+                                "Échec de la copie de secours :",
+                                error
+                            );
+                        }
+
+                        temporaryInput.remove();
+
+                        return success;
+                    }
+
+
+                    function showMessage(message) {
+                        if (!copyMessage) {
+                            return;
+                        }
+
+                        copyMessage.textContent = message;
+                        copyMessage.classList.add("is-visible");
+
+                        clearTimeout(messageTimer);
+
+                        messageTimer = setTimeout(() => {
+                            copyMessage.classList.remove("is-visible");
+                        }, 2500);
+                    }
+                });
+            </script>
+        </body>            
 </HTML>
 

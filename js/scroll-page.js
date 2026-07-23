@@ -11,42 +11,86 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    const getMaximumScroll = () => {
+    /*
+     * Petite marge afin d’éviter les changements
+     * incessants liés aux arrondis du navigateur.
+     */
+    const edgeTolerance = 6;
+
+
+    function getMaximumScroll() {
+        const documentElement =
+            document.documentElement;
+
+        const body =
+            document.body;
+
+        const fullPageHeight = Math.max(
+            documentElement.scrollHeight,
+            documentElement.offsetHeight,
+            documentElement.clientHeight,
+            body ? body.scrollHeight : 0,
+            body ? body.offsetHeight : 0
+        );
+
         return Math.max(
-            document.body.scrollHeight,
-            document.documentElement.scrollHeight
-        ) - window.innerHeight;
-    };
+            0,
+            fullPageHeight - window.innerHeight
+        );
+    }
 
-    const updateScrollButtons = () => {
-        const currentScroll = window.scrollY;
-        const maximumScroll = getMaximumScroll();
 
-        const isNearTop = currentScroll < 250;
-        const isNearBottom =
-            currentScroll >= maximumScroll - 250;
+    function updateScrollButtons() {
+        const currentScroll =
+            Math.max(
+                0,
+                window.scrollY ||
+                document.documentElement.scrollTop
+            );
+
+        const maximumScroll =
+            getMaximumScroll();
+
 
         /*
-         * En haut :
-         * le bouton bas apparaît.
-         *
-         * Au milieu :
-         * les deux boutons apparaissent.
-         *
-         * En bas :
-         * le bouton haut apparaît.
+         * Si la page n’est pas assez longue pour défiler,
+         * les deux boutons sont cachés.
          */
+        if (maximumScroll <= edgeTolerance) {
+            scrollTopButton.classList.add("is-hidden");
+            scrollBottomButton.classList.add("is-hidden");
+            return;
+        }
+
+
+        /*
+         * En haut de la page :
+         * on cache uniquement la flèche vers le haut.
+         */
+        const isAtTop =
+            currentScroll <= edgeTolerance;
+
+
+        /*
+         * En bas de la page :
+         * on cache uniquement la flèche vers le bas.
+         */
+        const isAtBottom =
+            currentScroll >=
+            maximumScroll - edgeTolerance;
+
 
         scrollTopButton.classList.toggle(
-            "is-visible",
-            !isNearTop
+            "is-hidden",
+            isAtTop
         );
 
         scrollBottomButton.classList.toggle(
-            "is-visible",
-            !isNearBottom && maximumScroll > 250
+            "is-hidden",
+            isAtBottom
         );
-    };
+    }
+
 
     scrollTopButton.addEventListener("click", () => {
         window.scrollTo({
@@ -55,6 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+
     scrollBottomButton.addEventListener("click", () => {
         window.scrollTo({
             top: getMaximumScroll(),
@@ -62,16 +107,45 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+
+    /*
+     * Mise à jour pendant le défilement.
+     */
+
     window.addEventListener(
         "scroll",
         updateScrollButtons,
-        { passive: true }
+        {
+            passive: true
+        }
     );
+
+
+    /*
+     * Mise à jour si la fenêtre change de taille.
+     */
 
     window.addEventListener(
         "resize",
         updateScrollButtons
     );
+
+
+    /*
+     * Mise à jour après le chargement complet des images.
+     * Cela évite une mauvaise hauteur si les images
+     * modifient la longueur de la page.
+     */
+
+    window.addEventListener(
+        "load",
+        updateScrollButtons
+    );
+
+
+    /*
+     * Premier contrôle dès que le HTML est disponible.
+     */
 
     updateScrollButtons();
 });
