@@ -99,25 +99,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Une nouvelle aventure peut commencer à partir d’un simple détail."
             ]
         },
-
-        "reseaux.html": {
-            welcome: [
-                "Tu veux continuer l’aventure avec moi ? Retrouve-moi sur mes réseaux !",
-                "Bienvenue dans ma salle des communications !"
-            ],
-
-            click: [
-                "Tu peux me retrouver sur Twitch !",
-                "Viens rejoindre la communauté sur Discord !",
-                "Je publie aussi du contenu sur mes autres réseaux !"
-            ],
-
-            idle: [
-                "Tu hésites sur le réseau à choisir ? Twitch est un bon début !",
-                "Je serai ravie de te retrouver ailleurs !"
-            ]
-        },
-
         "credits.html": {
             welcome: [
                 "Je ne serais pas là sans tous ces artistes incroyables !",

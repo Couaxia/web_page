@@ -150,6 +150,19 @@
         0 0 12px rgba(242, 34, 146, 0.5),
         0 0 26px rgba(109, 0, 163, 0.48);
 }
+.about-action-link img {
+    width: 24px;
+    height: 24px;
+
+    object-fit: contain;
+    flex-shrink: 0;
+}
+.about-action-link {
+    display: inline-flex;
+    align-items:normal;
+    justify-content: center;
+    gap: 10px;
+}
 
 
 .about-introduction {
