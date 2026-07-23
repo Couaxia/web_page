@@ -1250,7 +1250,7 @@ html[data-theme="dark"] {
 .mascotte-button {
     position: relative;
     display: block;
-    width: 190px;
+    width: 95px;
     margin: 0;
     padding: 0;
     background: transparent;
@@ -1277,17 +1277,12 @@ html[data-theme="dark"] {
 
 .mascotte-button::before {
     content: "";
-
     position: absolute;
-
     left: 50%;
     top: 55%;
-
-    width: 135px;
-    height: 135px;
-
+    width: 68px;
+    height: 68px;
     border-radius: 50%;
-
     background: radial-gradient(
         circle,
         rgba(34, 242, 239, 0.42) 0%,
@@ -1295,15 +1290,10 @@ html[data-theme="dark"] {
         rgba(109, 0, 163, 0.12) 65%,
         transparent 75%
     );
-
     transform: translate(-50%, -50%);
-
-    filter: blur(14px);
-
+    filter: blur(8px);
     opacity: 0.75;
-
     pointer-events: none;
-
     transition:
         opacity 0.3s ease,
         transform 0.3s ease;
@@ -1435,23 +1425,27 @@ html[data-theme="dark"] {
 
 @media (max-width: 900px) {
     .mascotte-widget {
-        right: 14px;
-        bottom: 14px;
+        right: 12px;
+        bottom: 12px;
     }
 
     .mascotte-button {
-        width: 145px;
+        width: 72px;
     }
 
     .mascotte-button::before {
-        width: 105px;
-        height: 105px;
+        width: 52px;
+        height: 52px;
+
+        filter: blur(7px);
     }
 
     .mascotte-bulle {
-        max-width: 250px;
-        padding: 13px 17px;
-        font-size: 0.9rem;
+        max-width: 220px;
+
+        padding: 12px 15px;
+
+        font-size: 0.85rem;
     }
 }
 
@@ -1462,39 +1456,46 @@ html[data-theme="dark"] {
 
 @media (max-width: 600px) {
     .mascotte-widget {
-        right: 8px;
-        bottom: 8px;
-        gap: 10px;
+        right: 7px;
+        bottom: 7px;
+
+        gap: 8px;
     }
 
     .mascotte-button {
-        width: 110px;
+        width: 55px;
     }
 
     .mascotte-button::before {
-        width: 82px;
-        height: 82px;
-        filter: blur(10px);
+        width: 41px;
+        height: 41px;
+
+        filter: blur(6px);
     }
 
     .mascotte-bulle {
-        max-width: 190px;
-        padding: 11px 13px;
+        max-width: 170px;
+
+        padding: 9px 11px;
+
         border-width: 2px;
-        border-radius: 18px;
-        font-size: 0.8rem;
+        border-radius: 16px;
+
+        font-size: 0.75rem;
+        line-height: 1.4;
     }
 
     .mascotte-bulle::after {
-        right: 25px;
-        bottom: -10px;
-        width: 16px;
-        height: 16px;
+        right: 20px;
+        bottom: -9px;
+
+        width: 14px;
+        height: 14px;
+
         border-right-width: 2px;
         border-bottom-width: 2px;
     }
 }
-
 
 /* ==========================================
    RÉDUCTION DES ANIMATIONS

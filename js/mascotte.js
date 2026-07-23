@@ -37,22 +37,66 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Je peux te faire découvrir mon univers quand tu veux."
             ]
         },
-
+            
         "a-propos.html": {
             welcome: [
-                "Tu veux en savoir plus sur moi ? C’est ici que je me présente !",
-                "Bienvenue dans ma petite fiche de présentation !"
+                "Bienvenue sur ma fiche officielle ! Ici, tu peux découvrir Couaxia sous toutes ses facettes.",
+                "Tu veux mieux me connaître ? Tu es exactement au bon endroit !",
+                "Entre mon histoire, ma personnalité et mon design, cette page regroupe presque tout sur moi.",
+                "Bienvenue dans les archives personnelles de Couaxia !",
+                "Approche ! Je vais te présenter mon univers, mon parcours et quelques-uns de mes secrets.",
+                "Ici, tu peux découvrir à la fois la VTubeuse et le personnage venu de Saphira."
             ],
 
             click: [
-                "Je suis une Kraduk venue de la planète Saphira !",
-                "J’adore explorer, jouer et rencontrer de nouvelles personnes !",
-                "Tu as déjà regardé mes préférences ?"
+                "Je suis Couaxia, une VTubeuse française spécialisée dans le multigaming.",
+                "Mon univers mélange aventures spatiales, créatures fantastiques, tentacules et bonne humeur.",
+                "Je suis une Kraduk originaire de la planète Saphira.",
+                "Dans mon univers, j’ai cent vingt-six ans !",
+                "Je mesure un mètre soixante.",
+                "Ma communauté porte le nom des Poups.",
+                "J’aime créer une ambiance accueillante, drôle et sans pression pendant mes lives.",
+                "Je suis curieuse, passionnée, souriante… et parfois un peu chaotique.",
+                "Mes couleurs préférées sont le violet, le rose et le bleu.",
+                "Je joue aussi bien à des jeux multijoueurs qu’à des jeux d’horreur ou narratifs.",
+                "Les jeux de survie et les jeux indépendants font aussi partie de mes préférences.",
+                "Mon aventure sur Twitch a franchi une grande étape le 20 mai 2025.",
+                "Je suis officiellement devenue VTubeuse le 2 juin 2025.",
+                "Depuis, je développe mes streams, mon site et tout l’univers de Couaxia.",
+                "Tu peux consulter mes références pour voir mon design sous différents angles.",
+                "La reference sheet principale montre mon visage, mon dos, mes mains et les détails importants.",
+                "La seconde reference sheet présente une variante de mon apparence.",
+                "Une autre référence montre ma morphologie, mes marques corporelles et mes tentacules.",
+                "Ma palette permet de récupérer directement les couleurs utilisées pour mon personnage.",
+                "Clique sur une couleur pour copier son code hexadécimal.",
+                "La couleur cyan lumineuse de mon univers correspond au code #22F2EF.",
+                "Mes cheveux utilisent principalement une teinte rouge sombre.",
+                "Les détails dorés permettent de donner un aspect plus précieux à mon design.",
+                "Mon personnage me permet de raconter des histoires qui seraient impossibles dans le monde réel.",
+                "Avadora, Natsu, Hylda et Cita font partie des éléments importants de mon univers.",
+                "Les aventures spatiales sont au cœur de mon histoire.",
+                "J’adore partager mes projets avec ma communauté et les faire évoluer progressivement.",
+                "Mon objectif est que chacun puisse venir discuter, rire et passer un bon moment.",
+                "Tu peux retrouver toute mon histoire grâce au bouton situé en haut de cette page.",
+                "Tu as déjà choisi la partie de mon design que tu préfères ?"
             ],
 
             idle: [
-                "Alors, tu commences à mieux me connaître ?",
-                "Je suis curieuse… et toi, qu’est-ce que tu aimes ?"
+                "Tu prends le temps d’observer mes références ? Regarde bien les petits détails.",
+                "Tu hésites entre mon histoire et ma fiche artistique ? Les deux sont liées.",
+                "La palette peut être très utile pour les artistes qui souhaitent me dessiner.",
+                "Chaque couleur de mon modèle a été choisie pour renforcer mon univers.",
+                "Tu as remarqué les différences entre mes différentes références ?",
+                "Mon univers continue d’évoluer avec de nouvelles histoires et de nouveaux personnages.",
+                "Prends ton temps, cette page contient beaucoup d’informations.",
+                "Je suis curieuse de savoir quelle couleur de ma palette tu préfères.",
+                "Les Poups sont une partie très importante de mon aventure.",
+                "Mon site évolue en même temps que mon histoire de VTubeuse.",
+                "Tu peux cliquer sur moi lorsque tu veux entendre une autre information.",
+                "On dirait que tu étudies sérieusement ma fiche de personnage !",
+                "Mes références servent à préserver les détails officiels de mon design.",
+                "Même après tout ce temps, j’ai encore beaucoup de projets à ajouter ici.",
+                "Une nouvelle aventure peut commencer à partir d’un simple détail."
             ]
         },
 
@@ -198,7 +242,57 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Les humains ignorent totalement l’existence de cet endroit."
             ]
         },
+        "chapitre4.html": {
+            welcome: [
+                "Bienvenue dans notre nouvelle base sur Terre !",
+                "Après le marché magique, il était temps de trouver un endroit où nous installer.",
+                "Ce chapitre marque le début d’une nouvelle vie… et peut-être de nouveaux sentiments.",
+                "Approche, je vais te raconter comment nous avons construit notre première base terrestre.",
+                "Entre exploration, lever de soleil et émotions inattendues… ce chapitre est très important pour moi."
+            ],
 
+            click: [
+                "Nous avons caché Avadora au fond d’un lac pour que personne ne puisse la découvrir.",
+                "La grotte sous-marine était parfaite pour dissimuler notre vaisseau.",
+                "La petite capsule pouvait déployer un dôme de protection et construire toute une base.",
+                "Notre nouvelle maison était invisible depuis la surface.",
+                "J’étais tellement heureuse d’avoir enfin un endroit sûr sur Terre.",
+                "Cette base allait devenir notre point de départ pour toutes nos futures explorations.",
+                "Le lever du soleil près du lac était magnifique.",
+                "Je voulais garder ce souvenir pour ne jamais oublier notre première matinée sur Terre.",
+                "Je ne m’attendais pas à retrouver Myo assise seule près du lac.",
+                "Myo semblait perdue dans ses pensées lorsque je l’ai rejointe.",
+                "Nous avons parlé longtemps de nos vies et de nos mondes.",
+                "Je lui ai raconté Saphira, mon peuple et mon voyage à travers les étoiles.",
+                "Myo m’a parlé de Sham et des personnes importantes qu’elle avait rencontrées.",
+                "Ce moment avec Myo était calme… mais il a changé quelque chose en moi.",
+                "À cet instant, je ne comprenais pas encore ce que je ressentais.",
+                "Je savais seulement que je me sentais bien à ses côtés.",
+                "Son baiser sur ma joue m’a complètement déstabilisée.",
+                "Je crois que je n’avais jamais rougi autant de toute ma vie.",
+                "Hylda a immédiatement remarqué que quelque chose n’allait pas.",
+                "Évidemment, j’ai prétendu que tout allait parfaitement bien.",
+                "Ce chapitre marque peut-être le début de quelque chose de plus profond entre Myo et moi.",
+                "Après cette matinée, nous étions enfin prêts à découvrir la technologie humaine.",
+                "La Terre était encore pleine de mystères à explorer.",
+                "Notre aventure ne faisait que commencer."
+            ],
+
+            idle: [
+                "Tu prends ton temps pour découvrir notre nouvelle base ?",
+                "Cette base est devenue un endroit très important pour notre équipage.",
+                "Le lac était calme, mais beaucoup de choses changeaient dans mon cœur.",
+                "Je me demande si tu avais compris mes sentiments avant moi.",
+                "Myo semblait déjà savoir que ce moment était spécial.",
+                "Hylda remarque toujours les choses que j’essaie de cacher.",
+                "Je n’étais vraiment pas prête à expliquer pourquoi j’étais aussi rouge.",
+                "Cette matinée reste l’un de mes plus beaux souvenirs sur Terre.",
+                "Le calme du lever de soleil contrastait beaucoup avec toutes nos aventures.",
+                "Prends ton temps… ce chapitre parle autant de notre base que de mes émotions.",
+                "Notre prochaine exploration nous fera découvrir un peu plus le monde humain.",
+                "Tu crois que Myo ressentait déjà la même chose que moi ?"
+            ]
+},
         "annexe_chapitre1.html": {
             welcome: [
                 "Une annexe ! Ici, tu trouveras quelques détails supplémentaires.",
@@ -215,7 +309,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Les plus curieux découvrent toujours davantage de secrets."
             ]
         }
+        
     };
+    window.showMascotteMessage = function (
+    message,
+    duration = 3500
+) {
+    showMessage(message, duration);
+    animateMascotte();
+};
 
     /* ==========================================
        MESSAGES DU MODE JOUR / NUIT

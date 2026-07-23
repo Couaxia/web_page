@@ -6,7 +6,7 @@
     <link rel="icon" type="image/png" href="./images/logo/Logo Transparents 2.png">
     <link href="./css/a-propos.css" rel="stylesheet">
     <link href="./css/style.css" rel="stylesheet">
-    <link href="./css/scroll-page.css" rel="stylesheet" >
+    <link href="./css/scroll-page.css" rel="stylesheet">
 
      <nav class="navbar">
             <a class="navbar-logo">
@@ -687,12 +687,8 @@
         </button>
 
     </div>
-
-    <p
-        class="oc-copy-message"
-        id="ocCopyMessage"
-        aria-live="polite"
-    ></p>
+    
+    <p class="oc-copy-message"id="ocCopyMessage"aria-live="polite"></p>
 
 </section>
 
@@ -1002,16 +998,25 @@
                             const copied = await copyColor(color);
 
                             if (copied) {
+                                // Message de la palette
                                 showMessage(
                                     `La couleur ${color} a été copiée !`
                                 );
+
+                                // Message de la mascotte
+                                if (typeof window.showMascotteMessage === "function") {
+                                    window.showMascotteMessage(
+                                        `Excellent choix ! La couleur ${color} a été copiée !`,
+                                        3500
+                                    );
+                                }
+
                             } else {
                                 showMessage(
                                     `Impossible de copier automatiquement. Code : ${color}`
                                 );
                             }
                         });
-
                     });
 
 
