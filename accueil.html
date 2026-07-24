@@ -34,8 +34,227 @@
                  <p>Tu cherches des informations sur <strong>Couaxia</strong> ? Tu es au bon endroit !</p>
                  <p><em>Streameuse Vtubeuse française de 26 ans, connue pour son multi-gaming, son humour et sa joie 
                  de vivre ! N'hésitez pas à la rejoindre sur Twitch !</em></p>
-        
+    
                  <p><strong><span class="follow">794 follows !!</span></strong></p>
+
+
+
+
+<!-- ==========================================
+     LIVE TWITCH
+=========================================== -->
+
+<section
+    class="home-live-section"
+    id="twitch-live-section"
+    aria-labelledby="twitch-live-title"
+>
+                <!-- Notification animée -->
+
+                <div
+                    class="twitch-live-notification"
+                    id="twitch-live-notification"
+                    role="status"
+                    aria-live="polite"
+                >
+                    <span
+                        class="twitch-live-notification-dot"
+                        aria-hidden="true"
+                    ></span>
+
+                    <span>
+                        Couaxia est actuellement en LIVE !
+                    </span>
+
+                    <button
+                        type="button"
+                        id="twitch-live-notification-close"
+                        aria-label="Fermer la notification"
+                    >
+                        ×
+                    </button>
+                </div>
+
+
+                <!-- En-tête -->
+
+                <div class="home-live-heading">
+                    <p class="home-live-label">
+                        Diffusion Twitch
+                    </p>
+
+                    <h2 id="twitch-live-title">
+                        <span
+                            class="home-live-status-dot"
+                            id="twitch-status-dot"
+                            aria-hidden="true"
+                        ></span>
+
+                        <span id="twitch-live-heading-text">
+                            Vérification du direct…
+                        </span>
+                    </h2>
+
+                    <p id="twitch-live-introduction">
+                        Chargement des informations de la chaîne.
+                    </p>
+                </div>
+
+
+                <!-- Chargement -->
+
+                <div
+                    class="twitch-live-loading"
+                    id="twitch-live-loading"
+                    role="status"
+                >
+                    <span
+                        class="twitch-live-spinner"
+                        aria-hidden="true"
+                    ></span>
+
+                    <p>
+                        Je vérifie si Couaxia est en direct…
+                    </p>
+                </div>
+
+
+                <!-- Contenu lorsque le live est actif -->
+
+                <div
+                    class="twitch-live-content is-hidden"
+                    id="twitch-live-content"
+                >
+                    <!-- Informations -->
+
+                    <article class="twitch-live-information">
+                        <div class="twitch-live-thumbnail">
+                            <img
+                                id="twitch-live-thumbnail"
+                                src=""
+                                alt="Miniature du direct Twitch de Couaxia"
+                            >
+
+                            <span class="twitch-live-badge">
+                                En direct
+                            </span>
+
+                            <span
+                                class="twitch-live-viewers"
+                                id="twitch-live-viewers"
+                            >
+                                0 spectateur
+                            </span>
+                        </div>
+
+                        <div class="twitch-live-details">
+                            <p
+                                class="twitch-live-category"
+                                id="twitch-live-category"
+                            >
+                                Catégorie
+                            </p>
+
+                            <h3 id="twitch-live-stream-title">
+                                Titre du direct
+                            </h3>
+
+                            <div class="twitch-live-actions">
+                                <a
+                                    class="twitch-live-button"
+                                    id="twitch-live-button"
+                                    href="https://www.twitch.tv/couaxia"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    data-messages="Viens suivre mes aventures en direct !|Le live t’attend sur Twitch !|Rejoins les Poups dans le tchat !"
+                                >
+                                    <img
+                                        src="./images/logo/twitch-logo-transparent.png"
+                                        alt="">
+                                    Regarder sur Twitch
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+
+
+                    <!-- Lecteur et tchat -->
+
+                    <div class="twitch-embed-layout">
+                        <div class="twitch-player-wrapper">
+                            <iframe
+                                id="twitch-live-player"
+                                title="Live Twitch de Couaxia"
+                                allowfullscreen
+                                allow="autoplay; fullscreen"
+                            ></iframe>
+                        </div>
+
+                        <aside
+                            class="twitch-chat-wrapper"
+                            aria-label="Tchat Twitch de Couaxia">
+                            <iframe
+                                id="twitch-live-chat"
+                                title="Tchat Twitch de Couaxia"
+                            ></iframe>
+                        </aside>
+                    </div>
+                </div>
+
+                <!-- Contenu lorsque la chaîne est hors ligne -->
+
+                <div
+                    class="twitch-offline-content is-hidden"
+                    id="twitch-offline-content"
+                >
+                    <span
+                        class="twitch-offline-icon"
+                        aria-hidden="true">
+                        🌙
+                    </span>
+                    <h3>
+                        Couaxia n’est pas en direct pour le moment
+                    </h3>
+                    <p>
+                        Le vaisseau est momentanément au repos.
+                        Retrouve la chaîne Twitch pour suivre les prochains lives.
+                    </p>
+
+                    <a
+                        class="twitch-offline-button"
+                        href="https://www.twitch.tv/couaxia"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-messages="Pas de live pour le moment, mais tu peux quand même visiter ma chaîne !|Le vaisseau recharge ses batteries !|Reviens bientôt pour une nouvelle aventure !">
+                        <img
+                            src="./images/logo/twitch-logo-transparent.png"
+                            alt="">
+                        Voir la chaîne Twitch
+                    </a>
+                </div>
+                <!-- Erreur -->
+                <div
+                    class="twitch-error-content is-hidden"
+                    id="twitch-error-content"
+                    role="alert">
+                    <span aria-hidden="true">
+                        ⚠️
+                    </span>
+                    <p>
+                        Impossible de vérifier le statut du live pour le moment.
+                    </p>
+                    <a
+                        href="https://www.twitch.tv/couaxia"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        Consulter Twitch
+                    </a>
+                </div>
+</section>
+
+
+
+
 
             <div class="scroll-page-controls" aria-label="Navigation verticale de la page">
                     <button id="scrollTopButton" class="scroll-page-button" type="button" aria-label="Retourner en haut de la page" title="Retour en haut">
@@ -58,6 +277,7 @@
                  <script src="./js/scroll-page.js"></script>
                  <script src="./js/mascotte.js"></script>
                  <script src="./js/protection.js"></script>
+                 <script src="./js/twitch-live.js"></script>
                  <script src="./js/theme.js"></script>
                  <script src="./js/artist.js"></script>
          </body> 
