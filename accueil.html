@@ -179,34 +179,48 @@
                 </a>
             </div>
         </article>
-
-        <!-- Live -->
+        <!-- Live Twitch intégré -->
         <article
-            class="twitch-live-card"
+            class="twitch-live-card home-stream-card"
             id="twitch-live-card"
+            aria-labelledby="twitch-stream-title"
         >
-            <div class="twitch-live-card__preview-wrapper">
-                <img
-                    class="twitch-live-card__preview"
-                    id="twitch-stream-thumbnail"
-                    src=""
-                    alt="Aperçu du live Twitch de Couaxia"
+            <header class="home-stream-header">
+                <div>
+                    <p class="home-stream-label">
+                        Stream
+                    </p>
+
+                    <h3 id="twitch-stream-title">
+                        Couaxia est hors ligne
+                    </h3>
+
+                    <p id="twitch-stream-message">
+                        Le prochain live sera annoncé prochainement.
+                    </p>
+                </div>
+
+                <a
+                    class="home-stream-link"
+                    href="https://www.twitch.tv/couaxia"
+                    target="_blank"
+                    rel="noopener noreferrer"
                 >
+                    Twitch ↗
+                </a>
+            </header>
+
+            <div class="home-stream-player">
+                <iframe
+                    id="twitch-player"
+                    title="Live Twitch de Couaxia"
+                    allow="autoplay; fullscreen"
+                    allowfullscreen
+                    scrolling="no"
+                ></iframe>
             </div>
 
-            <div class="twitch-live-card__content">
-                <p class="twitch-live-card__label">
-                    Statut du stream
-                </p>
-
-                <h3 id="twitch-stream-title">
-                    Couaxia est hors ligne
-                </h3>
-
-                <p id="twitch-stream-message">
-                    Le prochain live sera annoncé prochainement.
-                </p>
-
+            <div class="home-stream-details">
                 <div
                     class="twitch-game"
                     id="twitch-game"
@@ -318,8 +332,6 @@
         </p>
     </div>
 </section>
-
-
 
             <div class="scroll-page-controls" aria-label="Navigation verticale de la page">
                     <button id="scrollTopButton" class="scroll-page-button" type="button" aria-label="Retourner en haut de la page" title="Retour en haut">
@@ -433,6 +445,11 @@
                                     liveCard:
                                         document.getElementById(
                                             "twitch-live-card"
+                                        ),
+
+                                    twitchPlayer:
+                                        document.getElementById(
+                                            "twitch-player"
                                         ),
 
                                     streamThumbnail:
@@ -625,6 +642,55 @@
                                     }
 
                                     return element;
+                                }
+
+
+                                /* =========================================================
+                                LECTEUR TWITCH INTÉGRÉ
+                                ========================================================= */
+
+                                function initializeTwitchPlayer() {
+                                    const player =
+                                        twitchElements.twitchPlayer;
+
+                                    if (!player) {
+                                        return;
+                                    }
+
+                                    const parentDomain =
+                                        window.location.hostname;
+
+                                    if (!parentDomain) {
+                                        return;
+                                    }
+
+                                    const playerUrl =
+                                        new URL(
+                                            "https://player.twitch.tv/"
+                                        );
+
+                                    playerUrl.searchParams.set(
+                                        "channel",
+                                        "couaxia"
+                                    );
+
+                                    playerUrl.searchParams.set(
+                                        "parent",
+                                        parentDomain
+                                    );
+
+                                    playerUrl.searchParams.set(
+                                        "autoplay",
+                                        "false"
+                                    );
+
+                                    playerUrl.searchParams.set(
+                                        "muted",
+                                        "false"
+                                    );
+
+                                    player.src =
+                                        playerUrl.toString();
                                 }
 
 
@@ -1215,6 +1281,7 @@
                                         }
                                     );
 
+                                    initializeTwitchPlayer();
                                     loadTwitchData();
 
                                     setInterval(
@@ -1225,4 +1292,3 @@
          </body> 
          
 </HTML>
-

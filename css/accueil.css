@@ -648,3 +648,298 @@
         transition: none;
     }
 }
+/* =========================================================
+   GRANDE CARTE DU LIVE TWITCH
+========================================================= */
+
+.home-stream-section {
+    position: relative;
+    isolation: isolate;
+
+    width: min(1550px, calc(100% - 50px));
+    margin: 65px auto;
+    padding: clamp(24px, 4vw, 46px);
+
+    color: var(--couaxia-white, #ffffff);
+
+    background:
+        radial-gradient(
+            circle at 84% 15%,
+            rgba(242, 34, 146, 0.14),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 12% 90%,
+            rgba(34, 242, 239, 0.08),
+            transparent 34%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(10, 21, 39, 0.99),
+            rgba(12, 24, 43, 0.99)
+        );
+
+    border:
+        1px solid rgba(101, 181, 239, 0.24);
+
+    border-radius: 42px;
+
+    box-shadow:
+        0 24px 55px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   EN-TÊTE
+========================================================= */
+
+.home-stream-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 25px;
+
+    margin-bottom: 30px;
+}
+
+.home-stream-label {
+    margin: 0 0 13px;
+
+    color: var(--couaxia-cyan, #22f2ef);
+
+    font-family:
+        "Courier New",
+        Courier,
+        monospace;
+
+    font-size: clamp(0.78rem, 1.5vw, 1rem);
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+
+    text-shadow:
+        0 0 14px rgba(34, 242, 239, 0.5);
+}
+
+.home-stream-header h2 {
+    width: auto;
+    min-height: 0;
+    height: auto;
+
+    margin: 0;
+    padding: 0;
+
+    color: #ffffff;
+    background: none;
+
+    border: 0;
+    border-radius: 0;
+
+    box-shadow: none;
+
+    font-family:
+        "Courier New",
+        Courier,
+        monospace;
+
+    font-size: clamp(2.1rem, 5vw, 4rem);
+    font-weight: 900;
+    line-height: 1;
+
+    text-align: left;
+
+    text-shadow:
+        3px 4px 0 rgba(109, 0, 163, 0.35),
+        0 0 17px rgba(255, 255, 255, 0.12);
+}
+
+.home-stream-header h2::before,
+.home-stream-header h2::after {
+    content: none;
+}
+
+
+/* =========================================================
+   LIEN TWITCH
+========================================================= */
+
+.home-stream-link {
+    flex-shrink: 0;
+
+    margin-top: 25px;
+
+    color: var(--couaxia-cyan, #22f2ef);
+
+    font-family:
+        "Courier New",
+        Courier,
+        monospace;
+
+    font-size: clamp(1rem, 2vw, 1.35rem);
+    font-weight: 900;
+
+    text-decoration: none;
+
+    text-shadow:
+        0 0 12px rgba(34, 242, 239, 0.34);
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease,
+        text-shadow 0.2s ease;
+}
+
+.home-stream-link:hover {
+    color: #ffffff;
+
+    text-shadow:
+        0 0 18px rgba(34, 242, 239, 0.8);
+
+    transform:
+        translateY(-3px);
+}
+
+
+/* =========================================================
+   LECTEUR TWITCH
+========================================================= */
+
+.home-stream-player {
+    position: relative;
+
+    width: 100%;
+    aspect-ratio: 16 / 9;
+
+    background: #000000;
+
+    border:
+        1px solid rgba(77, 169, 237, 0.28);
+
+    border-radius: 34px;
+
+    box-shadow:
+        0 18px 44px rgba(0, 0, 0, 0.42),
+        0 0 22px rgba(34, 242, 239, 0.07);
+
+    overflow: hidden;
+}
+
+.home-stream-player iframe {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    background: #000000;
+
+    border: 0;
+}
+
+
+/* =========================================================
+   TABLETTE
+========================================================= */
+
+@media screen and (max-width: 950px) {
+    .home-stream-section {
+        width: calc(100% - 30px);
+        padding: 30px;
+
+        border-radius: 32px;
+    }
+
+    .home-stream-player {
+        border-radius: 25px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media screen and (max-width: 650px) {
+    .home-stream-section {
+        width: calc(100% - 16px);
+
+        margin: 35px auto;
+        padding: 22px 14px;
+
+        border-radius: 25px;
+    }
+
+    .home-stream-header {
+        align-items: center;
+
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .home-stream-label {
+        margin-bottom: 8px;
+    }
+
+    .home-stream-header h2 {
+        font-size: clamp(1.8rem, 10vw, 2.7rem);
+    }
+
+    .home-stream-link {
+        margin-top: 12px;
+
+        font-size: 0.9rem;
+    }
+
+    .home-stream-player {
+        min-height: 240px;
+        aspect-ratio: 16 / 9;
+
+        border-radius: 19px;
+    }
+}
+
+
+/* =========================================================
+   TRÈS PETITS ÉCRANS
+========================================================= */
+
+@media screen and (max-width: 420px) {
+    .home-stream-section {
+        padding: 18px 10px;
+    }
+
+    .home-stream-header {
+        align-items: flex-start;
+    }
+
+    .home-stream-link {
+        margin-top: 8px;
+    }
+
+    .home-stream-player {
+        min-height: 210px;
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITÉ
+========================================================= */
+
+.home-stream-link:focus-visible {
+    outline:
+        3px solid var(--couaxia-cyan, #22f2ef);
+
+    outline-offset:
+        5px;
+
+    border-radius: 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-stream-link {
+        transition: none;
+    }
+}
