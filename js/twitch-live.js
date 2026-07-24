@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
      * par l'adresse complète de ton API Vercel.
      */
     const TWITCH_API_URL =
-        "/api/twitch-status";
+        "/api/twitch/twitch-status";
 
     const loadingElement =
         document.getElementById("twitch-live-loading");
