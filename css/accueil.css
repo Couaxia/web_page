@@ -943,3 +943,26 @@
         transition: none;
     }
 }
+.home-stream-header h3 {
+    width: auto;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+
+    color: #ffffff;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+
+    font-family: "Courier New", monospace;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    line-height: 1.2;
+    text-align: left;
+}
+
+.home-stream-header h3::before,
+.home-stream-header h3::after {
+    content: none;
+}
