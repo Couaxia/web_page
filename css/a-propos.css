@@ -594,8 +594,72 @@
 
     font-weight: 700;
 }
+.about-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
 
+    margin-top: 12px;
+}
 
+.about-tags span {
+    padding: 6px 12px;
+
+    border-radius: 999px;
+
+    background: rgba(109, 0, 163, 0.12);
+
+    border: 1px solid rgba(109, 0, 163, 0.25);
+
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+/* ==================================================
+   GOÛTS ET PRÉFÉRENCES
+================================================== */
+
+.about-tastes-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    align-items: stretch;
+
+    gap: 24px;
+
+    margin-top: 36px;
+    padding-top: 34px;
+
+    border-top:
+        2px solid
+        rgba(109, 0, 163, 0.14);
+}
+html[data-theme="dark"]
+.about-tastes-grid {
+    border-top-color:
+        rgba(34, 242, 239, 0.18);
+}
+@media (max-width: 850px) {
+    .about-tastes-grid {
+        grid-template-columns: 1fr;
+
+        max-width: 680px;
+
+        margin-right: auto;
+        margin-left: auto;
+        margin-top: 30px;
+    }
+}
+
+@media (max-width: 550px) {
+    .about-tastes-grid {
+        gap: 17px;
+
+        margin-top: 24px;
+        padding-top: 24px;
+    }
+}
 /* ==================================================
    SECTION HISTOIRE PERSONNELLE
 ================================================== */
