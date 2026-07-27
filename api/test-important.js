@@ -12,10 +12,6 @@ import {
     getTwitchUser
 } from "./user.js";
 
-import {
-    getFollowerCount
-} from "./followers.js";
-
 
 export function GET() {
     return Response.json({
