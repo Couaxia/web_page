@@ -30,162 +30,154 @@
 
 </head>
          <body>
-             <h1><u>Couaxia</u></H1>
-                 <p>Tu cherches des informations sur <strong>Couaxia</strong> ? Tu es au bon endroit !</p>
-                 <p><em>Streameuse Vtubeuse française de 26 ans, connue pour son multi-gaming, son humour et sa joie 
-                 de vivre ! N'hésitez pas à la rejoindre sur Twitch !</em></p>
-    
-                 <p><strong><span class="follow">794 follows !!</span></strong></p>
+             
+<main class="home-page">
+
+    <!-- =====================================================
+         PRÉSENTATION PRINCIPALE
+    ====================================================== -->
+
+    <section class="home-hero" aria-labelledby="home-title">
+        <div class="home-hero-decoration home-hero-decoration-one"></div>
+        <div class="home-hero-decoration home-hero-decoration-two"></div>
+
+        <div class="home-hero-content">
+            <div class="home-hero-text">
+                <p class="home-overline">
+                    VTubeuse française • Multigaming
+                </p>
+
+                <h1 id="home-title">
+                    Bienvenue dans l’univers de
+                    <span>Couaxia</span>
+                </h1>
+
+                <p class="home-introduction">
+                    Je suis Couaxia, une VTubeuse française passionnée par
+                    les jeux vidéo, les aventures, l’humour et les moments
+                    partagés avec ma communauté.
+                </p>
+
+                <p class="home-introduction">
+                    Mon univers mélange tentacules, améthystes, magie,
+                    créatures fantastiques et beaucoup de bonne humeur.
+                </p>
+
+                <div class="home-hero-actions">
+                    <a
+                        class="home-action-link"
+                        href="https://www.twitch.tv/couaxia"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Twitch
+                    </a>
+
+                    <a
+                        class="home-action-link home-action-link-secondary"
+                        href="./a-propos.html"
+                    >
+                        Découvrir Couaxia
+                    </a>
+
+                    <a
+                        class="home-action-link home-action-link-secondary"
+                        href="./Histoire/debut_histoire.html"
+                    >
+                        Découvrir mon histoire
+                    </a>
+                </div>
+            </div>
+
+            <div class="home-character-wrapper">
+                <div class="home-character-glow"></div>
+
+                <img
+                    class="home-character"
+                    src="./images/mascotte/Aboutmeno.png"
+                    alt="Modèle VTuber de Couaxia"
+                >
+
+                <div class="home-character-name">
+                    <span>Couaxia</span>
+                    <small>VTubeuse spatiale des profondeurs</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
 
 
 
 
 <!-- =====================================================
-     SECTION TWITCH
+     SECTION TWITCH — PRÉSENTATION TYPE À PROPOS
 ====================================================== -->
 
 <section
-    class="twitch-section"
+    class="twitch-presentation"
     id="twitch-section"
     aria-labelledby="twitch-section-title"
 >
-    <div class="twitch-section__header">
-        <div>
-            <p class="twitch-section__eyebrow">
+    <div class="twitch-presentation__content">
+        <div class="twitch-presentation__text">
+            <p class="twitch-presentation__eyebrow">
                 Chaîne Twitch
             </p>
 
             <h2 id="twitch-section-title">
-                Couaxia en direct
+                Retrouve-moi en direct sur
+                <span>Twitch</span>
             </h2>
-        </div>
 
-        <button
-            class="twitch-refresh-button"
-            id="twitch-refresh-button"
-            type="button"
-        >
-            Actualiser
-        </button>
-    </div>
-
-    <!-- Chargement -->
-    <div
-        class="twitch-loading"
-        id="twitch-loading"
-        role="status"
-    >
-        Chargement des informations Twitch...
-    </div>
-
-    <!-- Erreur -->
-    <div
-        class="twitch-error"
-        id="twitch-error"
-        role="alert"
-        hidden
-    >
-        Impossible de récupérer les informations Twitch.
-    </div>
-
-    <!-- Contenu Twitch -->
-    <div
-        class="twitch-content"
-        id="twitch-content"
-        hidden
-    >
-        <!-- Profil -->
-        <article class="twitch-profile-card">
-            <div class="twitch-profile-card__image-wrapper">
-                <img
-                    class="twitch-profile-card__image"
-                    id="twitch-profile-image"
-                    src=""
-                    alt="Photo de profil Twitch de Couaxia"
-                >
-
+            <div class="twitch-presentation__status">
                 <span
-                    class="twitch-live-badge"
-                    id="twitch-live-badge"
-                >
+                    class="twitch-status-dot"
+                    id="twitch-status-dot"
+                    aria-hidden="true"
+                ></span>
+
+                <strong id="twitch-live-badge">
                     Hors ligne
+                </strong>
+            </div>
+
+            <p class="twitch-presentation__description">
+                Viens partager mes aventures, mes découvertes,
+                mes jeux et mes moments de folie avec toute la communauté.
+            </p>
+
+            <p class="twitch-follower-text">
+                Vous êtes actuellement
+                <strong id="twitch-follower-count">—</strong>
+                à suivre l’aventure de Couaxia sur Twitch !
+            </p>
+
+            <div class="twitch-presentation__meta">
+                <span>
+                    <strong id="twitch-viewer-count">0</strong>
+                    spectateur(s)
+                </span>
+
+                <span id="twitch-broadcaster-type">
+                    Streameuse
                 </span>
             </div>
 
-            <div class="twitch-profile-card__content">
-                <p class="twitch-profile-card__label">
-                    Profil Twitch
-                </p>
+            <a
+                class="twitch-channel-link"
+                id="twitch-channel-link"
+                href="https://www.twitch.tv/couaxia"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Voir la chaîne Twitch
+            </a>
+        </div>
 
-                <h3 id="twitch-display-name">
-                    Couaxia
-                </h3>
-
-                <p
-                    class="twitch-profile-card__description"
-                    id="twitch-description"
-                >
-                    Description indisponible.
-                </p>
-
-                <div class="twitch-profile-card__statistics">
-                    <div class="twitch-statistic">
-                        <span class="twitch-statistic__value">
-                            <span id="twitch-follower-count">
-                                —
-                            </span>
-                        </span>
-
-                        <span class="twitch-statistic__label">
-                            Followers
-                        </span>
-                    </div>
-
-                    <div class="twitch-statistic">
-                        <span
-                            class="twitch-statistic__value"
-                            id="twitch-viewer-count"
-                        >
-                            0
-                        </span>
-
-                        <span class="twitch-statistic__label">
-                            Spectateurs
-                        </span>
-                    </div>
-
-                    <div class="twitch-statistic">
-                        <span
-                            class="twitch-statistic__value"
-                            id="twitch-broadcaster-type"
-                        >
-                            —
-                        </span>
-
-                        <span class="twitch-statistic__label">
-                            Statut
-                        </span>
-                    </div>
-                </div>
-
-                <a
-                    class="twitch-channel-link"
-                    id="twitch-channel-link"
-                    href="https://www.twitch.tv/couaxia"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Voir la chaîne Twitch
-                </a>
-            </div>
-        </article>
-        <!-- Live Twitch intégré -->
-        <article
-            class="twitch-live-card home-stream-card"
-            id="twitch-live-card"
-            aria-labelledby="twitch-stream-title"
-        >
-            <header class="home-stream-header">
+        <div class="twitch-presentation__player">
+            <div class="twitch-player-heading">
                 <div>
                     <p class="home-stream-label">
                         Stream
@@ -199,16 +191,7 @@
                         Le prochain live sera annoncé prochainement.
                     </p>
                 </div>
-
-                <a
-                    class="home-stream-link"
-                    href="https://www.twitch.tv/couaxia"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Twitch ↗
-                </a>
-            </header>
+            </div>
 
             <div class="home-stream-player">
                 <iframe
@@ -238,62 +221,47 @@
                             Catégorie
                         </span>
 
-                        <strong id="twitch-game-name">
-                            —
-                        </strong>
+                        <strong id="twitch-game-name">—</strong>
                     </div>
                 </div>
 
                 <dl class="twitch-stream-information">
                     <div>
                         <dt>Langue</dt>
-                        <dd id="twitch-stream-language">
-                            —
-                        </dd>
+                        <dd id="twitch-stream-language">—</dd>
                     </div>
 
                     <div>
                         <dt>Commencé à</dt>
-                        <dd id="twitch-stream-started-at">
-                            —
-                        </dd>
+                        <dd id="twitch-stream-started-at">—</dd>
                     </div>
                 </dl>
             </div>
-        </article>
+        </div>
+    </div>
 
-        <!-- Vidéos -->
-        <section
-            class="twitch-resource-section"
-            aria-labelledby="twitch-videos-title"
-        >
-            <div class="twitch-resource-section__header">
-                <div>
-                    <p class="twitch-resource-section__eyebrow">
-                        Rediffusions
-                    </p>
+    <div
+        class="twitch-loading"
+        id="twitch-loading"
+        role="status"
+    >
+        Chargement des informations Twitch...
+    </div>
 
-                    <h3 id="twitch-videos-title">
-                        Dernières vidéos
-                    </h3>
-                </div>
-            </div>
+    <div
+        class="twitch-error"
+        id="twitch-error"
+        role="alert"
+        hidden
+    >
+        Impossible de récupérer les informations Twitch.
+    </div>
 
-            <div
-                class="twitch-resource-grid"
-                id="twitch-videos-list"
-            ></div>
-
-            <p
-                class="twitch-empty-message"
-                id="twitch-videos-empty"
-                hidden
-            >
-                Aucune vidéo disponible pour le moment.
-            </p>
-        </section>
-
-        <!-- Clips -->
+    <div
+        class="twitch-content"
+        id="twitch-content"
+        hidden
+    >
         <section
             class="twitch-resource-section"
             aria-labelledby="twitch-clips-title"
@@ -324,14 +292,52 @@
             </p>
         </section>
 
+        <section
+            class="twitch-resource-section"
+            aria-labelledby="twitch-videos-title"
+        >
+            <div class="twitch-resource-section__header">
+                <div>
+                    <p class="twitch-resource-section__eyebrow">
+                        Rediffusions
+                    </p>
+
+                    <h3 id="twitch-videos-title">
+                        Dernières vidéos
+                    </h3>
+                </div>
+            </div>
+
+            <div
+                class="twitch-resource-grid"
+                id="twitch-videos-list"
+            ></div>
+
+            <p
+                class="twitch-empty-message"
+                id="twitch-videos-empty"
+                hidden
+            >
+                Aucune vidéo disponible pour le moment.
+            </p>
+        </section>
+
         <p class="twitch-last-update">
             Dernière actualisation :
-            <time id="twitch-fetched-at">
-                —
-            </time>
+            <time id="twitch-fetched-at">—</time>
         </p>
     </div>
+
+    <button
+        class="twitch-refresh-button"
+        id="twitch-refresh-button"
+        type="button"
+    >
+        Actualiser
+    </button>
 </section>
+
+</main>
 
             <div class="scroll-page-controls" aria-label="Navigation verticale de la page">
                     <button id="scrollTopButton" class="scroll-page-button" type="button" aria-label="Retourner en haut de la page" title="Retour en haut">
@@ -402,21 +408,6 @@
                                             "twitch-refresh-button"
                                         ),
 
-                                    profileImage:
-                                        document.getElementById(
-                                            "twitch-profile-image"
-                                        ),
-
-                                    displayName:
-                                        document.getElementById(
-                                            "twitch-display-name"
-                                        ),
-
-                                    description:
-                                        document.getElementById(
-                                            "twitch-description"
-                                        ),
-
                                     followerCount:
                                         document.getElementById(
                                             "twitch-follower-count"
@@ -442,6 +433,11 @@
                                             "twitch-live-badge"
                                         ),
 
+                                    statusDot:
+                                        document.getElementById(
+                                            "twitch-status-dot"
+                                        ),
+
                                     liveCard:
                                         document.getElementById(
                                             "twitch-live-card"
@@ -450,11 +446,6 @@
                                     twitchPlayer:
                                         document.getElementById(
                                             "twitch-player"
-                                        ),
-
-                                    streamThumbnail:
-                                        document.getElementById(
-                                            "twitch-stream-thumbnail"
                                         ),
 
                                     streamTitle:
@@ -702,15 +693,6 @@
                                     user,
                                     followerCount
                                 ) {
-                                    twitchElements.displayName.textContent =
-                                        user?.displayName ||
-                                        user?.login ||
-                                        "Couaxia";
-
-                                    twitchElements.description.textContent =
-                                        user?.description ||
-                                        "Bienvenue sur la chaîne Twitch de Couaxia !";
-
                                     twitchElements.followerCount.textContent =
                                         formatNumber(
                                             followerCount
@@ -724,11 +706,6 @@
                                     twitchElements.channelLink.href =
                                         user?.twitchUrl ||
                                         "https://www.twitch.tv/couaxia";
-
-                                    setImage(
-                                        twitchElements.profileImage,
-                                        user?.profileImageUrl
-                                    );
                                 }
 
 
@@ -754,6 +731,11 @@
                                             : "Hors ligne";
 
                                     twitchElements.liveBadge.classList.toggle(
+                                        "is-live",
+                                        live
+                                    );
+
+                                    twitchElements.statusDot.classList.toggle(
                                         "is-live",
                                         live
                                     );
@@ -797,22 +779,6 @@
                                                 stream.startedAt
                                             )
                                             : "—";
-
-                                    const preview =
-                                        live
-                                            ? (
-                                                stream.thumbnailUrl ||
-                                                stream.thumbnail
-                                            )
-                                            : (
-                                                data?.user?.offlineImageUrl ||
-                                                ""
-                                            );
-
-                                    setImage(
-                                        twitchElements.streamThumbnail,
-                                        preview
-                                    );
                                 }
 
 
@@ -1289,6 +1255,5 @@
                                         TWITCH_REFRESH_INTERVAL
                                     );
                   </script>
-         </body> 
-         
+         </body>     
 </HTML>
