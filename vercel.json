@@ -1,5 +1,4 @@
 {
-    "$schema": "https://couaxiawebsite.vercel.app/vercel.json",
     "rewrites": [
         {
             "source": "/",
