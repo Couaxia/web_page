@@ -12,6 +12,21 @@ import {
     getTwitchUser
 } from "./user.js";
 
+import {
+    getFollowerCount
+} from "./followers.js";
+
+import {
+    getChannelVideos
+} from "./videos.js";
+
+import {
+    getChannelClips
+} from "./clips.js";
+
+import {
+    getGame
+} from "./game.js";
 
 export function GET() {
     return Response.json({

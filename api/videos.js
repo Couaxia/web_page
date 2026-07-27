@@ -19,7 +19,9 @@ export async function getLatestHighlights() {}
 export async function getLatestUploads() {}
 export async function getLatestVideo() {}
 
-
+export async function getChannelVideos(channelLogin, options = {}) {
+    // ton code
+}
 /* =========================================================
    CONFIGURATION
 ========================================================= */
@@ -873,3 +875,6 @@ export async function getLatestVideo(
         );
     return result.videos[0] || null;
 }
+export {
+    getChannelVideos
+};

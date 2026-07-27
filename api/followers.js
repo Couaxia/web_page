@@ -15,7 +15,13 @@ import {
 
 export async function checkUserFollowsChannel() {}
 export async function getChannelFollowers() {}
-export async function getFollowerCount() {}
+async function getFollowerCount(channelLogin) {
+    // ton code
+}
+
+export {
+    getFollowerCount
+};
 /* =========================================================
    CONFIGURATION
 ========================================================= */
@@ -443,3 +449,6 @@ export async function checkUserFollowsChannel(
                 : null
     };
 }
+export {
+    getFollowerCount
+};

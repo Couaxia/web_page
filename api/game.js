@@ -9,6 +9,10 @@ import {
     getTwitchApiHeaders
 } from "./auth.js";
 
+export async function getGame(gameId) {
+    // ton code
+}
+
 
 /* =========================================================
    CONFIGURATION
@@ -304,3 +308,6 @@ export async function getGame(gameId) {
         game
     );
 }
+export {
+    getGame
+};
