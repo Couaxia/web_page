@@ -1,44 +1,26 @@
 "use strict";
 
-import {
-    getTwitchAccessToken
-} from "./auth.js";
-
-import {
-    getStreamStatus
-} from "./stream.js";
-
-import {
-    getTwitchUser
-} from "./user.js";
-
-
+import * as followersModule from "./followers.js";
+import * as videosModule from "./videos.js";
+import * as clipsModule from "./clips.js";
+import * as gameModule from "./game.js";
 
 export function GET() {
     return Response.json({
         success: true,
 
-        imports: {
-            getTwitchAccessToken:
-                typeof getTwitchAccessToken,
+        exportedNames: {
+            followers:
+                Object.keys(followersModule),
 
-            getStreamStatus:
-                typeof getStreamStatus,
+            videos:
+                Object.keys(videosModule),
 
-            getTwitchUser:
-                typeof getTwitchUser,
+            clips:
+                Object.keys(clipsModule),
 
-            getFollowerCount:
-                typeof getFollowerCount,
-
-            getChannelVideos:
-                typeof getChannelVideos,
-
-            getChannelClips:
-                typeof getChannelClips,
-
-            getGame:
-                typeof getGame
+            game:
+                Object.keys(gameModule)
         }
     });
 }
