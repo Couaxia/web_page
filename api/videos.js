@@ -22,6 +22,9 @@ const TWITCH_VIDEOS_URL =
     "https://api.twitch.tv/helix/videos";
 
 const DEFAULT_CHANNEL =
+    process.env.TWITCH_CHANNEL_LOGIN
+        ?.trim()
+        .toLowerCase() ||
     "couaxia";
 
 const MAX_VIDEOS_PER_REQUEST =
@@ -53,7 +56,7 @@ const ALLOWED_PERIOD_VALUES = [
 ========================================================= */
 
 /**
- * Nettoie le nom de la chaîne Twitch.
+ * Nettoie et normalise le nom d'une chaîne Twitch.
  *
  * @param {string} channelLogin
  * @returns {string}
@@ -79,7 +82,7 @@ function normalizeChannelLogin(
 /**
  * Limite le nombre de vidéos entre 1 et 100.
  *
- * @param {number} value
+ * @param {number|string} value
  * @returns {number}
  */
 function normalizeLimit(value) {
@@ -98,16 +101,10 @@ function normalizeLimit(value) {
 
 
 /**
- * Vérifie le type de vidéo demandé.
- *
- * Valeurs possibles :
- * - all
- * - upload
- * - archive
- * - highlight
+ * Vérifie et normalise le type de vidéo.
  *
  * @param {string} type
- * @returns {string}
+ * @returns {"all"|"upload"|"archive"|"highlight"}
  */
 function normalizeVideoType(type) {
     const normalizedType =
@@ -124,15 +121,10 @@ function normalizeVideoType(type) {
 
 
 /**
- * Vérifie le mode de tri.
- *
- * Valeurs possibles :
- * - time
- * - trending
- * - views
+ * Vérifie et normalise le mode de tri.
  *
  * @param {string} sort
- * @returns {string}
+ * @returns {"time"|"trending"|"views"}
  */
 function normalizeSort(sort) {
     const normalizedSort =
@@ -149,16 +141,10 @@ function normalizeSort(sort) {
 
 
 /**
- * Vérifie la période.
- *
- * Valeurs possibles :
- * - all
- * - day
- * - week
- * - month
+ * Vérifie et normalise la période.
  *
  * @param {string} period
- * @returns {string}
+ * @returns {"all"|"day"|"week"|"month"}
  */
 function normalizePeriod(period) {
     const normalizedPeriod =
@@ -174,8 +160,23 @@ function normalizePeriod(period) {
 }
 
 
+/**
+ * Nettoie un curseur de pagination Twitch.
+ *
+ * @param {string|null} cursor
+ * @returns {string|null}
+ */
+function normalizeCursor(cursor) {
+    const normalizedCursor =
+        String(cursor ?? "")
+            .trim();
+
+    return normalizedCursor || null;
+}
+
+
 /* =========================================================
-   REQUÊTE TWITCH
+   REQUÊTES TWITCH
 ========================================================= */
 
 /**
@@ -188,15 +189,15 @@ function normalizePeriod(period) {
  * @returns {Promise<Response>}
  */
 async function fetchTwitchVideosApi(url) {
-    let headers =
-        await getTwitchApiHeaders();
-
     let response =
         await fetch(
             url.toString(),
             {
                 method: "GET",
-                headers,
+
+                headers:
+                    await getTwitchApiHeaders(),
+
                 cache: "no-store"
             }
         );
@@ -204,23 +205,64 @@ async function fetchTwitchVideosApi(url) {
     if (response.status === 401) {
         clearTwitchAccessToken();
 
-        headers =
-            await getTwitchApiHeaders({
-                forceRefresh: true
-            });
-
         response =
             await fetch(
                 url.toString(),
                 {
                     method: "GET",
-                    headers,
+
+                    headers:
+                        await getTwitchApiHeaders({
+                            forceRefresh: true
+                        }),
+
                     cache: "no-store"
                 }
             );
     }
 
     return response;
+}
+
+
+/**
+ * Analyse une réponse Twitch.
+ *
+ * @param {Response} response
+ * @returns {Promise<object>}
+ */
+async function parseTwitchResponse(
+    response
+) {
+    const responseBody =
+        await response.text();
+
+    let twitchData = {};
+
+    if (responseBody) {
+        try {
+            twitchData =
+                JSON.parse(responseBody);
+        } catch {
+            throw new Error(
+                "Twitch a renvoyé une réponse vidéos illisible."
+            );
+        }
+    }
+
+    if (!response.ok) {
+        const twitchMessage =
+            twitchData?.message ||
+            responseBody ||
+            "Erreur Twitch inconnue.";
+
+        throw new Error(
+            `Erreur Twitch Get Videos ` +
+            `(${response.status}) : ${twitchMessage}`
+        );
+    }
+
+    return twitchData;
 }
 
 
@@ -246,6 +288,12 @@ async function requestVideosFromTwitch({
     after = null,
     before = null
 }) {
+    if (!userId) {
+        throw new Error(
+            "L'identifiant numérique Twitch de la chaîne est absent."
+        );
+    }
+
     const videosUrl =
         new URL(TWITCH_VIDEOS_URL);
 
@@ -276,7 +324,7 @@ async function requestVideosFromTwitch({
 
     /*
      * Twitch n'autorise pas l'utilisation simultanée
-     * de "after" et "before".
+     * de after et before.
      */
     if (after) {
         videosUrl.searchParams.set(
@@ -295,17 +343,9 @@ async function requestVideosFromTwitch({
             videosUrl
         );
 
-    if (!response.ok) {
-        const errorBody =
-            await response.text();
-
-        throw new Error(
-            `Erreur Twitch Get Videos ` +
-            `(${response.status}) : ${errorBody}`
-        );
-    }
-
-    return response.json();
+    return parseTwitchResponse(
+        response
+    );
 }
 
 
@@ -314,8 +354,7 @@ async function requestVideosFromTwitch({
 ========================================================= */
 
 /**
- * Remplace les variables présentes dans
- * les miniatures Twitch.
+ * Remplace les variables présentes dans les miniatures.
  *
  * @param {string|null} thumbnailUrl
  * @param {number} width
@@ -329,26 +368,34 @@ function formatThumbnailUrl(
 ) {
     if (
         typeof thumbnailUrl !== "string" ||
-        !thumbnailUrl
+        !thumbnailUrl.trim()
     ) {
         return null;
     }
 
     return thumbnailUrl
-        .replace("%{width}", String(width))
-        .replace("%{height}", String(height))
-        .replace("{width}", String(width))
-        .replace("{height}", String(height));
+        .trim()
+        .replace(
+            "%{width}",
+            String(width)
+        )
+        .replace(
+            "%{height}",
+            String(height)
+        )
+        .replace(
+            "{width}",
+            String(width)
+        )
+        .replace(
+            "{height}",
+            String(height)
+        );
 }
 
 
 /**
- * Convertit une durée Twitch comme :
- *
- * 3h12m40s
- * 45m10s
- * 52s
- *
+ * Convertit une durée Twitch comme 3h12m40s
  * en nombre de secondes.
  *
  * @param {string} duration
@@ -359,11 +406,20 @@ function durationToSeconds(duration) {
         return 0;
     }
 
+    const normalizedDuration =
+        duration.trim();
+
+    if (!normalizedDuration) {
+        return 0;
+    }
+
     const durationPattern =
-        /(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?/;
+        /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/;
 
     const match =
-        duration.match(durationPattern);
+        normalizedDuration.match(
+            durationPattern
+        );
 
     if (!match) {
         return 0;
@@ -392,10 +448,14 @@ function durationToSeconds(duration) {
  * @param {number} totalSeconds
  * @returns {string}
  */
-function formatDuration(totalSeconds) {
+function formatDuration(
+    totalSeconds
+) {
     const safeSeconds =
         Math.max(
-            Number(totalSeconds) || 0,
+            Math.floor(
+                Number(totalSeconds) || 0
+            ),
             0
         );
 
@@ -439,82 +499,86 @@ function formatDuration(totalSeconds) {
 function formatVideo(video) {
     const durationSeconds =
         durationToSeconds(
-            video.duration
+            video?.duration
         );
+
+    const viewCount =
+        Number(
+            video?.view_count
+        ) || 0;
 
     return {
         id:
-            video.id ||
+            video?.id ||
             null,
 
         streamId:
-            video.stream_id ||
+            video?.stream_id ||
             null,
 
         userId:
-            video.user_id ||
+            video?.user_id ||
             null,
 
         userLogin:
-            video.user_login ||
+            video?.user_login ||
             null,
 
         displayName:
-            video.user_name ||
-            video.user_login ||
+            video?.user_name ||
+            video?.user_login ||
             null,
 
         title:
-            video.title ||
+            video?.title ||
             "Vidéo Twitch",
 
         description:
-            video.description ||
+            video?.description ||
             "",
 
         createdAt:
-            video.created_at ||
+            video?.created_at ||
             null,
 
         publishedAt:
-            video.published_at ||
+            video?.published_at ||
             null,
 
         url:
-            video.url ||
+            video?.url ||
             null,
 
         thumbnailUrl:
             formatThumbnailUrl(
-                video.thumbnail_url,
+                video?.thumbnail_url,
                 640,
                 360
             ),
 
         thumbnailLargeUrl:
             formatThumbnailUrl(
-                video.thumbnail_url,
+                video?.thumbnail_url,
                 1280,
                 720
             ),
 
         viewable:
-            video.viewable ||
+            video?.viewable ||
             "public",
 
-        viewCount:
-            Number(video.view_count) || 0,
+        viewCount,
 
         language:
-            video.language ||
+            video?.language ||
             null,
 
         type:
-            video.type ||
+            video?.type ||
             null,
 
         duration:
-            video.duration ||
+            video?.duration ||
             null,
 
         durationSeconds,
@@ -526,7 +590,7 @@ function formatVideo(video) {
 
         mutedSegments:
             Array.isArray(
-                video.muted_segments
+                video?.muted_segments
             )
                 ? video.muted_segments
                 : []
@@ -647,14 +711,10 @@ export async function getChannelVideos(
             normalizePeriod(period),
 
         after:
-            after
-                ? String(after).trim()
-                : null,
+            normalizeCursor(after),
 
         before:
-            before
-                ? String(before).trim()
-                : null
+            normalizeCursor(before)
     };
 
     const twitchData =
@@ -691,9 +751,6 @@ export async function getChannelVideos(
 
 /**
  * Récupère les dernières rediffusions automatiques.
- *
- * Les archives correspondent généralement aux VOD
- * créées après un live.
  *
  * @param {string} channelLogin
  * @param {number} limit
@@ -795,13 +852,18 @@ export async function getLatestVideo(
         await getChannelVideos(
             channelLogin,
             {
-                first: 1,
-                type: "all",
-                sort: "time",
-                period: "all"
+                first:
+                    1,
+
+                type:
+                    "all",
+
+                sort:
+                    "time",
+
+                period:
+                    "all"
             }
         );
-
     return result.videos[0] || null;
-    
 }

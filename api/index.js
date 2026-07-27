@@ -76,4 +76,4 @@ export {
     getMonthlyClips,
     getTopWeeklyClip,
     getWeeklyClips
-} from "./twitch/clips.js";
+} from "./clips.js";

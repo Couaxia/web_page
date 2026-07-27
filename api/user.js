@@ -18,6 +18,9 @@ const TWITCH_USERS_URL =
     "https://api.twitch.tv/helix/users";
 
 const DEFAULT_CHANNEL =
+    process.env.TWITCH_CHANNEL_LOGIN
+        ?.trim()
+        .toLowerCase() ||
     "couaxia";
 
 

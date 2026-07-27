@@ -22,10 +22,10 @@ const TWITCH_FOLLOWERS_URL =
     "https://api.twitch.tv/helix/channels/followers";
 
 const DEFAULT_CHANNEL =
+    process.env.TWITCH_CHANNEL_LOGIN?.trim().toLowerCase() ||
     "couaxia";
 
-const MAX_FOLLOWERS_PER_REQUEST =
-    100;
+const MAX_FOLLOWERS_PER_REQUEST = 100;
 
 
 /* =========================================================
@@ -33,14 +33,12 @@ const MAX_FOLLOWERS_PER_REQUEST =
 ========================================================= */
 
 /**
- * Nettoie le nom de la chaîne Twitch.
+ * Nettoie et normalise le nom de la chaîne Twitch.
  *
  * @param {string} channelLogin
  * @returns {string}
  */
-function normalizeChannelLogin(
-    channelLogin
-) {
+function normalizeChannelLogin(channelLogin) {
     const normalizedLogin =
         String(channelLogin ?? "")
             .trim()
@@ -78,24 +76,20 @@ function normalizeLimit(value) {
 
 
 /**
- * Effectue une requête vers Twitch.
- *
- * Si le token est refusé, un nouveau token est créé
- * puis la requête est tentée une seconde fois.
+ * Exécute une requête Twitch et renouvelle le token
+ * une seule fois si Twitch répond avec une erreur 401.
  *
  * @param {URL} url
  * @returns {Promise<Response>}
  */
 async function fetchTwitchFollowersApi(url) {
-    let headers =
-        await getTwitchApiHeaders();
-
     let response =
         await fetch(
             url.toString(),
             {
                 method: "GET",
-                headers,
+                headers:
+                    await getTwitchApiHeaders(),
                 cache: "no-store"
             }
         );
@@ -103,17 +97,15 @@ async function fetchTwitchFollowersApi(url) {
     if (response.status === 401) {
         clearTwitchAccessToken();
 
-        headers =
-            await getTwitchApiHeaders({
-                forceRefresh: true
-            });
-
         response =
             await fetch(
                 url.toString(),
                 {
                     method: "GET",
-                    headers,
+                    headers:
+                        await getTwitchApiHeaders({
+                            forceRefresh: true
+                        }),
                     cache: "no-store"
                 }
             );
@@ -133,16 +125,22 @@ async function fetchTwitchFollowersApi(url) {
  * @param {object} options
  * @param {string} options.broadcasterId
  * @param {number} options.first
- * @param {string | null} options.after
- * @param {string | null} options.userId
+ * @param {string|null} options.after
+ * @param {string|null} options.userId
  * @returns {Promise<object>}
  */
 async function requestFollowersFromTwitch({
     broadcasterId,
-    first,
+    first = 1,
     after = null,
     userId = null
 }) {
+    if (!broadcasterId) {
+        throw new Error(
+            "L'identifiant numérique du diffuseur Twitch est absent."
+        );
+    }
+
     const followersUrl =
         new URL(TWITCH_FOLLOWERS_URL);
 
@@ -153,20 +151,20 @@ async function requestFollowersFromTwitch({
 
     followersUrl.searchParams.set(
         "first",
-        String(first)
+        String(normalizeLimit(first))
     );
 
     if (after) {
         followersUrl.searchParams.set(
             "after",
-            after
+            String(after)
         );
     }
 
     if (userId) {
         followersUrl.searchParams.set(
             "user_id",
-            userId
+            String(userId)
         );
     }
 
@@ -175,17 +173,35 @@ async function requestFollowersFromTwitch({
             followersUrl
         );
 
+    const responseBody =
+        await response.text();
+
+    let twitchData = {};
+
+    if (responseBody) {
+        try {
+            twitchData =
+                JSON.parse(responseBody);
+        } catch {
+            throw new Error(
+                "Twitch a renvoyé une réponse illisible."
+            );
+        }
+    }
+
     if (!response.ok) {
-        const errorBody =
-            await response.text();
+        const twitchMessage =
+            twitchData?.message ||
+            responseBody ||
+            "Erreur Twitch inconnue.";
 
         throw new Error(
             `Erreur Twitch Get Channel Followers ` +
-            `(${response.status}) : ${errorBody}`
+            `(${response.status}) : ${twitchMessage}`
         );
     }
 
-    return response.json();
+    return twitchData;
 }
 
 
@@ -196,36 +212,33 @@ async function requestFollowersFromTwitch({
 /**
  * Formate un follower Twitch.
  *
- * Ces informations ne sont disponibles que lorsque
- * le token possède les autorisations nécessaires.
- *
  * @param {object} follower
  * @returns {object}
  */
 function formatFollower(follower) {
     return {
         userId:
-            follower.user_id ||
+            follower?.user_id ||
             null,
 
         login:
-            follower.user_login ||
+            follower?.user_login ||
             null,
 
         displayName:
-            follower.user_name ||
-            follower.user_login ||
+            follower?.user_name ||
+            follower?.user_login ||
             null,
 
         followedAt:
-            follower.followed_at ||
+            follower?.followed_at ||
             null
     };
 }
 
 
 /**
- * Formate la réponse complète.
+ * Formate la réponse complète de Twitch.
  *
  * @param {object} twitchData
  * @param {string} channelLogin
@@ -244,8 +257,13 @@ function formatFollowersResult(
             )
             : [];
 
+    const parsedTotal =
+        Number(twitchData?.total);
+
     const total =
-        Number(twitchData?.total) || 0;
+        Number.isFinite(parsedTotal)
+            ? parsedTotal
+            : 0;
 
     const cursor =
         twitchData?.pagination?.cursor ||
@@ -270,10 +288,6 @@ function formatFollowersResult(
                 Boolean(cursor)
         },
 
-        /*
-         * Avec un App Access Token, Twitch peut ne renvoyer
-         * que le total et laisser la liste vide.
-         */
         detailsAvailable:
             followers.length > 0,
 
@@ -289,13 +303,13 @@ function formatFollowersResult(
 ========================================================= */
 
 /**
- * Récupère le total et, lorsque le token l'autorise,
- * les derniers followers d'une chaîne.
+ * Récupère le total des followers et, lorsque le token
+ * l'autorise, la liste détaillée des followers.
  *
  * @param {string} channelLogin
  * @param {object} options
  * @param {number} options.first
- * @param {string | null} options.after
+ * @param {string|null} options.after
  * @returns {Promise<object>}
  */
 export async function getChannelFollowers(
@@ -315,13 +329,10 @@ export async function getChannelFollowers(
             normalizedLogin
         );
 
-    const normalizedFirst =
-        normalizeLimit(first);
-
     const twitchData =
         await requestFollowersFromTwitch({
             broadcasterId,
-            first: normalizedFirst,
+            first,
             after
         });
 
@@ -336,32 +347,42 @@ export async function getChannelFollowers(
 /**
  * Récupère uniquement le nombre total de followers.
  *
- * C'est la fonction recommandée pour afficher le compteur
- * sur la page d'accueil.
- *
  * @param {string} channelLogin
  * @returns {Promise<number>}
  */
 export async function getFollowerCount(
     channelLogin = DEFAULT_CHANNEL
 ) {
-    const result =
-        await getChannelFollowers(
-            channelLogin,
-            {
-                first: 1
-            }
+    const normalizedLogin =
+        normalizeChannelLogin(
+            channelLogin
         );
 
-    return result.total;
+    const broadcasterId =
+        await getTwitchUserId(
+            normalizedLogin
+        );
+
+    const twitchData =
+        await requestFollowersFromTwitch({
+            broadcasterId,
+            first: 1
+        });
+
+    const total =
+        Number(twitchData?.total);
+
+    return Number.isFinite(total)
+        ? total
+        : 0;
 }
 
 
 /**
- * Vérifie si un utilisateur suit une chaîne.
+ * Vérifie si un utilisateur précis suit la chaîne.
  *
- * Cette fonction nécessite normalement un User Access Token
- * avec le scope moderator:read:followers.
+ * Cette fonction nécessite un User Access Token ayant
+ * le scope moderator:read:followers.
  *
  * @param {string} channelLogin
  * @param {string} followerUserId
@@ -399,7 +420,8 @@ export async function checkUserFollowsChannel(
         });
 
     const follower =
-        twitchData?.data?.[0];
+        twitchData?.data?.[0] ||
+        null;
 
     return {
         follows:
@@ -418,5 +440,4 @@ export async function checkUserFollowsChannel(
                 ? formatFollower(follower)
                 : null
     };
-
 }

@@ -18,6 +18,9 @@ const TWITCH_STREAMS_URL =
     "https://api.twitch.tv/helix/streams";
 
 const DEFAULT_CHANNEL =
+    process.env.TWITCH_CHANNEL_LOGIN
+        ?.trim()
+        .toLowerCase() ||
     "couaxia";
 
 

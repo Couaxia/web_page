@@ -19,57 +19,163 @@ const TWITCH_GAMES_URL =
 
 
 /* =========================================================
+   OUTILS
+========================================================= */
+
+/**
+ * Lit proprement une réponse Twitch.
+ *
+ * @param {Response} response
+ * @returns {Promise<object>}
+ */
+async function readTwitchResponse(response) {
+    const contentType =
+        response.headers.get(
+            "content-type"
+        ) || "";
+
+    if (
+        contentType.includes(
+            "application/json"
+        )
+    ) {
+        return response.json();
+    }
+
+    const text =
+        await response.text();
+
+    if (!text) {
+        return {};
+    }
+
+    try {
+        return JSON.parse(text);
+    } catch {
+        return {
+            message:
+                text
+        };
+    }
+}
+
+
+/**
+ * Retourne le message d’erreur envoyé par Twitch.
+ *
+ * @param {object} data
+ * @param {number} status
+ * @returns {string}
+ */
+function getTwitchErrorMessage(
+    data,
+    status
+) {
+    return String(
+        data?.message ||
+        data?.error ||
+        `Erreur HTTP ${status}`
+    );
+}
+
+
+/* =========================================================
    REQUÊTE TWITCH
 ========================================================= */
 
-async function fetchGame(gameId) {
+/**
+ * Exécute une requête vers l’endpoint Twitch Games.
+ *
+ * @param {string} gameId
+ * @param {boolean} forceRefresh
+ * @returns {Promise<Response>}
+ */
+async function requestGame(
+    gameId,
+    forceRefresh = false
+) {
+    const url =
+        new URL(
+            TWITCH_GAMES_URL
+        );
 
-    if (!gameId) {
+    url.searchParams.set(
+        "id",
+        gameId
+    );
+
+    const headers =
+        await getTwitchApiHeaders({
+            forceRefresh
+        });
+
+    return fetch(
+        url.toString(),
+        {
+            method:
+                "GET",
+
+            headers,
+
+            cache:
+                "no-store"
+        }
+    );
+}
+
+
+/**
+ * Récupère une catégorie Twitch brute.
+ *
+ * Une seconde requête est effectuée lorsque le jeton
+ * d’accès a expiré et que Twitch répond avec un code 401.
+ *
+ * @param {string} gameId
+ * @returns {Promise<object|null>}
+ */
+async function fetchGame(gameId) {
+    const normalizedGameId =
+        String(
+            gameId ?? ""
+        ).trim();
+
+    if (!normalizedGameId) {
         return null;
     }
 
-    const url = new URL(TWITCH_GAMES_URL);
-
-    url.searchParams.set("id", gameId);
-
-    let headers =
-        await getTwitchApiHeaders();
-
     let response =
-        await fetch(url.toString(), {
-            method: "GET",
-            headers,
-            cache: "no-store"
-        });
+        await requestGame(
+            normalizedGameId
+        );
 
-    if (response.status === 401) {
-
+    if (
+        response.status === 401
+    ) {
         clearTwitchAccessToken();
 
-        headers =
-            await getTwitchApiHeaders({
-                forceRefresh: true
-            });
-
         response =
-            await fetch(url.toString(), {
-                method: "GET",
-                headers,
-                cache: "no-store"
-            });
+            await requestGame(
+                normalizedGameId,
+                true
+            );
     }
 
+    const data =
+        await readTwitchResponse(
+            response
+        );
+
     if (!response.ok) {
-
-        const error =
-            await response.text();
-
         throw new Error(
-            `Erreur Twitch Games (${response.status}) : ${error}`
+            `Erreur Twitch Games (${response.status}) : ` +
+            getTwitchErrorMessage(
+                data,
+                response.status
+            )
         );
     }
 
-    return response.json();
+    return data;
 }
 
 
@@ -77,25 +183,72 @@ async function fetchGame(gameId) {
    FORMATAGE
 ========================================================= */
 
-function formatBoxArt(url) {
-    if (!url) {
+/**
+ * Remplace les dimensions dynamiques d’une jaquette Twitch.
+ *
+ * @param {unknown} value
+ * @param {number} width
+ * @param {number} height
+ * @returns {string|null}
+ */
+function formatBoxArt(
+    value,
+    width = 285,
+    height = 380
+) {
+    if (!value) {
         return null;
     }
-    return url
-        .replace("{width}", "512")
-        .replace("{height}", "512");
+
+    return String(value)
+        .replaceAll(
+            "{width}",
+            String(width)
+        )
+        .replaceAll(
+            "{height}",
+            String(height)
+        )
+        .replaceAll(
+            "%{width}",
+            String(width)
+        )
+        .replaceAll(
+            "%{height}",
+            String(height)
+        );
 }
 
+
+/**
+ * Normalise une catégorie Twitch.
+ *
+ * @param {object} game
+ * @returns {{
+ *   found: true,
+ *   id: string,
+ *   name: string,
+ *   boxArtUrl: string|null
+ * }}
+ */
 function formatGame(game) {
     return {
-        found: true,
+        found:
+            true,
+
         id:
-            game.id,
+            String(
+                game?.id ?? ""
+            ),
+
         name:
-            game.name,
+            String(
+                game?.name ?? ""
+            ),
+
         boxArtUrl:
             formatBoxArt(
-                game.box_art_url
+                game?.box_art_url
             )
     };
 }
@@ -106,27 +259,48 @@ function formatGame(game) {
 ========================================================= */
 
 /**
- * Retourne les informations
- * d'une catégorie Twitch.
+ * Retourne les informations d’une catégorie Twitch.
+ *
+ * @param {string|number} gameId
+ * @returns {Promise<object|null>}
  */
 export async function getGame(gameId) {
-    if (!gameId) {
+    const normalizedGameId =
+        String(
+            gameId ?? ""
+        ).trim();
+
+    if (!normalizedGameId) {
         return null;
     }
+
     const data =
-        await fetchGame(gameId);
+        await fetchGame(
+            normalizedGameId
+        );
+
     const game =
-        data?.data?.[0];
+        Array.isArray(data?.data)
+            ? data.data[0]
+            : null;
 
     if (!game) {
         return {
-            found: false,
-            id: gameId,
-            name: null,
-            boxArtUrl: null
+            found:
+                false,
+
+            id:
+                normalizedGameId,
+
+            name:
+                null,
+
+            boxArtUrl:
+                null
         };
     }
 
-    return formatGame(game);
-
+    return formatGame(
+        game
+    );
 }

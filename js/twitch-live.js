@@ -9,19 +9,15 @@ document.addEventListener("DOMContentLoaded", () => {
         "couaxia";
 
     /*
-     * Ta fonction Vercel se trouve actuellement ici :
+     * La fonction Vercel se trouve dans :
      *
-     * WEB_PAGE/twitch/api/twitch-status.js
+     * WEB_PAGE/api/twitch-status.js
      *
-     * L’URL publique correspond donc à :
+     * Son URL publique est :
      *
-     * /twitch/api/twitch-status
-     *
-     * La deuxième route est conservée comme solution de secours
-     * si tu déplaces plus tard twitch-status.js dans /api.
+     * /api/twitch-status
      */
     const TWITCH_API_URLS = [
-        "/twitch/api/twitch-status",
         "/api/twitch-status"
     ];
 
@@ -222,8 +218,15 @@ document.addEventListener("DOMContentLoaded", () => {
     /**
      * Formate les miniatures Twitch.
      *
-     * Twitch renvoie parfois :
-     * %{width} et %{height}
+     * Twitch peut renvoyer :
+     *
+     * %{width}
+     * %{height}
+     *
+     * ou :
+     *
+     * {width}
+     * {height}
      *
      * @param {unknown} value
      * @param {number} width
@@ -242,6 +245,14 @@ document.addEventListener("DOMContentLoaded", () => {
             )
             .replaceAll(
                 "%{height}",
+                String(height)
+            )
+            .replaceAll(
+                "{width}",
+                String(width)
+            )
+            .replaceAll(
+                "{height}",
                 String(height)
             );
     }
@@ -298,208 +309,1319 @@ document.addEventListener("DOMContentLoaded", () => {
     /* =========================================================
        NORMALISATION DE LA RÉPONSE API
     ========================================================= */
-
-    /**
+        /**
      * Récupère le nombre total de followers.
      *
-     * Cette fonction accepte plusieurs structures possibles :
-     *
-     * followerCount: 794
-     *
-     * followerCount: {
-     *     total: 794
-     * }
-     *
-     * followerCount: {
-     *     followerCount: 794
-     * }
+     * La fonction accepte plusieurs structures possibles
+     * afin de rester compatible avec l’API Vercel.
      *
      * @param {object} data
      * @returns {number}
      */
     function getFollowerTotal(data) {
-        const followerValue =
-            data?.followerCount;
+        return toNumber(
+            firstDefined(
+                data?.followers,
+                data?.followersTotal,
+                data?.followers?.total,
+                data?.resources?.followers?.total,
+                data?.followersResult?.total,
+                0
+            )
+        );
+    }
 
+
+    /**
+     * Récupère le nombre de spectateurs actuels.
+     *
+     * @param {object} data
+     * @returns {number}
+     */
+    function getViewerTotal(data) {
+        return toNumber(
+            firstDefined(
+                data?.viewerCount,
+                data?.viewer_count,
+                data?.stream?.viewerCount,
+                data?.stream?.viewer_count,
+                data?.stream?.viewers,
+                0
+            )
+        );
+    }
+
+
+    /**
+     * Détermine si la chaîne est actuellement en direct.
+     *
+     * La valeur peut être :
+     *
+     * true
+     * false
+     * 1
+     * 0
+     * "1"
+     * "0"
+     * "true"
+     * "false"
+     *
+     * @param {object} data
+     * @returns {boolean}
+     */
+    function getLiveStatus(data) {
+        const value =
+            firstDefined(
+                data?.live,
+                data?.isLive,
+                data?.stream?.live,
+                data?.stream?.isLive,
+                data?.stream?.is_live,
+                false
+            );
+
+        return (
+            value === true ||
+            value === 1 ||
+            value === "1" ||
+            String(value)
+                .toLowerCase() ===
+                "true"
+        );
+    }
+
+
+    /**
+     * Récupère le titre du stream.
+     *
+     * @param {object} data
+     * @returns {string}
+     */
+    function getStreamTitle(data) {
+        return String(
+            firstDefined(
+                data?.title,
+                data?.streamTitle,
+                data?.stream?.title,
+                data?.channel?.title,
+                ""
+            )
+        );
+    }
+
+
+    /**
+     * Récupère le nom du jeu ou de la catégorie.
+     *
+     * @param {object} data
+     * @returns {string}
+     */
+    function getGameName(data) {
+        return String(
+            firstDefined(
+                data?.gameName,
+                data?.game_name,
+                data?.stream?.gameName,
+                data?.stream?.game_name,
+                data?.game?.name,
+                ""
+            )
+        );
+    }
+
+
+    /**
+     * Récupère la langue du stream.
+     *
+     * @param {object} data
+     * @returns {string}
+     */
+    function getStreamLanguage(data) {
+        return String(
+            firstDefined(
+                data?.language,
+                data?.streamLanguage,
+                data?.stream?.language,
+                data?.stream?.broadcasterLanguage,
+                ""
+            )
+        ).toUpperCase();
+    }
+
+
+    /**
+     * Récupère la date de début du live.
+     *
+     * @param {object} data
+     * @returns {string}
+     */
+    function getStartedAt(data) {
+        return String(
+            firstDefined(
+                data?.startedAt,
+                data?.started_at,
+                data?.stream?.startedAt,
+                data?.stream?.started_at,
+                ""
+            )
+        );
+    }
+
+
+    /**
+     * Récupère l’URL de la miniature du live.
+     *
+     * @param {object} data
+     * @returns {string}
+     */
+    function getStreamThumbnail(data) {
+        const thumbnail =
+            firstDefined(
+                data?.thumbnailUrl,
+                data?.thumbnail_url,
+                data?.stream?.thumbnailUrl,
+                data?.stream?.thumbnail_url,
+                ""
+            );
+
+        return formatThumbnail(
+            thumbnail,
+            1280,
+            720
+        );
+    }
+
+
+    /**
+     * Récupère les clips depuis la réponse API.
+     *
+     * Important :
+     *
+     * data.clips peut être directement un tableau,
+     * mais peut également être un objet contenant
+     * lui-même une propriété clips.
+     *
+     * @param {object} data
+     * @returns {Array<object>}
+     */
+    function getClips(data) {
         const candidates = [
-            followerValue,
-            followerValue?.total,
-            followerValue?.count,
-            followerValue?.followerCount,
-            data?.followers,
-            data?.followers?.total,
-            data?.followers?.count,
-            data?.user?.followers,
-            data?.user?.followerCount
+            data?.clips?.clips,
+            data?.resources?.clips?.clips,
+            data?.clipsResult?.clips,
+            data?.clips
         ];
 
         for (
             const candidate
             of candidates
         ) {
-            const number =
-                Number(candidate);
-
             if (
-                Number.isFinite(number) &&
-                number >= 0
+                Array.isArray(
+                    candidate
+                )
             ) {
-                return number;
+                return candidate;
             }
         }
 
-        return 0;
+        return [];
     }
 
 
     /**
-     * Récupère les clips.
+     * Récupère les vidéos depuis la réponse API.
      *
-     * @param {object} data
-     * @returns {Array<object>}
-     */
-    function getClips(data) {
-        return getArray(
-            firstDefined(
-                data?.clips,
-                data?.resources
-                    ?.clips
-                    ?.clips,
-                data?.clipsResult
-                    ?.clips
-            )
-        );
-    }
-
-
-    /**
-     * Récupère les vidéos.
+     * Comme pour les clips, la réponse peut contenir :
+     *
+     * videos: [...]
+     *
+     * ou :
+     *
+     * videos: {
+     *     videos: [...]
+     * }
      *
      * @param {object} data
      * @returns {Array<object>}
      */
     function getVideos(data) {
-        return getArray(
+        const candidates = [
+            data?.videos?.videos,
+            data?.resources?.videos?.videos,
+            data?.videosResult?.videos,
+            data?.videos
+        ];
+
+        for (
+            const candidate
+            of candidates
+        ) {
+            if (
+                Array.isArray(
+                    candidate
+                )
+            ) {
+                return candidate;
+            }
+        }
+
+        return [];
+    }
+
+
+    /**
+     * Récupère le message général renvoyé par l’API.
+     *
+     * @param {object} data
+     * @returns {string}
+     */
+    function getApiMessage(data) {
+        return String(
             firstDefined(
-                data?.videos,
-                data?.resources
-                    ?.videos
-                    ?.videos,
-                data?.videosResult
-                    ?.videos
+                data?.message,
+                data?.statusMessage,
+                data?.error?.message,
+                ""
             )
         );
     }
 
 
     /**
-     * Récupère le statut du live.
+     * Récupère le nom d’affichage de la chaîne.
      *
      * @param {object} data
-     * @returns {boolean}
+     * @returns {string}
      */
-    function getLiveStatus(data) {
-        return Boolean(
+    function getDisplayName(data) {
+        return String(
             firstDefined(
-                data?.live,
-                data?.stream?.live,
-                data?.stream?.isLive,
-                false
+                data?.displayName,
+                data?.display_name,
+                data?.user?.displayName,
+                data?.user?.display_name,
+                data?.channel?.displayName,
+                data?.channel?.display_name,
+                TWITCH_CHANNEL
+            )
+        );
+    }
+
+
+    /**
+     * Récupère la photo de profil Twitch.
+     *
+     * @param {object} data
+     * @returns {string}
+     */
+    function getProfileImage(data) {
+        return String(
+            firstDefined(
+                data?.profileImageUrl,
+                data?.profile_image_url,
+                data?.user?.profileImageUrl,
+                data?.user?.profile_image_url,
+                data?.channel?.profileImageUrl,
+                ""
             )
         );
     }
 
 
     /* =========================================================
-       LECTEUR TWITCH PERMANENT
+       GESTION DES TEXTES DE L’INTERFACE
     ========================================================= */
 
     /**
-     * Retourne le domaine autorisé pour l’intégration Twitch.
+     * Modifie le texte d’un élément.
      *
-     * @returns {string}
+     * @param {HTMLElement|null} element
+     * @param {unknown} value
      */
-    function getEmbedParent() {
-        return (
-            window.location.hostname ||
-            "localhost"
+    function setText(
+        element,
+        value
+    ) {
+        if (!element) {
+            return;
+        }
+
+        element.textContent =
+            String(value ?? "");
+    }
+
+
+    /**
+     * Affiche un message provenant de l’API.
+     *
+     * @param {string} message
+     * @param {"info"|"success"|"error"} type
+     */
+    function showApiMessage(
+        message,
+        type = "info"
+    ) {
+        if (!apiMessage) {
+            return;
+        }
+
+        if (!message) {
+            hideElement(
+                apiMessage
+            );
+
+            apiMessage.textContent =
+                "";
+
+            apiMessage.classList.remove(
+                "is-success",
+                "is-error",
+                "is-info"
+            );
+
+            return;
+        }
+
+        apiMessage.textContent =
+            message;
+
+        apiMessage.classList.remove(
+            "is-success",
+            "is-error",
+            "is-info"
+        );
+
+        apiMessage.classList.add(
+            `is-${type}`
+        );
+
+        showElement(
+            apiMessage
+        );
+    }
+        /* =========================================================
+       GESTION VISUELLE DU STATUT TWITCH
+    ========================================================= */
+
+    /**
+     * Met à jour le badge indiquant si la chaîne est en direct.
+     *
+     * @param {boolean} isLive
+     */
+    function updateStatusPill(isLive) {
+        if (statusPill) {
+            statusPill.classList.toggle(
+                "is-live",
+                isLive
+            );
+
+            statusPill.classList.toggle(
+                "is-offline",
+                !isLive
+            );
+        }
+
+        setText(
+            statusLabel,
+            isLive
+                ? "En direct"
+                : "Hors ligne"
         );
     }
 
 
     /**
-     * Crée l’adresse du lecteur Twitch.
+     * Met à jour les statistiques principales.
      *
-     * Le paramètre parent est obligatoire.
+     * @param {object} data
+     */
+    function updateStatistics(data) {
+        const followers =
+            getFollowerTotal(data);
+
+        const viewers =
+            getViewerTotal(data);
+
+        const language =
+            getStreamLanguage(data);
+
+        setText(
+            followersCount,
+            formatNumber(followers)
+        );
+
+        setText(
+            viewerCount,
+            formatNumber(viewers)
+        );
+
+        setText(
+            streamLanguage,
+            language || "—"
+        );
+    }
+
+
+    /**
+     * Met à jour les informations textuelles du stream.
+     *
+     * @param {object} data
+     * @param {boolean} isLive
+     */
+    function updateStreamInformation(
+        data,
+        isLive
+    ) {
+        const displayName =
+            getDisplayName(data);
+
+        const title =
+            getStreamTitle(data);
+
+        const category =
+            getGameName(data);
+
+        const streamStartedAt =
+            getStartedAt(data);
+
+        if (isLive) {
+            setText(
+                streamHeading,
+                title ||
+                    `${displayName} est en direct`
+            );
+
+            setText(
+                streamSubtitle,
+                category
+                    ? `En direct sur ${category}`
+                    : `${displayName} diffuse actuellement`
+            );
+
+            setText(
+                gameName,
+                category || "Non renseigné"
+            );
+
+            setText(
+                startedAt,
+                streamStartedAt
+                    ? formatDateTime(
+                        streamStartedAt
+                    )
+                    : "—"
+            );
+
+            return;
+        }
+
+        setText(
+            streamHeading,
+            `${displayName} est hors ligne`
+        );
+
+        setText(
+            streamSubtitle,
+            "Retrouvez les derniers clips et les dernières vidéos."
+        );
+
+        setText(
+            gameName,
+            category || "Hors ligne"
+        );
+
+        setText(
+            startedAt,
+            "—"
+        );
+    }
+
+
+    /**
+     * Construit l’URL du lecteur Twitch.
+     *
+     * Twitch exige le paramètre parent correspondant
+     * au nom de domaine qui affiche le lecteur.
      *
      * @returns {string}
      */
-    function createPlayerUrl() {
+    function createTwitchPlayerUrl() {
+        const parent =
+            window.location.hostname ||
+            "localhost";
+
         const parameters =
             new URLSearchParams({
                 channel:
                     TWITCH_CHANNEL,
 
-                parent:
-                    getEmbedParent(),
+                parent,
 
                 autoplay:
-                    "false",
+                    "true",
 
                 muted:
                     "true"
             });
 
         return (
-            "https://player.twitch.tv/" +
-            `?${parameters.toString()}`
+            "https://player.twitch.tv/?" +
+            parameters.toString()
         );
     }
 
 
     /**
-     * Initialise le lecteur.
+     * Affiche le lecteur Twitch lorsque la chaîne est en direct.
      *
-     * Contrairement à l’ancienne version, le lecteur n’est plus
-     * supprimé lorsque Couaxia est hors ligne.
+     * @param {boolean} isLive
+     * @param {object} data
      */
-    function initializePlayer() {
+    function updatePlayer(
+        isLive,
+        data
+    ) {
         if (!player) {
             return;
         }
 
-        const playerUrl =
-            createPlayerUrl();
+        if (isLive) {
+            const currentSource =
+                player.getAttribute(
+                    "src"
+                );
 
-        if (
-            player.getAttribute("src") !==
-            playerUrl
-        ) {
-            player.src =
-                playerUrl;
+            const playerUrl =
+                createTwitchPlayerUrl();
+
+            if (
+                currentSource !==
+                playerUrl
+            ) {
+                player.setAttribute(
+                    "src",
+                    playerUrl
+                );
+            }
+
+            player.setAttribute(
+                "title",
+                `Live Twitch de ${getDisplayName(data)}`
+            );
+
+            showElement(
+                player
+            );
+
+            if (playerBadge) {
+                playerBadge.classList.add(
+                    "is-live"
+                );
+
+                playerBadge.classList.remove(
+                    "is-offline"
+                );
+            }
+
+            setText(
+                playerBadge,
+                "LIVE"
+            );
+
+            return;
         }
+
+        player.removeAttribute(
+            "src"
+        );
+
+        hideElement(
+            player
+        );
+
+        if (playerBadge) {
+            playerBadge.classList.remove(
+                "is-live"
+            );
+
+            playerBadge.classList.add(
+                "is-offline"
+            );
+        }
+
+        setText(
+            playerBadge,
+            "HORS LIGNE"
+        );
     }
 
+
+    /**
+     * Construit une image de remplacement lorsque Twitch
+     * ne renvoie aucune miniature.
+     *
+     * @param {string} label
+     * @returns {string}
+     */
+    function createFallbackThumbnail(label) {
+        const safeLabel =
+            encodeURIComponent(
+                label || "Couaxia"
+            );
+
+        return (
+            "https://placehold.co/" +
+            `640x360?text=${safeLabel}`
+        );
+    }
+
+
+    /**
+     * Récupère l’URL principale d’un clip ou d’une vidéo.
+     *
+     * @param {object} media
+     * @returns {string}
+     */
+    function getMediaUrl(media) {
+        return String(
+            firstDefined(
+                media?.url,
+                media?.watchUrl,
+                media?.watch_url,
+                media?.embedUrl,
+                media?.embed_url,
+                "#"
+            )
+        );
+    }
+
+
+    /**
+     * Récupère le titre d’un clip ou d’une vidéo.
+     *
+     * @param {object} media
+     * @returns {string}
+     */
+    function getMediaTitle(media) {
+        return String(
+            firstDefined(
+                media?.title,
+                media?.name,
+                "Contenu Twitch"
+            )
+        );
+    }
+
+
+    /**
+     * Récupère l’auteur d’un clip ou d’une vidéo.
+     *
+     * @param {object} media
+     * @returns {string}
+     */
+    function getMediaAuthor(media) {
+        return String(
+            firstDefined(
+                media?.creatorName,
+                media?.creator_name,
+                media?.userName,
+                media?.user_name,
+                media?.broadcasterName,
+                media?.broadcaster_name,
+                TWITCH_CHANNEL
+            )
+        );
+    }
+
+
+    /**
+     * Récupère la miniature d’un média Twitch.
+     *
+     * @param {object} media
+     * @returns {string}
+     */
+    function getMediaThumbnail(media) {
+        const title =
+            getMediaTitle(media);
+
+        const thumbnail =
+            firstDefined(
+                media?.thumbnailUrl,
+                media?.thumbnail_url,
+                media?.thumbnail,
+                ""
+            );
+
+        const formattedThumbnail =
+            formatThumbnail(
+                thumbnail,
+                640,
+                360
+            );
+
+        return (
+            formattedThumbnail ||
+            createFallbackThumbnail(
+                title
+            )
+        );
+    }
+
+
+    /**
+     * Récupère la date de publication d’un média.
+     *
+     * @param {object} media
+     * @returns {string}
+     */
+    function getMediaDate(media) {
+        return String(
+            firstDefined(
+                media?.createdAt,
+                media?.created_at,
+                media?.publishedAt,
+                media?.published_at,
+                ""
+            )
+        );
+    }
+
+
+    /**
+     * Récupère la durée affichable d’une vidéo.
+     *
+     * @param {object} media
+     * @returns {string}
+     */
+    function getMediaDuration(media) {
+        return String(
+            firstDefined(
+                media?.formattedDuration,
+                media?.duration,
+                ""
+            )
+        );
+    }
+
+
+    /**
+     * Récupère le nombre de vues d’un média.
+     *
+     * @param {object} media
+     * @returns {number}
+     */
+    function getMediaViews(media) {
+        return toNumber(
+            firstDefined(
+                media?.viewCount,
+                media?.view_count,
+                media?.views,
+                0
+            )
+        );
+    }
+
+
     /* =========================================================
-       APPEL DE L’API
+       CRÉATION DES CARTES CLIPS ET VIDÉOS
     ========================================================= */
 
     /**
-     * Essaie les routes API dans l’ordre.
+     * Crée une carte HTML pour un clip ou une vidéo.
+     *
+     * @param {object} media
+     * @param {"clip"|"video"} type
+     * @returns {HTMLElement}
+     */
+    function createMediaCard(
+        media,
+        type
+    ) {
+        const article =
+            document.createElement(
+                "article"
+            );
+
+        article.className =
+            `twitch-media-card twitch-${type}-card`;
+
+        const url =
+            getMediaUrl(media);
+
+        const title =
+            getMediaTitle(media);
+
+        const thumbnail =
+            getMediaThumbnail(media);
+
+        const author =
+            getMediaAuthor(media);
+
+        const date =
+            getMediaDate(media);
+
+        const duration =
+            getMediaDuration(media);
+
+        const views =
+            getMediaViews(media);
+
+        article.innerHTML = `
+            <a
+                class="twitch-media-link"
+                href="${escapeHtml(url)}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <div class="twitch-media-thumbnail-wrapper">
+                    <img
+                        class="twitch-media-thumbnail"
+                        src="${escapeHtml(thumbnail)}"
+                        alt="${escapeHtml(title)}"
+                        loading="lazy"
+                    >
+
+                    ${
+                        duration
+                            ? `
+                                <span class="twitch-media-duration">
+                                    ${escapeHtml(duration)}
+                                </span>
+                            `
+                            : ""
+                    }
+                </div>
+
+                <div class="twitch-media-content">
+                    <h3 class="twitch-media-title">
+                        ${escapeHtml(title)}
+                    </h3>
+
+                    <p class="twitch-media-author">
+                        Par ${escapeHtml(author)}
+                    </p>
+
+                    <div class="twitch-media-details">
+                        <span>
+                            ${
+                                views > 0
+                                    ? `${escapeHtml(formatNumber(views))} vues`
+                                    : "Twitch"
+                            }
+                        </span>
+
+                        <span>
+                            ${
+                                date
+                                    ? escapeHtml(formatDateTime(date))
+                                    : ""
+                            }
+                        </span>
+                    </div>
+                </div>
+            </a>
+        `;
+
+        const image =
+            article.querySelector(
+                ".twitch-media-thumbnail"
+            );
+
+        image?.addEventListener(
+            "error",
+            () => {
+                image.src =
+                    createFallbackThumbnail(
+                        title
+                    );
+            },
+            {
+                once:
+                    true
+            }
+        );
+
+        return article;
+    }
+        /**
+     * Affiche une liste de clips ou de vidéos.
+     *
+     * @param {HTMLElement|null} container
+     * @param {Array<object>} mediaList
+     * @param {"clip"|"video"} type
+     */
+    function renderMediaList(
+        container,
+        mediaList,
+        type
+    ) {
+        if (!container) {
+            return;
+        }
+
+        container.innerHTML =
+            "";
+
+        const safeMediaList =
+            getArray(mediaList);
+
+        if (
+            safeMediaList.length === 0
+        ) {
+            const emptyMessage =
+                document.createElement(
+                    "p"
+                );
+
+            emptyMessage.className =
+                "twitch-media-empty";
+
+            emptyMessage.textContent =
+                type === "clip"
+                    ? "Aucun clip disponible pour le moment."
+                    : "Aucune vidéo disponible pour le moment.";
+
+            container.appendChild(
+                emptyMessage
+            );
+
+            return;
+        }
+
+        const fragment =
+            document.createDocumentFragment();
+
+        safeMediaList.forEach(
+            (media) => {
+                const card =
+                    createMediaCard(
+                        media,
+                        type
+                    );
+
+                fragment.appendChild(
+                    card
+                );
+            }
+        );
+
+        container.appendChild(
+            fragment
+        );
+    }
+
+
+    /**
+     * Affiche les clips présents dans la réponse API.
+     *
+     * @param {object} data
+     */
+    function renderClips(data) {
+        const clips =
+            getClips(data);
+
+        renderMediaList(
+            clipsList,
+            clips,
+            "clip"
+        );
+    }
+
+
+    /**
+     * Affiche les vidéos présentes dans la réponse API.
+     *
+     * @param {object} data
+     */
+    function renderVideos(data) {
+        const videos =
+            getVideos(data);
+
+        renderMediaList(
+            videosList,
+            videos,
+            "video"
+        );
+    }
+
+
+    /* =========================================================
+       MISE À JOUR COMPLÈTE DE L’INTERFACE
+    ========================================================= */
+
+    /**
+     * Met à jour toute l’interface avec les données Twitch.
+     *
+     * @param {object} data
+     */
+    function updateStatusDisplay(data) {
+        const isLive =
+            getLiveStatus(data);
+
+        updateStatusPill(
+            isLive
+        );
+
+        updateStatistics(
+            data
+        );
+
+        updateStreamInformation(
+            data,
+            isLive
+        );
+
+        updatePlayer(
+            isLive,
+            data
+        );
+
+        renderClips(
+            data
+        );
+
+        renderVideos(
+            data
+        );
+
+        const message =
+            getApiMessage(data);
+
+        if (message) {
+            showApiMessage(
+                message,
+                "info"
+            );
+        } else {
+            showApiMessage(
+                "",
+                "info"
+            );
+        }
+    }
+
+
+    /**
+     * Affiche une interface temporaire pendant le chargement.
+     */
+    function showLoadingState() {
+        if (refreshButton) {
+            refreshButton.disabled =
+                true;
+
+            refreshButton.classList.add(
+                "is-loading"
+            );
+
+            refreshButton.setAttribute(
+                "aria-busy",
+                "true"
+            );
+        }
+
+        showApiMessage(
+            "Chargement des informations Twitch…",
+            "info"
+        );
+    }
+
+
+    /**
+     * Retire l’état de chargement.
+     */
+    function hideLoadingState() {
+        if (refreshButton) {
+            refreshButton.disabled =
+                false;
+
+            refreshButton.classList.remove(
+                "is-loading"
+            );
+
+            refreshButton.removeAttribute(
+                "aria-busy"
+            );
+        }
+    }
+
+
+    /**
+     * Affiche un état d’erreur dans l’interface.
+     *
+     * @param {unknown} error
+     */
+    function showErrorState(error) {
+        const message =
+            error instanceof Error
+                ? error.message
+                : String(
+                    error ||
+                    "Une erreur inconnue est survenue."
+                );
+
+        console.error(
+            "[Twitch]",
+            error
+        );
+
+        updateStatusPill(
+            false
+        );
+
+        setText(
+            viewerCount,
+            "0"
+        );
+
+        setText(
+            streamLanguage,
+            "—"
+        );
+
+        setText(
+            streamHeading,
+            "Informations Twitch indisponibles"
+        );
+
+        setText(
+            streamSubtitle,
+            "Impossible de contacter le serveur Twitch pour le moment."
+        );
+
+        setText(
+            gameName,
+            "—"
+        );
+
+        setText(
+            startedAt,
+            "—"
+        );
+
+        showApiMessage(
+            message,
+            "error"
+        );
+    }
+
+
+    /* =========================================================
+       COMMUNICATION AVEC L’API VERCEL
+    ========================================================= */
+
+    /**
+     * Construit une URL API avec le nom de la chaîne.
+     *
+     * @param {string} endpoint
+     * @returns {string}
+     */
+    function createApiUrl(endpoint) {
+        const url =
+            new URL(
+                endpoint,
+                window.location.origin
+            );
+
+        url.searchParams.set(
+            "channel",
+            TWITCH_CHANNEL
+        );
+
+        /*
+         * Empêche le navigateur de réutiliser une ancienne
+         * réponse mise en cache.
+         */
+        url.searchParams.set(
+            "_",
+            String(Date.now())
+        );
+
+        return url.toString();
+    }
+
+
+    /**
+     * Lit proprement la réponse JSON de l’API.
+     *
+     * @param {Response} response
+     * @returns {Promise<object>}
+     */
+    async function readApiResponse(
+        response
+    ) {
+        const contentType =
+            response.headers.get(
+                "content-type"
+            ) || "";
+
+        let data = {};
+
+        if (
+            contentType.includes(
+                "application/json"
+            )
+        ) {
+            data =
+                await response.json();
+        } else {
+            const text =
+                await response.text();
+
+            if (text) {
+                try {
+                    data =
+                        JSON.parse(text);
+                } catch {
+                    data = {
+                        message:
+                            text
+                    };
+                }
+            }
+        }
+
+        if (!response.ok) {
+            const errorMessage =
+                firstDefined(
+                    data?.error?.message,
+                    data?.error,
+                    data?.message,
+                    `Erreur HTTP ${response.status}`
+                );
+
+            throw new Error(
+                String(errorMessage)
+            );
+        }
+
+        return (
+            data &&
+            typeof data === "object"
+                ? data
+                : {}
+        );
+    }
+
+
+    /**
+     * Essaie les différentes URL API configurées.
      *
      * @returns {Promise<object>}
      */
     async function fetchTwitchData() {
-        let lastError =
-            new Error(
-                "Aucune route Twitch n’a répondu."
-            );
+        let lastError = null;
 
         for (
-            const apiUrl
+            const endpoint
             of TWITCH_API_URLS
         ) {
             try {
+                const apiUrl =
+                    createApiUrl(
+                        endpoint
+                    );
+
                 const response =
                     await fetch(
                         apiUrl,
@@ -517,585 +1639,57 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     );
 
-                if (!response.ok) {
-                    throw new Error(
-                        `Erreur HTTP ${response.status} sur ${apiUrl}`
-                    );
-                }
-
-                const data =
-                    await response.json();
-
-                if (
-                    !data ||
-                    typeof data !==
-                    "object"
-                ) {
-                    throw new Error(
-                        `Réponse JSON invalide sur ${apiUrl}`
-                    );
-                }
-
-                if (
-                    data.success ===
-                    false
-                ) {
-                    throw new Error(
-                        data.error ||
-                        "L’API Twitch a renvoyé une erreur."
-                    );
-                }
-
-                console.info(
-                    `[Twitch] Route utilisée : ${apiUrl}`
+                return await readApiResponse(
+                    response
                 );
-
-                return data;
             } catch (error) {
                 lastError =
-                    error instanceof Error
-                        ? error
-                        : new Error(
-                            String(error)
-                        );
+                    error;
 
                 console.warn(
-                    `[Twitch] Échec de ${apiUrl} :`,
-                    lastError.message
+                    `[Twitch] Échec de ${endpoint}`,
+                    error
                 );
             }
         }
 
-        throw lastError;
-    }
-
-
-    /* =========================================================
-       AFFICHAGE DU STATUT
-    ========================================================= */
-
-    /**
-     * Met à jour le statut visuel.
-     *
-     * @param {boolean} live
-     */
-    function displayStatus(live) {
-        if (live) {
-            if (statusPill) {
-                statusPill.dataset.status =
-                    "online";
-            }
-
-            if (statusLabel) {
-                statusLabel.textContent =
-                    "En direct";
-            }
-
-            if (playerBadge) {
-                playerBadge.dataset.status =
-                    "online";
-
-                playerBadge.textContent =
-                    "LIVE";
-            }
-
-            return;
-        }
-
-        if (statusPill) {
-            statusPill.dataset.status =
-                "offline";
-        }
-
-        if (statusLabel) {
-            statusLabel.textContent =
-                "Hors ligne";
-        }
-
-        if (playerBadge) {
-            playerBadge.dataset.status =
-                "offline";
-
-            playerBadge.textContent =
-                "Hors ligne";
-        }
-    }
-
-
-    /**
-     * Affiche toutes les informations du stream.
-     *
-     * @param {object} data
-     */
-    function displayChannelInformation(data) {
-        const live =
-            getLiveStatus(data);
-
-        const stream =
-            data?.stream &&
-            typeof data.stream ===
-            "object"
-                ? data.stream
-                : {};
-
-        const user =
-            data?.user &&
-            typeof data.user ===
-            "object"
-                ? data.user
-                : {};
-
-        const game =
-            data?.game &&
-            typeof data.game ===
-            "object"
-                ? data.game
-                : {};
-
-        displayStatus(live);
-
-        if (followersCount) {
-            followersCount.textContent =
-                formatNumber(
-                    getFollowerTotal(data)
-                );
-        }
-
-        if (viewerCount) {
-            viewerCount.textContent =
-                formatNumber(
-                    firstDefined(
-                        stream?.viewerCount,
-                        stream?.viewers,
-                        stream?.viewer_count,
-                        0
-                    )
-                );
-        }
-
-        if (streamLanguage) {
-            streamLanguage.textContent =
-                String(
-                    firstDefined(
-                        stream?.language,
-                        stream?.lang,
-                        "FR"
-                    )
-                ).toUpperCase();
-        }
-
-        if (gameName) {
-            gameName.textContent =
-                String(
-                    firstDefined(
-                        game?.name,
-                        stream?.gameName,
-                        stream?.game_name,
-                        "Aucune catégorie"
-                    )
-                );
-        }
-
-        if (startedAt) {
-            startedAt.textContent =
-                formatDateTime(
-                    firstDefined(
-                        stream?.startedAt,
-                        stream?.started_at
-                    )
-                );
-        }
-
-        if (live) {
-            if (streamHeading) {
-                streamHeading.textContent =
-                    String(
-                        firstDefined(
-                            stream?.title,
-                            "Couaxia est actuellement en direct"
-                        )
-                    );
-            }
-
-            if (streamSubtitle) {
-                const viewers =
-                    formatNumber(
-                        firstDefined(
-                            stream?.viewerCount,
-                            stream?.viewers,
-                            stream?.viewer_count,
-                            0
-                        )
-                    );
-
-                streamSubtitle.textContent =
-                    `${viewers} spectateur(s) actuellement sur le live.`;
-            }
-
-            return;
-        }
-
-        if (streamHeading) {
-            streamHeading.textContent =
-                "Couaxia est hors ligne";
-        }
-
-        if (streamSubtitle) {
-            streamSubtitle.textContent =
-                String(
-                    firstDefined(
-                        user?.description,
-                        "Le prochain live sera annoncé prochainement."
-                    )
-                );
-        }
-    }
-    /* =========================================================
-       CARTES DES CLIPS ET VIDÉOS
-    ========================================================= */
-
-    /**
-     * Crée une carte Twitch.
-     *
-     * @param {object} media
-     * @param {"clip"|"video"} type
-     * @returns {HTMLAnchorElement}
-     */
-    function createMediaCard(
-        media,
-        type
-    ) {
-        const isClip =
-            type === "clip";
-
-        const card =
-            document.createElement(
-                "a"
-            );
-
-        card.className =
-            "twitch-media-card";
-
-        card.target =
-            "_blank";
-
-        card.rel =
-            "noopener noreferrer";
-
-        const mediaId =
-            firstDefined(
-                media?.id,
-                media?.videoId,
-                media?.video_id
-            );
-
-        card.href =
-            String(
-                firstDefined(
-                    media?.url,
-                    media?.clipUrl,
-                    media?.clip_url,
-                    isClip
-                        ? `https://www.twitch.tv/${TWITCH_CHANNEL}/clips`
-                        : mediaId
-                            ? `https://www.twitch.tv/videos/${mediaId}`
-                            : `https://www.twitch.tv/${TWITCH_CHANNEL}/videos`
-                )
-            );
-
-        const title =
-            String(
-                firstDefined(
-                    media?.title,
-                    isClip
-                        ? "Clip Twitch de Couaxia"
-                        : "Vidéo Twitch de Couaxia"
-                )
-            );
-
-        const thumbnail =
-            formatThumbnail(
-                firstDefined(
-                    media?.thumbnailUrl,
-                    media?.thumbnail_url,
-                    media?.thumbnail
-                )
-            );
-
-        const creator =
-            String(
-                firstDefined(
-                    media?.creatorName,
-                    media?.creator_name,
-                    media?.userName,
-                    media?.user_name,
-                    "Couaxia"
-                )
-            );
-
-        const viewCount =
-            firstDefined(
-                media?.viewCount,
-                media?.view_count
-            );
-
-        const duration =
-            String(
-                firstDefined(
-                    media?.duration,
-                    media?.formattedDuration,
-                    viewCount !== undefined
-                        ? `${formatNumber(viewCount)} vues`
-                        : ""
-                )
-            );
-
-        const publishedAt =
-            firstDefined(
-                media?.publishedAt,
-                media?.published_at,
-                media?.createdAt,
-                media?.created_at
-            );
-
-        card.innerHTML = `
-            <div class="twitch-media-thumbnail">
-                ${
-                    thumbnail
-                        ? `
-                            <img
-                                src="${escapeHtml(thumbnail)}"
-                                alt="${escapeHtml(title)}"
-                                loading="lazy"
-                            >
-                        `
-                        : ""
-                }
-
-                <span
-                    class="twitch-media-play"
-                    aria-hidden="true"
-                >
-                    ▶
-                </span>
-
-                ${
-                    duration
-                        ? `
-                            <span class="twitch-media-duration">
-                                ${escapeHtml(duration)}
-                            </span>
-                        `
-                        : ""
-                }
-            </div>
-
-            <div class="twitch-media-content">
-                <h3>
-                    ${escapeHtml(title)}
-                </h3>
-
-                <p>
-                    ${
-                        isClip
-                            ? `Créé par ${escapeHtml(creator)}`
-                            : publishedAt
-                                ? `Publiée le ${escapeHtml(
-                                    formatDateTime(publishedAt)
-                                )}`
-                                : "Rediffusion Twitch"
-                    }
-                </p>
-            </div>
-        `;
-
-        return card;
-    }
-
-
-    /**
-     * Affiche une liste de clips ou de vidéos.
-     *
-     * @param {HTMLElement|null} container
-     * @param {Array<object>} mediaList
-     * @param {"clip"|"video"} type
-     */
-    function displayMediaList(
-        container,
-        mediaList,
-        type
-    ) {
-        if (!container) {
-            return;
-        }
-
-        container.replaceChildren();
-
-        if (
-            !Array.isArray(mediaList) ||
-            mediaList.length === 0
-        ) {
-            const emptyMessage =
-                document.createElement(
-                    "article"
-                );
-
-            emptyMessage.className =
-                "twitch-empty-message";
-
-            emptyMessage.textContent =
-                type === "clip"
-                    ? "Aucun clip n’est disponible pour le moment."
-                    : "Aucune vidéo n’est disponible pour le moment.";
-
-            container.appendChild(
-                emptyMessage
-            );
-
-            return;
-        }
-
-        const displayedMedia =
-            type === "clip"
-                ? mediaList
-                : mediaList.slice(0, 3);
-
-            displayedMedia.forEach((media) => {
-                container.appendChild(
-                    createMediaCard(
-                        media,
-                        type
-                    )
-                );
-            });
-    }
-
-
-    /* =========================================================
-       GESTION DES ERREURS
-    ========================================================= */
-
-    /**
-     * Affiche une erreur sans supprimer le lecteur.
-     *
-     * @param {unknown} error
-     */
-    function displayError(error) {
-        console.error(
-            "[Twitch] Erreur de chargement :",
-            error
-        );
-
-        if (statusPill) {
-            statusPill.dataset.status =
-                "error";
-        }
-
-        if (statusLabel) {
-            statusLabel.textContent =
-                "Informations indisponibles";
-        }
-
-        if (playerBadge) {
-            playerBadge.dataset.status =
-                "error";
-
-            playerBadge.textContent =
-                "Erreur API";
-        }
-
-        if (streamHeading) {
-            streamHeading.textContent =
-                "Le lecteur Twitch reste disponible";
-        }
-
-        if (streamSubtitle) {
-            streamSubtitle.textContent =
-                "Tu peux tout de même consulter la chaîne de Couaxia.";
-        }
-
-        showElement(
-            apiMessage
-        );
-
-        displayMediaList(
-            clipsList,
-            [],
-            "clip"
-        );
-
-        displayMediaList(
-            videosList,
-            [],
-            "video"
+        throw (
+            lastError ||
+            new Error(
+                "Aucune route Twitch n’est disponible."
+            )
         );
     }
-    /* =========================================================
-       CHARGEMENT PRINCIPAL
-    ========================================================= */
+
 
     /**
-     * Charge toutes les informations Twitch.
+     * Charge les données Twitch puis met à jour l’interface.
      */
     async function loadTwitchStatus() {
-        hideElement(
-            apiMessage
-        );
-
-        if (statusPill) {
-            statusPill.dataset.status =
-                "loading";
-        }
-
-        if (statusLabel) {
-            statusLabel.textContent =
-                "Vérification…";
-        }
-
-        if (playerBadge) {
-            playerBadge.dataset.status =
-                "loading";
-
-            playerBadge.textContent =
-                "Vérification";
-        }
+        showLoadingState();
 
         try {
             const data =
                 await fetchTwitchData();
 
-            console.log(
-                "[Twitch] Réponse complète :",
+            updateStatusDisplay(
                 data
-            );
-
-            displayChannelInformation(
-                data
-            );
-
-            displayMediaList(
-                clipsList,
-                getClips(data),
-                "clip"
-            );
-
-            displayMediaList(
-                videosList,
-                getVideos(data),
-                "video"
             );
         } catch (error) {
-            displayError(
+            showErrorState(
                 error
             );
+        } finally {
+            hideLoadingState();
         }
     }
-
-
-    /* =========================================================
-       ÉVÉNEMENTS
+        /* =========================================================
+       ÉVÉNEMENTS ET DÉMARRAGE
     ========================================================= */
 
+    /**
+     * Actualise manuellement les informations Twitch.
+     */
     refreshButton?.addEventListener(
         "click",
         () => {
@@ -1104,18 +1698,57 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    /* =========================================================
-       INITIALISATION
-    ========================================================= */
+    /**
+     * Recharge les données lorsque l’onglet redevient visible.
+     *
+     * Cela évite d’utiliser des informations trop anciennes
+     * après avoir laissé la page ouverte en arrière-plan.
+     */
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+            if (
+                document.visibilityState ===
+                "visible"
+            ) {
+                loadTwitchStatus();
+            }
+        }
+    );
 
-    initializePlayer();
 
+    /**
+     * Premier chargement dès que le DOM est prêt.
+     */
     loadTwitchStatus();
 
-    window.setInterval(
+
+    /**
+     * Actualisation automatique toutes les 60 secondes.
+     */
+    const refreshInterval =
+        window.setInterval(
+            () => {
+                if (
+                    document.visibilityState ===
+                    "visible"
+                ) {
+                    loadTwitchStatus();
+                }
+            },
+            REFRESH_DELAY
+        );
+
+
+    /**
+     * Nettoie l’intervalle lorsque la page est quittée.
+     */
+    window.addEventListener(
+        "beforeunload",
         () => {
-            loadTwitchStatus();
-        },
-        REFRESH_DELAY
+            window.clearInterval(
+                refreshInterval
+            );
+        }
     );
-});            
+});
