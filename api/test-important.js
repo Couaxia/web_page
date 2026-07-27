@@ -1,10 +1,58 @@
-import { getTwitchAccessToken } from "./auth.js";
+"use strict";
+
+import {
+    getTwitchAccessToken
+} from "./auth.js";
+
+import {
+    getStreamStatus
+} from "./stream.js";
+
+import {
+    getTwitchUser
+} from "./user.js";
+
+import {
+    getFollowerCount
+} from "./followers.js";
+
+import {
+    getChannelVideos
+} from "./videos.js";
+
+import {
+    getChannelClips
+} from "./clips.js";
+
+import {
+    getGame
+} from "./game.js";
 
 export function GET() {
     return Response.json({
         success: true,
-        message: "Le fichier auth.js a été importé.",
-        getTwitchAccessToken:
-            typeof getTwitchAccessToken
+
+        imports: {
+            getTwitchAccessToken:
+                typeof getTwitchAccessToken,
+
+            getStreamStatus:
+                typeof getStreamStatus,
+
+            getTwitchUser:
+                typeof getTwitchUser,
+
+            getFollowerCount:
+                typeof getFollowerCount,
+
+            getChannelVideos:
+                typeof getChannelVideos,
+
+            getChannelClips:
+                typeof getChannelClips,
+
+            getGame:
+                typeof getGame
+        }
     });
 }
