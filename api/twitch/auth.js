@@ -215,4 +215,5 @@ export async function getTwitchApiHeaders({
             `Bearer ${accessToken}`,
         Accept: "application/json"
     };
+
 }

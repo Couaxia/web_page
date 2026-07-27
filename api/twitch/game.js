@@ -128,4 +128,5 @@ export async function getGame(gameId) {
     }
 
     return formatGame(game);
+
 }

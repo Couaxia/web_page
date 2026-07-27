@@ -418,4 +418,5 @@ export async function checkUserFollowsChannel(
                 ? formatFollower(follower)
                 : null
     };
+
 }

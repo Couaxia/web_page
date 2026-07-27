@@ -7,7 +7,7 @@
 import {
     clearTwitchAccessToken,
     getTwitchApiHeaders
-} from "./auth.js";
+} from "./twitch/auth.js";
 
 
 /* =========================================================

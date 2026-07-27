@@ -317,4 +317,4 @@ export async function twitchUserExists(
         );
 
     return user.found;
-}
+    }
