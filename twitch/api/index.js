@@ -9,7 +9,7 @@ export {
     getTwitchAccessToken,
     getTwitchApiHeaders,
     getTwitchClientId
-} from "./twitch/auth.js";
+} from "./auth.js";
 
 
 /* =========================================================
@@ -39,7 +39,7 @@ export {
 
 export {
     getGame
-} from "./twitch/game.js";
+} from "./game.js";
 
 /* =========================================================
    FOLLOWERS
@@ -49,7 +49,7 @@ export {
     checkUserFollowsChannel,
     getChannelFollowers,
     getFollowerCount
-} from "./twitch/followers.js";
+} from "./followers.js";
 
 /* =========================================================
    VIDÉOS ET REDIFFUSIONS

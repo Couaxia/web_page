@@ -7,11 +7,11 @@
 import {
     clearTwitchAccessToken,
     getTwitchApiHeaders
-} from "../auth.js";
+} from "./auth.js";
 
 import {
     getTwitchUserId
-} from "../user.js";
+} from "./user.js";
 
 
 /* =========================================================

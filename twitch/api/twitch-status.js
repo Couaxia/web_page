@@ -11,7 +11,7 @@ import {
     getGame,
     getStreamStatus,
     getTwitchUser
-} from "./index.js";
+} from "./api/index.js";
 
 
 /* =========================================================
@@ -198,7 +198,7 @@ function createEmptyClipsResult() {
 /**
  * Route :
  *
- * GET /api/twitch/twitch-status
+ * GET /twitch/twitch-status
  *
  * @param {import("@vercel/node").VercelRequest} request
  * @param {import("@vercel/node").VercelResponse} response
