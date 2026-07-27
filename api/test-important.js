@@ -20,10 +20,6 @@ import {
     getChannelVideos
 } from "./videos.js";
 
-import {
-    getChannelClips
-} from "./clips.js";
-
 
 export function GET() {
     return Response.json({
