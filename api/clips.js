@@ -13,6 +13,14 @@ import {
     getTwitchUserId
 } from "./user.js";
 
+export async function getChannelClips() {}
+export async function getClipById() {}
+export async function getClipsByIds() {}
+export async function getFeaturedClips() {}
+export async function getGameClips() {}
+export async function getMonthlyClips() {}
+export async function getTopWeeklyClip() {}
+export async function getWeeklyClips() {}
 
 /* =========================================================
    CONFIGURATION

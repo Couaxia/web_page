@@ -13,6 +13,12 @@ import {
     getTwitchUserId
 } from "./user.js";
 
+export async function getChannelVideos() {}
+export async function getLatestArchives() {}
+export async function getLatestHighlights() {}
+export async function getLatestUploads() {}
+export async function getLatestVideo() {}
+
 
 /* =========================================================
    CONFIGURATION

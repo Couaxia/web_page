@@ -5,20 +5,35 @@
 ========================================================= */
 
 import {
-    getChannelClips,
-    getChannelVideos,
-    getFollowerCount,
-    getGame,
-    getStreamStatus,
-    getTwitchUser
-} from "./api/index.js";
+    getChannelClips
+} from "./clips.js";
 
+import {
+    getChannelVideos
+} from "./videos.js";
+
+import {
+    getFollowerCount
+} from "./followers.js";
+
+import {
+    getGame
+} from "./game.js";
+
+import {
+    getStreamStatus
+} from "./stream.js";
+
+import {
+    getTwitchUser
+} from "./user.js";
 
 /* =========================================================
    CONFIGURATION
 ========================================================= */
 
 const TWITCH_CHANNEL =
+    process.env.TWITCH_CHANNEL_LOGIN ||
     "couaxia";
 
 const VIDEOS_LIMIT =
@@ -70,12 +85,6 @@ function setCacheHeaders(response) {
    OUTILS
 ========================================================= */
 
-/**
- * Transforme une erreur en message lisible.
- *
- * @param {unknown} error
- * @returns {string}
- */
 function getErrorMessage(error) {
     if (
         error instanceof Error &&
@@ -85,20 +94,12 @@ function getErrorMessage(error) {
     }
 
     return String(
-        error || "Erreur inconnue."
+        error ||
+        "Erreur inconnue."
     );
 }
 
 
-/**
- * Exécute une promesse sans bloquer toute l'API
- * lorsqu'une donnée secondaire échoue.
- *
- * @param {Promise<any>} promise
- * @param {any} fallback
- * @param {string} serviceName
- * @returns {Promise<any>}
- */
 async function safeRequest(
     promise,
     fallback,
@@ -117,11 +118,6 @@ async function safeRequest(
 }
 
 
-/**
- * Crée la structure par défaut des vidéos.
- *
- * @returns {object}
- */
 function createEmptyVideosResult() {
     return {
         channel:
@@ -161,11 +157,6 @@ function createEmptyVideosResult() {
 }
 
 
-/**
- * Crée la structure par défaut des clips.
- *
- * @returns {object}
- */
 function createEmptyClipsResult() {
     return {
         channel:
@@ -191,6 +182,42 @@ function createEmptyClipsResult() {
 }
 
 
+/**
+ * Normalise le résultat du compteur de followers.
+ *
+ * @param {unknown} result
+ * @returns {number}
+ */
+function normalizeFollowerCount(result) {
+    if (
+        typeof result === "number"
+    ) {
+        return Number.isFinite(result)
+            ? result
+            : 0;
+    }
+
+    if (
+        result &&
+        typeof result === "object"
+    ) {
+        const total =
+            Number(
+                result.total ??
+                result.followers ??
+                result.followersTotal ??
+                0
+            );
+
+        return Number.isFinite(total)
+            ? total
+            : 0;
+    }
+
+    return 0;
+}
+
+
 /* =========================================================
    ROUTE API
 ========================================================= */
@@ -198,11 +225,7 @@ function createEmptyClipsResult() {
 /**
  * Route :
  *
- * GET /twitch/twitch-status
- *
- * @param {import("@vercel/node").VercelRequest} request
- * @param {import("@vercel/node").VercelResponse} response
- * @returns {Promise<void>}
+ * GET /api/twitch-status
  */
 export default async function handler(
     request,
@@ -210,10 +233,9 @@ export default async function handler(
 ) {
     setCorsHeaders(response);
 
-    /*
-     * Réponse aux vérifications CORS du navigateur.
-     */
-    if (request.method === "OPTIONS") {
+    if (
+        request.method === "OPTIONS"
+    ) {
         response
             .status(204)
             .end();
@@ -221,10 +243,9 @@ export default async function handler(
         return;
     }
 
-    /*
-     * Cette route accepte uniquement GET.
-     */
-    if (request.method !== "GET") {
+    if (
+        request.method !== "GET"
+    ) {
         response.setHeader(
             "Allow",
             "GET, OPTIONS"
@@ -249,10 +270,6 @@ export default async function handler(
     }
 
     try {
-        /*
-         * Le stream et l'utilisateur sont les deux données
-         * principales de cette route.
-         */
         const [
             streamStatus,
             twitchUser
@@ -267,7 +284,7 @@ export default async function handler(
         ]);
 
         if (
-            twitchUser &&
+            !twitchUser ||
             twitchUser.found === false
         ) {
             response
@@ -283,14 +300,8 @@ export default async function handler(
             return;
         }
 
-        /*
-         * Données secondaires.
-         *
-         * Une erreur sur les followers, vidéos ou clips
-         * ne doit pas empêcher l'affichage du statut du live.
-         */
         const [
-            followerCount,
+            followerResult,
             videosResult,
             clipsResult
         ] = await Promise.all([
@@ -298,7 +309,7 @@ export default async function handler(
                 getFollowerCount(
                     TWITCH_CHANNEL
                 ),
-                null,
+                0,
                 "followers"
             ),
 
@@ -328,10 +339,7 @@ export default async function handler(
                     TWITCH_CHANNEL,
                     {
                         first:
-                            CLIPS_LIMIT,
-
-                        period:
-                            "month"
+                            CLIPS_LIMIT
                     }
                 ),
                 createEmptyClipsResult(),
@@ -339,10 +347,6 @@ export default async function handler(
             )
         ]);
 
-        /*
-         * Le jeu n'est recherché que lorsque Twitch
-         * renvoie un identifiant de catégorie.
-         */
         const game =
             streamStatus?.gameId
                 ? await safeRequest(
@@ -354,7 +358,28 @@ export default async function handler(
                 )
                 : null;
 
-        setCacheHeaders(response);
+        const followers =
+            normalizeFollowerCount(
+                followerResult
+            );
+
+        const videos =
+            Array.isArray(
+                videosResult?.videos
+            )
+                ? videosResult.videos
+                : [];
+
+        const clips =
+            Array.isArray(
+                clipsResult?.clips
+            )
+                ? clipsResult.clips
+                : [];
+
+        setCacheHeaders(
+            response
+        );
 
         response
             .status(200)
@@ -366,11 +391,9 @@ export default async function handler(
                     TWITCH_CHANNEL,
 
                 fetchedAt:
-                    new Date().toISOString(),
+                    new Date()
+                        .toISOString(),
 
-                /*
-                 * Informations du live.
-                 */
                 live:
                     Boolean(
                         streamStatus?.live
@@ -379,39 +402,30 @@ export default async function handler(
                 stream:
                     streamStatus,
 
-                /*
-                 * Profil de la chaîne.
-                 */
                 user:
                     twitchUser,
 
-                /*
-                 * Catégorie actuellement diffusée.
-                 */
                 game,
 
                 /*
-                 * Le compteur peut être null lorsque Twitch
-                 * refuse l'accès aux followers.
+                 * Nom attendu par twitch-live.js.
                  */
-                followerCount,
+                followers,
 
                 /*
-                 * Listes simplifiées pour le front-end.
+                 * Nom conservé pour compatibilité.
                  */
-                videos:
-                    videosResult?.videos ||
-                    [],
+                followerCount:
+                    followers,
 
-                clips:
-                    clipsResult?.clips ||
-                    [],
+                videos,
 
-                /*
-                 * Informations complètes, notamment
-                 * la pagination.
-                 */
+                clips,
+
                 resources: {
+                    followers:
+                        followerResult,
+
                     videos:
                         videosResult,
 
@@ -420,6 +434,11 @@ export default async function handler(
                 }
             });
     } catch (error) {
+        const errorMessage =
+            getErrorMessage(
+                error
+            );
+
         console.error(
             "[Twitch API] Erreur twitch-status :",
             error
@@ -437,12 +456,12 @@ export default async function handler(
                 error:
                     "Impossible de récupérer les informations Twitch.",
 
+                /*
+                 * À garder temporairement pour connaître
+                 * l’erreur exacte sur le navigateur.
+                 */
                 details:
-                    process.env.NODE_ENV ===
-                    "development"
-                        ? getErrorMessage(error)
-                        : undefined
+                    errorMessage
             });
     }
-
 }
