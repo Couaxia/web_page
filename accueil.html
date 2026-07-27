@@ -12,22 +12,21 @@
 
         <nav class="navbar">
             <a class="navbar-logo">
-                <video autoplay muted loop playsinline>
+                <video autoplay muted loop playsinline  aria-label="Logo animé de Couaxia">
                         <source src="./images/logo/Transparents.webm" alt="Accueil Couaxia" type="video/webm"> 
                 </video> 
             </a>
             <div class="navbar-links">
                 <a href="./accueil.html" aria-current="page">🏠 Accueil</a>
-                <a href="./a-propos.html" aria-current="page">👤 Mes informations</a>
-                <a href="./Histoire/debut_histoire.html" aria-current="page">📖 Mon histoire</a>
-                <a href="./credits.html" aria-current="page">🎨 Crédits</a>
+                <a href="./a-propos.html" >👤 Mes informations</a>
+                <a href="./Histoire/debut_histoire.html" >📖 Mon histoire</a>
+                <a href="./credits.html" >🎨 Crédits</a>
             </div>
                 <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Activer le mode nuit" title="Changer le thème">
                     <span class="theme-icon" aria-hidden="true">🌙</span>
                     <span class="theme-text">Mode nuit</span>
                 </button>
         </nav>
-
 </head>
          <body>
              
@@ -64,26 +63,18 @@
                 </p>
 
                 <div class="home-hero-actions">
-                    <a
-                        class="home-action-link"
-                        href="https://www.twitch.tv/couaxia"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
+                    <a class="home-action-link" href="https://www.twitch.tv/couaxia"
+                        target="_blank" rel="noopener noreferrer">
                         Twitch
                     </a>
 
-                    <a
-                        class="home-action-link home-action-link-secondary"
-                        href="./a-propos.html"
-                    >
+                    <a class="home-action-link home-action-link-secondary"
+                        href="./a-propos.html">
                         Découvrir Couaxia
                     </a>
 
-                    <a
-                        class="home-action-link home-action-link-secondary"
-                        href="./Histoire/debut_histoire.html"
-                    >
+                    <a class="home-action-link home-action-link-secondary"
+                        href="./Histoire/debut_histoire.html">
                         Découvrir mon histoire
                     </a>
                 </div>
@@ -131,15 +122,14 @@
                 <span>Twitch</span>
             </h2>
 
-            <div class="twitch-presentation__status">
-                <span
-                    class="twitch-status-dot"
-                    id="twitch-status-dot"
-                    aria-hidden="true"
-                ></span>
+            <div class="twitch-presentation__status"
+                id="twitch-status-pill" data-status="loading">
+                <span class="twitch-status-dot" aria-hidden="true">
 
-                <strong id="twitch-live-badge">
-                    Hors ligne
+                </span>
+
+                <strong id="twitch-status-label">
+                    Vérification…
                 </strong>
             </div>
 
@@ -150,7 +140,7 @@
 
             <p class="twitch-follower-text">
                 Vous êtes actuellement
-                <strong id="twitch-follower-count">—</strong>
+                <strong id="twitch-followers-count">—</strong>
                 à suivre l’aventure de Couaxia sur Twitch !
             </p>
 
@@ -165,57 +155,42 @@
                 </span>
             </div>
 
-            <a
-                class="twitch-channel-link"
-                id="twitch-channel-link"
-                href="https://www.twitch.tv/couaxia"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                Voir la chaîne Twitch
+           <a class="twitch-channel-button" href="https://www.twitch.tv/couaxia"
+                target="_blank" rel="noopener noreferrer">
+                <img
+                    src="./images/logo/twitch-logo-transparent.png"
+                    alt="" aria-hidden="true">
+                <span>Voir la chaîne Twitch</span>
+                <span aria-hidden="true">↗</span>
             </a>
         </div>
 
         <div class="twitch-presentation__player">
-            <div class="twitch-player-heading">
-                <div>
+                <div class="twitch-player-heading">
                     <p class="home-stream-label">
                         Stream
                     </p>
-
-                    <h3 id="twitch-stream-title">
+                    <h3 id="twitch-stream-heading">
                         Couaxia est hors ligne
                     </h3>
-
-                    <p id="twitch-stream-message">
+                    <p id="twitch-stream-subtitle">
                         Le prochain live sera annoncé prochainement.
                     </p>
                 </div>
-            </div>
+                <span class="twitch-player-badge" id="twitch-player-badge"
+                    data-status="loading">
+                    Vérification
+                </span>
+        </div>
 
             <div class="home-stream-player">
-                <iframe
-                    id="twitch-player"
-                    title="Live Twitch de Couaxia"
-                    allow="autoplay; fullscreen"
-                    allowfullscreen
-                    scrolling="no"
-                ></iframe>
+                <iframe id="twitch-player" title="Live Twitch de Couaxia" allow="autoplay; fullscreen"
+                 allowfullscreen scrolling="no"></iframe>
             </div>
 
             <div class="home-stream-details">
-                <div
-                    class="twitch-game"
-                    id="twitch-game"
-                    hidden
-                >
-                    <img
-                        class="twitch-game__image"
-                        id="twitch-game-image"
-                        src=""
-                        alt=""
-                    >
-
+                <div class="twitch-game" id="twitch-game" hidden>
+                    <img class="twitch-game__image" id="twitch-game-image" src="" alt="">
                     <div>
                         <span class="twitch-game__label">
                             Catégorie
@@ -233,110 +208,53 @@
 
                     <div>
                         <dt>Commencé à</dt>
-                        <dd id="twitch-stream-started-at">—</dd>
+                        <dd id="twitch-started-at">—</dd>
                     </div>
                 </dl>
             </div>
         </div>
     </div>
 
-    <div
-        class="twitch-loading"
-        id="twitch-loading"
-        role="status"
-    >
-        Chargement des informations Twitch...
-    </div>
-
-    <div
-        class="twitch-error"
-        id="twitch-error"
-        role="alert"
-        hidden
-    >
-        Impossible de récupérer les informations Twitch.
-    </div>
-
-    <div
-        class="twitch-content"
-        id="twitch-content"
-        hidden
-    >
-        <section
-            class="twitch-resource-section"
-            aria-labelledby="twitch-clips-title"
-        >
-            <div class="twitch-resource-section__header">
-                <div>
-                    <p class="twitch-resource-section__eyebrow">
-                        Meilleurs moments
-                    </p>
-
-                    <h3 id="twitch-clips-title">
-                        Derniers clips
-                    </h3>
-                </div>
-            </div>
-
-            <div
-                class="twitch-resource-grid"
-                id="twitch-clips-list"
-            ></div>
-
-            <p
-                class="twitch-empty-message"
-                id="twitch-clips-empty"
-                hidden
-            >
-                Aucun clip disponible pour le moment.
-            </p>
+     <section class="twitch-api-message is-hidden" id="twitch-api-message" role="alert">
+            <strong>Les informations Twitch sont momentanément indisponibles.</strong>
+            <span>Le lecteur reste accessible et tu peux toujours rejoindre la chaîne.</span>
+            <button type="button" id="twitch-refresh-button">Actualiser</button>
         </section>
 
-        <section
-            class="twitch-resource-section"
-            aria-labelledby="twitch-videos-title"
-        >
-            <div class="twitch-resource-section__header">
+        <section class="twitch-media-section" aria-labelledby="twitch-clips-title">
+            <header class="twitch-media-heading">
                 <div>
-                    <p class="twitch-resource-section__eyebrow">
-                        Rediffusions
-                    </p>
-
-                    <h3 id="twitch-videos-title">
-                        Dernières vidéos
-                    </h3>
+                    <p class="twitch-eyebrow">Moments forts</p>
+                    <h2 id="twitch-clips-title">Mes derniers clips</h2>
                 </div>
+
+                <a href="https://www.twitch.tv/couaxia/clips" target="_blank" rel="noopener noreferrer">
+                    Voir tous les clips <span aria-hidden="true">↗</span>
+                </a>
+            </header>
+
+            <div class="twitch-media-grid" id="twitch-clips-list" aria-live="polite">
+                <article class="twitch-media-placeholder">Chargement des clips…</article>
             </div>
-
-            <div
-                class="twitch-resource-grid"
-                id="twitch-videos-list"
-            ></div>
-
-            <p
-                class="twitch-empty-message"
-                id="twitch-videos-empty"
-                hidden
-            >
-                Aucune vidéo disponible pour le moment.
-            </p>
         </section>
 
-        <p class="twitch-last-update">
-            Dernière actualisation :
-            <time id="twitch-fetched-at">—</time>
-        </p>
-    </div>
+        <section class="twitch-media-section" aria-labelledby="twitch-videos-title">
+            <header class="twitch-media-heading">
+                <div>
+                    <p class="twitch-eyebrow">Rediffusions</p>
+                    <h2 id="twitch-videos-title">Mes dernières vidéos</h2>
+                </div>
 
-    <button
-        class="twitch-refresh-button"
-        id="twitch-refresh-button"
-        type="button"
-    >
-        Actualiser
-    </button>
-</section>
+                <a href="https://www.twitch.tv/couaxia/videos" target="_blank" rel="noopener noreferrer">
+                    Voir toutes les vidéos <span aria-hidden="true">↗</span>
+                </a>
+            </header>
 
+            <div class="twitch-media-grid" id="twitch-videos-list" aria-live="polite">
+                <article class="twitch-media-placeholder">Chargement des vidéos…</article>
+            </div>
+        </section>
+    </section>
 </main>
 
             <div class="scroll-page-controls" aria-label="Navigation verticale de la page">
@@ -363,897 +281,5 @@
                  <script src="./js/twitch-live.js"></script>
                  <script src="./js/theme.js"></script>
                  <script src="./js/artist.js"></script>
-
-                 <script>
-                                "use strict";
-
-                                /* =========================================================
-                                CONFIGURATION
-                                ========================================================= */
-
-                                const TWITCH_API_URL =
-                                    "/api/twitch-status";
-
-                                const TWITCH_REFRESH_INTERVAL =
-                                    60_000;
-
-
-                                /* =========================================================
-                                ÉLÉMENTS HTML
-                                ========================================================= */
-
-                                const twitchElements = {
-                                    section:
-                                        document.getElementById(
-                                            "twitch-section"
-                                        ),
-
-                                    loading:
-                                        document.getElementById(
-                                            "twitch-loading"
-                                        ),
-
-                                    error:
-                                        document.getElementById(
-                                            "twitch-error"
-                                        ),
-
-                                    content:
-                                        document.getElementById(
-                                            "twitch-content"
-                                        ),
-
-                                    refreshButton:
-                                        document.getElementById(
-                                            "twitch-refresh-button"
-                                        ),
-
-                                    followerCount:
-                                        document.getElementById(
-                                            "twitch-follower-count"
-                                        ),
-
-                                    viewerCount:
-                                        document.getElementById(
-                                            "twitch-viewer-count"
-                                        ),
-
-                                    broadcasterType:
-                                        document.getElementById(
-                                            "twitch-broadcaster-type"
-                                        ),
-
-                                    channelLink:
-                                        document.getElementById(
-                                            "twitch-channel-link"
-                                        ),
-
-                                    liveBadge:
-                                        document.getElementById(
-                                            "twitch-live-badge"
-                                        ),
-
-                                    statusDot:
-                                        document.getElementById(
-                                            "twitch-status-dot"
-                                        ),
-
-                                    liveCard:
-                                        document.getElementById(
-                                            "twitch-live-card"
-                                        ),
-
-                                    twitchPlayer:
-                                        document.getElementById(
-                                            "twitch-player"
-                                        ),
-
-                                    streamTitle:
-                                        document.getElementById(
-                                            "twitch-stream-title"
-                                        ),
-
-                                    streamMessage:
-                                        document.getElementById(
-                                            "twitch-stream-message"
-                                        ),
-
-                                    streamLanguage:
-                                        document.getElementById(
-                                            "twitch-stream-language"
-                                        ),
-
-                                    streamStartedAt:
-                                        document.getElementById(
-                                            "twitch-stream-started-at"
-                                        ),
-
-                                    game:
-                                        document.getElementById(
-                                            "twitch-game"
-                                        ),
-
-                                    gameImage:
-                                        document.getElementById(
-                                            "twitch-game-image"
-                                        ),
-
-                                    gameName:
-                                        document.getElementById(
-                                            "twitch-game-name"
-                                        ),
-
-                                    videosList:
-                                        document.getElementById(
-                                            "twitch-videos-list"
-                                        ),
-
-                                    videosEmpty:
-                                        document.getElementById(
-                                            "twitch-videos-empty"
-                                        ),
-
-                                    clipsList:
-                                        document.getElementById(
-                                            "twitch-clips-list"
-                                        ),
-
-                                    clipsEmpty:
-                                        document.getElementById(
-                                            "twitch-clips-empty"
-                                        ),
-
-                                    fetchedAt:
-                                        document.getElementById(
-                                            "twitch-fetched-at"
-                                        )
-                                };
-
-
-                                /* =========================================================
-                                OUTILS
-                                ========================================================= */
-
-                                function formatNumber(value) {
-                                    const number =
-                                        Number(value);
-
-                                    if (!Number.isFinite(number)) {
-                                        return "—";
-                                    }
-
-                                    return new Intl.NumberFormat(
-                                        "fr-FR"
-                                    ).format(number);
-                                }
-
-
-                                function formatDate(value) {
-                                    if (!value) {
-                                        return "—";
-                                    }
-
-                                    const date =
-                                        new Date(value);
-
-                                    if (
-                                        Number.isNaN(
-                                            date.getTime()
-                                        )
-                                    ) {
-                                        return "—";
-                                    }
-
-                                    return new Intl.DateTimeFormat(
-                                        "fr-FR",
-                                        {
-                                            dateStyle:
-                                                "medium",
-
-                                            timeStyle:
-                                                "short"
-                                        }
-                                    ).format(date);
-                                }
-
-
-                                function formatBroadcasterType(value) {
-                                    switch (
-                                        String(value || "")
-                                            .toLowerCase()
-                                    ) {
-                                        case "partner":
-                                            return "Partenaire";
-
-                                        case "affiliate":
-                                            return "Affiliée";
-
-                                        default:
-                                            return "Streameuse";
-                                    }
-                                }
-
-
-                                function setImage(
-                                    imageElement,
-                                    source,
-                                    fallback = ""
-                                ) {
-                                    if (!imageElement) {
-                                        return;
-                                    }
-
-                                    if (source) {
-                                        imageElement.src =
-                                            source;
-
-                                        imageElement.hidden =
-                                            false;
-
-                                        return;
-                                    }
-
-                                    if (fallback) {
-                                        imageElement.src =
-                                            fallback;
-
-                                        imageElement.hidden =
-                                            false;
-
-                                        return;
-                                    }
-
-                                    imageElement.removeAttribute(
-                                        "src"
-                                    );
-
-                                    imageElement.hidden =
-                                        true;
-                                }
-
-
-                                function createElement(
-                                    tagName,
-                                    className = "",
-                                    textContent = ""
-                                ) {
-                                    const element =
-                                        document.createElement(
-                                            tagName
-                                        );
-
-                                    if (className) {
-                                        element.className =
-                                            className;
-                                    }
-
-                                    if (textContent) {
-                                        element.textContent =
-                                            textContent;
-                                    }
-
-                                    return element;
-                                }
-
-
-                                /* =========================================================
-                                LECTEUR TWITCH INTÉGRÉ
-                                ========================================================= */
-
-                                function initializeTwitchPlayer() {
-                                    const player =
-                                        twitchElements.twitchPlayer;
-
-                                    if (!player) {
-                                        return;
-                                    }
-
-                                    const parentDomain =
-                                        window.location.hostname;
-
-                                    if (!parentDomain) {
-                                        return;
-                                    }
-
-                                    const playerUrl =
-                                        new URL(
-                                            "https://player.twitch.tv/"
-                                        );
-
-                                    playerUrl.searchParams.set(
-                                        "channel",
-                                        "couaxia"
-                                    );
-
-                                    playerUrl.searchParams.set(
-                                        "parent",
-                                        parentDomain
-                                    );
-
-                                    playerUrl.searchParams.set(
-                                        "autoplay",
-                                        "false"
-                                    );
-
-                                    playerUrl.searchParams.set(
-                                        "muted",
-                                        "false"
-                                    );
-
-                                    player.src =
-                                        playerUrl.toString();
-                                }
-
-
-                                /* =========================================================
-                                PROFIL
-                                ========================================================= */
-
-                                function displayTwitchProfile(
-                                    user,
-                                    followerCount
-                                ) {
-                                    twitchElements.followerCount.textContent =
-                                        formatNumber(
-                                            followerCount
-                                        );
-
-                                    twitchElements.broadcasterType.textContent =
-                                        formatBroadcasterType(
-                                            user?.broadcasterType
-                                        );
-
-                                    twitchElements.channelLink.href =
-                                        user?.twitchUrl ||
-                                        "https://www.twitch.tv/couaxia";
-                                }
-
-
-                                /* =========================================================
-                                LIVE
-                                ========================================================= */
-
-                                function displayLiveStatus(
-                                    data
-                                ) {
-                                    const stream =
-                                        data?.stream || {};
-
-                                    const live =
-                                        Boolean(
-                                            data?.live ||
-                                            stream?.live
-                                        );
-
-                                    twitchElements.liveBadge.textContent =
-                                        live
-                                            ? "En direct"
-                                            : "Hors ligne";
-
-                                    twitchElements.liveBadge.classList.toggle(
-                                        "is-live",
-                                        live
-                                    );
-
-                                    twitchElements.statusDot.classList.toggle(
-                                        "is-live",
-                                        live
-                                    );
-
-                                    twitchElements.liveCard.classList.toggle(
-                                        "is-live",
-                                        live
-                                    );
-
-                                    twitchElements.viewerCount.textContent =
-                                        live
-                                            ? formatNumber(
-                                                stream.viewerCount ??
-                                                stream.viewers
-                                            )
-                                            : "0";
-
-                                    twitchElements.streamTitle.textContent =
-                                        live
-                                            ? (
-                                                stream.title ||
-                                                "Couaxia est en direct !"
-                                            )
-                                            : "Couaxia est hors ligne";
-
-                                    twitchElements.streamMessage.textContent =
-                                        live
-                                            ? "Le live est actuellement en cours sur Twitch."
-                                            : "Le prochain live sera annoncé prochainement.";
-
-                                    twitchElements.streamLanguage.textContent =
-                                        stream.language
-                                            ? String(
-                                                stream.language
-                                            ).toUpperCase()
-                                            : "—";
-
-                                    twitchElements.streamStartedAt.textContent =
-                                        live
-                                            ? formatDate(
-                                                stream.startedAt
-                                            )
-                                            : "—";
-                                }
-
-
-                                /* =========================================================
-                                JEU
-                                ========================================================= */
-
-                                function displayGame(game) {
-                                    if (
-                                        !game ||
-                                        game.found === false
-                                    ) {
-                                        twitchElements.game.hidden =
-                                            true;
-
-                                        return;
-                                    }
-
-                                    twitchElements.game.hidden =
-                                        false;
-
-                                    twitchElements.gameName.textContent =
-                                        game.name ||
-                                        "Catégorie inconnue";
-
-                                    twitchElements.gameImage.alt =
-                                        game.name
-                                            ? `Jaquette de ${game.name}`
-                                            : "Jaquette du jeu Twitch";
-
-                                    setImage(
-                                        twitchElements.gameImage,
-                                        game.boxArtUrl
-                                    );
-                                }
-
-
-                                /* =========================================================
-                                VIDÉOS
-                                ========================================================= */
-
-                                function createVideoCard(video) {
-                                    const article =
-                                        createElement(
-                                            "article",
-                                            "twitch-resource-card twitch-video-card"
-                                        );
-
-                                    const link =
-                                        createElement(
-                                            "a",
-                                            "twitch-resource-card__link"
-                                        );
-
-                                    link.href =
-                                        video.url ||
-                                        "https://www.twitch.tv/couaxia/videos";
-
-                                    link.target =
-                                        "_blank";
-
-                                    link.rel =
-                                        "noopener noreferrer";
-
-                                    const imageWrapper =
-                                        createElement(
-                                            "div",
-                                            "twitch-resource-card__image-wrapper"
-                                        );
-
-                                    const image =
-                                        createElement(
-                                            "img",
-                                            "twitch-resource-card__image"
-                                        );
-
-                                    image.src =
-                                        video.thumbnailUrl ||
-                                        "";
-
-                                    image.alt =
-                                        video.title
-                                            ? `Miniature de ${video.title}`
-                                            : "Miniature d'une vidéo Twitch";
-
-                                    image.loading =
-                                        "lazy";
-
-                                    const duration =
-                                        createElement(
-                                            "span",
-                                            "twitch-resource-card__duration",
-                                            video.formattedDuration ||
-                                            video.duration ||
-                                            ""
-                                        );
-
-                                    imageWrapper.append(
-                                        image,
-                                        duration
-                                    );
-
-                                    const content =
-                                        createElement(
-                                            "div",
-                                            "twitch-resource-card__content"
-                                        );
-
-                                    const type =
-                                        createElement(
-                                            "span",
-                                            "twitch-resource-card__type",
-                                            getVideoTypeLabel(
-                                                video.type
-                                            )
-                                        );
-
-                                    const title =
-                                        createElement(
-                                            "h4",
-                                            "twitch-resource-card__title",
-                                            video.title ||
-                                            "Vidéo Twitch"
-                                        );
-
-                                    const metadata =
-                                        createElement(
-                                            "p",
-                                            "twitch-resource-card__metadata"
-                                        );
-
-                                    metadata.textContent =
-                                        `${formatNumber(video.viewCount)} vues`;
-
-                                    if (video.publishedAt) {
-                                        metadata.textContent +=
-                                            ` · ${formatDate(video.publishedAt)}`;
-                                    }
-
-                                    content.append(
-                                        type,
-                                        title,
-                                        metadata
-                                    );
-
-                                    link.append(
-                                        imageWrapper,
-                                        content
-                                    );
-
-                                    article.appendChild(
-                                        link
-                                    );
-
-                                    return article;
-                                }
-
-
-                                function getVideoTypeLabel(type) {
-                                    switch (type) {
-                                        case "archive":
-                                            return "Rediffusion";
-
-                                        case "highlight":
-                                            return "Temps fort";
-
-                                        case "upload":
-                                            return "Vidéo";
-
-                                        default:
-                                            return "Twitch";
-                                    }
-                                }
-
-
-                                function displayVideos(videos) {
-                                    twitchElements.videosList.replaceChildren();
-
-                                    const safeVideos =
-                                        Array.isArray(videos)
-                                            ? videos
-                                            : [];
-
-                                    twitchElements.videosEmpty.hidden =
-                                        safeVideos.length > 0;
-
-                                    for (
-                                        const video of safeVideos
-                                    ) {
-                                        twitchElements.videosList.appendChild(
-                                            createVideoCard(video)
-                                        );
-                                    }
-                                }
-
-
-                                /* =========================================================
-                                CLIPS
-                                ========================================================= */
-
-                                function createClipCard(clip) {
-                                    const article =
-                                        createElement(
-                                            "article",
-                                            "twitch-resource-card twitch-clip-card"
-                                        );
-
-                                    const link =
-                                        createElement(
-                                            "a",
-                                            "twitch-resource-card__link"
-                                        );
-
-                                    link.href =
-                                        clip.url ||
-                                        "https://www.twitch.tv/couaxia/clips";
-
-                                    link.target =
-                                        "_blank";
-
-                                    link.rel =
-                                        "noopener noreferrer";
-
-                                    const imageWrapper =
-                                        createElement(
-                                            "div",
-                                            "twitch-resource-card__image-wrapper"
-                                        );
-
-                                    const image =
-                                        createElement(
-                                            "img",
-                                            "twitch-resource-card__image"
-                                        );
-
-                                    image.src =
-                                        clip.thumbnailUrl ||
-                                        "";
-
-                                    image.alt =
-                                        clip.title
-                                            ? `Miniature du clip ${clip.title}`
-                                            : "Miniature d'un clip Twitch";
-
-                                    image.loading =
-                                        "lazy";
-
-                                    const duration =
-                                        createElement(
-                                            "span",
-                                            "twitch-resource-card__duration",
-                                            clip.formattedDuration ||
-                                            ""
-                                        );
-
-                                    imageWrapper.append(
-                                        image,
-                                        duration
-                                    );
-
-                                    const content =
-                                        createElement(
-                                            "div",
-                                            "twitch-resource-card__content"
-                                        );
-
-                                    const type =
-                                        createElement(
-                                            "span",
-                                            "twitch-resource-card__type",
-                                            clip.featured
-                                                ? "Clip mis en avant"
-                                                : "Clip"
-                                        );
-
-                                    const title =
-                                        createElement(
-                                            "h4",
-                                            "twitch-resource-card__title",
-                                            clip.title ||
-                                            "Clip Twitch"
-                                        );
-
-                                    const metadata =
-                                        createElement(
-                                            "p",
-                                            "twitch-resource-card__metadata"
-                                        );
-
-                                    metadata.textContent =
-                                        `${formatNumber(clip.viewCount)} vues`;
-
-                                    if (clip.creatorName) {
-                                        metadata.textContent +=
-                                            ` · par ${clip.creatorName}`;
-                                    }
-
-                                    content.append(
-                                        type,
-                                        title,
-                                        metadata
-                                    );
-
-                                    link.append(
-                                        imageWrapper,
-                                        content
-                                    );
-
-                                    article.appendChild(
-                                        link
-                                    );
-
-                                    return article;
-                                }
-
-
-                                function displayClips(clips) {
-                                    twitchElements.clipsList.replaceChildren();
-
-                                    const safeClips =
-                                        Array.isArray(clips)
-                                            ? clips
-                                            : [];
-
-                                    twitchElements.clipsEmpty.hidden =
-                                        safeClips.length > 0;
-
-                                    for (
-                                        const clip of safeClips
-                                    ) {
-                                        twitchElements.clipsList.appendChild(
-                                            createClipCard(clip)
-                                        );
-                                    }
-                                }
-
-
-                                /* =========================================================
-                                AFFICHAGE COMPLET
-                                ========================================================= */
-
-                                function displayTwitchData(data) {
-                                    displayTwitchProfile(
-                                        data.user,
-                                        data.followerCount
-                                    );
-
-                                    displayLiveStatus(
-                                        data
-                                    );
-
-                                    displayGame(
-                                        data.game
-                                    );
-
-                                    displayVideos(
-                                        data.videos
-                                    );
-
-                                    displayClips(
-                                        data.clips
-                                    );
-
-                                    twitchElements.fetchedAt.textContent =
-                                        formatDate(
-                                            data.fetchedAt
-                                        );
-                                }
-
-
-                                /* =========================================================
-                                REQUÊTE API
-                                ========================================================= */
-
-                                async function loadTwitchData() {
-                                    twitchElements.loading.hidden =
-                                        false;
-
-                                    twitchElements.error.hidden =
-                                        true;
-
-                                    twitchElements.refreshButton.disabled =
-                                        true;
-
-                                    twitchElements.refreshButton.textContent =
-                                        "Actualisation...";
-
-                                    try {
-                                        const response =
-                                            await fetch(
-                                                TWITCH_API_URL,
-                                                {
-                                                    method:
-                                                        "GET",
-
-                                                    headers: {
-                                                        Accept:
-                                                            "application/json"
-                                                    }
-                                                }
-                                            );
-
-                                        const data =
-                                            await response.json();
-
-                                        if (
-                                            !response.ok ||
-                                            data.success === false
-                                        ) {
-                                            throw new Error(
-                                                data.error ||
-                                                "Erreur Twitch inconnue."
-                                            );
-                                        }
-
-                                        displayTwitchData(
-                                            data
-                                        );
-
-                                        twitchElements.content.hidden =
-                                            false;
-                                    } catch (error) {
-                                        console.error(
-                                            "[Accueil] Erreur Twitch :",
-                                            error
-                                        );
-
-                                        twitchElements.error.textContent =
-                                            error instanceof Error
-                                                ? error.message
-                                                : "Impossible de récupérer les informations Twitch.";
-
-                                        twitchElements.error.hidden =
-                                            false;
-                                    } finally {
-                                        twitchElements.loading.hidden =
-                                            true;
-
-                                        twitchElements.refreshButton.disabled =
-                                            false;
-
-                                        twitchElements.refreshButton.textContent =
-                                            "Actualiser";
-                                    }
-                                     }
-
-
-                                    /* =========================================================
-                                    ÉVÉNEMENTS
-                                    ========================================================= */
-
-                                    twitchElements.refreshButton.addEventListener(
-                                        "click",
-                                        loadTwitchData
-                                    );
-
-                                    document.addEventListener(
-                                        "visibilitychange",
-                                        () => {
-                                            if (
-                                                document.visibilityState ===
-                                                "visible"
-                                            ) {
-                                                loadTwitchData();
-                                            }
-                                        }
-                                    );
-
-                                    initializeTwitchPlayer();
-                                    loadTwitchData();
-
-                                    setInterval(
-                                        loadTwitchData,
-                                        TWITCH_REFRESH_INTERVAL
-                                    );
-                  </script>
          </body>     
 </HTML>

@@ -1542,3 +1542,729 @@
         border-radius: 18px;
     }
 }
+
+/* =========================================================
+   NOUVELLE PAGE D’ACCUEIL TWITCH
+   Ces règles sont placées à la fin du fichier afin de
+   remplacer proprement les anciennes versions de la section.
+========================================================= */
+
+:root {
+    --twitch-page-width: 1540px;
+    --twitch-cyan: #22f2ef;
+    --twitch-pink: #ff1493;
+    --twitch-purple: #6d00a3;
+    --twitch-purple-dark: #210034;
+    --twitch-purple-darker: #12001f;
+    --twitch-white: #ffffff;
+    --twitch-muted: rgba(255, 255, 255, 0.74);
+    --twitch-border: rgba(34, 242, 239, 0.28);
+    --twitch-card: rgba(31, 0, 51, 0.88);
+    --twitch-card-soft: rgba(255, 255, 255, 0.07);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    overflow-x: hidden;
+}
+
+main {
+    width: 100%;
+    padding: 70px 0 110px;
+}
+
+.is-hidden {
+    display: none !important;
+}
+
+.twitch-showcase {
+    display: grid;
+    grid-template-columns:
+        minmax(320px, 0.72fr)
+        minmax(620px, 1.35fr);
+    gap: clamp(38px, 5vw, 80px);
+    align-items: stretch;
+    width: min(var(--twitch-page-width), 94%);
+    margin: 0 auto;
+}
+
+.twitch-showcase__information {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    padding: 34px 0;
+}
+
+.twitch-eyebrow {
+    margin: 0 0 26px;
+    color: var(--twitch-cyan);
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(0.88rem, 1.2vw, 1.08rem);
+    font-weight: 900;
+    letter-spacing: 0.25em;
+    line-height: 1.3;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(34, 242, 239, 0.45);
+}
+
+.twitch-main-title {
+    width: auto;
+    height: auto;
+    min-height: 0;
+    max-width: 730px;
+    margin: 0;
+    padding: 0;
+    color: var(--twitch-white);
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(3rem, 6.4vw, 6.9rem);
+    font-weight: 900;
+    letter-spacing: -0.055em;
+    line-height: 0.95;
+    overflow-wrap: anywhere;
+    text-align: left;
+    text-wrap: balance;
+}
+
+.twitch-main-title::before,
+.twitch-main-title::after {
+    content: none;
+    display: none;
+}
+
+.twitch-main-title span {
+    display: block;
+    margin-top: 18px;
+    color: var(--twitch-pink);
+    text-shadow:
+        0 0 14px rgba(255, 20, 147, 0.45),
+        0 0 32px rgba(255, 20, 147, 0.25);
+}
+
+.twitch-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 13px;
+    width: fit-content;
+    min-height: 55px;
+    margin-top: 44px;
+    padding: 10px 22px;
+    color: var(--twitch-white);
+    font-size: 1.05rem;
+    font-weight: 800;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.04);
+}
+
+.twitch-status-pill__dot {
+    width: 23px;
+    height: 23px;
+    flex: 0 0 auto;
+    border: 5px solid rgba(255, 255, 255, 0.88);
+    border-radius: 50%;
+    background: #8f8f9f;
+    box-shadow: 0 0 0 8px rgba(143, 143, 159, 0.17);
+}
+
+.twitch-status-pill[data-status="online"] .twitch-status-pill__dot {
+    background: #29e67a;
+    box-shadow:
+        0 0 0 8px rgba(41, 230, 122, 0.16),
+        0 0 20px rgba(41, 230, 122, 0.7);
+}
+
+.twitch-status-pill[data-status="offline"] .twitch-status-pill__dot {
+    background: #8f8f9f;
+}
+
+.twitch-status-pill[data-status="error"] .twitch-status-pill__dot {
+    background: #ffb020;
+    box-shadow:
+        0 0 0 8px rgba(255, 176, 32, 0.15),
+        0 0 18px rgba(255, 176, 32, 0.55);
+}
+
+.twitch-description,
+.twitch-followers-line {
+    max-width: 720px;
+    margin: 38px 0 0;
+    color: var(--twitch-muted);
+    font-size: clamp(1.12rem, 1.45vw, 1.38rem);
+    line-height: 1.85;
+}
+
+.twitch-followers-line {
+    margin-top: 30px;
+    padding-left: 24px;
+    border-left: 4px solid var(--twitch-cyan);
+}
+
+.twitch-followers-line strong {
+    color: var(--twitch-cyan);
+    font-size: 1.18em;
+    text-shadow: 0 0 12px rgba(34, 242, 239, 0.38);
+}
+
+.twitch-statistics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 34px;
+}
+
+.twitch-statistic {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    min-height: 50px;
+    padding: 11px 20px;
+    color: var(--twitch-white);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.twitch-statistic__value {
+    color: var(--twitch-cyan);
+    font-size: 1.08rem;
+    font-weight: 900;
+}
+
+.twitch-statistic__label {
+    color: var(--twitch-muted);
+    font-size: 0.95rem;
+}
+
+.twitch-channel-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+    width: fit-content;
+    min-height: 60px;
+    margin-top: 38px;
+    padding: 13px 25px;
+    color: var(--twitch-white);
+    font-size: 1.04rem;
+    font-weight: 900;
+    text-decoration: none;
+    border: 2px solid rgba(34, 242, 239, 0.78);
+    border-radius: 999px;
+    background: linear-gradient(
+        135deg,
+        rgba(109, 0, 163, 0.98),
+        rgba(255, 20, 147, 0.96)
+    );
+    box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.28),
+        0 0 26px rgba(255, 20, 147, 0.25);
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        filter 180ms ease;
+}
+
+.twitch-channel-button img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+}
+
+.twitch-channel-button__arrow {
+    font-size: 1.2rem;
+}
+
+.twitch-channel-button:hover {
+    color: var(--twitch-white);
+    transform: translateY(-4px);
+    filter: brightness(1.08);
+    box-shadow:
+        0 18px 38px rgba(0, 0, 0, 0.34),
+        0 0 32px rgba(34, 242, 239, 0.32);
+}
+
+.twitch-channel-button:focus-visible {
+    outline: 3px solid var(--twitch-cyan);
+    outline-offset: 5px;
+}
+
+.twitch-player-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 760px;
+    padding: clamp(25px, 3vw, 44px);
+    color: var(--twitch-white);
+    border: 1px solid var(--twitch-border);
+    border-radius: 44px;
+    background:
+        radial-gradient(
+            circle at 80% 10%,
+            rgba(109, 0, 163, 0.24),
+            transparent 35%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(35, 0, 58, 0.98),
+            rgba(17, 0, 31, 0.98)
+        );
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.34),
+        0 0 34px rgba(34, 242, 239, 0.08);
+}
+
+.twitch-player-card__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+.twitch-player-card__label {
+    margin: 0 0 10px;
+    color: var(--twitch-cyan);
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.twitch-player-card__header h2 {
+    width: auto;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    color: var(--twitch-white);
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(2rem, 3.5vw, 3.4rem);
+    line-height: 1.05;
+    text-align: left;
+}
+
+.twitch-player-card__header h2::before,
+.twitch-player-card__header h2::after {
+    content: none;
+    display: none;
+}
+
+.twitch-player-card__header p:last-child {
+    margin: 14px 0 0;
+    color: var(--twitch-muted);
+    font-size: 1.08rem;
+}
+
+.twitch-player-card__badge {
+    flex: 0 0 auto;
+    padding: 10px 15px;
+    color: var(--twitch-white);
+    font-size: 0.9rem;
+    font-weight: 900;
+    border-radius: 999px;
+    background: rgba(143, 143, 159, 0.25);
+}
+
+.twitch-player-card__badge[data-status="online"] {
+    color: #7dffb1;
+    background: rgba(41, 230, 122, 0.2);
+}
+
+.twitch-player-card__badge[data-status="offline"] {
+    background: rgba(143, 143, 159, 0.23);
+}
+
+.twitch-player-card__badge[data-status="error"] {
+    color: #ffd889;
+    background: rgba(255, 176, 32, 0.2);
+}
+
+.twitch-player-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 520px;
+    margin: auto 0;
+    overflow: hidden;
+    border: 3px solid rgba(255, 255, 255, 0.85);
+    border-radius: 26px;
+    background: #090010;
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.42),
+        0 0 30px rgba(109, 0, 163, 0.28);
+}
+
+.twitch-player-wrapper::before {
+    content: "";
+    display: block;
+    padding-top: 56.25%;
+}
+
+.twitch-player-wrapper iframe {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 400px;
+    min-height: 300px;
+    border: 0;
+}
+
+.twitch-player-card__footer {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 28px;
+}
+
+.twitch-player-card__footer > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    padding: 18px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.twitch-player-card__footer span {
+    color: var(--twitch-muted);
+    font-size: 0.9rem;
+}
+
+.twitch-player-card__footer strong {
+    overflow: hidden;
+    color: var(--twitch-white);
+    font-size: 1.05rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.twitch-api-message {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px 18px;
+    width: min(var(--twitch-page-width), 94%);
+    margin: 34px auto 0;
+    padding: 20px 24px;
+    color: var(--twitch-white);
+    text-align: center;
+    border: 1px solid rgba(255, 176, 32, 0.4);
+    border-radius: 22px;
+    background: rgba(255, 176, 32, 0.1);
+}
+
+.twitch-api-message span {
+    color: var(--twitch-muted);
+}
+
+.twitch-api-message button {
+    min-height: 42px;
+    padding: 8px 18px;
+    color: var(--twitch-white);
+    font-weight: 900;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.twitch-media-section {
+    width: min(var(--twitch-page-width), 94%);
+    margin: 100px auto 0;
+}
+
+.twitch-media-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    align-items: flex-end;
+    margin-bottom: 32px;
+}
+
+.twitch-media-heading .twitch-eyebrow {
+    margin-bottom: 12px;
+}
+
+.twitch-media-heading h2 {
+    width: auto;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    color: var(--twitch-white);
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(2.2rem, 4.2vw, 4.6rem);
+    line-height: 1;
+    text-align: left;
+}
+
+.twitch-media-heading h2::before,
+.twitch-media-heading h2::after {
+    content: none;
+    display: none;
+}
+
+.twitch-media-heading > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    flex: 0 0 auto;
+    min-height: 46px;
+    padding: 9px 17px;
+    color: var(--twitch-cyan);
+    font-weight: 900;
+    text-decoration: none;
+    border: 1px solid rgba(34, 242, 239, 0.38);
+    border-radius: 999px;
+    background: rgba(34, 242, 239, 0.06);
+}
+
+.twitch-media-heading > a:hover {
+    color: var(--twitch-white);
+    background: rgba(34, 242, 239, 0.15);
+}
+
+.twitch-media-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 27px;
+}
+
+.twitch-media-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--twitch-white);
+    text-decoration: none;
+    border: 1px solid rgba(34, 242, 239, 0.22);
+    border-radius: 25px;
+    background: linear-gradient(
+        145deg,
+        rgba(42, 0, 68, 0.94),
+        rgba(20, 0, 34, 0.96)
+    );
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.28);
+    transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.twitch-media-card:hover {
+    color: var(--twitch-white);
+    transform: translateY(-7px);
+    border-color: var(--twitch-cyan);
+    box-shadow:
+        0 22px 52px rgba(0, 0, 0, 0.35),
+        0 0 24px rgba(34, 242, 239, 0.17);
+}
+
+.twitch-media-thumbnail {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--twitch-purple-darker);
+}
+
+.twitch-media-thumbnail img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 250ms ease;
+}
+
+.twitch-media-card:hover .twitch-media-thumbnail img {
+    transform: scale(1.055);
+}
+
+.twitch-media-play {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    width: 62px;
+    height: 62px;
+    color: var(--twitch-white);
+    font-size: 1.35rem;
+    border: 2px solid rgba(255, 255, 255, 0.75);
+    border-radius: 50%;
+    background: rgba(109, 0, 163, 0.88);
+    box-shadow:
+        0 0 0 8px rgba(109, 0, 163, 0.2),
+        0 0 28px rgba(255, 20, 147, 0.5);
+}
+
+.twitch-media-duration {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    padding: 6px 9px;
+    color: var(--twitch-white);
+    font-size: 0.82rem;
+    font-weight: 900;
+    border-radius: 9px;
+    background: rgba(0, 0, 0, 0.76);
+}
+
+.twitch-media-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 22px;
+}
+
+.twitch-media-content h3 {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0;
+    color: var(--twitch-white);
+    font-size: 1.17rem;
+    line-height: 1.35;
+    -webkit-box-orient: vertical;
+    
+}
+
+.twitch-media-content p {
+    margin: 13px 0 0;
+    color: var(--twitch-muted);
+    font-size: 0.94rem;
+    line-height: 1.55;
+}
+
+.twitch-media-placeholder,
+.twitch-empty-message {
+    grid-column: 1 / -1;
+    padding: 34px;
+    color: var(--twitch-muted);
+    text-align: center;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.045);
+}
+
+@media (max-width: 1250px) {
+    .twitch-showcase {
+        grid-template-columns: 1fr;
+    }
+
+    .twitch-showcase__information {
+        padding-bottom: 0;
+    }
+
+    .twitch-main-title {
+        max-width: 1000px;
+    }
+
+    .twitch-player-card {
+        min-height: auto;
+    }
+
+    .twitch-player-wrapper {
+        min-height: 480px;
+    }
+}
+
+@media (max-width: 980px) {
+    main {
+        padding-top: 45px;
+    }
+
+    .twitch-media-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .twitch-player-wrapper {
+        min-height: 400px;
+    }
+}
+
+@media (max-width: 680px) {
+    .twitch-showcase,
+    .twitch-media-section,
+    .twitch-api-message {
+        width: min(94%, 620px);
+    }
+
+    .twitch-main-title {
+        font-size: clamp(2.7rem, 14vw, 4.8rem);
+    }
+
+    .twitch-description,
+    .twitch-followers-line {
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    .twitch-player-card {
+        padding: 20px;
+        border-radius: 28px;
+    }
+
+    .twitch-player-card__header {
+        flex-direction: column;
+    }
+
+    .twitch-player-wrapper {
+        min-height: 300px;
+        border-radius: 18px;
+    }
+
+    .twitch-player-wrapper iframe {
+        min-width: 0;
+    }
+
+    .twitch-player-card__footer {
+        grid-template-columns: 1fr;
+    }
+
+    .twitch-media-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .twitch-media-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .twitch-channel-button {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+    }
+}
