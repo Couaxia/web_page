@@ -16,10 +16,6 @@ import {
     getFollowerCount
 } from "./followers.js";
 
-import {
-    getChannelVideos
-} from "./videos.js";
-
 
 export function GET() {
     return Response.json({
