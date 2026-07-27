@@ -108,33 +108,13 @@ async function safeRequest(
     try {
         return await promise;
     } catch (error) {
-    const errorMessage =
-        error instanceof Error
-            ? error.message
-            : String(error);
+        console.error(
+            `[Twitch API] Erreur ${serviceName} :`,
+            getErrorMessage(error)
+        );
 
-    const errorStack =
-        error instanceof Error
-            ? error.stack
-            : null;
-
-    console.error(
-        "[Twitch API] Erreur twitch-status :",
-        {
-            message: errorMessage,
-            stack: errorStack
-        }
-    );
-
-    response
-        .status(500)
-        .json({
-            success: false,
-            channel: TWITCH_CHANNEL,
-            error: "Impossible de récupérer les informations Twitch.",
-            details: errorMessage,
-            stack: errorStack
-        });
+        return fallback;
+    }
 }
 
 
