@@ -24,9 +24,6 @@ import {
     getChannelClips
 } from "./clips.js";
 
-import {
-    getGame
-} from "./game.js";
 
 export function GET() {
     return Response.json({
