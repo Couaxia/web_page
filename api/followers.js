@@ -13,15 +13,7 @@ import {
     getTwitchUserId
 } from "./user.js";
 
-export async function checkUserFollowsChannel() {}
-export async function getChannelFollowers() {}
-async function getFollowerCount(channelLogin) {
-    // ton code
-}
 
-export {
-    getFollowerCount
-};
 /* =========================================================
    CONFIGURATION
 ========================================================= */
@@ -449,6 +441,3 @@ export async function checkUserFollowsChannel(
                 : null
     };
 }
-export {
-    getFollowerCount
-};

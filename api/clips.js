@@ -12,18 +12,6 @@ import {
 import {
     getTwitchUserId
 } from "./user.js";
-
-export async function getClipById() {}
-export async function getClipsByIds() {}
-export async function getFeaturedClips() {}
-export async function getGameClips() {}
-export async function getMonthlyClips() {}
-export async function getTopWeeklyClip() {}
-export async function getWeeklyClips() {}
-export async function getChannelClips(channelLogin, options = {}) {
-    // ton code
-}
-
 /* =========================================================
    CONFIGURATION
 ========================================================= */
@@ -1017,6 +1005,3 @@ export async function getFeaturedClips(
         }
     );
 }
-export {
-    getChannelClips
-};
