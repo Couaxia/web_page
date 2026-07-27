@@ -1,6 +1,5 @@
 {
     "$schema": "https://web-page-seven-eta.vercel.app/vercel.json",
-    "cleanUrls": true,
     "rewrites": [
         {
             "source": "/",
