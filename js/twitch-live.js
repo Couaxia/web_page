@@ -955,9 +955,12 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        mediaList
-            .slice(0, 3)
-            .forEach((media) => {
+        const displayedMedia =
+            type === "clip"
+                ? mediaList
+                : mediaList.slice(0, 3);
+
+            displayedMedia.forEach((media) => {
                 container.appendChild(
                     createMediaCard(
                         media,

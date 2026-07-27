@@ -250,24 +250,13 @@ img {
     position: sticky;
     top: 0;
     z-index: 1000;
-
     width: 100%;
-
-    background: var(--navbar-background);
-
+    padding: 12px 20px;
+    background: transparent;
     border: none;
-
-    box-shadow:
-        0 8px 24px
-        rgba(0, 0, 0, 0.32);
-
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-
-    transition:
-        background-color 0.35s ease,
-        box-shadow 0.35s ease;
+    box-shadow: none;
 }
+
 
 
 /* ==================================================
@@ -279,56 +268,46 @@ img {
     align-items: center;
     justify-content: space-between;
     flex-wrap: nowrap;
-
-    gap: 24px;
-
-    width: min(97%, 1800px);
-    min-height: 130px;
-
+    gap: 18px;
+    width: min(100%, 1250px);
+    min-height: 78px;
     margin: 0 auto;
-    padding: 12px 28px;
-
-    box-sizing: border-box;
-
-    background: transparent;
-
-    border: none;
+    padding: 6px 24px;
+    background: var(--navbar-background);
+    border: 1px solid rgba(109, 0, 163, 0.18);
+    border-radius: 28px;
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.22),
+        0 0 18px rgba(109, 0, 163, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition:
+        background-color 0.35s ease,
+        box-shadow 0.35s ease;
 }
-
-
 /* ==================================================
    LOGO VIDÉO
 ================================================== */
 
 .navbar-logo {
     position: relative;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     flex: 0 0 auto;
-
-    width: 170px;
-    height: 122px;
-
+    width: 115px;
+    height: 72px;
     margin: 0;
     padding: 0;
-
     background: transparent;
-
     border: none;
-
     overflow: visible;
-
     text-decoration: none;
     cursor: pointer;
-
     transition:
         transform 0.3s ease,
         filter 0.3s ease;
 }
-
 
 .navbar-logo video {
     display: block;
@@ -340,26 +319,22 @@ img {
     object-position: center;
 
     background: transparent;
-
     border: none;
 
     pointer-events: none;
 
     filter:
         drop-shadow(
-            0 0 7px
-            rgba(255, 255, 255, 0.35)
+            0 0 7px rgba(255, 255, 255, 0.35)
         )
         drop-shadow(
-            0 0 15px
-            rgba(242, 34, 146, 0.35)
+            0 0 15px rgba(242, 34, 146, 0.35)
         );
 
     transition:
         transform 0.3s ease,
         filter 0.3s ease;
 }
-
 
 /* Survol du logo */
 
@@ -406,12 +381,11 @@ img {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     flex: 1 1 auto;
-    gap: 28px;
-    width: 100%;
-    padding: 10px 18px;
-    box-sizing: border-box;
+    gap: 24px;
+    width: auto;
+    padding: 4px 8px;
 }
 
 
@@ -425,30 +399,22 @@ img {
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
-    padding: 8px 6px;
+    padding: 7px 4px;
     color: var(--navbar-text);
     background: transparent;
     border: none;
     border-radius: 0;
     outline: none;
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-    font-size: 1.08rem;
+    font-family:        Arial,        Helvetica,        sans-serif;
+    font-size: 1rem;
     font-weight: 700;
     line-height: 1.2;
     text-align: center;
     text-decoration: none;
     white-space: nowrap;
-    text-shadow:
-        0 0 4px rgba(255, 255, 255, 0.18),
-        0 0 7px rgba(242, 34, 146, 0.22);
+    text-shadow:        0 0 4px rgba(255, 255, 255, 0.18),        0 0 7px rgba(242, 34, 146, 0.22);
     overflow: hidden;
-    transition:
-        color 0.25s ease,
-        text-shadow 0.25s ease,
-        transform 0.25s ease;
+    transition:        color 0.25s ease,        text-shadow 0.25s ease,        transform 0.25s ease;
 }
 /* ==================================================
    PETIT TRAIT LUMINEUX SOUS LE TEXTE
@@ -627,25 +593,17 @@ img {
 
 .theme-toggle {
     position: relative;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     flex: 0 0 auto;
-
     gap: 10px;
-
-    min-width: 155px;
-    min-height: 54px;
-
+    min-width: 135px;
+    min-height: 46px;
+    padding: 10px 16px;
     margin: 0 0 0 auto;
-    padding: 12px 20px;
-
     box-sizing: border-box;
-
     color: var(--button-text);
-
     background:
         rgba(
             35,
@@ -653,7 +611,6 @@ img {
             58,
             0.25
         );
-
     border:
         1px solid
         rgba(
@@ -662,9 +619,7 @@ img {
             255,
             0.8
         );
-
     border-radius: 999px;
-
     font: inherit;
     font-size: 1rem;
     font-weight: 700;
