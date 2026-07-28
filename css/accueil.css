@@ -4041,3 +4041,38 @@ body.light-mode .hero-tag-warning{
     }
 
 }
+.twitch-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.twitch-pagination-pages {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.twitch-pagination-indicator {
+    flex-basis: 100%;
+    margin: 8px 0 0;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #22f2ef;
+}
+
+.twitch-pagination-button.is-active {
+    border-color: #22f2ef;
+    color: #22f2ef;
+    box-shadow: 0 0 10px rgba(34, 242, 239, 0.55);
+}
+
+.twitch-pagination-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
+}

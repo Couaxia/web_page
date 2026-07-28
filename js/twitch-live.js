@@ -1229,38 +1229,31 @@ function renderPagination(
         return;
     }
 
-    container.innerHTML =
-        "";
+    container.innerHTML = "";
 
     /*
      * Une seule page :
      * inutile d’afficher la pagination.
      */
     if (totalPages <= 1) {
-        hideElement(
-            container
-        );
-
+        hideElement(container);
         return;
     }
 
-    showElement(
-        container
-    );
+    showElement(container);
 
+    /*
+     * Bouton précédent.
+     */
     const previousButton =
-        document.createElement(
-            "button"
-        );
+        document.createElement("button");
 
-    previousButton.type =
-        "button";
+    previousButton.type = "button";
 
     previousButton.className =
         "twitch-pagination-button twitch-pagination-arrow";
 
-    previousButton.textContent =
-        "←";
+    previousButton.textContent = "←";
 
     previousButton.setAttribute(
         "aria-label",
@@ -1283,18 +1276,24 @@ function renderPagination(
         previousButton
     );
 
+    /*
+     * Numéros des pages.
+     */
+    const pageButtonsContainer =
+        document.createElement("div");
+
+    pageButtonsContainer.className =
+        "twitch-pagination-pages";
+
     for (
         let page = 1;
         page <= totalPages;
         page += 1
     ) {
         const pageButton =
-            document.createElement(
-                "button"
-            );
+            document.createElement("button");
 
-        pageButton.type =
-            "button";
+        pageButton.type = "button";
 
         pageButton.className =
             "twitch-pagination-button";
@@ -1321,30 +1320,31 @@ function renderPagination(
         pageButton.addEventListener(
             "click",
             () => {
-                onPageChange(
-                    page
-                );
+                onPageChange(page);
             }
         );
 
-        container.appendChild(
+        pageButtonsContainer.appendChild(
             pageButton
         );
     }
 
-    const nextButton =
-        document.createElement(
-            "button"
-        );
+    container.appendChild(
+        pageButtonsContainer
+    );
 
-    nextButton.type =
-        "button";
+    /*
+     * Bouton suivant.
+     */
+    const nextButton =
+        document.createElement("button");
+
+    nextButton.type = "button";
 
     nextButton.className =
         "twitch-pagination-button twitch-pagination-arrow";
 
-    nextButton.textContent =
-        "→";
+    nextButton.textContent = "→";
 
     nextButton.setAttribute(
         "aria-label",
@@ -1366,107 +1366,26 @@ function renderPagination(
     container.appendChild(
         nextButton
     );
-}
 
-    /**
- * Affiche une page de clips Twitch.
- *
- * @param {Array<object>} clips
- * @param {number} requestedPage
- */
-function renderClips(
-    clips,
-    requestedPage = currentClipsPage
-) {
-    if (!clipsList) {
-        return;
-    }
+    /*
+     * Texte indiquant la page actuelle.
+     */
+    const pageIndicator =
+        document.createElement("p");
 
-    storedClips =
-        getArray(clips);
+    pageIndicator.className =
+        "twitch-pagination-indicator";
 
-    if (
-        storedClips.length ===
-        0
-    ) {
-        clipsList.innerHTML = `
-            <p class="twitch-empty-message">
-                Aucun clip disponible pour le moment.
-            </p>
-        `;
+    pageIndicator.textContent =
+        `Page ${currentPage} sur ${totalPages}`;
 
-        currentClipsPage =
-            1;
+    pageIndicator.setAttribute(
+        "aria-live",
+        "polite"
+    );
 
-        if (clipsPagination) {
-            clipsPagination.innerHTML =
-                "";
-
-            hideElement(
-                clipsPagination
-            );
-        }
-
-        return;
-    }
-
-    const totalPages =
-        Math.ceil(
-            storedClips.length /
-            MEDIA_PER_PAGE
-        );
-
-    currentClipsPage =
-        Math.min(
-            Math.max(
-                requestedPage,
-                1
-            ),
-            totalPages
-        );
-
-    const startIndex =
-        (
-            currentClipsPage -
-            1
-        ) *
-        MEDIA_PER_PAGE;
-
-    const endIndex =
-        startIndex +
-        MEDIA_PER_PAGE;
-
-    const visibleClips =
-        storedClips.slice(
-            startIndex,
-            endIndex
-        );
-
-    clipsList.innerHTML =
-        visibleClips
-            .map(
-                createClipCard
-            )
-            .join("");
-
-    renderPagination(
-        clipsPagination,
-        currentClipsPage,
-        totalPages,
-        (page) => {
-            renderClips(
-                storedClips,
-                page
-            );
-
-            clipsList.scrollIntoView({
-                behavior:
-                    "smooth",
-
-                block:
-                    "start"
-            });
-        }
+    container.appendChild(
+        pageIndicator
     );
 }
     /* =========================================================
@@ -1748,7 +1667,7 @@ function renderVideos(
         const videos =
             getVideos(data);
             
-
+        
         updateStatusPill(
             isLive
         );
