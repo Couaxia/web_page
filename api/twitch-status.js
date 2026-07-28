@@ -5,7 +5,7 @@
 ========================================================= */
 
 import {
-    getChannelClips
+    getAllChannelClips
 } from "./clips.js";
 
 import {
@@ -335,10 +335,10 @@ export default async function handler(
             ),
 
             safeRequest(
-                getChannelClips(
+                getAllChannelClips(
                     TWITCH_CHANNEL,
                     {
-                        first:
+                        maxClips:
                             CLIPS_LIMIT
                     }
                 ),

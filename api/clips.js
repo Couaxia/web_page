@@ -697,6 +697,106 @@ export async function getChannelClips(
 }
 
 
+/**
+ * Récupère plusieurs pages de clips d'une chaîne.
+ *
+ * @param {string} channelLogin
+ * @param {object} options
+ * @param {number} options.maxClips
+ * @returns {Promise<object>}
+ */
+export async function getAllChannelClips(
+    channelLogin = DEFAULT_CHANNEL,
+    {
+        maxClips = 300
+    } = {}
+) {
+    const normalizedMaximum =
+        Math.max(
+            Number.parseInt(
+                maxClips,
+                10
+            ) || 100,
+            1
+        );
+
+    const normalizedLogin =
+        normalizeChannelLogin(
+            channelLogin
+        );
+
+    const allClips = [];
+
+    let cursor = null;
+    let broadcasterId = null;
+    let filters = null;
+
+    do {
+        const remaining =
+            normalizedMaximum -
+            allClips.length;
+
+        const result =
+            await getChannelClips(
+                normalizedLogin,
+                {
+                    first:
+                        Math.min(
+                            remaining,
+                            MAX_CLIPS_PER_REQUEST
+                        ),
+
+                    after:
+                        cursor
+                }
+            );
+
+        broadcasterId =
+            result.broadcasterId;
+
+        filters =
+            result.filters;
+
+        allClips.push(
+            ...result.clips
+        );
+
+        cursor =
+            result.pagination?.cursor ||
+            null;
+    } while (
+        cursor &&
+        allClips.length <
+            normalizedMaximum
+    );
+
+    const clips =
+        allClips.slice(
+            0,
+            normalizedMaximum
+        );
+
+    return {
+        channel:
+            normalizedLogin,
+
+        broadcasterId,
+
+        clips,
+
+        returned:
+            clips.length,
+
+        filters,
+
+        pagination: {
+            cursor,
+
+            hasNextPage:
+                Boolean(cursor)
+        }
+    };
+}
 /* =========================================================
    CLIPS D'UN JEU
 ========================================================= */
