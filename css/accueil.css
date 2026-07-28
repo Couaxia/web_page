@@ -4043,36 +4043,82 @@ body.light-mode .hero-tag-warning{
 }
 .twitch-pagination {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 12px;
-    margin-top: 25px;
+    gap: 24px;
+    width: 100%;
+    margin-top: 28px;
 }
 
-.twitch-pagination-pages {
-    display: flex;
+.twitch-pagination-button {
+    display: inline-flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
+    min-width: 135px;
+    padding: 11px 18px;
+
+    border: 2px solid #6d00a3;
+    border-radius: 12px;
+
+    background: rgba(109, 0, 163, 0.15);
+    color: #ffffff;
+
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.twitch-pagination-indicator {
-    flex-basis: 100%;
-    margin: 8px 0 0;
-    text-align: center;
-    font-size: 1rem;
-    font-weight: bold;
-    color: #22f2ef;
-}
-
-.twitch-pagination-button.is-active {
+.twitch-pagination-button:hover:not(:disabled),
+.twitch-pagination-button:focus-visible:not(:disabled) {
+    transform: translateY(-2px);
     border-color: #22f2ef;
-    color: #22f2ef;
-    box-shadow: 0 0 10px rgba(34, 242, 239, 0.55);
+    background: rgba(34, 242, 239, 0.12);
+    box-shadow: 0 0 14px rgba(34, 242, 239, 0.45);
+}
+
+.twitch-pagination-button:focus-visible {
+    outline: 3px solid rgba(34, 242, 239, 0.5);
+    outline-offset: 3px;
 }
 
 .twitch-pagination-button:disabled {
-    cursor: not-allowed;
     opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.twitch-pagination-indicator {
+    min-width: 120px;
+    margin: 0;
+    text-align: center;
+
+    color: #22f2ef;
+    font-size: 1rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .twitch-pagination {
+        gap: 10px;
+    }
+
+    .twitch-pagination-button {
+        min-width: auto;
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+
+    .twitch-pagination-indicator {
+        min-width: auto;
+        font-size: 0.9rem;
+    }
 }

@@ -1212,7 +1212,8 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 /**
- * Crée les boutons d’une pagination.
+ * Crée une pagination simple :
+ * ← Précédent   Page 2 / 8   Suivant →
  *
  * @param {HTMLElement|null} container
  * @param {number} currentPage
@@ -1231,10 +1232,6 @@ function renderPagination(
 
     container.innerHTML = "";
 
-    /*
-     * Une seule page :
-     * inutile d’afficher la pagination.
-     */
     if (totalPages <= 1) {
         hideElement(container);
         return;
@@ -1242,150 +1239,86 @@ function renderPagination(
 
     showElement(container);
 
-    /*
-     * Bouton précédent.
-     */
     const previousButton =
         document.createElement("button");
 
-    previousButton.type = "button";
+    previousButton.type =
+        "button";
 
     previousButton.className =
-        "twitch-pagination-button twitch-pagination-arrow";
+        "twitch-pagination-button twitch-pagination-previous";
 
-    previousButton.textContent = "←";
+    previousButton.innerHTML =
+        '<span aria-hidden="true">←</span> Précédent';
 
     previousButton.setAttribute(
         "aria-label",
-        "Page précédente"
+        "Afficher la page précédente"
     );
 
     previousButton.disabled =
-        currentPage === 1;
+        currentPage <= 1;
 
     previousButton.addEventListener(
         "click",
         () => {
-            onPageChange(
-                currentPage - 1
-            );
-        }
-    );
-
-    container.appendChild(
-        previousButton
-    );
-
-    /*
-     * Numéros des pages.
-     */
-    const pageButtonsContainer =
-        document.createElement("div");
-
-    pageButtonsContainer.className =
-        "twitch-pagination-pages";
-
-    for (
-        let page = 1;
-        page <= totalPages;
-        page += 1
-    ) {
-        const pageButton =
-            document.createElement("button");
-
-        pageButton.type = "button";
-
-        pageButton.className =
-            "twitch-pagination-button";
-
-        pageButton.textContent =
-            String(page);
-
-        pageButton.setAttribute(
-            "aria-label",
-            `Afficher la page ${page}`
-        );
-
-        if (page === currentPage) {
-            pageButton.classList.add(
-                "is-active"
-            );
-
-            pageButton.setAttribute(
-                "aria-current",
-                "page"
-            );
-        }
-
-        pageButton.addEventListener(
-            "click",
-            () => {
-                onPageChange(page);
+            if (currentPage > 1) {
+                onPageChange(
+                    currentPage - 1
+                );
             }
-        );
-
-        pageButtonsContainer.appendChild(
-            pageButton
-        );
-    }
-
-    container.appendChild(
-        pageButtonsContainer
-    );
-
-    /*
-     * Bouton suivant.
-     */
-    const nextButton =
-        document.createElement("button");
-
-    nextButton.type = "button";
-
-    nextButton.className =
-        "twitch-pagination-button twitch-pagination-arrow";
-
-    nextButton.textContent = "→";
-
-    nextButton.setAttribute(
-        "aria-label",
-        "Page suivante"
-    );
-
-    nextButton.disabled =
-        currentPage === totalPages;
-
-    nextButton.addEventListener(
-        "click",
-        () => {
-            onPageChange(
-                currentPage + 1
-            );
         }
     );
 
-    container.appendChild(
-        nextButton
-    );
-
-    /*
-     * Texte indiquant la page actuelle.
-     */
     const pageIndicator =
-        document.createElement("p");
+        document.createElement("span");
 
     pageIndicator.className =
         "twitch-pagination-indicator";
 
     pageIndicator.textContent =
-        `Page ${currentPage} sur ${totalPages}`;
+        `Page ${currentPage} / ${totalPages}`;
 
     pageIndicator.setAttribute(
         "aria-live",
         "polite"
     );
 
-    container.appendChild(
-        pageIndicator
+    const nextButton =
+        document.createElement("button");
+
+    nextButton.type =
+        "button";
+
+    nextButton.className =
+        "twitch-pagination-button twitch-pagination-next";
+
+    nextButton.innerHTML =
+        'Suivant <span aria-hidden="true">→</span>';
+
+    nextButton.setAttribute(
+        "aria-label",
+        "Afficher la page suivante"
+    );
+
+    nextButton.disabled =
+        currentPage >= totalPages;
+
+    nextButton.addEventListener(
+        "click",
+        () => {
+            if (currentPage < totalPages) {
+                onPageChange(
+                    currentPage + 1
+                );
+            }
+        }
+    );
+
+    container.append(
+        previousButton,
+        pageIndicator,
+        nextButton
     );
 }
 /**
