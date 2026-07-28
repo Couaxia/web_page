@@ -37,10 +37,10 @@ const TWITCH_CHANNEL =
     "couaxia";
 
 const VIDEOS_LIMIT =
-    3;
+    20;
 
 const CLIPS_LIMIT =
-    3;
+    100;
 
 
 /* =========================================================

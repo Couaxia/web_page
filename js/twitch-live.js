@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
    CONFIGURATION DE LA PAGINATION
 ========================================================= */
 
-    const MEDIA_PER_PAGE =2;
+    const MEDIA_PER_PAGE =4;
     let currentClipsPage =1;
     let currentVideosPage =1;
 
