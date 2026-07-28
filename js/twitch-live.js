@@ -122,14 +122,21 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById(
             "twitch-videos-pagination"
         );
+    const descriptionValue =
+    firstDefined(
+        video?.description,
+        ""
+    );
+    const description =
+        descriptionValue
+            ? String(descriptionValue)
+            : "";    
 /* =========================================================
    CONFIGURATION DE LA PAGINATION
 ========================================================= */
 
-    const MEDIA_PER_PAGE =4;
-
+    const MEDIA_PER_PAGE =2;
     let currentClipsPage =1;
-
     let currentVideosPage =1;
 
     let storedClips =[];
@@ -177,13 +184,29 @@ document.addEventListener("DOMContentLoaded", () => {
      * @returns {unknown}
      */
     function firstDefined(...values) {
-        return values.find(
-            (value) =>
-                value !== undefined &&
-                value !== null &&
-                value !== ""
-        );
-    }
+    return values.find((value) => {
+        if (
+            value === undefined ||
+            value === null
+        ) {
+            return false;
+        }
+
+        if (typeof value === "string") {
+            const normalizedValue =
+                value.trim().toLowerCase();
+
+            return (
+                normalizedValue !== "" &&
+                normalizedValue !== "undefined" &&
+                normalizedValue !== "null" &&
+                normalizedValue !== "nan"
+            );
+        }
+
+        return true;
+    });
+}
 
 
     /**
@@ -462,19 +485,23 @@ document.addEventListener("DOMContentLoaded", () => {
      * @returns {string}
      */
     function getGameName(data) {
-        return String(
-            firstDefined(
-                data?.gameName,
-                data?.game_name,
-                data?.category,
-                data?.stream?.gameName,
-                data?.stream?.game_name,
-                data?.stream?.category,
-                data?.game?.name,
-                ""
-            )
-        );
-    }
+    return String(
+        firstDefined(
+            data?.gameName,
+            data?.game_name,
+            data?.category,
+            data?.stream?.gameName,
+            data?.stream?.game_name,
+            data?.stream?.category,
+            data?.stream?.game?.name,
+            data?.channel?.gameName,
+            data?.channel?.game_name,
+            data?.channel?.category,
+            data?.game?.name,
+            ""
+        ) ?? ""
+    );
+}
 
 
     /**
