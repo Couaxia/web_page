@@ -58,7 +58,7 @@
                     </p>
 
                     <p class="home-introduction">
-                        Mon univers mélange tentacules, améthystes, magie,
+                        Mon univers mélange tentacules,humour, magie,
                         créatures fantastiques et beaucoup de bonne humeur.
                     </p>
 
@@ -67,23 +67,20 @@
                             class="home-action-link"
                             href="https://www.twitch.tv/couaxia"
                             target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Twitch
+                            rel="noopener noreferrer" data-mascotte-message="Je crois qu'ici c'est ma chaine twoirch !">
+                            🟣 Twitch
                         </a>
 
                         <a
                             class="home-action-link home-action-link-secondary"
-                            href="./a-propos.html"
-                        >
-                            Découvrir Couaxia
+                            href="./a-propos.html" data-mascotte-message="Clique ici pour en savoir plus sur moi !">
+                           ✨ Découvrir mon univers
                         </a>
 
                         <a
                             class="home-action-link home-action-link-secondary"
-                            href="./Histoire/debut_histoire.html"
-                        >
-                            Découvrir mon histoire
+                            href="./Histoire/debut_histoire.html" data-mascotte-message="Ici ta mon histoire !">
+                            📖 Lire mon histoire
                         </a>
                     </div>
                 </div>
@@ -94,8 +91,7 @@
                     <img
                         class="home-character"
                         src="./images/mascotte/Aboutmeno.png"
-                        alt="Modèle VTuber de Couaxia"
-                    >
+                        alt="Modèle VTuber de Couaxia">
 
                     <div class="home-character-name">
                         <span>Couaxia</span>
@@ -109,11 +105,8 @@
              PRÉSENTATION DE LA CHAÎNE TWITCH
         ====================================================== -->
 
-        <section
-            class="twitch-presentation"
-            id="twitch-section"
-            aria-labelledby="twitch-section-title"
-        >
+        <section class="twitch-presentation" id="twitch-section"
+            aria-labelledby="twitch-section-title">
             <div class="twitch-presentation__content">
                 <div class="twitch-presentation__text">
                     <p class="twitch-presentation__eyebrow">
@@ -125,21 +118,6 @@
                         <span>Twitch</span>
                     </h2>
 
-                    <div
-                        class="twitch-presentation__status"
-                        id="twitch-status-pill"
-                        data-status="loading"
-                    >
-                        <span
-                            class="twitch-status-dot"
-                            aria-hidden="true"
-                        ></span>
-
-                        <strong id="twitch-status-label">
-                            Vérification…
-                        </strong>
-                    </div>
-
                     <p class="twitch-presentation__description">
                         Viens partager mes aventures, mes découvertes,
                         mes jeux et mes moments de folie avec toute la communauté.
@@ -148,128 +126,176 @@
                     <p class="twitch-follower-text">
                         Vous êtes actuellement
                         <strong id="twitch-followers-count">—</strong>
-                        à suivre l’aventure de Couaxia sur Twitch !
+                        à suivre les aventures de Couaxia sur Twitch !
                     </p>
 
-                    <div class="twitch-presentation__meta">
-                        <span>
-                            <strong id="twitch-viewer-count">0</strong>
-                            spectateur(s)
+                    <div class="hero-tags">
+                        <span class="hero-tag" data-messages="
+                              J'adore découvrir toutes sortes de jeux !|
+                              Chez moi, on change souvent de jeu pour varier les plaisirs !|
+                              Impossible de me limiter à un seul univers, j'aime tout essayer !|
+                              Du chill à l'horreur, il y en a pour tout le monde !">
+                            🎮 Multi-Gaming
                         </span>
-
-                        <span>Streameuse</span>
+                        <span class="hero-tag"  data-messages="
+                                Je suis une VTubeuse venue de la planète Saphira !|
+                                Mon avatar me permet de raconter plein d'histoires !|
+                                Derrière ce modèle virtuel se cache tout un univers !">
+                            👾 VTubeuse
+                        </span>
+                        <span class="hero-tag" data-messages="
+                                Oui oui, Baguette, Fromage, Saucisson ! 🇫🇷|
+                                Les streams sont en français !|
+                                Tu entendras sûrement quelques expressions bien françaises ici !|
+                                Bienvenue à tous, où que vous soyez !">
+                            🇫🇷 Française
+                        </span>
+                        <span class="hero-tag" data-messages="Ici tout le monde est le bienvenu 💜|
+                                    Mon objectif est que chacun passe un bon moment.| 
+                                    Respect, bienveillance et bonne humeur avant tout !|
+                                    Les Poups prennent soin les uns des autres.">
+                            💜 Safe Place
+                        </span>
+                        <span class="hero-tag" data-mascotte-message="Les poulpes sont les maîtres du monde.|
+                                               Tu as remarqué mes tentacules ?|
+                                               Les tentacules font partie de mon identité !|
+                                               Bienvenue dans le royaume des poulpes !">
+                            🐙 Octopus
+                        </span>
+                        <span class="hero-tag" data-mascotte-message="J'adore streamer avec d'autres créateurs.|
+                                                Plus on est nombreux, plus on ris !|
+                                                Les collaborations donnent toujours des moments mémorables !|
+                                                Tu me verras souvent jouer avec des amis !">
+                            🤝 Collab
+                        </span>
+                        <span class="hero-tag" data-mascotte-message="Je tiens rarement en place pendant un stream !|
+                                                J'ai toujours beaucoup trop d'énergie !|
+                                                Prépare-toi à quelques moments complètement chaotiques !|
+                                                Chez moi, ça bouge presque tout le temps !">
+                            ⚡ Énergie
+                        </span>
+                        <span class="hero-tag" data-mascotte-message="Même en mode détente, on rigole beaucoup.| 
+                                                Installe-toi tranquillement et profite du stream !|
+                                                Ici, on aime prendre notre temps entre deux aventures.| 
+                                                Une boisson chaude, un plaid et c'est parfait !">
+                            🌙 Chill
+                        </span>
+                        <span class="hero-tag hero-tag-warning" data-mascotte-message="Attention... ici on filtre rarement nos bêtises 😂|
+                                                Quelques gros mots peuvent parfois s'échapper... oups !|
+                                                Le contenu est réservé à un public averti !|
+                                                Promis... on essaie d'être sages... enfin presque !">
+                            🔞 +18
+                        </span>
                     </div>
 
-                    <a
-                        class="twitch-channel-button"
-                        href="https://www.twitch.tv/couaxia"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
+                    <a class="twitch-channel-button" href="https://www.twitch.tv/couaxia"
+                        target="_blank" rel="noopener noreferrer" data-mascotte-message="Encore un lien vers ma chaine Twitch ?!">
                         <img
                             src="./images/logo/twitch-logo-transparent.png"
                             alt=""
-                            aria-hidden="true"
-                        >
+                            aria-hidden="true">
 
                         <span>Voir la chaîne Twitch</span>
                         <span aria-hidden="true">↗</span>
                     </a>
                 </div>
+                 <div class="twitch-presentation__visual">
+                        <img src="./images/Arts/Couaxia_Myo.png"
+                            alt="Couaxia"
+                            class="twitch-presentation__character">
+                    </div>
             </div>
+            
         </section>
 
         <!-- =====================================================
              BLOC STREAM TWITCH
         ====================================================== -->
-
-        <section class="twitch-stream-section"
-            aria-labelledby="twitch-stream-heading">
-            <header class="twitch-stream-section__heading">
-                <div>
-                    <p class="twitch-eyebrow">
-                        Stream
-                    </p>
-                    <h2 id="twitch-stream-heading">
-                        Couaxia est hors ligne
-                    </h2>
-                    <p id="twitch-stream-subtitle">
-                        Le prochain live sera annoncé prochainement.
-                    </p>
-                </div>
-
-                <span class="twitch-player-badge" id="twitch-player-badge"
-                    data-status="loading">
-                    Vérification
-                </span>
-            </header>
-
-            <div class="twitch-stream-card">
-                <div class="home-stream-player">
-                    <iframe id="twitch-player" title="Live Twitch de Couaxia"
-                        allow="autoplay; fullscreen" allowfullscreen scrolling="no">
-                    </iframe>
-                </div>
-
-                <div class="home-stream-details">
-                    <div class="twitch-game">
-                        <div>
-                            <span class="twitch-game__label">
-                                Catégorie
+        <section class="twitch-section" aria-labelledby="twitch-live-title" >
+                <div class="twitch-section-header">
+                    <div class="twitch-header-left">
+                    <div class="twitch-header-top">
+                        <span class="twitch-eyebrow">
+                            STREAM
+                        </span>
+                        <div class="twitch-presentation__status" id="twitch-status-pill" data-status="loading" role="status" aria-live="polite">
+                            <span class="twitch-status-dot" aria-hidden="true"> 
                             </span>
-                            <strong id="twitch-game-name">
-                                Aucune catégorie
+                            <strong id="twitch-status-label">
+                                Vérification…
                             </strong>
                         </div>
                     </div>
-
-                    <dl class="twitch-stream-information">
-                        <div>
-                            <dt>Langue</dt>
-                            <dd id="twitch-stream-language">—</dd>
-                        </div>
-                        <div>
-                            <dt>Commencé à</dt>
-                            <dd id="twitch-started-at">—</dd>
-                        </div>
-                    </dl>
+                        <h2 id="twitch-live-title">
+                            En direct sur Twitch
+                        </h2>
+                    </div>
+                            
+                <div class="twitch-header-actions">
+                    <a class="twitch-channel-link"
+                        href="https://www.twitch.tv/couaxia"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Voir la chaîne Twitch de Couaxia" data-mascotte-message="C'est le troisième liens ! Promis c'est le dernier !">
+                        <svg
+                            class="twitch-channel-logo"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true">
+                            <path fill="currentColor"
+                                d="M4.3 2 2 6.1v14.8h5.2V24l3.1-3.1h4.1L22 13.3V2H4.3Zm15.6 10.3-3.4 3.4h-5.2l-2.9 2.9v-2.9H4.8V4.1h15.1v8.2Zm-3.1-5.1v5.1h-2.1V7.2h2.1Zm-5.3 0v5.1H9.4V7.2h2.1Z"/>
+                        </svg>
+                            
+                        <span>Twitch</span>
+                        <span class="twitch-channel-arrow" aria-hidden="true">↗</span>
+                    </a>              
+                    <button id="twitch-refresh-button" class="twitch-refresh-button" type="button">
+                        <span aria-hidden="true">🔄</span>
+                        <span>Actualiser</span>
+                    </button>
                 </div>
+            </div>
+
+        <div class="twitch-live-block">
+                <div class="twitch-player-wrapper">
+                    <span id="twitch-player-badge" class="twitch-player-badge">
+                        HORS LIGNE
+                    </span>
+                    <iframe id="twitch-player" title="Live Twitch de Couaxia"
+                        allow="autoplay; fullscreen" allowfullscreen>
+                    </iframe>
+                </div>
+
+            <div class="twitch-live-infos">
+                    <div class="twitch-live-info">
+                        <span class="twitch-info-label">
+                            Catégorie
+                        </span>
+                        <strong id="twitch-game-name">
+                            Hors ligne
+                        </strong>
+                    </div>
+                    <div class="twitch-live-info">
+                        <span class="twitch-info-label">
+                            Viewers
+                        </span>
+                        <strong id="twitch-viewer-count">
+                            0
+                        </strong>
+                    </div>
+                </div>
+
+                <p id="twitch-api-message" class="twitch-api-message is-hidden"
+                    role="status" aria-live="polite">
+                </p>
             </div>
         </section>
 
-        <!-- =====================================================
-             MESSAGE D’ERREUR TWITCH
-        ====================================================== -->
-
-        <section
-            class="twitch-api-message is-hidden"
-            id="twitch-api-message"
-            role="alert"
-        >
-            <strong>
-                Les informations Twitch sont momentanément indisponibles.
-            </strong>
-
-            <span>
-                Le lecteur reste accessible et tu peux toujours rejoindre la chaîne.
-            </span>
-
-            <button
-                type="button"
-                id="twitch-refresh-button"
-            >
-                Actualiser
-            </button>
-        </section>
-
+    
         <!-- =====================================================
              CLIPS TWITCH
         ====================================================== -->
 
-        <section
-            class="twitch-media-section"
-            aria-labelledby="twitch-clips-title"
-        >
+        <section class="twitch-media-section" aria-labelledby="twitch-clips-title">
             <header class="twitch-media-heading">
                 <div>
                     <p class="twitch-eyebrow">
@@ -281,35 +307,30 @@
                     </h2>
                 </div>
 
-                <a
-                    href="https://www.twitch.tv/couaxia/clips"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
+                <a href="https://www.twitch.tv/couaxia/clips"
+                    target="_blank" rel="noopener noreferrer">
                     Voir tous les clips
                     <span aria-hidden="true">↗</span>
                 </a>
             </header>
-
-            <div
-                class="twitch-media-grid"
-                id="twitch-clips-list"
-                aria-live="polite"
-            >
+            <div class="twitch-media-grid" id="twitch-clips-list"
+                aria-live="polite">
                 <article class="twitch-media-placeholder">
                     Chargement des clips…
                 </article>
             </div>
+            
+                <div id="twitch-clips-list" class="twitch-media-grid"></div>
+                <nav id="twitch-clips-pagination"
+                    class="twitch-pagination"
+                    aria-label="Pagination des clips"> </nav>
         </section>
 
         <!-- =====================================================
              VIDÉOS TWITCH
         ====================================================== -->
 
-        <section
-            class="twitch-media-section"
-            aria-labelledby="twitch-videos-title"
-        >
+        <section class="twitch-media-section" aria-labelledby="twitch-videos-title">
             <header class="twitch-media-heading">
                 <div>
                     <p class="twitch-eyebrow">
@@ -321,25 +342,23 @@
                     </h2>
                 </div>
 
-                <a
-                    href="https://www.twitch.tv/couaxia/videos"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
+                <a href="https://www.twitch.tv/couaxia/videos" target="_blank"
+                    rel="noopener noreferrer">
                     Voir toutes les vidéos
                     <span aria-hidden="true">↗</span>
                 </a>
             </header>
+                
+             <div id="twitch-videos-list" class="twitch-media-grid"></div>
 
-            <div
-                class="twitch-media-grid"
-                id="twitch-videos-list"
-                aria-live="polite"
-            >
+            <div class="twitch-media-grid" id="twitch-videos-list" aria-live="polite">
                 <article class="twitch-media-placeholder">
                     Chargement des vidéos…
                 </article>
             </div>
+            <nav id="twitch-videos-pagination" class="twitch-pagination"
+                aria-label="Pagination des vidéos">
+            </nav>
         </section>
 </main>
 
@@ -363,6 +382,7 @@
             </div>
                  <script src="./js/scroll-page.js"></script>
                  <script src="./js/mascotte.js"></script>
+                 <script src="./js/mascotte-navigation.js"></script>
                  <script src="./js/protection.js"></script>
                  <script src="./js/twitch-live.js"></script>
                  <script src="./js/theme.js"></script>

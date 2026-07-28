@@ -2149,7 +2149,7 @@ main {
     font-size: 1.17rem;
     line-height: 1.35;
     -webkit-box-orient: vertical;
-    
+    -webkit-line-clamp: 2;
 }
 
 .twitch-media-content p {
@@ -2268,2566 +2268,1093 @@ main {
         animation: none !important;
     }
 }
-
 /* =========================================================
-   NOUVELLE PRÉSENTATION TWITCH
-   Présentation séparée du lecteur
+   ACCUEIL TWITCH — ADAPTATION HTML ACTUEL + MODE JOUR/NUIT
+   Placé à la fin du fichier pour neutraliser les anciennes
+   règles répétées.
 ========================================================= */
 
-:root {
-    --twitch-section-width: 1500px;
-    --twitch-cyan: #22f2ef;
-    --twitch-pink: #f22292;
-    --twitch-purple: #6d00a3;
-    --twitch-dark: #170020;
-    --twitch-white: #ffffff;
-    --twitch-muted: rgba(255, 255, 255, 0.74);
-}
-
-
-/* =========================================================
-   LARGEUR COMMUNE DES BLOCS TWITCH
-========================================================= */
-
-.twitch-presentation,
-.twitch-stream-section,
-.twitch-api-message,
-.twitch-media-section {
-    width: min(
-        var(--twitch-section-width),
-        94%
-    );
-
-    margin-right: auto;
-    margin-left: auto;
-}
-
-
-/* =========================================================
-   BLOC DE PRÉSENTATION DE LA CHAÎNE
-========================================================= */
-
-.twitch-presentation {
-    position: relative;
-    margin-top: 70px;
-    padding: clamp(
-        42px,
-        6vw,
-        85px
-    );
-
-    overflow: hidden;
-    color: var(--twitch-white);
-
-    background:
-        radial-gradient(
-            circle at 82% 18%,
-            rgba(242, 34, 146, 0.22),
-            transparent 31%
-        ),
-        radial-gradient(
-            circle at 13% 78%,
-            rgba(34, 242, 239, 0.11),
-            transparent 35%
-        ),
+:root,
+html[data-theme="dark"] {
+    --home-twitch-surface:
         linear-gradient(
             135deg,
-            rgba(40, 7, 70, 0.97),
-            rgba(83, 10, 104, 0.94),
-            rgba(22, 8, 54, 0.97)
+            rgba(31, 9, 67, 0.96),
+            rgba(89, 8, 103, 0.91),
+            rgba(30, 7, 57, 0.97)
         );
+    --home-twitch-card: rgba(13, 8, 38, 0.64);
+    --home-twitch-card-strong: rgba(14, 5, 34, 0.82);
+    --home-twitch-text: #ffffff;
+    --home-twitch-muted: rgba(255, 255, 255, 0.76);
+    --home-twitch-border: rgba(34, 242, 239, 0.42);
+    --home-twitch-border-soft: rgba(255, 255, 255, 0.16);
+    --home-twitch-shadow: rgba(0, 0, 0, 0.38);
+    --home-twitch-cyan: #22f2ef;
+    --home-twitch-logo: #a970ff;
+    --home-twitch-button-text: #22f2ef;
+    --home-twitch-button-hover-text: #240038;
+    --home-twitch-player-background: #000000;
+}
 
-    border: 1px solid
-        rgba(255, 255, 255, 0.15);
+html[data-theme="light"] {
+    --home-twitch-surface:
+        linear-gradient(
+            135deg,
+            rgba(250, 244, 255, 0.97),
+            rgba(242, 225, 255, 0.96),
+            rgba(221, 247, 249, 0.96)
+        );
+    --home-twitch-card: rgba(255, 255, 255, 0.78);
+    --home-twitch-card-strong: rgba(255, 255, 255, 0.92);
+    --home-twitch-text: #2b123d;
+    --home-twitch-muted: rgba(43, 18, 61, 0.72);
+    --home-twitch-border: rgba(109, 0, 163, 0.38);
+    --home-twitch-border-soft: rgba(109, 0, 163, 0.16);
+    --home-twitch-shadow: rgba(71, 20, 99, 0.18);
+    --home-twitch-cyan: #087f83;
+    --home-twitch-logo: #772ce8;
+    --home-twitch-button-text: #6d00a3;
+    --home-twitch-button-hover-text: #ffffff;
+    --home-twitch-player-background: #111111;
+}
 
-    border-radius: 42px;
-
+/* Section Twitch principale */
+.twitch-section {
+    width: min(1500px, calc(100% - 60px));
+    margin: 80px auto;
+    padding: clamp(35px, 5vw, 70px);
+    color: var(--home-twitch-text);
+    border: 1px solid var(--home-twitch-border-soft);
+    border-radius: 44px;
+    background: var(--home-twitch-surface);
     box-shadow:
-        0 24px 60px rgba(0, 0, 0, 0.42),
-        0 0 35px rgba(109, 0, 163, 0.3);
+        0 22px 55px var(--home-twitch-shadow),
+        0 0 30px rgba(109, 0, 163, 0.16);
+    overflow: hidden;
+    transition:
+        background 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
-.twitch-presentation::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-
-    pointer-events: none;
-
-    background:
-        radial-gradient(
-            circle at 16% 18%,
-            rgba(255, 255, 255, 0.05),
-            transparent 20%
-        ),
-        radial-gradient(
-            circle at 88% 80%,
-            rgba(255, 255, 255, 0.035),
-            transparent 22%
-        );
-}
-
-.twitch-presentation__content {
-    position: relative;
-    z-index: 2;
-
-    display: block;
-    width: 100%;
-}
-
-.twitch-presentation__text {
+/* En-tête */
+.twitch-section-header {
     display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 36px;
+    width: 100%;
+    margin-bottom: 36px;
+}
+
+.twitch-header-left {
+    display: flex;
+    flex: 1 1 auto;
     flex-direction: column;
+    min-width: 0;
+    gap: 14px;
+}
+
+.twitch-header-top {
+    display: flex;
     align-items: center;
-
-    max-width: 1000px;
-    margin: 0 auto;
-
-    text-align: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 0;
 }
 
-.twitch-presentation__eyebrow {
-    margin: 0 0 16px;
-
-    color: var(--twitch-cyan);
-
-    font-family:
-        "Courier New",
-        Courier,
-        monospace;
-
-    font-size: 0.95rem;
+.twitch-header-top .twitch-eyebrow {
+    margin: 0;
+    color: var(--home-twitch-cyan);
+    font-family: "Courier New", monospace;
+    font-size: clamp(1.45rem, 2.7vw, 2.7rem);
     font-weight: 900;
-    letter-spacing: 0.23em;
-    text-transform: uppercase;
-
-    text-shadow:
-        0 0 12px
-        rgba(34, 242, 239, 0.5);
-}
-
-.twitch-presentation h2 {
-    width: auto;
-    height: auto;
-    min-height: 0;
-
-    margin: 0 0 28px;
-    padding: 0;
-
-    color: var(--twitch-white);
-    background: none;
-    border: 0;
-    box-shadow: none;
-
-    font-family:
-        "Courier New",
-        Courier,
-        monospace;
-
-    font-size: clamp(
-        2.7rem,
-        6vw,
-        5.8rem
-    );
-
     line-height: 1;
-    text-align: center;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
 }
 
-.twitch-presentation h2::before,
-.twitch-presentation h2::after {
-    display: none;
-    content: none;
+.twitch-section-header h2 {
+    margin: 0;
+    color: var(--home-twitch-text);
+    font-family: "Courier New", monospace;
+    font-size: clamp(2.8rem, 5.5vw, 5.6rem);
+    line-height: 1.02;
+    text-align: left;
 }
 
-.twitch-presentation h2 span {
-    display: block;
-    margin-top: 12px;
-
-    color: var(--twitch-pink);
-
-    text-shadow:
-        0 0 14px
-        rgba(242, 34, 146, 0.5),
-        0 0 30px
-        rgba(109, 0, 163, 0.45);
-}
-
-
-/* =========================================================
-   STATUT TWITCH
-========================================================= */
-
+/* Statut à côté de STREAM */
 .twitch-presentation__status {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 13px;
-
-    min-height: 55px;
-    margin: 0 0 25px;
-    padding: 10px 22px;
-
-    color: var(--twitch-white);
-    background:
-        rgba(255, 255, 255, 0.08);
-
-    border: 1px solid
-        rgba(255, 255, 255, 0.18);
-
-    border-radius: 999px;
-
-    box-shadow:
-        inset 0 0 24px
-        rgba(255, 255, 255, 0.04);
-}
-
-.twitch-presentation__status
-.twitch-status-dot {
-    width: 20px;
-    height: 20px;
-    flex: 0 0 auto;
-
-    background: #8f8f9f;
-
-    border: 4px solid
-        rgba(255, 255, 255, 0.88);
-
-    border-radius: 50%;
-
-    box-shadow:
-        0 0 0 7px
-        rgba(143, 143, 159, 0.16);
-}
-
-.twitch-presentation__status[
-    data-status="online"
-]
-.twitch-status-dot {
-    background: #29e67a;
-
-    box-shadow:
-        0 0 0 7px
-        rgba(41, 230, 122, 0.16),
-        0 0 22px
-        rgba(41, 230, 122, 0.75);
-
-    animation:
-        twitch-status-pulse-new
-        1.4s
-        ease-in-out
-        infinite;
-}
-
-.twitch-presentation__status[
-    data-status="offline"
-]
-.twitch-status-dot {
-    background: #8f8f9f;
-}
-
-.twitch-presentation__status[
-    data-status="error"
-]
-.twitch-status-dot {
-    background: #ffb020;
-
-    box-shadow:
-        0 0 0 7px
-        rgba(255, 176, 32, 0.16),
-        0 0 22px
-        rgba(255, 176, 32, 0.55);
-}
-
-
-/* =========================================================
-   DESCRIPTION ET STATISTIQUES
-========================================================= */
-
-.twitch-presentation__description,
-.twitch-follower-text {
-    max-width: 850px;
-    margin: 0 0 18px;
-
-    color:
-        rgba(255, 255, 255, 0.88);
-
-    font-size: clamp(
-        1rem,
-        1.5vw,
-        1.2rem
-    );
-
-    line-height: 1.8;
-    text-align: center;
-}
-
-.twitch-follower-text strong {
-    color: var(--twitch-cyan);
-
-    font-family:
-        "Courier New",
-        Courier,
-        monospace;
-
-    font-size: 1.25em;
-
-    text-shadow:
-        0 0 12px
-        rgba(34, 242, 239, 0.45);
-}
-
-.twitch-presentation__meta {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-
-    margin: 22px 0 28px;
-}
-
-.twitch-presentation__meta span {
-    padding: 10px 17px;
-
-    color:
-        rgba(255, 255, 255, 0.88);
-
-    background:
-        rgba(255, 255, 255, 0.075);
-
-    border: 1px solid
-        rgba(255, 255, 255, 0.15);
-
-    border-radius: 999px;
-
-    font-size: 0.92rem;
-    font-weight: 800;
-}
-
-
-/* =========================================================
-   BOUTON TWITCH
-========================================================= */
-
-.twitch-channel-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-
-    min-height: 56px;
-    padding: 13px 25px;
-
-    color: var(--twitch-white);
-
-    background:
-        linear-gradient(
-            135deg,
-            #9146ff,
-            #6d00a3
-        );
-
-    border: 1px solid
-        rgba(255, 255, 255, 0.25);
-
-    border-radius: 999px;
-
-    font-size: 1rem;
-    font-weight: 900;
-    text-decoration: none;
-
-    box-shadow:
-        0 12px 28px
-        rgba(109, 0, 163, 0.42);
-
-    transition:
-        transform 0.25s ease,
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
-}
-
-.twitch-channel-button img {
-    width: 27px;
-    height: 27px;
-    object-fit: contain;
-}
-
-.twitch-channel-button:hover {
-    color: var(--twitch-white);
-    border-color: var(--twitch-cyan);
-
-    transform:
-        translateY(-4px);
-
-    box-shadow:
-        0 16px 32px
-        rgba(109, 0, 163, 0.5),
-        0 0 24px
-        rgba(34, 242, 239, 0.32);
-}
-
-
-/* =========================================================
-   SECTION DU STREAM SÉPARÉE
-========================================================= */
-
-.twitch-stream-section {
-    position: relative;
-    margin-top: 75px;
-}
-
-.twitch-stream-section__heading {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 30px;
-
-    margin-bottom: 28px;
-}
-
-.twitch-stream-section__heading
-.twitch-eyebrow {
-    margin: 0 0 12px;
-}
-
-.twitch-stream-section__heading h2 {
-    width: auto;
-    height: auto;
-    min-height: 0;
-
+    gap: 11px;
+    width: fit-content;
+    min-height: 43px;
     margin: 0;
-    padding: 0;
-
-    color: var(--twitch-white);
-    background: none;
-    border: 0;
-    box-shadow: none;
-
-    font-family:
-        "Courier New",
-        Courier,
-        monospace;
-
-    font-size: clamp(
-        2.4rem,
-        4.6vw,
-        5rem
-    );
-
-    line-height: 1.03;
-    text-align: left;
-}
-
-.twitch-stream-section__heading h2::before,
-.twitch-stream-section__heading h2::after {
-    display: none;
-    content: none;
-}
-
-.twitch-stream-section__heading
-p:last-child {
-    max-width: 800px;
-    margin: 16px 0 0;
-
-    color: var(--twitch-muted);
-
-    font-size: 1.08rem;
-    line-height: 1.65;
-}
-
-
-/* =========================================================
-   BADGE DU STREAM
-========================================================= */
-
-.twitch-player-badge {
-    flex: 0 0 auto;
-
-    min-width: 125px;
-    padding: 11px 17px;
-
-    color: var(--twitch-white);
-    background:
-        rgba(143, 143, 159, 0.22);
-
-    border: 1px solid
-        rgba(255, 255, 255, 0.18);
-
+    padding: 9px 16px;
+    color: var(--home-twitch-text);
+    border: 1px solid var(--home-twitch-border-soft);
     border-radius: 999px;
-
-    font-size: 0.9rem;
-    font-weight: 900;
-    text-align: center;
-    text-transform: uppercase;
-}
-
-.twitch-player-badge[
-    data-status="online"
-] {
-    color: #7dffb1;
-
-    background:
-        rgba(41, 230, 122, 0.17);
-
-    border-color:
-        rgba(41, 230, 122, 0.48);
-
-    box-shadow:
-        0 0 20px
-        rgba(41, 230, 122, 0.16);
-}
-
-.twitch-player-badge[
-    data-status="offline"
-] {
-    color:
-        rgba(255, 255, 255, 0.82);
-}
-
-.twitch-player-badge[
-    data-status="error"
-] {
-    color: #ffd889;
-
-    background:
-        rgba(255, 176, 32, 0.16);
-
-    border-color:
-        rgba(255, 176, 32, 0.45);
-}
-
-
-/* =========================================================
-   CARTE DU LECTEUR
-========================================================= */
-
-.twitch-stream-card {
-    position: relative;
-    padding: clamp(
-        18px,
-        3vw,
-        34px
-    );
-
-    overflow: hidden;
-
-    background:
-        radial-gradient(
-            circle at 88% 12%,
-            rgba(242, 34, 146, 0.15),
-            transparent 30%
-        ),
-        linear-gradient(
-            145deg,
-            rgba(35, 0, 58, 0.98),
-            rgba(14, 0, 27, 0.98)
-        );
-
-    border: 1px solid
-        rgba(34, 242, 239, 0.3);
-
-    border-radius: 35px;
-
-    box-shadow:
-        0 24px 65px
-        rgba(0, 0, 0, 0.4),
-        0 0 30px
-        rgba(34, 242, 239, 0.08);
-}
-
-
-/* =========================================================
-   LECTEUR TWITCH
-========================================================= */
-
-.twitch-stream-card
-.home-stream-player {
-    position: relative;
-    width: 100%;
-    min-height: 0;
-    aspect-ratio: 16 / 9;
-
-    overflow: hidden;
-
-    background: #08000e;
-
-    border: 2px solid
-        rgba(255, 255, 255, 0.75);
-
-    border-radius: 25px;
-
-    box-shadow:
-        0 18px 45px
-        rgba(0, 0, 0, 0.45),
-        0 0 30px
-        rgba(109, 0, 163, 0.28);
-}
-
-.twitch-stream-card
-.home-stream-player iframe {
-    position: absolute;
-    inset: 0;
-
-    display: block;
-    width: 100%;
-    height: 100%;
-
-    border: 0;
-}
-
-
-/* =========================================================
-   INFORMATIONS SOUS LE LECTEUR
-========================================================= */
-
-.twitch-stream-card
-.home-stream-details {
-    display: grid;
-    grid-template-columns:
-        minmax(0, 1fr)
-        auto;
-
-    align-items: stretch;
-    gap: 18px;
-
-    margin-top: 22px;
-}
-
-.twitch-stream-card
-.twitch-game,
-.twitch-stream-card
-.twitch-stream-information {
-    margin: 0;
-
-    background:
-        rgba(255, 255, 255, 0.055);
-
-    border: 1px solid
-        rgba(255, 255, 255, 0.12);
-
-    border-radius: 20px;
-}
-
-.twitch-stream-card
-.twitch-game {
-    display: flex;
-    align-items: center;
-
-    min-height: 90px;
-    padding: 18px 22px;
-}
-
-.twitch-game__label {
-    display: block;
-    margin-bottom: 7px;
-
-    color: var(--twitch-muted);
-
-    font-size: 0.78rem;
-    font-weight: 900;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-}
-
-.twitch-stream-card
-.twitch-game strong {
-    display: block;
-
-    color: var(--twitch-white);
-
-    font-family:
-        "Courier New",
-        Courier,
-        monospace;
-
-    font-size: 1.1rem;
-}
-
-.twitch-stream-information {
-    display: grid;
-    grid-template-columns:
-        repeat(2, minmax(150px, 1fr));
-
-    gap: 12px;
-    padding: 12px;
-}
-
-.twitch-stream-information > div {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    min-width: 150px;
-    padding: 10px 16px;
-
-    text-align: center;
-
-    background:
-        rgba(255, 255, 255, 0.04);
-
-    border-radius: 14px;
-}
-
-.twitch-stream-information dt {
-    margin-bottom: 7px;
-
-    color: var(--twitch-muted);
-
-    font-size: 0.78rem;
-    font-weight: 900;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-}
-
-.twitch-stream-information dd {
-    margin: 0;
-
-    color: var(--twitch-white);
-
-    font-size: 1rem;
-    font-weight: 900;
-}
-
-
-/* =========================================================
-   MESSAGE D’ERREUR
-========================================================= */
-
-.twitch-api-message {
-    margin-top: 35px;
-    padding: 22px 25px;
-
-    color: var(--twitch-white);
-
-    background:
-        rgba(255, 176, 32, 0.1);
-
-    border: 1px solid
-        rgba(255, 176, 32, 0.42);
-
-    border-radius: 24px;
-}
-
-.twitch-api-message button {
-    min-height: 45px;
-    padding: 9px 20px;
-
-    color: var(--twitch-white);
-    background:
-        rgba(255, 255, 255, 0.1);
-
-    border: 1px solid
-        rgba(255, 255, 255, 0.35);
-
-    border-radius: 999px;
-
-    font-weight: 900;
-    cursor: pointer;
-}
-
-
-/* =========================================================
-   ESPACEMENT DES CLIPS ET DES VIDÉOS
-========================================================= */
-
-.twitch-media-section {
-    margin-top: 90px;
-}
-
-.twitch-media-section
-+ .twitch-media-section {
-    margin-top: 105px;
-}
-
-
-/* =========================================================
-   RESPONSIVE — TABLETTE
-========================================================= */
-
-@media (max-width: 1000px) {
-    .twitch-presentation {
-        padding: 50px 30px;
-    }
-
-    .twitch-stream-section__heading {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .twitch-stream-card
-    .home-stream-details {
-        grid-template-columns: 1fr;
-    }
-
-    .twitch-stream-information {
-        width: 100%;
-    }
-}
-
-
-/* =========================================================
-   RESPONSIVE — MOBILE
-========================================================= */
-
-@media (max-width: 680px) {
-    .twitch-presentation,
-    .twitch-stream-section,
-    .twitch-api-message,
-    .twitch-media-section {
-        width: calc(100% - 20px);
-    }
-
-    .twitch-presentation {
-        margin-top: 40px;
-        padding: 38px 18px;
-        border-radius: 28px;
-    }
-
-    .twitch-presentation h2 {
-        font-size: clamp(
-            2.25rem,
-            12vw,
-            3.7rem
-        );
-    }
-
-    .twitch-presentation__status {
-        width: 100%;
-        max-width: 340px;
-    }
-
-    .twitch-presentation__meta {
-        width: 100%;
-        flex-direction: column;
-    }
-
-    .twitch-presentation__meta span {
-        width: 100%;
-        text-align: center;
-    }
-
-    .twitch-channel-button {
-        width: 100%;
-    }
-
-    .twitch-stream-section {
-        margin-top: 55px;
-    }
-
-    .twitch-stream-section__heading h2 {
-        font-size: clamp(
-            2rem,
-            11vw,
-            3.5rem
-        );
-    }
-
-    .twitch-player-badge {
-        width: 100%;
-    }
-
-    .twitch-stream-card {
-        padding: 12px;
-        border-radius: 24px;
-    }
-
-    .twitch-stream-card
-    .home-stream-player {
-        border-radius: 17px;
-    }
-
-    .twitch-stream-information {
-        grid-template-columns: 1fr;
-    }
-
-    .twitch-stream-information > div {
-        min-width: 0;
-    }
-
-    .twitch-media-section {
-        margin-top: 70px;
-    }
-
-    .twitch-media-section
-    + .twitch-media-section {
-        margin-top: 80px;
-    }
-}
-
-
-/* =========================================================
-   ANIMATIONS
-========================================================= */
-
-@keyframes twitch-status-pulse-new {
-    0%,
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    50% {
-        opacity: 0.62;
-        transform: scale(0.78);
-    }
-}
-
-@media (
-    prefers-reduced-motion:
-    reduce
-) {
-    .twitch-presentation__status
-    .twitch-status-dot {
-        animation: none;
-    }
-}
-/* =========================================================
-   BLOCS STREAM, CLIPS ET VIDÉOS
-========================================================= */
-
-.twitch-stream-section,
-.twitch-media-section {
-    position: relative;
-    width: min(1500px, 94%);
-    margin-right: auto;
-    margin-left: auto;
-    padding: clamp(30px, 4vw, 55px);
-
-    overflow: hidden;
-
-    background:
-        radial-gradient(
-            circle at 82% 20%,
-            rgba(242, 34, 146, 0.16),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 12% 82%,
-            rgba(34, 242, 239, 0.08),
-            transparent 34%
-        ),
-        linear-gradient(
-            135deg,
-            rgba(40, 7, 70, 0.96),
-            rgba(83, 10, 104, 0.92),
-            rgba(22, 8, 54, 0.96)
-        );
-
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 42px;
-
-    box-shadow:
-        0 24px 60px rgba(0, 0, 0, 0.42),
-        0 0 35px rgba(109, 0, 163, 0.28);
-}
-
-.twitch-stream-section::before,
-.twitch-media-section::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-
-    background:
-        radial-gradient(
-            circle at 15% 20%,
-            rgba(255, 255, 255, 0.045),
-            transparent 21%
-        ),
-        radial-gradient(
-            circle at 88% 80%,
-            rgba(255, 255, 255, 0.03),
-            transparent 23%
-        );
-}
-
-
-/* Le contenu reste devant les décorations */
-
-.twitch-stream-section > *,
-.twitch-media-section > * {
-    position: relative;
-    z-index: 2;
-}
-
-
-/* Espacement entre les blocs */
-
-.twitch-stream-section {
-    margin-top: 70px;
-}
-
-.twitch-media-section {
-    margin-top: 70px;
-}
-
-.twitch-media-section + .twitch-media-section {
-    margin-top: 70px;
-}
-
-
-/* =========================================================
-   EN-TÊTES DES BLOCS
-========================================================= */
-
-.twitch-stream-section__heading,
-.twitch-media-heading {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 30px;
-
-    margin-bottom: 35px;
-    padding-bottom: 25px;
-
-    border-bottom: 1px solid rgba(255, 255, 255, 0.13);
-}
-
-.twitch-stream-section__heading > div,
-.twitch-media-heading > div {
-    min-width: 0;
-}
-
-.twitch-stream-section__heading h2,
-.twitch-media-heading h2 {
-    width: auto;
-    min-height: 0;
-    height: auto;
-
-    margin: 0;
-    padding: 0;
-
-    color: #ffffff;
-    background: none;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-
-    font-family: "Courier New", Courier, monospace;
-    font-size: clamp(2.4rem, 4.8vw, 5rem);
-    font-weight: 900;
-    line-height: 1.05;
-    text-align: left;
-}
-
-.twitch-stream-section__heading h2::before,
-.twitch-stream-section__heading h2::after,
-.twitch-media-heading h2::before,
-.twitch-media-heading h2::after {
-    display: none;
-    content: none;
-}
-
-
-/* Petit titre turquoise */
-
-.twitch-eyebrow {
-    margin: 0 0 13px;
-
-    color: #22f2ef;
-
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.95rem;
-    font-weight: 900;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-
-    text-shadow:
-        0 0 12px rgba(34, 242, 239, 0.48);
-}
-
-
-/* Texte sous le titre du stream */
-
-.twitch-stream-section__heading p:last-child {
-    max-width: 850px;
-    margin: 16px 0 0;
-
-    color: rgba(255, 255, 255, 0.75);
-    font-size: 1.05rem;
-    line-height: 1.7;
-}
-
-
-/* =========================================================
-   GRILLES DES CLIPS ET VIDÉOS
-========================================================= */
-
-.twitch-media-grid {
-    display: grid;
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(min(100%, 340px), 1fr)
-        );
-
-    gap: 25px;
-    width: 100%;
-}
-
-
-/* Message lorsqu’il n’y a aucun contenu */
-
-.twitch-empty-message,
-.twitch-media-placeholder {
-    grid-column: 1 / -1;
-
-    min-height: 140px;
-    padding: 35px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: rgba(255, 255, 255, 0.72);
-    background: rgba(255, 255, 255, 0.045);
-
-    border: 1px dashed rgba(255, 255, 255, 0.22);
-    border-radius: 25px;
-
-    font-size: 1.05rem;
-    font-weight: 700;
-    text-align: center;
-}
-
-
-/* =========================================================
-   BOUTONS VOIR TOUS
-========================================================= */
-
-.twitch-media-heading a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-
-    flex: 0 0 auto;
-    min-height: 52px;
-    padding: 11px 22px;
-
-    color: #22f2ef;
-    background: rgba(34, 242, 239, 0.055);
-
-    border: 1px solid rgba(34, 242, 239, 0.55);
-    border-radius: 999px;
-
-    font-size: 1rem;
-    font-weight: 900;
-    text-decoration: none;
-
-    transition:
-        color 0.25s ease,
-        background 0.25s ease,
-        box-shadow 0.25s ease,
-        transform 0.25s ease;
-}
-
-.twitch-media-heading a:hover {
-    color: #ffffff;
-    background: rgba(34, 242, 239, 0.12);
-
-    box-shadow:
-        0 0 22px rgba(34, 242, 239, 0.28);
-
-    transform: translateY(-3px);
-}
-
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media (max-width: 800px) {
-    .twitch-stream-section,
-    .twitch-media-section {
-        width: calc(100% - 20px);
-        padding: 32px 18px;
-        border-radius: 28px;
-    }
-
-    .twitch-stream-section__heading,
-    .twitch-media-heading {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
-    .twitch-stream-section__heading h2,
-    .twitch-media-heading h2 {
-        font-size: clamp(2rem, 11vw, 3.6rem);
-    }
-
-    .twitch-media-heading a {
-        width: 100%;
-    }
-
-    .twitch-media-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* =========================================================
-   ACCUEIL — TRANSITIONS JOUR / NUIT
-========================================================= */
-
-.home-hero,
-.home-character-name,
-.home-live-section,
-.twitch-presentation,
-.twitch-stream-section,
-.twitch-media-section,
-.twitch-presentation__player,
-.twitch-player-card,
-.twitch-channel-summary,
-.twitch-resource-section,
-.twitch-media-card,
-.twitch-status-pill,
-.twitch-presentation__status,
-.twitch-presentation__meta span,
-.twitch-live-metadata span,
-.home-stream-details,
-.twitch-stream-information,
-.twitch-game,
-.twitch-api-message,
-.home-action-link,
-.twitch-media-heading a {
-    transition:
-        color 0.35s ease,
-        background 0.35s ease,
-        background-color 0.35s ease,
-        border-color 0.35s ease,
-        box-shadow 0.35s ease,
-        text-shadow 0.35s ease,
-        transform 0.25s ease;
-}
-
-/* =========================================================
-   TRANSITIONS ENTRE LES THÈMES (jour/nuit)
-========================================================= */
-
-.home-page,
-.home-hero,
-.home-character-name,
-.home-live-section,
-.twitch-presentation,
-.twitch-stream-section,
-.twitch-media-section,
-.twitch-stream-card,
-.twitch-player-card,
-.twitch-presentation__player,
-.twitch-resource-section,
-.twitch-channel-summary,
-.twitch-media-card,
-.twitch-media-item,
-.twitch-api-message,
-.twitch-status-pill,
-.twitch-presentation__status,
-.twitch-presentation__meta span,
-.twitch-live-metadata span,
-.twitch-game,
-.twitch-stream-information,
-.home-stream-details,
-.home-action-link,
-.twitch-live-button,
-.twitch-offline-button,
-.twitch-refresh-button,
-.twitch-media-heading a {
-    transition:
-        color 0.35s ease,
-        background 0.35s ease,
-        background-color 0.35s ease,
-        border-color 0.35s ease,
-        box-shadow 0.35s ease,
-        text-shadow 0.35s ease,
-        transform 0.25s ease,
-        filter 0.25s ease;
-}
-
-
-/* =========================================================
-   MODE JOUR — CONTENEUR PRINCIPAL
-========================================================= */
-
-html[data-theme="light"] .home-page {
-    color: var(--text-color);
-}
-
-
-/* =========================================================
-   MODE JOUR — HERO PRINCIPAL
-========================================================= */
-
-html[data-theme="light"] .home-hero {
-    color: #48105d;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255, 245, 253, 0.93),
-            rgba(238, 219, 255, 0.91)
-        );
-
-    border: 1px solid rgba(109, 0, 163, 0.22);
-
-    box-shadow:
-        0 20px 48px rgba(69, 14, 91, 0.16),
-        inset 0 0 25px rgba(109, 0, 163, 0.05);
-}
-
-
-/* Décorations lumineuses du hero */
-
-html[data-theme="light"] .home-hero::before {
-    background:
-        radial-gradient(
-            circle at 20% 25%,
-            rgba(242, 34, 146, 0.18),
-            transparent 32%
-        ),
-        radial-gradient(
-            circle at 78% 65%,
-            rgba(34, 242, 239, 0.13),
-            transparent 32%
-        );
-}
-
-
-html[data-theme="light"] .home-hero-decoration-one {
-    background:
-        radial-gradient(
-            circle,
-            rgba(242, 34, 146, 0.28),
-            transparent 70%
-        );
-}
-
-
-html[data-theme="light"] .home-hero-decoration-two {
-    background:
-        radial-gradient(
-            circle,
-            rgba(34, 242, 239, 0.17),
-            transparent 72%
-        );
-}
-
-
-/* =========================================================
-   MODE JOUR — TITRES DU HERO
-========================================================= */
-
-html[data-theme="light"] .home-hero h1 {
-    color: #48105d;
-
-    text-shadow: none;
-}
-
-
-html[data-theme="light"] .home-hero h1 span {
-    color: #f22292;
-
-    text-shadow:
-        0 0 12px rgba(242, 34, 146, 0.35),
-        0 0 26px rgba(109, 0, 163, 0.24);
-}
-
-
-html[data-theme="light"] .home-overline {
-    color: #008f91;
-
-    text-shadow:
-        0 0 10px rgba(34, 242, 239, 0.28);
-}
-
-
-html[data-theme="light"] .home-introduction {
-    color: rgba(60, 18, 79, 0.83);
-}
-
-
-/* =========================================================
-   MODE JOUR — BOUTONS DU HERO
-========================================================= */
-
-html[data-theme="light"] .home-action-link {
-    color: #ffffff;
-
-    background:
-        linear-gradient(
-            135deg,
-            #f22292,
-            #6d00a3
-        );
-
-    border: 1px solid rgba(255, 255, 255, 0.28);
-
-    box-shadow:
-        0 9px 24px rgba(109, 0, 163, 0.25),
-        0 0 18px rgba(242, 34, 146, 0.16);
-}
-
-
-html[data-theme="light"] .home-action-link:hover {
-    color: #ffffff;
-
-    border-color: #22f2ef;
-
-    box-shadow:
-        0 13px 28px rgba(109, 0, 163, 0.32),
-        0 0 24px rgba(34, 242, 239, 0.32);
-
-    transform:
-        translateY(-4px)
-        scale(1.02);
-}
-
-
-html[data-theme="light"] .home-action-link-secondary {
-    color: #48105d;
-
-    background:
-        rgba(255, 255, 255, 0.55);
-
-    border-color:
-        rgba(109, 0, 163, 0.22);
-
-    box-shadow:
-        0 9px 22px rgba(69, 14, 91, 0.12);
-}
-
-
-html[data-theme="light"] .home-action-link-secondary:hover {
-    color: #6d00a3;
-
-    background:
-        rgba(255, 255, 255, 0.86);
-
-    border-color:
-        rgba(34, 242, 239, 0.72);
-
-    box-shadow:
-        0 13px 28px rgba(69, 14, 91, 0.16),
-        0 0 20px rgba(34, 242, 239, 0.22);
-}
-
-
-/* =========================================================
-   MODE JOUR — PERSONNAGE PRINCIPAL
-========================================================= */
-
-html[data-theme="light"] .home-character-glow {
-    background:
-        radial-gradient(
-            circle,
-            rgba(242, 34, 146, 0.25),
-            rgba(109, 0, 163, 0.12) 48%,
-            transparent 72%
-        );
-}
-
-
-html[data-theme="light"] .home-character {
-    filter:
-        drop-shadow(
-            0 18px 20px
-            rgba(69, 14, 91, 0.22)
-        )
-        drop-shadow(
-            0 0 18px
-            rgba(242, 34, 146, 0.12)
-        );
-}
-
-
-html[data-theme="light"] .home-character-name {
-    color: #48105d;
-
-    background:
-        rgba(255, 245, 253, 0.86);
-
-    border:
-        1px solid
-        rgba(109, 0, 163, 0.22);
-
-    border-left:
-        3px solid
-        #22f2ef;
-
-    box-shadow:
-        0 14px 30px rgba(69, 14, 91, 0.15);
-
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-}
-
-
-html[data-theme="light"] .home-character-name span {
-    color: #f22292;
-}
-
-
-html[data-theme="light"] .home-character-name small {
-    color: rgba(60, 18, 79, 0.72);
-}
-
-
-/* =========================================================
-   MODE JOUR — GRANDES SECTIONS TWITCH
-========================================================= */
-
-html[data-theme="light"] .home-live-section,
-html[data-theme="light"] .twitch-presentation,
-html[data-theme="light"] .twitch-stream-section,
-html[data-theme="light"] .twitch-media-section {
-    color: #48105d;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255, 245, 253, 0.93),
-            rgba(238, 219, 255, 0.91)
-        );
-
-    border: 1px solid rgba(109, 0, 163, 0.22);
-
-    box-shadow:
-        0 20px 48px rgba(69, 14, 91, 0.16),
-        inset 0 0 25px rgba(109, 0, 163, 0.05);
-}
-
-
-/* Décorations des grandes sections */
-
-html[data-theme="light"] .home-live-section::before {
-    background:
-        radial-gradient(
-            circle,
-            rgba(242, 34, 146, 0.18),
-            transparent 68%
-        );
-}
-
-
-html[data-theme="light"] .home-live-section::after {
-    background:
-        radial-gradient(
-            circle,
-            rgba(34, 242, 239, 0.12),
-            transparent 70%
-        );
-}
-
-
-html[data-theme="light"] .twitch-presentation::before {
-    background:
-        radial-gradient(
-            circle at 18% 20%,
-            rgba(242, 34, 146, 0.08),
-            transparent 24%
-        ),
-        radial-gradient(
-            circle at 85% 78%,
-            rgba(34, 242, 239, 0.08),
-            transparent 25%
-        );
-}
-
-
-/* =========================================================
-   MODE JOUR — TITRES TWITCH
-========================================================= */
-
-html[data-theme="light"] .home-live-heading h2,
-html[data-theme="light"] .twitch-main-title,
-html[data-theme="light"] .twitch-presentation h2,
-html[data-theme="light"] .twitch-stream-section h2,
-html[data-theme="light"] .twitch-media-heading h2,
-html[data-theme="light"] .twitch-player-heading h3,
-html[data-theme="light"] .twitch-player-card__header h3 {
-    color: #48105d;
-
-    text-shadow: none;
-}
-
-
-html[data-theme="light"] .twitch-main-title span,
-html[data-theme="light"] .twitch-presentation h2 span {
-    color: #f22292;
-
-    text-shadow:
-        0 0 12px rgba(242, 34, 146, 0.32),
-        0 0 26px rgba(109, 0, 163, 0.2);
-}
-
-
-html[data-theme="light"] .home-live-label,
-html[data-theme="light"] .twitch-eyebrow,
-html[data-theme="light"] .twitch-presentation__eyebrow,
-html[data-theme="light"] .twitch-media-label,
-html[data-theme="light"] .twitch-section-label {
-    color: #008f91;
-
-    text-shadow:
-        0 0 10px rgba(34, 242, 239, 0.25);
-}
-
-
-/* =========================================================
-   MODE JOUR — TEXTES TWITCH
-========================================================= */
-
-html[data-theme="light"] .home-live-heading > p:last-child,
-html[data-theme="light"] .twitch-presentation__description,
-html[data-theme="light"] .twitch-follower-text,
-html[data-theme="light"] .twitch-player-heading p,
-html[data-theme="light"] .twitch-player-heading p:last-child,
-html[data-theme="light"] .twitch-stream-subtitle,
-html[data-theme="light"] .twitch-media-heading p,
-html[data-theme="light"] .twitch-player-card__header > div > p:last-child {
-    color: rgba(60, 18, 79, 0.83);
-}
-
-
-/* =========================================================
-   MODE JOUR — CARTES TWITCH PRINCIPALES
-========================================================= */
-
-html[data-theme="light"] .twitch-presentation__player,
-html[data-theme="light"] .twitch-player-card,
-html[data-theme="light"] .twitch-channel-summary,
-html[data-theme="light"] .twitch-resource-section,
-html[data-theme="light"] .twitch-stream-card,
-html[data-theme="light"] .twitch-media-card,
-html[data-theme="light"] .twitch-media-item,
-html[data-theme="light"] .twitch-live-information,
-html[data-theme="light"] .twitch-offline-content,
-html[data-theme="light"] .twitch-live-loading,
-html[data-theme="light"] .twitch-error-content {
-    color: #48105d;
-
-    background:
-        rgba(255, 255, 255, 0.55);
-
-    border: 1px solid rgba(109, 0, 163, 0.14);
-
-    box-shadow:
-        0 14px 30px rgba(69, 14, 91, 0.12),
-        inset 0 0 16px rgba(109, 0, 163, 0.04);
-
+    background: var(--home-twitch-card);
+    box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.035);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
 
+.twitch-presentation__status #twitch-status-label {
+    color: inherit;
+    font-size: 0.95rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
 
-/* Survol des cartes */
+.twitch-presentation__status .twitch-status-dot {
+    display: block;
+    width: 13px;
+    height: 13px;
+    flex: 0 0 13px;
+    border: 3px solid rgba(255, 255, 255, 0.82);
+    border-radius: 50%;
+    background: #999999;
+    box-shadow: 0 0 0 6px rgba(153, 153, 153, 0.14);
+    animation: none;
+}
 
-html[data-theme="light"] .twitch-media-card:hover,
-html[data-theme="light"] .twitch-media-item:hover {
-    background:
-        rgba(255, 255, 255, 0.78);
+html[data-theme="light"] .twitch-presentation__status .twitch-status-dot {
+    border-color: rgba(255, 255, 255, 0.95);
+}
 
-    border-color:
-        rgba(34, 242, 239, 0.52);
+.twitch-presentation__status.is-live {
+    border-color: rgba(255, 49, 49, 0.58);
+    background: rgba(255, 49, 49, 0.13);
+}
 
+.twitch-presentation__status.is-live .twitch-status-dot {
+    background: #ff3131;
     box-shadow:
-        0 14px 30px rgba(69, 14, 91, 0.16),
-        0 0 18px rgba(34, 242, 239, 0.16);
+        0 0 0 6px rgba(255, 49, 49, 0.16),
+        0 0 18px rgba(255, 49, 49, 0.75);
+    animation: twitch-status-pulse 1.5s ease-out infinite;
 }
 
+.twitch-presentation__status.is-offline .twitch-status-dot {
+    background: #858585;
+    box-shadow: 0 0 0 6px rgba(133, 133, 133, 0.14);
+    animation: none;
+}
 
-/* =========================================================
-   MODE JOUR — STATUT DE LA CHAÎNE
-========================================================= */
+@keyframes twitch-status-pulse {
+    0% {
+        box-shadow:
+            0 0 0 0 rgba(255, 49, 49, 0.68),
+            0 0 18px rgba(255, 49, 49, 0.75);
+    }
 
-html[data-theme="light"] .twitch-status-pill,
-html[data-theme="light"] .twitch-presentation__status {
-    color: #48105d;
+    70% {
+        box-shadow:
+            0 0 0 12px rgba(255, 49, 49, 0),
+            0 0 18px rgba(255, 49, 49, 0.64);
+    }
 
-    background:
-        rgba(255, 255, 255, 0.55);
+    100% {
+        box-shadow:
+            0 0 0 0 rgba(255, 49, 49, 0),
+            0 0 18px rgba(255, 49, 49, 0.56);
+    }
+}
 
-    border:
-        1px solid
-        rgba(109, 0, 163, 0.14);
+/* Actions Twitch */
+.twitch-header-actions {
+    display: flex;
+    flex: 0 0 220px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 13px;
+    padding-top: 4px;
+}
 
+.twitch-channel-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    color: var(--home-twitch-cyan);
+    font-family: "Courier New", monospace;
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+        color 0.22s ease,
+        transform 0.22s ease;
+}
+
+.twitch-channel-link:hover {
+    color: var(--home-twitch-text);
+    transform: translateX(4px);
+}
+
+.twitch-channel-logo {
+    display: block;
+    width: 27px !important;
+    height: 27px !important;
+    min-width: 27px;
+    min-height: 27px;
+    flex: 0 0 27px;
+    color: var(--home-twitch-logo);
+}
+
+.twitch-channel-arrow {
+    font-size: 1.2rem;
+}
+
+.twitch-refresh-button,
+.twitch-presentation .twitch-refresh-button {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: auto;
+    min-width: 170px;
+    height: 46px;
+    min-height: 46px;
+    margin: 0;
+    padding: 0 17px;
+    color: var(--home-twitch-button-text);
+    font-family: "Courier New", monospace;
+    font-size: 0.9rem;
+    font-weight: 800;
+    border: 2px solid var(--home-twitch-button-text);
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+    transition:
+        transform 0.22s ease,
+        background-color 0.22s ease,
+        color 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+.twitch-refresh-button:hover:not(:disabled) {
+    color: var(--home-twitch-button-hover-text);
+    background: var(--home-twitch-button-text);
+    transform: translateY(-2px);
+    box-shadow: 0 0 18px rgba(34, 242, 239, 0.3);
+}
+
+html[data-theme="light"] .twitch-refresh-button:hover:not(:disabled) {
+    box-shadow: 0 8px 20px rgba(109, 0, 163, 0.22);
+}
+
+.twitch-refresh-button:disabled {
+    opacity: 0.56;
+    cursor: wait;
+}
+
+/* Lecteur et informations */
+.twitch-live-block {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+}
+
+.twitch-player-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+    margin: 0;
+    overflow: hidden;
+    border: 3px solid var(--home-twitch-border);
+    border-radius: 30px;
+    background: var(--home-twitch-player-background);
     box-shadow:
-        inset 0 0 16px rgba(109, 0, 163, 0.04);
+        0 16px 38px var(--home-twitch-shadow),
+        0 0 24px rgba(34, 242, 239, 0.12);
 }
 
-
-html[data-theme="light"] .twitch-channel-status__label {
-    color: rgba(60, 18, 79, 0.68);
+.twitch-player-wrapper::before {
+    content: none;
+    display: none;
 }
 
-
-html[data-theme="light"] #twitch-live-badge {
-    color: #48105d;
+.twitch-player-wrapper iframe,
+#twitch-player {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    border: 0;
+    border-radius: inherit;
+    background: var(--home-twitch-player-background);
 }
 
-
-html[data-theme="light"] #twitch-live-badge.is-live {
-    color: #087d3f;
-}
-
-
-/* =========================================================
-   MODE JOUR — BADGES ET MÉTADONNÉES
-========================================================= */
-
-html[data-theme="light"] .twitch-presentation__meta span,
-html[data-theme="light"] .twitch-live-metadata span,
-html[data-theme="light"] .twitch-live-category {
-    color: #48105d;
-
-    background:
-        rgba(255, 255, 255, 0.55);
-
-    border:
-        1px solid
-        rgba(109, 0, 163, 0.14);
-}
-
-
-/* =========================================================
-   MODE JOUR — LECTEUR TWITCH
-========================================================= */
-
-html[data-theme="light"] .twitch-player-wrapper,
-html[data-theme="light"] .twitch-chat-wrapper,
-html[data-theme="light"] .home-stream-player {
-    background:
-        rgba(238, 219, 255, 0.62);
-
-    border:
-        1px solid
-        rgba(109, 0, 163, 0.22);
-
-    box-shadow:
-        0 14px 30px rgba(69, 14, 91, 0.13),
-        0 0 16px rgba(34, 242, 239, 0.08);
-}
-
-
-/* =========================================================
-   MODE JOUR — INFORMATIONS SOUS LE LIVE
-========================================================= */
-
-html[data-theme="light"] .home-stream-details {
-    background:
-        rgba(255, 255, 255, 0.55);
-
-    border:
-        1px solid
-        rgba(109, 0, 163, 0.14);
-
-    box-shadow:
-        0 14px 30px rgba(69, 14, 91, 0.11),
-        inset 0 0 16px rgba(109, 0, 163, 0.04);
-}
-
-
-html[data-theme="light"] .twitch-game,
-html[data-theme="light"] .twitch-stream-information {
-    color: #48105d;
-
-    background:
-        rgba(255, 255, 255, 0.55);
-
-    border:
-        1px solid
-        rgba(109, 0, 163, 0.14);
-
-    box-shadow:
-        inset 0 0 16px rgba(109, 0, 163, 0.04);
-}
-
-
-html[data-theme="light"] .twitch-game-label,
-html[data-theme="light"] .twitch-stream-information span,
-html[data-theme="light"] .twitch-stream-information small {
-    color: rgba(60, 18, 79, 0.72);
-}
-
-
-html[data-theme="light"] .twitch-game-name,
-html[data-theme="light"] #twitch-game-name,
-html[data-theme="light"] #twitch-stream-language,
-html[data-theme="light"] #twitch-started-at {
-    color: #48105d;
-}
-
-
-/* =========================================================
-   MODE JOUR — MESSAGE DE L’API
-========================================================= */
-
-html[data-theme="light"] .twitch-api-message {
-    color: rgba(60, 18, 79, 0.83);
-
-    background:
-        rgba(255, 255, 255, 0.55);
-
-    border:
-        1px solid
-        rgba(109, 0, 163, 0.14);
-
-    box-shadow:
-        0 12px 26px rgba(69, 14, 91, 0.1);
-}
-
-/* =========================================================
-   MODE JOUR — BOUTONS TWITCH
-========================================================= */
-
-html[data-theme="light"] .twitch-live-button,
-html[data-theme="light"] .twitch-offline-button,
-html[data-theme="light"] .twitch-refresh-button,
-html[data-theme="light"] .twitch-channel-link {
+.twitch-player-badge {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    z-index: 5;
+    padding: 8px 14px;
     color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    border-radius: 999px;
+    background: rgba(28, 28, 30, 0.88);
+    pointer-events: none;
+}
 
+.twitch-player-badge.is-live {
+    background: #e91916;
+}
+
+.twitch-live-infos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-top: 24px;
+}
+
+.twitch-live-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    min-height: 82px;
+    padding: 18px 23px;
+    color: var(--home-twitch-text);
+    border: 1px solid var(--home-twitch-border-soft);
+    border-radius: 20px;
+    background: var(--home-twitch-card);
+    box-shadow: 0 8px 20px var(--home-twitch-shadow);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.twitch-info-label {
+    color: var(--home-twitch-muted);
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.twitch-live-info strong {
+    overflow: hidden;
+    color: var(--home-twitch-cyan);
+    font-size: clamp(1.05rem, 2vw, 1.45rem);
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Message de l’API */
+.twitch-live-block .twitch-api-message {
+    width: 100%;
+    margin: 20px 0 0;
+    padding: 13px 17px;
+    color: var(--home-twitch-text);
+    text-align: center;
+    border: 1px solid var(--home-twitch-border-soft);
+    border-radius: 15px;
+    background: var(--home-twitch-card);
+}
+
+.twitch-live-block .twitch-api-message.is-success {
+    border-color: var(--home-twitch-border);
+}
+
+.twitch-live-block .twitch-api-message.is-error {
+    border-color: rgba(216, 44, 44, 0.58);
+    background: rgba(216, 44, 44, 0.1);
+}
+
+/* Tags de présentation */
+.hero-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    margin:35px 0 45px;
+}
+
+.hero-tag{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 18px;
+    border-radius:999px;
+    font-size:.95rem;
+    font-weight:700;
+    color:#ffffff;
+    border:1px solid rgba(34,242,239,.45);
     background:
+        rgba(255,255,255,.08);
+    backdrop-filter:blur(10px);
+    transition:.25s;
+}
+
+
+.hero-tag:hover{
+    transform:translateY(-2px);
+    background:#22F2EF;
+    color:#2b123d;
+    box-shadow:
+        0 0 18px rgba(34,242,239,.30);
+}
+.hero-tag-warning{
+    border-color:#ff2a9d;
+}
+
+.hero-tag-warning:hover{
+    background:#ff2a9d;
+    color:#ffffff;
+
+}
+
+html[data-theme="light"] .twitch-presentation {
+    color: #2b123d;
+    background:
+        radial-gradient(
+            circle at 78% 30%,
+            rgba(160, 84, 214, 0.15),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 18% 75%,
+            rgba(8, 127, 131, 0.1),
+            transparent 36%
+        ),
         linear-gradient(
             135deg,
-            #f22292,
-            #6d00a3
+            rgba(253, 248, 255, 0.98),
+            rgba(244, 231, 253, 0.96),
+            rgba(231, 250, 251, 0.97)
         );
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.24);
-
+    border-color: rgba(109, 0, 163, 0.16);
     box-shadow:
-        0 9px 24px rgba(109, 0, 163, 0.25),
-        0 0 18px rgba(242, 34, 146, 0.16);
+        0 24px 60px rgba(71, 20, 99, 0.16),
+        0 0 30px rgba(109, 0, 163, 0.1);
 }
 
+html[data-theme="light"] .twitch-presentation h2,
+html[data-theme="light"] .twitch-presentation__description,
+html[data-theme="light"] .twitch-follower-text {
+    color: #2b123d;
+}
 
-html[data-theme="light"] .twitch-live-button:hover,
-html[data-theme="light"] .twitch-offline-button:hover,
-html[data-theme="light"] .twitch-refresh-button:hover,
-html[data-theme="light"] .twitch-channel-link:hover {
+html[data-theme="light"] .twitch-channel-button {
     color: #ffffff;
-
-    border-color: #22f2ef;
-
-    box-shadow:
-        0 13px 28px rgba(109, 0, 163, 0.32),
-        0 0 24px rgba(34, 242, 239, 0.3);
-
-    filter: brightness(1.04);
-
-    transform:
-        translateY(-4px)
-        scale(1.02);
 }
 
-
-/* =========================================================
-   MODE JOUR — BOUTONS VOIR TOUS
-========================================================= */
-
-html[data-theme="light"] .twitch-media-heading a,
-html[data-theme="light"] .twitch-resource-section__link {
-    color: #48105d;
-
-    background:
-        rgba(255, 255, 255, 0.55);
-
-    border:
-        1px solid
-        rgba(109, 0, 163, 0.14);
-
-    box-shadow:
-        0 9px 22px rgba(69, 14, 91, 0.1);
-
-    text-decoration: none;
+/* Sections clips et vidéos en mode jour */
+html[data-theme="light"] .twitch-media-section {
+    color: #2b123d;
 }
 
+html[data-theme="light"] .twitch-media-heading h2 {
+    color: #2b123d;
+}
 
-html[data-theme="light"] .twitch-media-heading a:hover,
-html[data-theme="light"] .twitch-resource-section__link:hover {
+html[data-theme="light"] .twitch-media-heading > a {
     color: #6d00a3;
-
-    background:
-        rgba(255, 255, 255, 0.88);
-
-    border-color:
-        rgba(34, 242, 239, 0.62);
-
-    box-shadow:
-        0 12px 26px rgba(69, 14, 91, 0.15),
-        0 0 18px rgba(34, 242, 239, 0.18);
-
-    transform: translateY(-3px);
 }
-
-
-/* =========================================================
-   MODE JOUR — CARTES CLIPS ET VIDÉOS
-========================================================= */
-
-html[data-theme="light"] .twitch-media-grid {
-    color: #48105d;
-}
-
 
 html[data-theme="light"] .twitch-media-card,
-html[data-theme="light"] .twitch-media-item,
-html[data-theme="light"] .twitch-clip-card,
-html[data-theme="light"] .twitch-video-card {
-    color: #48105d;
-
-    background:
-        rgba(255, 255, 255, 0.55);
-
-    border:
-        1px solid
-        rgba(109, 0, 163, 0.14);
-
-    box-shadow:
-        0 12px 28px rgba(69, 14, 91, 0.12),
-        inset 0 0 16px rgba(109, 0, 163, 0.04);
-
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+html[data-theme="light"] .twitch-media-placeholder,
+html[data-theme="light"] .twitch-empty-message {
+    color: #2b123d;
+    border-color: rgba(109, 0, 163, 0.16);
+    background: rgba(255, 255, 255, 0.86);
+    box-shadow: 0 13px 30px rgba(71, 20, 99, 0.13);
 }
 
-
-html[data-theme="light"] .twitch-media-card:hover,
-html[data-theme="light"] .twitch-media-item:hover,
-html[data-theme="light"] .twitch-clip-card:hover,
-html[data-theme="light"] .twitch-video-card:hover {
-    background:
-        rgba(255, 255, 255, 0.82);
-
-    border-color:
-        rgba(34, 242, 239, 0.52);
-
-    box-shadow:
-        0 15px 32px rgba(69, 14, 91, 0.16),
-        0 0 18px rgba(34, 242, 239, 0.16);
-
-    transform: translateY(-6px);
-}
-
-
-/* =========================================================
-   MODE JOUR — IMAGES DES MÉDIAS
-========================================================= */
-
-html[data-theme="light"] .twitch-media-thumbnail,
-html[data-theme="light"] .twitch-media-image,
-html[data-theme="light"] .twitch-clip-thumbnail,
-html[data-theme="light"] .twitch-video-thumbnail {
-    background:
-        rgba(238, 219, 255, 0.62);
-
-    border-color:
-        rgba(109, 0, 163, 0.18);
-}
-
-
-html[data-theme="light"] .twitch-media-thumbnail::after,
-html[data-theme="light"] .twitch-media-image::after {
-    background:
-        linear-gradient(
-            to top,
-            rgba(72, 16, 93, 0.3),
-            transparent 58%
-        );
-}
-
-
-/* =========================================================
-   MODE JOUR — TEXTES DES CARTES MÉDIAS
-========================================================= */
-
-html[data-theme="light"] .twitch-media-card h3,
-html[data-theme="light"] .twitch-media-item h3,
-html[data-theme="light"] .twitch-clip-card h3,
-html[data-theme="light"] .twitch-video-card h3,
 html[data-theme="light"] .twitch-media-title {
-    color: #48105d;
+    color: #2b123d;
 }
 
-
-html[data-theme="light"] .twitch-media-card p,
-html[data-theme="light"] .twitch-media-item p,
-html[data-theme="light"] .twitch-clip-card p,
-html[data-theme="light"] .twitch-video-card p,
-html[data-theme="light"] .twitch-media-description {
-    color:
-        rgba(
-            60,
-            18,
-            79,
-            0.78
-        );
-}
-
-
-html[data-theme="light"] .twitch-media-card span,
-html[data-theme="light"] .twitch-media-item span,
 html[data-theme="light"] .twitch-media-meta,
 html[data-theme="light"] .twitch-media-date,
-html[data-theme="light"] .twitch-media-views {
-    color:
-        rgba(
-            60,
-            18,
-            79,
-            0.68
-        );
+html[data-theme="light"] .twitch-media-description {
+    color: rgba(43, 18, 61, 0.72);
+}
+
+html[data-theme="light"] .twitch-pagination-button {
+    color: #2b123d;
+    border-color: rgba(109, 0, 163, 0.16);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+html[data-theme="light"] .twitch-pagination-button:hover:not(:disabled) {
+    color: #6d00a3;
+    border-color: #6d00a3;
+}
+
+html[data-theme="light"] .twitch-pagination-button.is-active {
+    color: #ffffff;
+    border-color: #6d00a3;
+    background: #6d00a3;
+}
+html[data-theme="light"] .hero-tag,
+body[data-theme="light"] .hero-tag,
+html.light-mode .hero-tag,
+body.light-mode .hero-tag{
+
+    color:#2b123d;
+
+    background:
+        rgba(255,255,255,.75);
+
+    border-color:#22F2EF;
+
+}
+
+html[data-theme="light"] .hero-tag-warning,
+body[data-theme="light"] .hero-tag-warning,
+html.light-mode .hero-tag-warning,
+body.light-mode .hero-tag-warning{
+
+    border-color:#ff2a9d;
+
+}
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+    .twitch-section {
+        width: min(100% - 30px, 1500px);
+        padding: 45px 28px;
+        border-radius: 34px;
+    }
+
+    .twitch-section-header {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .twitch-header-actions {
+        flex: none;
+        width: auto;
+    }
+
+    .twitch-live-infos {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .twitch-section {
+        width: calc(100% - 20px);
+        margin: 45px auto;
+        padding: 32px 16px;
+        border-radius: 25px;
+    }
+
+    .twitch-header-top {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 13px;
+    }
+
+    .twitch-section-header h2 {
+        font-size: clamp(2.25rem, 12vw, 3.8rem);
+    }
+
+    .twitch-channel-link {
+        font-size: 1.35rem;
+    }
+
+    .twitch-refresh-button,
+    .twitch-presentation .twitch-refresh-button {
+        min-width: 158px;
+        height: 44px;
+        min-height: 44px;
+        padding: 0 15px;
+        font-size: 0.86rem;
+    }
+
+    .twitch-player-wrapper {
+        border-width: 2px;
+        border-radius: 18px;
+    }
+
+    .twitch-player-badge {
+        top: 11px;
+        left: 11px;
+        padding: 7px 10px;
+        font-size: 0.68rem;
+    }
+
+    .twitch-live-info {
+        min-height: 72px;
+        padding: 16px 18px;
+    }
+
+    .hero-tags {
+        gap: 10px;
+        margin: 26px 0;
+    }
+
+    .hero-tag {
+        min-height: 41px;
+        padding: 8px 14px;
+        font-size: 0.88rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .twitch-presentation__status.is-live .twitch-status-dot {
+        animation: none;
+    }
 }
 
 
 /* =========================================================
-   MODE JOUR — LIENS DES CARTES
+   CORRECTION DU THÈME — COMPATIBILITÉ AVEC THEME.JS
+   Le thème peut être appliqué sur <html> ou <body>, avec
+   data-theme, light-mode ou light-theme.
 ========================================================= */
 
-html[data-theme="light"] .twitch-media-card a,
-html[data-theme="light"] .twitch-media-item a,
-html[data-theme="light"] .twitch-clip-card a,
-html[data-theme="light"] .twitch-video-card a {
-    color: inherit;
+/* Variables du mode jour, quel que soit l’élément ciblé par theme.js */
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) {
+    --home-twitch-surface:
+        radial-gradient(
+            circle at 78% 30%,
+            rgba(160, 84, 214, 0.15),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 18% 75%,
+            rgba(8, 127, 131, 0.10),
+            transparent 36%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(253, 248, 255, 0.98),
+            rgba(244, 231, 253, 0.97),
+            rgba(231, 250, 251, 0.98)
+        );
+
+    --home-twitch-card: rgba(255, 255, 255, 0.82);
+    --home-twitch-card-strong: rgba(255, 255, 255, 0.94);
+    --home-twitch-text: #2b123d;
+    --home-twitch-muted: rgba(43, 18, 61, 0.72);
+    --home-twitch-border: rgba(109, 0, 163, 0.36);
+    --home-twitch-border-soft: rgba(109, 0, 163, 0.18);
+    --home-twitch-shadow: rgba(71, 20, 99, 0.16);
+    --home-twitch-cyan: #087f83;
+    --home-twitch-logo: #772ce8;
+    --home-twitch-button-text: #6d00a3;
+    --home-twitch-button-hover-text: #ffffff;
+    --home-twitch-player-background: #111111;
 }
 
+/* Le grand bloc STREAM adopte exactement le fond clair de la présentation */
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-section {
+    color: #2b123d;
+    background:
+        radial-gradient(
+            circle at 78% 30%,
+            rgba(160, 84, 214, 0.15),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 18% 75%,
+            rgba(8, 127, 131, 0.10),
+            transparent 36%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(253, 248, 255, 0.98),
+            rgba(244, 231, 253, 0.97),
+            rgba(231, 250, 251, 0.98)
+        );
+    border-color: rgba(109, 0, 163, 0.16);
+    box-shadow:
+        0 24px 60px rgba(71, 20, 99, 0.16),
+        0 0 30px rgba(109, 0, 163, 0.10);
+}
 
-html[data-theme="light"] .twitch-media-card a:hover,
-html[data-theme="light"] .twitch-media-item a:hover,
-html[data-theme="light"] .twitch-clip-card a:hover,
-html[data-theme="light"] .twitch-video-card a:hover {
+/* STREAM prend la même couleur que « Chaîne Twitch » */
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-header-top .twitch-eyebrow {
+    color: #087f83;
+    text-shadow: 0 0 10px rgba(8, 127, 131, 0.20);
+}
+
+/* Le titre principal adopte la même teinte foncée que la présentation */
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-section-header h2 {
+    color: #2b123d;
+}
+
+/* Lien Twitch et bouton dans le thème clair */
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-channel-link {
+    color: #087f83;
+}
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-channel-link:hover {
     color: #6d00a3;
 }
 
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-refresh-button {
+    color: #6d00a3;
+    border-color: #6d00a3;
+}
 
-/* =========================================================
-   MODE JOUR — BADGES MÉDIAS
-========================================================= */
-
-html[data-theme="light"] .twitch-media-badge,
-html[data-theme="light"] .twitch-media-duration,
-html[data-theme="light"] .twitch-clip-duration,
-html[data-theme="light"] .twitch-video-duration {
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-refresh-button:hover:not(:disabled) {
     color: #ffffff;
+    background: #6d00a3;
+    box-shadow: 0 8px 20px rgba(109, 0, 163, 0.22);
+}
 
-    background:
-        rgba(
-            72,
-            16,
-            93,
-            0.86
-        );
+/* Cartes Catégorie / Viewers */
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-live-info {
+    color: #2b123d;
+    border-color: rgba(109, 0, 163, 0.18);
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 8px 20px rgba(71, 20, 99, 0.13);
+}
 
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.32);
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-info-label {
+    color: rgba(43, 18, 61, 0.72);
+}
 
-    box-shadow:
-        0 5px 14px rgba(69, 14, 91, 0.2);
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-live-info strong {
+    color: #087f83;
+}
+
+/* Badge Hors ligne / En direct */
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-presentation__status {
+    color: #2b123d;
+    border-color: rgba(109, 0, 163, 0.18);
+    background: rgba(255, 255, 255, 0.82);
+}
+
+/* Message API */
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-live-block .twitch-api-message {
+    color: #2b123d;
+    border-color: rgba(109, 0, 163, 0.18);
+    background: rgba(255, 255, 255, 0.82);
+}
+
+/* Tags Multi-Gaming, VTubeuse, Française, Safe Place */
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .hero-tag {
+    color: #2b123d;
+    border-color: rgba(109, 0, 163, 0.18);
+    background: rgba(255, 255, 255, 0.82);
 }
 
 
 /* =========================================================
-   MODE JOUR — BOUTON DE LECTURE
+   CORRECTIONS FINALES — COULEURS CYAN ET BOUTONS D’ACCUEIL
+   À conserver à la fin du fichier afin de remplacer les
+   anciennes déclarations en conflit.
 ========================================================= */
 
-html[data-theme="light"] .twitch-media-play,
-html[data-theme="light"] .twitch-play-button {
-    color: #ffffff;
-
-    background:
-        linear-gradient(
-            135deg,
-            #f22292,
-            #6d00a3
-        );
-
-    border:
-        2px solid
-        rgba(255, 255, 255, 0.72);
-
-    box-shadow:
-        0 0 20px rgba(109, 0, 163, 0.28);
-}
-
-
-html[data-theme="light"] .twitch-media-card:hover .twitch-media-play,
-html[data-theme="light"] .twitch-media-item:hover .twitch-media-play,
-html[data-theme="light"] .twitch-media-card:hover .twitch-play-button {
-    border-color: #22f2ef;
-
-    box-shadow:
-        0 0 24px rgba(34, 242, 239, 0.34);
-
-    transform: scale(1.08);
+:root {
+    --couaxia-cyan: #22f2ef;
+    --couaxia-light-text: #2b123d;
+    --couaxia-pink: #f22292;
+    --couaxia-purple: #6d00a3;
 }
 
 
 /* =========================================================
-   MODE JOUR — ÉTAT HORS LIGNE
+   COULEUR CYAN IDENTIQUE EN MODE JOUR ET NUIT
 ========================================================= */
 
-html[data-theme="light"] .twitch-offline-content {
-    color: #48105d;
+.twitch-presentation__eyebrow,
+.twitch-header-top .twitch-eyebrow,
+.twitch-channel-link,
+.twitch-channel-logo,
+.twitch-live-info strong,
+#twitch-game-name,
+#twitch-viewer-count {
+    color: var(--couaxia-cyan) !important;
+}
+
+.twitch-presentation__eyebrow,
+.twitch-header-top .twitch-eyebrow {
+    text-shadow:
+        0 0 10px rgba(34, 242, 239, 0.4) !important;
+}
+
+.twitch-live-info strong,
+#twitch-game-name,
+#twitch-viewer-count {
+    text-shadow:
+        0 0 9px rgba(34, 242, 239, 0.24);
+}
+
+.twitch-channel-link:hover {
+    color: #ffffff !important;
+}
+
+
+/* =========================================================
+   MODE JOUR — PRÉSENTATION PRINCIPALE
+========================================================= */
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .home-hero {
+    color: var(--couaxia-light-text);
 
     background:
         radial-gradient(
-            circle at center,
-            rgba(242, 34, 146, 0.08),
-            transparent 56%
+            circle at 20% 25%,
+            rgba(242, 34, 146, 0.11),
+            transparent 32%
         ),
-        rgba(255, 255, 255, 0.55);
-
-    border:
-        1px solid
-        rgba(109, 0, 163, 0.14);
-}
-
-
-html[data-theme="light"] .twitch-offline-content h3 {
-    color: #48105d;
-
-    text-shadow: none;
-}
-
-
-html[data-theme="light"] .twitch-offline-content p {
-    color:
-        rgba(
-            60,
-            18,
-            79,
-            0.83
-        );
-}
-
-
-html[data-theme="light"] .twitch-offline-icon {
-    filter:
-        drop-shadow(
-            0 0 15px
-            rgba(242, 34, 146, 0.28)
-        );
-}
-
-
-/* =========================================================
-   MODE JOUR — CHARGEMENT
-========================================================= */
-
-html[data-theme="light"] .twitch-live-loading {
-    color: #48105d;
-
-    background:
-        rgba(255, 255, 255, 0.55);
-
-    border:
-        1px solid
-        rgba(109, 0, 163, 0.14);
-}
-
-
-html[data-theme="light"] .twitch-live-loading p {
-    color:
-        rgba(
-            60,
-            18,
-            79,
-            0.83
-        );
-}
-
-
-html[data-theme="light"] .twitch-live-spinner {
-    border-color:
-        rgba(
-            109,
-            0,
-            163,
-            0.14
-        );
-
-    border-top-color: #f22292;
-}
-
-
-/* =========================================================
-   MODE JOUR — ERREUR
-========================================================= */
-
-html[data-theme="light"] .twitch-error-content {
-    color: #48105d;
-
-    background:
-        rgba(255, 255, 255, 0.55);
-
-    border:
-        1px solid
-        rgba(109, 0, 163, 0.14);
-}
-
-
-html[data-theme="light"] .twitch-error-content h3 {
-    color: #48105d;
-}
-
-
-html[data-theme="light"] .twitch-error-content p {
-    color:
-        rgba(
-            60,
-            18,
-            79,
-            0.83
-        );
-}
-
-
-html[data-theme="light"] .twitch-error-content a {
-    color: #008f91;
-}
-
-
-html[data-theme="light"] .twitch-error-content a:hover {
-    color: #6d00a3;
-}
-
-
-/* =========================================================
-   MODE JOUR — INFORMATIONS DU LIVE
-========================================================= */
-
-html[data-theme="light"] .twitch-live-details h3 {
-    color: #48105d;
-
-    text-shadow: none;
-}
-
-
-html[data-theme="light"] .twitch-live-category {
-    color: #008f91;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.55
-        );
-
-    border:
-        1px solid
-        rgba(
-            0,
-            143,
-            145,
-            0.3
-        );
-}
-
-
-/* =========================================================
-   MODE JOUR — BADGES DU LIVE
-========================================================= */
-
-html[data-theme="light"] .twitch-live-badge {
-    color: #ffffff;
-
-    background:
+        radial-gradient(
+            circle at 78% 65%,
+            rgba(34, 242, 239, 0.1),
+            transparent 32%
+        ),
         linear-gradient(
             135deg,
-            #f22292,
-            #b50065
+            rgba(255, 250, 255, 0.98),
+            rgba(246, 231, 253, 0.97),
+            rgba(233, 250, 251, 0.98)
         );
 
-    border-color:
-        rgba(
-            255,
-            255,
-            255,
-            0.4
-        );
-}
-
-
-html[data-theme="light"] .twitch-live-viewers {
-    color: #48105d;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.82
-        );
-
-    border-color:
-        rgba(
-            109,
-            0,
-            163,
-            0.16
-        );
-}
-
-
-/* =========================================================
-   MODE JOUR — NOTIFICATION DU LIVE
-========================================================= */
-
-html[data-theme="light"] .twitch-live-notification {
-    color: #ffffff;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(242, 34, 146, 0.97),
-            rgba(109, 0, 163, 0.97)
-        );
-
-    border:
-        2px solid
-        rgba(34, 242, 239, 0.68);
+    border-color: rgba(109, 0, 163, 0.16);
 
     box-shadow:
-        0 18px 40px rgba(69, 14, 91, 0.24),
-        0 0 25px rgba(242, 34, 146, 0.28);
+        0 24px 60px rgba(71, 20, 99, 0.16),
+        0 0 30px rgba(109, 0, 163, 0.09);
 }
 
-
-/* =========================================================
-   MODE JOUR — BOUTON FERMER NOTIFICATION
-========================================================= */
-
-html[data-theme="light"] .twitch-live-notification button {
-    color: #ffffff;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.18
-        );
-
-    border:
-        1px solid
-        rgba(
-            255,
-            255,
-            255,
-            0.3
-        );
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .home-hero h1 {
+    color: var(--couaxia-light-text) !important;
 }
 
-
-html[data-theme="light"] .twitch-live-notification button:hover {
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.3
-        );
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .home-introduction {
+    color: rgba(43, 18, 61, 0.82) !important;
 }
 
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .home-overline {
+    color: var(--couaxia-cyan) !important;
+}
 
-/* =========================================================
-   MODE JOUR — LECTEUR ET TCHAT
-========================================================= */
-
-html[data-theme="light"] .twitch-player-wrapper,
-html[data-theme="light"] .twitch-chat-wrapper {
-    background: #ede1f4;
-
-    border:
-        1px solid
-        rgba(
-            109,
-            0,
-            163,
-            0.22
-        );
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .home-character-name {
+    background: rgba(255, 255, 255, 0.88);
+    border-color: rgba(34, 242, 239, 0.75);
 
     box-shadow:
-        0 18px 40px rgba(69, 14, 91, 0.14),
-        0 0 18px rgba(34, 242, 239, 0.08);
+        0 16px 35px rgba(71, 20, 99, 0.16),
+        0 0 22px rgba(34, 242, 239, 0.15);
+}
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .home-character-name small {
+    color: rgba(43, 18, 61, 0.76);
 }
 
 
 /* =========================================================
-   MODE JOUR — CONTOURS RENFORCÉS
+   MODE JOUR — SECTION STREAM
 ========================================================= */
 
-html[data-theme="light"] .home-hero,
-html[data-theme="light"] .home-live-section,
-html[data-theme="light"] .twitch-presentation,
-html[data-theme="light"] .twitch-stream-section,
-html[data-theme="light"] .twitch-media-section {
-    border:
-        2px solid
-        rgba(
-            109,
-            0,
-            163,
-            0.28
-        );
-}
-
-
-html[data-theme="light"] .twitch-presentation__player,
-html[data-theme="light"] .twitch-player-card,
-html[data-theme="light"] .twitch-channel-summary,
-html[data-theme="light"] .twitch-resource-section,
-html[data-theme="light"] .twitch-stream-card,
-html[data-theme="light"] .twitch-media-card,
-html[data-theme="light"] .twitch-media-item,
-html[data-theme="light"] .twitch-live-information,
-html[data-theme="light"] .home-stream-details {
-    border:
-        1px solid
-        rgba(
-            109,
-            0,
-            163,
-            0.18
-        );
-}
-
-
-/* =========================================================
-   MODE NUIT — CONTENEUR PRINCIPAL
-========================================================= */
-
-html[data-theme="dark"] .home-page {
-    color: #ffffff;
-}
-
-
-/* =========================================================
-   MODE NUIT — HERO PRINCIPAL
-========================================================= */
-
-html[data-theme="dark"] .home-hero {
-    color: #ffffff;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(40, 7, 70, 0.94),
-            rgba(83, 10, 104, 0.88),
-            rgba(22, 8, 54, 0.94)
-        );
-
-    border:
-        1px solid
-        rgba(
-            197,
-            111,
-            255,
-            0.3
-        );
-
-    box-shadow:
-        0 24px 60px rgba(0, 0, 0, 0.45),
-        0 0 35px rgba(109, 0, 163, 0.35);
-}
-
-
-html[data-theme="dark"] .home-hero h1 {
-    color: #ffffff;
-}
-
-
-html[data-theme="dark"] .home-hero h1 span {
-    color: #f22292;
-
-    text-shadow:
-        0 0 12px rgba(242, 34, 146, 0.5),
-        0 0 26px rgba(109, 0, 163, 0.48);
-}
-
-
-html[data-theme="dark"] .home-overline {
-    color: #22f2ef;
-}
-
-
-html[data-theme="dark"] .home-introduction {
-    color:
-        rgba(
-            255,
-            255,
-            255,
-            0.88
-        );
-}
-
-
-/* =========================================================
-   MODE NUIT — PERSONNAGE
-========================================================= */
-
-html[data-theme="dark"] .home-character-name {
-    color: #ffffff;
-
-    background:
-        rgba(
-            22,
-            7,
-            44,
-            0.82
-        );
-
-    border:
-        1px solid
-        rgba(
-            34,
-            242,
-            239,
-            0.4
-        );
-
-    border-left:
-        3px solid
-        #22f2ef;
-
-    box-shadow:
-        0 16px 35px rgba(0, 0, 0, 0.32),
-        0 0 22px rgba(34, 242, 239, 0.14);
-}
-
-
-html[data-theme="dark"] .home-character-name span {
-    color: #f22292;
-}
-
-
-html[data-theme="dark"] .home-character-name small {
-    color:
-        rgba(
-            255,
-            255,
-            255,
-            0.72
-        );
-}
-
-
-/* =========================================================
-   MODE NUIT — GRANDES SECTIONS TWITCH
-========================================================= */
-
-html[data-theme="dark"] .home-live-section,
-html[data-theme="dark"] .twitch-presentation,
-html[data-theme="dark"] .twitch-stream-section,
-html[data-theme="dark"] .twitch-media-section {
-    color: #ffffff;
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-section {
+    color: var(--couaxia-light-text);
 
     background:
         radial-gradient(
             circle at 78% 30%,
-            rgba(242, 34, 146, 0.2),
+            rgba(242, 34, 146, 0.11),
             transparent 30%
         ),
         radial-gradient(
@@ -4837,410 +3364,680 @@ html[data-theme="dark"] .twitch-media-section {
         ),
         linear-gradient(
             135deg,
-            rgba(40, 7, 70, 0.96),
-            rgba(83, 10, 104, 0.92),
+            rgba(255, 250, 255, 0.98),
+            rgba(246, 231, 253, 0.97),
+            rgba(233, 250, 251, 0.98)
+        );
+
+    border-color: rgba(109, 0, 163, 0.16);
+
+    box-shadow:
+        0 24px 60px rgba(71, 20, 99, 0.16),
+        0 0 30px rgba(109, 0, 163, 0.09);
+}
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-section-header h2 {
+    color: var(--couaxia-light-text) !important;
+}
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-live-info {
+    color: var(--couaxia-light-text);
+    background: rgba(255, 255, 255, 0.84);
+    border-color: rgba(109, 0, 163, 0.18);
+    box-shadow: 0 8px 20px rgba(71, 20, 99, 0.13);
+}
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-info-label {
+    color: rgba(43, 18, 61, 0.72) !important;
+}
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-refresh-button {
+    color: var(--couaxia-cyan) !important;
+    border-color: var(--couaxia-cyan) !important;
+}
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-refresh-button:hover:not(:disabled) {
+    color: var(--couaxia-light-text) !important;
+    background: var(--couaxia-cyan) !important;
+}
+
+
+/* =========================================================
+   BOUTONS PRINCIPAUX DE L’ACCUEIL
+========================================================= */
+
+.home-hero-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 36px;
+}
+
+.home-action-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 210px;
+    min-height: 58px;
+    padding: 12px 28px;
+
+    color: #ffffff;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+
+    border: 2px solid transparent;
+    border-radius: 999px;
+
+    transition:
+        transform 0.25s ease,
+        color 0.25s ease,
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+/* Bouton Twitch principal */
+.home-action-link:not(.home-action-link-secondary) {
+    color: #ffffff !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--couaxia-pink),
+            var(--couaxia-purple)
+        );
+
+    border-color: rgba(255, 255, 255, 0.2);
+
+    box-shadow:
+        0 11px 26px rgba(109, 0, 163, 0.34),
+        0 0 19px rgba(242, 34, 146, 0.22);
+}
+
+.home-action-link:not(.home-action-link-secondary):hover {
+    color: #ffffff !important;
+    transform: translateY(-3px);
+    filter: brightness(1.08);
+
+    box-shadow:
+        0 16px 34px rgba(109, 0, 163, 0.42),
+        0 0 25px rgba(242, 34, 146, 0.32);
+}
+
+/* Boutons Découvrir Couaxia et Découvrir mon histoire */
+.home-action-link-secondary {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--couaxia-cyan);
+
+    box-shadow:
+        0 10px 22px rgba(34, 242, 239, 0.12);
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.home-action-link-secondary:hover {
+    color: var(--couaxia-light-text) !important;
+    background: var(--couaxia-cyan);
+    border-color: var(--couaxia-cyan);
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 17px 31px rgba(34, 242, 239, 0.31);
+}
+
+
+/* =========================================================
+   BOUTONS PRINCIPAUX — MODE JOUR
+========================================================= */
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .home-action-link-secondary {
+    color: var(--couaxia-light-text) !important;
+    background: rgba(255, 255, 255, 0.78);
+    border-color: var(--couaxia-cyan);
+
+    box-shadow:
+        0 10px 22px rgba(34, 242, 239, 0.17),
+        0 5px 18px rgba(71, 20, 99, 0.08);
+}
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .home-action-link-secondary:hover {
+    color: var(--couaxia-light-text) !important;
+    background: var(--couaxia-cyan);
+    border-color: var(--couaxia-cyan);
+
+    box-shadow:
+        0 16px 30px rgba(34, 242, 239, 0.26);
+}
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .home-action-link:not(.home-action-link-secondary) {
+    color: #ffffff !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE DES BOUTONS
+========================================================= */
+
+@media screen and (max-width: 900px) {
+    .home-hero-actions {
+        justify-content: center;
+    }
+
+    .home-action-link {
+        width: min(100%, 340px);
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .home-hero-actions {
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .home-action-link {
+        width: 100%;
+        min-width: 0;
+        min-height: 54px;
+        padding: 11px 20px;
+        font-size: 0.98rem;
+    }
+}
+/* =========================================================
+   BLOCS CLIPS ET VIDÉOS
+========================================================= */
+
+.twitch-media-section {
+    position: relative;
+
+    width: min(1500px, calc(100% - 60px));
+    margin: 70px auto 0;
+    padding: clamp(35px, 5vw, 65px);
+
+    color: #ffffff;
+
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 42px;
+
+    background:
+        radial-gradient(
+            circle at 75% 25%,
+            rgba(242, 34, 146, 0.16),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 18% 78%,
+            rgba(34, 242, 239, 0.08),
+            transparent 34%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(40, 7, 70, 0.95),
+            rgba(83, 10, 104, 0.91),
             rgba(22, 8, 54, 0.96)
         );
 
-    border:
-        1px solid
-        rgba(
-            197,
-            111,
-            255,
-            0.3
-        );
-
     box-shadow:
-        0 24px 60px rgba(0, 0, 0, 0.42),
-        0 0 35px rgba(109, 0, 163, 0.3);
+        0 24px 60px rgba(0, 0, 0, 0.38),
+        0 0 30px rgba(109, 0, 163, 0.2);
+
+    overflow: hidden;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 
 /* =========================================================
-   MODE NUIT — TITRES ET TEXTES
+   EN-TÊTE CLIPS ET VIDÉOS
 ========================================================= */
 
-html[data-theme="dark"] .home-live-heading h2,
-html[data-theme="dark"] .twitch-main-title,
-html[data-theme="dark"] .twitch-presentation h2,
-html[data-theme="dark"] .twitch-stream-section h2,
-html[data-theme="dark"] .twitch-media-heading h2,
-html[data-theme="dark"] .twitch-player-heading h3,
-html[data-theme="dark"] .twitch-player-card__header h3 {
-    color: #ffffff;
+.twitch-media-heading {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 30px;
+
+    margin-bottom: 35px;
 }
 
+.twitch-media-heading .twitch-eyebrow {
+    margin: 0 0 12px;
 
-html[data-theme="dark"] .twitch-main-title span,
-html[data-theme="dark"] .twitch-presentation h2 span {
-    color: #f22292;
+    color: #22f2ef !important;
+
+    text-shadow:
+        0 0 10px rgba(34, 242, 239, 0.4);
 }
 
+.twitch-media-heading h2 {
+    margin: 0;
 
-html[data-theme="dark"] .home-live-label,
-html[data-theme="dark"] .twitch-eyebrow,
-html[data-theme="dark"] .twitch-presentation__eyebrow,
-html[data-theme="dark"] .twitch-media-label,
-html[data-theme="dark"] .twitch-section-label {
-    color: #22f2ef;
-}
-
-
-html[data-theme="dark"] .home-live-heading > p:last-child,
-html[data-theme="dark"] .twitch-presentation__description,
-html[data-theme="dark"] .twitch-follower-text,
-html[data-theme="dark"] .twitch-player-heading p,
-html[data-theme="dark"] .twitch-stream-subtitle,
-html[data-theme="dark"] .twitch-media-heading p,
-html[data-theme="dark"] .twitch-player-card__header > div > p:last-child {
-    color:
-        rgba(
-            255,
-            255,
-            255,
-            0.82
-        );
-}
-
-
-/* =========================================================
-   MODE NUIT — CARTES
-========================================================= */
-
-html[data-theme="dark"] .twitch-presentation__player,
-html[data-theme="dark"] .twitch-player-card,
-html[data-theme="dark"] .twitch-channel-summary,
-html[data-theme="dark"] .twitch-resource-section,
-html[data-theme="dark"] .twitch-stream-card,
-html[data-theme="dark"] .twitch-media-card,
-html[data-theme="dark"] .twitch-media-item,
-html[data-theme="dark"] .twitch-live-information,
-html[data-theme="dark"] .twitch-offline-content,
-html[data-theme="dark"] .twitch-live-loading,
-html[data-theme="dark"] .twitch-error-content,
-html[data-theme="dark"] .home-stream-details {
     color: #ffffff;
 
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.055
-        );
-
-    border:
-        1px solid
-        rgba(
-            255,
-            255,
-            255,
-            0.11
-        );
-
-    box-shadow:
-        0 16px 38px rgba(0, 0, 0, 0.3),
-        inset 0 0 16px rgba(109, 0, 163, 0.05);
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(2.4rem, 4.6vw, 4.8rem);
+    line-height: 1;
 }
 
+.twitch-media-heading > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
 
-/* =========================================================
-   MODE NUIT — BADGES ET INFORMATIONS
-========================================================= */
+    min-height: 52px;
+    padding: 11px 22px;
 
-html[data-theme="dark"] .twitch-status-pill,
-html[data-theme="dark"] .twitch-presentation__status,
-html[data-theme="dark"] .twitch-presentation__meta span,
-html[data-theme="dark"] .twitch-live-metadata span,
-html[data-theme="dark"] .twitch-live-category,
-html[data-theme="dark"] .twitch-game,
-html[data-theme="dark"] .twitch-stream-information {
-    color: #ffffff;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.07
-        );
-
-    border:
-        1px solid
-        rgba(
-            255,
-            255,
-            255,
-            0.14
-        );
-}
-
-
-/* =========================================================
-   MODE NUIT — CARTES MÉDIAS
-========================================================= */
-
-html[data-theme="dark"] .twitch-media-card h3,
-html[data-theme="dark"] .twitch-media-item h3,
-html[data-theme="dark"] .twitch-clip-card h3,
-html[data-theme="dark"] .twitch-video-card h3 {
-    color: #ffffff;
-}
-
-
-html[data-theme="dark"] .twitch-media-card p,
-html[data-theme="dark"] .twitch-media-item p,
-html[data-theme="dark"] .twitch-clip-card p,
-html[data-theme="dark"] .twitch-video-card p {
-    color:
-        rgba(
-            255,
-            255,
-            255,
-            0.78
-        );
-}
-
-
-html[data-theme="dark"] .twitch-media-card span,
-html[data-theme="dark"] .twitch-media-item span,
-html[data-theme="dark"] .twitch-media-meta {
-    color:
-        rgba(
-            255,
-            255,
-            255,
-            0.66
-        );
-}
-
-
-/* =========================================================
-   MODE NUIT — MESSAGE DE L’API
-========================================================= */
-
-html[data-theme="dark"] .twitch-api-message {
-    color:
-        rgba(
-            255,
-            255,
-            255,
-            0.84
-        );
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.06
-        );
-
-    border:
-        1px solid
-        rgba(
-            255,
-            255,
-            255,
-            0.14
-        );
-}
-
-
-/* =========================================================
-   MODE NUIT — BOUTONS VOIR TOUS
-========================================================= */
-
-html[data-theme="dark"] .twitch-media-heading a,
-html[data-theme="dark"] .twitch-resource-section__link {
     color: #22f2ef;
 
-    background:
-        rgba(
-            34,
-            242,
-            239,
-            0.06
-        );
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
 
-    border:
-        1px solid
-        rgba(
-            34,
-            242,
-            239,
-            0.28
-        );
+    border: 1px solid rgba(34, 242, 239, 0.55);
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.06);
+
+    transition:
+        transform 0.22s ease,
+        color 0.22s ease,
+        background-color 0.22s ease,
+        border-color 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+.twitch-media-heading > a:hover {
+    color: #2b123d;
+    background: #22f2ef;
+    border-color: #22f2ef;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 0 18px rgba(34, 242, 239, 0.3);
 }
 
 
-html[data-theme="dark"] .twitch-media-heading a:hover,
-html[data-theme="dark"] .twitch-resource-section__link:hover {
-    color: #ffffff;
+/* =========================================================
+   CONTENU DES CLIPS ET VIDÉOS
+========================================================= */
+
+.twitch-media-grid {
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+
+    width: 100%;
+}
+
+.twitch-media-placeholder,
+.twitch-empty-message {
+    grid-column: 1 / -1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 140px;
+    padding: 25px;
+
+    color: rgba(255, 255, 255, 0.82);
+
+    text-align: center;
+
+    border: 1px dashed rgba(255, 255, 255, 0.25);
+    border-radius: 24px;
+
+    background: rgba(13, 8, 38, 0.45);
+}
+
+
+/* =========================================================
+   MODE JOUR — CLIPS ET VIDÉOS
+========================================================= */
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-media-section {
+    color: #2b123d;
+
+    border-color: rgba(109, 0, 163, 0.16);
 
     background:
-        rgba(
-            34,
-            242,
-            239,
-            0.12
-        );
-
-    border-color:
-        rgba(
-            34,
-            242,
-            239,
-            0.56
+        radial-gradient(
+            circle at 75% 25%,
+            rgba(242, 34, 146, 0.1),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 18% 78%,
+            rgba(34, 242, 239, 0.09),
+            transparent 34%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(255, 250, 255, 0.98),
+            rgba(246, 231, 253, 0.97),
+            rgba(233, 250, 251, 0.98)
         );
 
     box-shadow:
-        0 0 22px rgba(34, 242, 239, 0.28);
+        0 24px 60px rgba(71, 20, 99, 0.16),
+        0 0 30px rgba(109, 0, 163, 0.09);
+}
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-media-heading h2 {
+    color: #2b123d;
+}
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-media-heading > a {
+    color: #6d00a3;
+
+    border-color: rgba(109, 0, 163, 0.45);
+
+    background: rgba(255, 255, 255, 0.7);
+}
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-media-heading > a:hover {
+    color: #2b123d;
+
+    border-color: #22f2ef;
+
+    background: #22f2ef;
+}
+
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-media-placeholder,
+:is(
+    html[data-theme="light"],
+    body[data-theme="light"],
+    html.light-mode,
+    body.light-mode,
+    html.light-theme,
+    body.light-theme,
+    html.theme-light,
+    body.theme-light
+) .twitch-empty-message {
+    color: rgba(43, 18, 61, 0.78);
+
+    border-color: rgba(109, 0, 163, 0.22);
+
+    background: rgba(255, 255, 255, 0.62);
 }
 
 
 /* =========================================================
-   MODE NUIT — LECTEUR ET TCHAT
+   RESPONSIVE
 ========================================================= */
 
-html[data-theme="dark"] .twitch-player-wrapper,
-html[data-theme="dark"] .twitch-chat-wrapper,
-html[data-theme="dark"] .home-stream-player {
-    background: #170620;
-
-    border:
-        2px solid
-        rgba(
-            34,
-            242,
-            239,
-            0.33
-        );
-
-    box-shadow:
-        0 18px 45px rgba(10, 0, 22, 0.45),
-        0 0 20px rgba(242, 34, 146, 0.13);
-}
-
-
-/* =========================================================
-   RESPONSIVE — THÈMES
-========================================================= */
-
-@media (max-width: 1050px) {
-    html[data-theme="light"] .home-hero,
-    html[data-theme="light"] .home-live-section,
-    html[data-theme="light"] .twitch-presentation,
-    html[data-theme="light"] .twitch-stream-section,
-    html[data-theme="light"] .twitch-media-section,
-    html[data-theme="dark"] .home-hero,
-    html[data-theme="dark"] .home-live-section,
-    html[data-theme="dark"] .twitch-presentation,
-    html[data-theme="dark"] .twitch-stream-section,
-    html[data-theme="dark"] .twitch-media-section {
-        box-shadow:
-            0 18px 40px rgba(69, 14, 91, 0.14);
+@media screen and (max-width: 1200px) {
+    .twitch-media-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
+@media screen and (max-width: 800px) {
+    .twitch-media-section {
+        width: min(100% - 30px, 1500px);
+        padding: 42px 26px;
 
-@media (max-width: 650px) {
-    html[data-theme="light"] .home-hero,
-    html[data-theme="light"] .home-live-section,
-    html[data-theme="light"] .twitch-presentation,
-    html[data-theme="light"] .twitch-stream-section,
-    html[data-theme="light"] .twitch-media-section,
-    html[data-theme="dark"] .home-hero,
-    html[data-theme="dark"] .home-live-section,
-    html[data-theme="dark"] .twitch-presentation,
-    html[data-theme="dark"] .twitch-stream-section,
-    html[data-theme="dark"] .twitch-media-section {
-        border-radius: 28px;
+        border-radius: 32px;
     }
 
+    .twitch-media-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 20px;
+    }
+}
 
-    html[data-theme="light"] .twitch-presentation__player,
-    html[data-theme="light"] .twitch-player-card,
-    html[data-theme="light"] .twitch-channel-summary,
-    html[data-theme="light"] .twitch-resource-section,
-    html[data-theme="light"] .twitch-media-card,
-    html[data-theme="light"] .twitch-media-item,
-    html[data-theme="light"] .home-stream-details,
-    html[data-theme="dark"] .twitch-presentation__player,
-    html[data-theme="dark"] .twitch-player-card,
-    html[data-theme="dark"] .twitch-channel-summary,
-    html[data-theme="dark"] .twitch-resource-section,
-    html[data-theme="dark"] .twitch-media-card,
-    html[data-theme="dark"] .twitch-media-item,
-    html[data-theme="dark"] .home-stream-details {
-        border-radius: 22px;
+@media screen and (max-width: 600px) {
+    .twitch-media-section {
+        width: calc(100% - 20px);
+        margin-top: 45px;
+        padding: 32px 16px;
+
+        border-radius: 25px;
     }
 
+    .twitch-media-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
 
-    html[data-theme="light"] .twitch-live-button,
-    html[data-theme="light"] .twitch-offline-button,
-    html[data-theme="light"] .twitch-refresh-button,
-    html[data-theme="light"] .twitch-channel-link,
-    html[data-theme="dark"] .twitch-live-button,
-    html[data-theme="dark"] .twitch-offline-button,
-    html[data-theme="dark"] .twitch-refresh-button,
-    html[data-theme="dark"] .twitch-channel-link {
+    .twitch-media-heading > a {
         width: 100%;
-        min-width: 0;
-    }
-
-
-    html[data-theme="light"] .twitch-media-heading a,
-    html[data-theme="dark"] .twitch-media-heading a {
-        width: 100%;
-        justify-content: center;
     }
 }
 
+.hero-content{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    align-items:center;
+    gap:60px;
+}
+
+.hero-right{
+    position:relative;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    min-height:650px;
+}
 
 /* =========================================================
-   ACCESSIBILITÉ — RÉDUCTION DES ANIMATIONS
+   PRÉSENTATION TWITCH
 ========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
-    .home-page,
-    .home-hero,
-    .home-character-name,
-    .home-live-section,
-    .twitch-presentation,
-    .twitch-stream-section,
-    .twitch-media-section,
-    .twitch-stream-card,
-    .twitch-player-card,
-    .twitch-presentation__player,
-    .twitch-resource-section,
-    .twitch-channel-summary,
-    .twitch-media-card,
-    .twitch-media-item,
-    .twitch-api-message,
-    .twitch-status-pill,
-    .twitch-game,
-    .twitch-stream-information,
-    .home-stream-details,
-    .home-action-link,
-    .twitch-live-button,
-    .twitch-offline-button,
-    .twitch-refresh-button,
-    .twitch-media-heading a {
-        transition: none;
+.twitch-presentation__content{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    align-items:center;
+    gap:70px;
+}
+
+/* =========================================================
+   IMAGE
+========================================================= */
+
+.twitch-presentation__visual{
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    position:relative;
+
+    min-height:650px;
+}
+
+.twitch-presentation__character{
+
+    width:100%;
+    max-width:650px;
+
+    user-select:none;
+    pointer-events:none;
+
+    filter:
+        drop-shadow(0 25px 45px rgba(0,0,0,.35));
+
+    animation:
+        couaxiaFloat 6s ease-in-out infinite;
+}
+
+@keyframes couaxiaFloat{
+
+    0%{
+        transform:translateY(0px);
     }
 
-
-    .twitch-media-card:hover,
-    .twitch-media-item:hover,
-    .twitch-clip-card:hover,
-    .twitch-video-card:hover,
-    .home-action-link:hover,
-    .twitch-live-button:hover,
-    .twitch-offline-button:hover,
-    .twitch-refresh-button:hover,
-    .twitch-channel-link:hover {
-        transform: none;
+    50%{
+        transform:translateY(-14px);
     }
+
+    100%{
+        transform:translateY(0px);
+    }
+
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width:1100px){
+
+    .twitch-presentation__content{
+
+        grid-template-columns:1fr;
+        text-align:center;
+    }
+
+    .twitch-presentation__visual{
+
+        order:-1;
+
+        min-height:auto;
+    }
+
+    .twitch-presentation__character{
+
+        max-width:420px;
+    }
+
 }

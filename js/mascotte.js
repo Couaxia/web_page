@@ -553,6 +553,837 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /* ==========================================
+   INTERACTIONS DE LA PAGE D'ACCUEIL
+             VARIABLES ET OUTILS
+========================================== */
+
+const currentMascottePage = getCurrentPage();
+
+if (
+    currentMascottePage === "accueil.html" ||
+    currentMascottePage === "index.html"
+) {
+    /*
+     * Cet objet mémorise les informations déjà détectées.
+     * Cela évite que la mascotte répète continuellement
+     * le même message.
+     */
+    const accueilInteractionState = {
+        lastFollowerCount: null,
+        lastLiveStatus: null,
+        lastCategory: "",
+        lastAutomaticMessageAt: 0,
+        seenSections: new Set()
+    };
+
+    /*
+     * Temps minimal entre deux messages automatiques.
+     * La valeur est exprimée en millisecondes.
+     *
+     * 7000 = 7 secondes
+     */
+    const AUTO_MESSAGE_COOLDOWN = 7000;
+
+    /*
+     * Vérifie si la mascotte peut afficher
+     * un nouveau message automatique.
+     */
+    function canShowAutomaticMessage() {
+        const currentTime = Date.now();
+
+        const elapsedTime =
+            currentTime -
+            accueilInteractionState.lastAutomaticMessageAt;
+
+        if (elapsedTime < AUTO_MESSAGE_COOLDOWN) {
+            return false;
+        }
+
+        accueilInteractionState.lastAutomaticMessageAt =
+            currentTime;
+
+        return true;
+    }
+
+    /*
+     * Affiche un message automatique,
+     * anime la mascotte et réinitialise
+     * son compteur d'inactivité.
+     */
+    function showAutomaticMascotteMessage(
+        message,
+        duration = 5000
+    ) {
+        if (!message) {
+            return;
+        }
+
+        if (!canShowAutomaticMessage()) {
+            return;
+        }
+
+        showMessage(message, duration);
+        animateMascotte();
+        resetIdleTimer();
+    }
+
+    /*
+     * Transforme un texte comme :
+     *
+     * "867 followers"
+     *
+     * en nombre :
+     *
+     * 867
+     */
+    function parseMascotteNumber(value) {
+        const normalizedValue = String(value || "")
+            .replace(/\s/g, "")
+            .replace(/[^\d]/g, "");
+
+        const parsedNumber = Number.parseInt(
+            normalizedValue,
+            10
+        );
+
+        if (!Number.isFinite(parsedNumber)) {
+            return null;
+        }
+
+        return parsedNumber;
+    }
+
+    /*
+     * Recherche le premier élément HTML existant
+     * parmi plusieurs sélecteurs possibles.
+     *
+     * Cela permet au script de fonctionner même
+     * si certains identifiants sont légèrement
+     * différents dans accueil.html.
+     */
+    function findFirstMascotteElement(selectors) {
+        for (const selector of selectors) {
+            const element =
+                document.querySelector(selector);
+
+            if (element) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /*
+     * Éléments Twitch recherchés dans accueil.html.
+     */
+
+    const twitchFollowerElement =
+        findFirstMascotteElement([
+            "#twitch-followers-count",
+            "#followers-count",
+            "[data-twitch-followers]"
+        ]);
+
+    const twitchLiveStatusElement =
+        findFirstMascotteElement([
+            "#twitch-status-pill",
+            "#twitch-status-label",
+            "[data-twitch-status]"
+        ]);
+
+    const twitchCategoryElement =
+        findFirstMascotteElement([
+            "#twitch-category",
+            "#twitch-category-name",
+            "#stream-category",
+            "#twitch-game",
+            "[data-twitch-category]"
+        ]);
+
+    /*
+     * Affichage temporaire dans la console.
+     * Cela permet de vérifier que les éléments
+     * Twitch ont bien été trouvés.
+     */
+    console.log(
+        "[Mascotte] Compteur followers :",
+        twitchFollowerElement
+    );
+
+    console.log(
+        "[Mascotte] Statut Twitch :",
+        twitchLiveStatusElement
+    );
+
+    console.log(
+        "[Mascotte] Catégorie Twitch :",
+        twitchCategoryElement
+    );
+
+/* ==========================================
+   FOLLOWERS - LIVE - CATEGORIE
+========================================== */
+
+/* ------------------------------
+   FOLLOWERS
+------------------------------ */
+
+function updateFollowersReaction() {
+
+    if (!twitchFollowerElement) {
+        return;
+    }
+
+    const followerCount = parseMascotteNumber(
+        twitchFollowerElement.textContent
+    );
+
+    if (followerCount === null) {
+        return;
+    }
+
+    if (accueilInteractionState.lastFollowerCount === null) {
+
+        accueilInteractionState.lastFollowerCount =
+            followerCount;
+
+        return;
+    }
+
+    if (
+        followerCount >
+        accueilInteractionState.lastFollowerCount
+    ) {
+
+        const gainedFollowers =
+            followerCount -
+            accueilInteractionState.lastFollowerCount;
+
+        accueilInteractionState.lastFollowerCount =
+            followerCount;
+
+        showAutomaticMascotteMessage(
+
+            gainedFollowers === 1
+                ? `Un nouveau Poup vient d'arriver ! Nous sommes maintenant ${followerCount} ! 💜`
+                : `${gainedFollowers} nouveaux Poups ! Merci énormément ! 💜`,
+
+            6500
+        );
+
+        return;
+    }
+
+    accueilInteractionState.lastFollowerCount =
+        followerCount;
+
+}
+
+if (twitchFollowerElement) {
+
+    updateFollowersReaction();
+
+    new MutationObserver(updateFollowersReaction)
+        .observe(
+            twitchFollowerElement,
+            {
+                childList: true,
+                subtree: true,
+                characterData: true
+            }
+        );
+
+}
+
+
+/* ------------------------------
+   LIVE / OFFLINE
+------------------------------ */
+
+function getLiveStatus() {
+
+    if (!twitchLiveStatusElement) {
+        return null;
+    }
+
+    const container =
+
+        twitchLiveStatusElement.closest(
+            "[data-status]"
+        ) ||
+
+        twitchLiveStatusElement;
+
+    const status =
+
+        String(
+            container.dataset.status ||
+            ""
+        ).toLowerCase();
+
+    if (
+        status === "live" ||
+        status === "online"
+    ) {
+        return "live";
+    }
+
+    if (
+        status === "offline"
+    ) {
+        return "offline";
+    }
+
+    const text =
+
+        container.textContent
+            .toLowerCase();
+
+    if (
+        text.includes("en direct")
+    ) {
+        return "live";
+    }
+
+    if (
+        text.includes("hors ligne")
+    ) {
+        return "offline";
+    }
+
+    return null;
+
+}
+
+function updateLiveReaction() {
+
+    const currentStatus =
+        getLiveStatus();
+
+    if (
+        currentStatus === null
+    ) {
+        return;
+    }
+
+    if (
+        accueilInteractionState.lastLiveStatus ===
+        null
+    ) {
+
+        accueilInteractionState.lastLiveStatus =
+            currentStatus;
+
+        return;
+    }
+
+    if (
+        accueilInteractionState.lastLiveStatus ===
+        currentStatus
+    ) {
+        return;
+    }
+
+    accueilInteractionState.lastLiveStatus =
+        currentStatus;
+
+    if (
+        currentStatus === "live"
+    ) {
+
+        showAutomaticMascotteMessage(
+
+            "🔴 Je suis en direct ! Rejoins-nous sur Twitch !!",
+
+            6500
+        );
+
+    }
+
+    else {
+
+        showAutomaticMascotteMessage(
+
+            "💜 Le live est terminé. Tu peux regarder les clips ou les rediffusions juste en dessous !",
+
+            6500
+        );
+
+    }
+
+}
+
+if (twitchLiveStatusElement) {
+
+    updateLiveReaction();
+
+    const container =
+
+        twitchLiveStatusElement.closest(
+            "[data-status]"
+        ) ||
+
+        twitchLiveStatusElement;
+
+    new MutationObserver(
+        updateLiveReaction
+    ).observe(
+        container,
+        {
+            attributes: true,
+            childList: true,
+            subtree: true,
+            characterData: true,
+            attributeFilter: [
+                "data-status"
+            ]
+        }
+    );
+
+}
+
+
+/* ------------------------------
+   CATEGORIE
+------------------------------ */
+
+function getCurrentCategory() {
+
+    if (!twitchCategoryElement) {
+        return "";
+    }
+
+    return String(
+
+        twitchCategoryElement.textContent ||
+
+        ""
+
+    ).trim();
+
+}
+
+function updateCategoryReaction() {
+
+    const category =
+        getCurrentCategory();
+
+    if (
+        category === ""
+    ) {
+        return;
+    }
+
+    if (
+        accueilInteractionState.lastCategory ===
+        ""
+    ) {
+
+        accueilInteractionState.lastCategory =
+            category;
+
+        return;
+    }
+
+    if (
+        accueilInteractionState.lastCategory ===
+        category
+    ) {
+        return;
+    }
+
+    accueilInteractionState.lastCategory =
+        category;
+
+    showAutomaticMascotteMessage(
+
+        `🎮 Aujourd'hui je joue à ${category} ! Tu connais ce jeu ?`,
+
+        6000
+    );
+
+}
+
+if (twitchCategoryElement) {
+
+    updateCategoryReaction();
+
+    new MutationObserver(
+        updateCategoryReaction
+    ).observe(
+
+        twitchCategoryElement,
+
+        {
+            childList: true,
+            subtree: true,
+            characterData: true
+        }
+    );
+}
+
+/* ==========================================
+   REACTIONS AU SCROLL DES SECTIONS
+========================================== */
+
+/*
+ * Chaque section possède :
+ * - un nom unique ;
+ * - plusieurs sélecteurs possibles ;
+ * - un message adapté.
+ */
+const mascotteSections = [
+    {
+        name: "stream",
+
+        selectors: [
+            "#twitch-player-section",
+            "#twitch-stream-section",
+            ".twitch-stream",
+            ".twitch-player-wrapper",
+            "#twitch-section"
+        ],
+
+        getMessage() {
+            const liveStatus = getLiveStatus();
+
+            if (liveStatus === "live") {
+                return "🔴 Tu arrives sur le live ! Je suis en direct, installe-toi avec nous !";
+            }
+
+            return "Voici mon espace Twitch ! Même hors ligne, tu peux découvrir mes contenus juste en dessous.";
+        }
+    },
+
+    {
+        name: "category",
+
+        selectors: [
+            "#twitch-category-section",
+            ".twitch-stream-info",
+            ".stream-information",
+            "[data-section='category']"
+        ],
+
+        getMessage() {
+            const category =
+                getCurrentCategory();
+
+            if (category) {
+                return `🎮 Ici, tu peux voir la catégorie actuelle : ${category} !`;
+            }
+
+            return "La catégorie du stream sera affichée ici dès qu'elle sera disponible.";
+        }
+    },
+
+    {
+        name: "clips",
+
+        selectors: [
+            "#twitch-clips",
+            "#clips-section",
+            ".twitch-clips-section",
+            ".clips-section",
+            "[data-section='clips']"
+        ],
+
+        getMessage() {
+            return "😂 Tu arrives sur mes clips ! C'est ici que se trouvent mes meilleurs moments… et probablement quelques fails !";
+        }
+    },
+
+    {
+        name: "videos",
+
+        selectors: [
+            "#twitch-videos",
+            "#videos-section",
+            ".twitch-videos-section",
+            ".videos-section",
+            "[data-section='videos']"
+        ],
+
+        getMessage() {
+            return "📺 Tu as raté un live ? Toutes les rediffusions disponibles sont regroupées ici !";
+        }
+    }
+];
+
+
+/*
+ * Recherche chaque section dans le HTML.
+ */
+const detectedMascotteSections = [];
+
+mascotteSections.forEach((sectionConfig) => {
+    const sectionElement =
+        findFirstMascotteElement(
+            sectionConfig.selectors
+        );
+
+    if (!sectionElement) {
+        return;
+    }
+
+    /*
+     * On ajoute un nom à la section
+     * pour pouvoir l'identifier ensuite.
+     */
+    sectionElement.dataset.mascotteSection =
+        sectionConfig.name;
+
+    detectedMascotteSections.push({
+        element: sectionElement,
+        config: sectionConfig
+    });
+});
+
+
+/*
+ * Vérifie que le navigateur supporte
+ * IntersectionObserver.
+ */
+if (
+    "IntersectionObserver" in window &&
+    detectedMascotteSections.length > 0
+) {
+    const mascotteSectionObserver =
+        new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    /*
+                     * La section doit être visible
+                     * à au moins 35 %.
+                     */
+                    if (
+                        !entry.isIntersecting ||
+                        entry.intersectionRatio < 0.35
+                    ) {
+                        return;
+                    }
+
+                    const sectionName =
+                        entry.target.dataset.mascotteSection;
+
+                    /*
+                     * Évite que la mascotte répète
+                     * le même message à chaque scroll.
+                     */
+                    if (
+                        accueilInteractionState
+                            .seenSections
+                            .has(sectionName)
+                    ) {
+                        return;
+                    }
+
+                    const detectedSection =
+                        detectedMascotteSections.find(
+                            (section) =>
+                                section.config.name ===
+                                sectionName
+                        );
+
+                    if (!detectedSection) {
+                        return;
+                    }
+
+                    accueilInteractionState
+                        .seenSections
+                        .add(sectionName);
+
+                    showAutomaticMascotteMessage(
+                        detectedSection
+                            .config
+                            .getMessage(),
+                        6000
+                    );
+                });
+            },
+
+            {
+                /*
+                 * La mascotte parle lorsque
+                 * la section est suffisamment visible.
+                 */
+                threshold: [
+                    0.35,
+                    0.6
+                ],
+
+                /*
+                 * Évite une détection trop tardive
+                 * en bas de l'écran.
+                 */
+                rootMargin:
+                    "0px 0px -12% 0px"
+            }
+        );
+
+            /*
+            * Active l'observation
+            * sur chaque section trouvée.
+            */
+            detectedMascotteSections.forEach(
+                ({ element }) => {
+                    mascotteSectionObserver.observe(
+                        element
+                    );
+                }
+            );
+        }
+
+
+        /*
+        * Petit message dans la console
+        * pour vérifier les sections trouvées.
+        */
+        console.log(
+            "[Mascotte] Sections détectées :",
+            detectedMascotteSections.map(
+                ({ config }) => config.name
+            )
+        );
+
+        /* ==========================================
+   PARTIE 4/4
+   CLIPS - VIDEOS - FIN
+========================================== */
+
+/* ------------------------------
+   SURVOL DES CLIPS
+------------------------------ */
+
+function setupClipInteractions() {
+
+    const clipCards = document.querySelectorAll(
+        ".twitch-clip-card, .clip-card, [data-twitch-clip]"
+    );
+
+    clipCards.forEach((card) => {
+
+        if (card.dataset.mascotteReady === "true") {
+            return;
+        }
+
+        card.dataset.mascotteReady = "true";
+
+        card.addEventListener("mouseenter", () => {
+
+            showMessage(
+                "😂 Celui-là vaut vraiment le détour ! Clique dessus pour voir ce qu'il s'est passé !",
+                4500
+            );
+
+            animateMascotte();
+
+        });
+
+    });
+
+}
+
+
+/* ------------------------------
+   SURVOL DES VIDEOS
+------------------------------ */
+
+function setupVideoInteractions() {
+
+    const videoCards = document.querySelectorAll(
+        ".twitch-video-card, .video-card, [data-twitch-video]"
+    );
+
+    videoCards.forEach((card) => {
+
+        if (card.dataset.mascotteReady === "true") {
+            return;
+        }
+
+        card.dataset.mascotteReady = "true";
+
+        card.addEventListener("mouseenter", () => {
+
+            showMessage(
+                "📺 Une rediffusion complète ! Parfait si tu as raté un live.",
+                4500
+            );
+
+            animateMascotte();
+
+        });
+
+    });
+
+}
+
+
+/* ------------------------------
+   INITIALISATION
+------------------------------ */
+
+setupClipInteractions();
+setupVideoInteractions();
+
+
+/*
+ * Les clips et vidéos sont créés
+ * après les appels API Twitch.
+ *
+ * On observe donc le DOM.
+ */
+
+const twitchContentContainer =
+    findFirstMascotteElement([
+
+        "#twitch-clips",
+
+        "#clips-section",
+
+        "#twitch-videos",
+
+        "#videos-section",
+
+        "main"
+
+    ]);
+
+
+if (twitchContentContainer) {
+
+    new MutationObserver(() => {
+
+        setupClipInteractions();
+        setupVideoInteractions();
+
+    }).observe(
+
+        twitchContentContainer,
+
+        {
+            childList: true,
+            subtree: true
+        }
+
+    );
+
+}
+/*
+ * Petit message dans la console.
+ */
+
+console.log(
+    "[Mascotte] Toutes les interactions Twitch sont chargées."
+);
+
+}
+/* ==========================================
+   FIN DOMContentLoaded
+========================================== */
+
+    /* ==========================================
        DÉTECTION D’INACTIVITÉ
     ========================================== */
 
