@@ -122,15 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById(
             "twitch-videos-pagination"
         );
-    const descriptionValue =
-    firstDefined(
-        video?.description,
-        ""
-    );
-    const description =
-        descriptionValue
-            ? String(descriptionValue)
-            : "";    
+    
 /* =========================================================
    CONFIGURATION DE LA PAGINATION
 ========================================================= */
@@ -1543,13 +1535,16 @@ function renderClips(
                 ""
             );
 
-        const description =
-            String(
-                firstDefined(
-                    video?.description,
-                    ""
-                )
+        const descriptionValue =
+            firstDefined(
+                video?.description,
+                ""
             );
+
+        const description =
+            descriptionValue
+            ? String(descriptionValue)
+            : "";
 
         return `
             <article class="twitch-media-card twitch-video-card">
