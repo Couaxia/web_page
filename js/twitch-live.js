@@ -1388,6 +1388,107 @@ function renderPagination(
         pageIndicator
     );
 }
+/**
+ * Affiche une page de clips Twitch.
+ *
+ * @param {Array<object>} clips
+ * @param {number} requestedPage
+ */
+function renderClips(
+    clips,
+    requestedPage = currentClipsPage
+) {
+    if (!clipsList) {
+        return;
+    }
+
+    storedClips =
+        getArray(clips);
+
+    if (
+        storedClips.length ===
+        0
+    ) {
+        clipsList.innerHTML = `
+            <p class="twitch-empty-message">
+                Aucun clip disponible pour le moment.
+            </p>
+        `;
+
+        currentClipsPage =
+            1;
+
+        if (clipsPagination) {
+            clipsPagination.innerHTML =
+                "";
+
+            hideElement(
+                clipsPagination
+            );
+        }
+
+        return;
+    }
+
+    const totalPages =
+        Math.ceil(
+            storedClips.length /
+            MEDIA_PER_PAGE
+        );
+
+    currentClipsPage =
+        Math.min(
+            Math.max(
+                requestedPage,
+                1
+            ),
+            totalPages
+        );
+
+    const startIndex =
+        (
+            currentClipsPage -
+            1
+        ) *
+        MEDIA_PER_PAGE;
+
+    const endIndex =
+        startIndex +
+        MEDIA_PER_PAGE;
+
+    const visibleClips =
+        storedClips.slice(
+            startIndex,
+            endIndex
+        );
+
+    clipsList.innerHTML =
+        visibleClips
+            .map(
+                createClipCard
+            )
+            .join("");
+
+    renderPagination(
+        clipsPagination,
+        currentClipsPage,
+        totalPages,
+        (page) => {
+            renderClips(
+                storedClips,
+                page
+            );
+
+            clipsList.scrollIntoView({
+                behavior:
+                    "smooth",
+
+                block:
+                    "start"
+            });
+        }
+    );
+}
     /* =========================================================
        AFFICHAGE DES VIDÉOS TWITCH
     ========================================================= */
