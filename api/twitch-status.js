@@ -36,11 +36,9 @@ const TWITCH_CHANNEL =
     process.env.TWITCH_CHANNEL_LOGIN ||
     "couaxia";
 
-const VIDEOS_LIMIT =
-    20;
+const VIDEOS_LIMIT = 20;
 
-const CLIPS_LIMIT =
-    100;
+const CLIPS_LIMIT = 100;
 
 
 /* =========================================================
