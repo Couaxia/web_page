@@ -637,7 +637,7 @@ function formatClipsResult(
 export async function getChannelClips(
     channelLogin = DEFAULT_CHANNEL,
     {
-        first = 5,
+        first = 100,
         startedAt = null,
         endedAt = null,
         period = null,
