@@ -635,14 +635,13 @@ document.addEventListener("DOMContentLoaded", () => {
      * @returns {string}
      */
     function getApiMessage(data) {
-        return String(
-            firstDefined(
-                data?.message,
-                data?.statusMessage,
-                data?.status_message,
-                data?.error?.message,
-                ""
-            )
+    return (
+        firstDefined(
+            data?.message,
+            data?.statusMessage,
+            data?.status_message,
+            data?.error?.message
+        ) ?? ""
         );
     }
 
