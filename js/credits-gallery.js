@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
             id: "compagnons",
             title: "🐉 Compagnons",
             description:
-                "Natsu, Cit, Xaouc et les autres compagnons de Couaxia.",
+                "Natsu, Cita et Hylda qui sont les compagnons de Couaxia.",
             tag: "compagnons"
         },
         {

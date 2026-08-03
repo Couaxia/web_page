@@ -1,731 +1,10 @@
-/* =========================
-   TITRES
-========================= */h1,
-h2 {
-    display: block;
-
-    width: 90%;
-    max-width: 1050px;
-
-    margin: 30px auto;
-    padding: 30px 60px;
-
-    font-family: "Courier New", Courier, monospace;
-    font-size: clamp(1.6rem, 4vw, 3rem);
-    line-height: 1.25;
-
-    color: var(--title-color);
-
-    text-align: center;
-
-    background-image: url("../images/background/bg.jpg");
-    background-position: center;
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-
-    border: 4px solid var(--title-border);
-    border-radius: 50% 50% 8% 8% / 45% 45% 12% 12%;
-
-    box-shadow: 6px 6px 15px var(--title-shadow);
-
-    text-shadow:
-        6px 6px 15px var(--title-text-shadow);
-
-    white-space: normal;
-    overflow-wrap: break-word;
-
-    transition:
-        color 0.35s ease,
-        border-color 0.35s ease,
-        box-shadow 0.35s ease;
-}
-
-h1::after,
-h2::after {
-    content: "";
-
-    display: block;
-
-    width: 55%;
-    height: 3px;
-
-    margin: 12px auto 0;
-
-    background:
-        linear-gradient(
-            to right,
-            transparent,
-            var(--title-color),
-            transparent
-        );
-
-    box-shadow: 0 0 12px var(--title-text-shadow);
-}
-
-/* =========================
-   SECTION CRÉDITS
-========================= */
-
-#credits {
-    width: 92%;
-    max-width: 1600px;
-
-    margin: auto;
-    padding: 40px 0;
-
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: stretch;
-    gap: 30px;
-}
-
-#credits h2 {
-    width: 100%;
-    margin-bottom: 40px;
-}
-
-/* =========================
-   CARTES
-========================= */
-
-.artist-card {
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    flex: 1 1 480px;
-    width: 100%;
-    min-width: 0;
-    max-width: none;
-    /* Plus de hauteur fixe */
-    height: auto;
-    min-height: 360px;
-    padding: 25px;
-    overflow: hidden;
-    background: rgba(255, 0, 166, 0.85);
-    border: 2px solid #6D00A3;
-    border-radius: 20px;
-    box-shadow: 0 0 12px rgba(109, 0, 163, 0.35);
-    transition:
-        transform 0.35s ease,
-        border-color 0.35s ease,
-        box-shadow 0.35s ease;
-}
-
-.artist-card:hover {
-    transform: scale(1.03);
-
-    border-color: #22F2EF;
-
-    box-shadow: 0 0 20px #22F2EF;
-}
-
-/* =========================
-   MODE JOUR / NUIT
-========================= */
-
-/* Mode jour */
-
-html[data-theme="light"] .artist-card {
-    background: rgba(255, 0, 166, 0.82);
-
-    border-color: #6D00A3;
-
-    box-shadow: 0 0 15px rgba(109, 0, 163, 0.35);
-}
-
-/* Mode nuit */
-
-html[data-theme="dark"] .artist-card {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(109, 0, 163, 0.88),
-            rgba(242, 34, 146, 0.78)
-        );
-
-    border-color: #22F2EF;
-
-    box-shadow:
-        0 0 18px rgba(34, 242, 239, 0.35),
-        0 0 30px rgba(132, 0, 255, 0.22);
-}
-
-/* =========================
-   IMAGE / VIDÉO
-========================= */
-
-.image-container {
-    position: relative;
-    flex: 0 0 260px;
-    width: 260px;
-    height: 260px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    background: rgba(0, 0, 0, 0.16);
-    border-radius: 15px;
-    cursor: zoom-in;
-    z-index: 5;
-    transition:
-        width 0.45s ease,
-        height 0.45s ease,
-        top 0.45s ease,
-        left 0.45s ease,
-        border-radius 0.45s ease;
-}
-
-.image-container img,
-.image-container video {
-    display: block;
-
-    width: 100%;
-    height: 100%;
-
-    object-fit: contain;
-    object-position: center;
-
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-user-drag: none;
-
-    pointer-events: none;
-
-    transition: transform 0.45s ease;
-}
-
-/* =========================
-   TEXTE
-========================= */
-
-#credits p {
-    font-family:
-        "Lucida Sans",
-        "Lucida Sans Regular",
-        "Lucida Grande",
-        "Lucida Sans Unicode",
-        Geneva,
-        Verdana,
-        sans-serif;
-
-    font-style: italic;
-}
-
-.artist-content {
-    position: relative;
-    z-index: 2;
-
-    flex: 1;
-
-    min-width: 0;
-
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-
-    text-align: left;
-
-    transition:
-        opacity 0.25s ease,
-        visibility 0.25s ease;
-}
-
-.artist-content h3 {
-    width: 100%;
-    margin: 0 0 12px;
-    font-size:2.1rem;
-    margin-bottom:18px;
-    color: #22F2EF;
-    line-height: 1.2;
-    text-align: left;
-    text-shadow: 0 0 10px rgba(132, 0, 255, 0.8);
-}
-
-.artist-role {
-    margin: 0 0 15px;
-
-    color: #2809f5;
-
-    font-size: clamp(1.15rem, 2vw, 1.45rem);
-    font-weight: bold;
-    line-height: 1.4;
-}
-
-.artist-description {
-    margin: 0;
-
-    color: white;
-
-    font-size: clamp(1rem, 1.5vw, 1.2rem);
-    line-height: 1.6;
-
-    overflow-wrap: break-word;
-}
-
-/* Amélioration de la lisibilité en mode nuit */
-
-html[data-theme="dark"] .artist-role {
-    color: #c6baff;
-}
-
-html[data-theme="dark"] .artist-description {
-    color: #ffffff;
-}
-
-/* =========================
-   BOUTON
-========================= */
-
-.artist-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-width: 190px;
-    min-height: 52px;
-
-    margin-top: 20px;
-    padding: 12px 20px;
-
-    background: #6D00A3;
-    color: white;
-
-    border: 2px solid transparent;
-    border-radius: 10px;
-
-    font-size: 1.05rem;
-    font-weight: bold;
-    line-height: 1.3;
-    text-align: center;
-    text-decoration: none;
-
-    transition:
-        color 0.3s ease,
-        background-color 0.3s ease,
-        border-color 0.3s ease,
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
-}
-
-.artist-btn:hover {
-    color: black;
-    background: #22F2EF;
-
-    border-color: #22F2EF;
-
-    transform: scale(1.05);
-
-    box-shadow: 0 0 18px #22F2EF;
-}
-
-/* =========================
-   ZOOM IMAGE / VIDÉO
-========================= */
-
-.image-container:hover {
-    position: absolute;
-
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-
-    margin: 0;
-
-    background: rgba(0, 0, 0, 0.92);
-
-    border-radius: 18px;
-
-    cursor: zoom-out;
-
-    z-index: 50;
-}
-
-.image-container:hover img,
-.image-container:hover video {
-    width: 100%;
-    height: 100%;
-
-    object-fit: contain;
-
-    transform: scale(1.03);
-}
-
-/*
-   Cache le texte uniquement quand l’image
-   ou la vidéo occupe toute la carte.
-*/
-
-.artist-card:has(.image-container:hover) .artist-content {
-    opacity: 0;
-    visibility: hidden;
-
-    pointer-events: none;
-}
-
-/* =========================
-   RESPONSIVE TABLETTE
-========================= */
-
-@media (max-width: 900px) {
-    #credits {
-        width: 94%;
-        gap: 25px;
-    }
-
-    .artist-card {
-        flex-basis: 100%;
-
-        width: 100%;
-        max-width: 720px;
-        min-width: 0;
-
-        min-height: 320px;
-    }
-
-    .image-container {
-        flex-basis: 220px;
-
-        width: 220px;
-        height: 220px;
-    }
-}
-
-/* =========================
-   RESPONSIVE MOBILE
-========================= */
-
-@media (max-width: 650px) {
-    #credits {
-        width: 95%;
-        padding: 25px 0;
-    }
-
-    #credits h2 {
-        margin-bottom: 25px;
-    }
-
-    .artist-card {
-        flex-direction: column;
-
-        width: 100%;
-        min-width: 0;
-        min-height: auto;
-
-        padding: 22px;
-
-        gap: 20px;
-    }
-
-    .image-container {
-        flex: none;
-
-        width: 100%;
-        max-width: 420px;
-        height: 230px;
-    }
-
-    .artist-content {
-        width: 100%;
-
-        align-items: center;
-
-        text-align: center;
-    }
-
-    .artist-content h3 {
-        text-align: center;
-    }
-
-    .artist-description {
-        text-align: center;
-    }
-
-    .artist-btn {
-        width: 100%;
-        max-width: 320px;
-
-        min-width: 0;
-    }
-}
-
-/* =========================
-   TRÈS PETITS ÉCRANS
-========================= */
-
-@media (max-width: 400px) {
-    .artist-card {
-        padding: 16px;
-    }
-
-    .image-container {
-        height: 190px;
-    }
-
-    .artist-content h3 {
-        font-size: 1.5rem;
-    }
-
-    .artist-role {
-        font-size: 1.1rem;
-    }
-
-    .artist-description {
-        font-size: 1rem;
-    }
-}
-
-/* =========================
-   ACCESSIBILITÉ
-========================= */
-
-@media (prefers-reduced-motion: reduce) {
-    .artist-card,
-    .image-container,
-    .image-container img,
-    .image-container video,
-    .artist-content,
-    .artist-btn {
-        transition: none;
-    }
-
-    .artist-card:hover,
-    .artist-btn:hover,
-    .image-container:hover img,
-    .image-container:hover video {
-        transform: none;
-    }
-}
 /* =========================================================
-   FILTRE GLOBAL DE LA GALERIE
+   1. VARIABLES JOUR / NUIT
 ========================================================= */
 
-.credits-global-filter {
-    width: 100%;
-    margin-bottom:70px;
-    max-width:none;
-    margin: 0 auto 60px;
-    padding: 40px;
-    border: 2px solid #6d00a3;
-    border-radius: 35px;
-    background:        linear-gradient(            135deg,            rgba(109, 0, 163, 0.92),            rgba(48, 10, 83, 0.94)        );
-    box-shadow:        0 15px 35px rgba(17, 48, 158, 0.28),        inset 0 0 20px rgba(34, 242, 239, 0.12);
-    color: #ffffff;
-    text-align: center;
-}
-
-.credits-global-filter label {
-    display: block;
-    margin-bottom: 13px;
-
-    color: #22f2ef;
-
-    font-family: "Courier New", monospace;
-    font-size: clamp(1.1rem, 3vw, 1.45rem);
-    font-weight: 900;
-}
-.credits-grid{
-    display:grid;
-    grid-template-columns: repeat(auto-fit,minmax(420px,1fr));
-    gap:45px;
-    margin-top:40px;
-}
-
-.credits-select-wrapper {
-    position: relative;
-}
-
-.credits-select-wrapper::after {
-    position: absolute;
-    top: 50%;
-    right: 20px;
-
-    content: "▼";
-
-    color: #6d00a3;
-    font-size: 0.9rem;
-
-    transform: translateY(-50%);
-    pointer-events: none;
-}
-
-#credits-category-filter {
-    width: 100%;
-    min-height: 58px;
-    padding: 12px 55px 12px 20px;
-
-    appearance: none;
-
-    border: 3px solid #22f2ef;
-    border-radius: 16px;
-
-    background: #ffffff;
-    color: #4d076f;
-
-    font: inherit;
-    font-size: 1rem;
-    font-weight: 800;
-
-    cursor: pointer;
-
-    box-shadow:
-        0 7px 18px rgba(0, 0, 0, 0.18);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
-}
-
-#credits-category-filter:hover {
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 10px 22px rgba(0, 0, 0, 0.23),
-        0 0 15px rgba(34, 242, 239, 0.3);
-}
-
-#credits-category-filter:focus {
-    border-color: #ff00a6;
-    outline: 3px solid rgba(34, 242, 239, 0.4);
-    outline-offset: 4px;
-}
-
-#credits-category-filter optgroup {
-    color: #6d00a3;
-    font-weight: 900;
-}
-
-#credits-category-filter option {
-    color: #222222;
-    font-weight: 600;
-}
-
-.credits-global-results {
-    min-height: 22px;
-    margin: 14px 0 0;
-
-    color: #ffffff;
-
-    font-size: 0.9rem;
-    font-weight: 700;
-}
-
-
-/* Cartes masquées par le filtre */
-
-.artist-card[hidden],
-.credits-gallery-section[hidden] {
-    display: none;
-}
-
-
-/* Apparition des cartes */
-
-.artist-card.is-filtered-in {
-    animation: credits-card-appearance 0.35s ease both;
-}
-
-@keyframes credits-card-appearance {
-    from {
-        opacity: 0;
-        transform: translateY(14px) scale(0.98);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-
-@media (max-width: 600px) {
-    .credits-global-filter {
-        width: calc(100% - 20px);
-        margin-bottom: 40px;
-        padding: 17px;
-        border-radius: 19px;
-    }
-
-    #credits-category-filter {
-        min-height: 54px;
-        padding-left: 14px;
-        font-size: 0.9rem;
-    }
-}
-.theme-toggle{
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-
-    padding:12px 20px;
-
-    border:2px solid var(--border);
-    border-radius:15px;
-
-    background:var(--button-bg);
-    color:var(--button-text);
-
-    font-weight:700;
-    font-size:.95rem;
-
-    cursor:pointer;
-
-    transition:
-        background .3s,
-        color .3s,
-        border-color .3s,
-        transform .25s,
-        box-shadow .25s;
-
-}
-
-.theme-toggle:hover{
-
-    transform:translateY(-2px);
-
-    border-color:var(--border-light);
-
-    box-shadow:0 8px 18px var(--shadow);
-
-}
-
-.theme-toggle:active{
-
-    transform:scale(.96);
-
-}
-
-.theme-icon{
-
-    font-size:1.2rem;
-
-    transition:
-        transform .4s ease,
-        rotate .4s ease;
-
-}
-
-body.dark-theme .theme-icon{
-
-    transform:rotate(180deg);
-
-}
-/* ==========================================
-   THÈME JOUR
-========================================== */
-
 :root,
-[data-theme="light"] {
+html[data-theme="light"] {
     --credits-page-bg: rgba(255, 247, 253, 0.94);
-
     --credits-surface: rgba(255, 255, 255, 0.94);
     --credits-surface-secondary: rgba(246, 237, 255, 0.96);
 
@@ -742,33 +21,23 @@ body.dark-theme .theme-icon{
     --credits-select-bg: #ffffff;
     --credits-select-text: #4d076f;
 
-    --credits-shadow: rgba(17, 48, 158, 0.2);
+    --credits-card-start: rgba(244, 220, 252, 0.98);
+    --credits-card-end: rgba(240, 184, 225, 0.96);
+
+    --credits-shadow: rgba(17, 48, 158, 0.20);
 
     --credits-filter-bg:
         linear-gradient(
             135deg,
-            rgba(255, 0, 166, 0.9),
+            rgba(255, 0, 166, 0.90),
             rgba(109, 0, 163, 0.92)
-        );
-
-    --credits-banner-bg:
-        linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.96),
-            rgba(243, 230, 255, 0.96)
         );
 }
 
-
-/* ==========================================
-   THÈME NUIT
-========================================== */
-
-[data-theme="dark"] {
+html[data-theme="dark"] {
     --credits-page-bg: rgba(14, 8, 29, 0.95);
-
     --credits-surface: rgba(35, 24, 57, 0.95);
-    --credits-surface-secondary: rgba(47, 29, 72, 0.96);
+    --credits-surface-secondary: rgba(18, 9, 40, 0.88);
 
     --credits-text: #ffffff;
     --credits-text-secondary: #ddd2e8;
@@ -783,7 +52,10 @@ body.dark-theme .theme-icon{
     --credits-select-bg: #2c1d48;
     --credits-select-text: #ffffff;
 
-    --credits-shadow: rgba(0, 0, 0, 0.5);
+    --credits-card-start: rgba(92, 5, 133, 0.96);
+    --credits-card-end: rgba(177, 17, 130, 0.90);
+
+    --credits-shadow: rgba(0, 0, 0, 0.50);
 
     --credits-filter-bg:
         linear-gradient(
@@ -791,46 +63,145 @@ body.dark-theme .theme-icon{
             rgba(65, 15, 94, 0.96),
             rgba(19, 10, 38, 0.98)
         );
-
-    --credits-banner-bg:
-        linear-gradient(
-            135deg,
-            rgba(43, 27, 67, 0.98),
-            rgba(19, 11, 37, 0.98)
-        );
 }
-.credits-global-filter {
-    width: min(760px, calc(100% - 30px));
-    margin: 0 auto 60px;
-    padding: 24px;
 
-    border: 2px solid var(--credits-border);
-    border-radius: 24px;
+
+/* =========================================================
+   2. TITRE PRINCIPAL DE LA PAGE
+========================================================= */
+
+#credits > h1,
+#credits > h2,
+.credits-page-header h1,
+.credits-page-header h2 {
+    display: block;
+
+    width: min(90%, 1050px);
+    margin: 30px auto;
+    padding: 30px 60px;
+
+    color: var(--title-color, var(--credits-title));
+
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    line-height: 1.25;
+    text-align: center;
+
+    background-image: url("../images/background/bg.jpg");
+    background-position: center;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+
+    border: 4px solid var(--title-border, var(--credits-border));
+    border-radius: 50% 50% 8% 8% / 45% 45% 12% 12%;
+
+    box-shadow: 6px 6px 15px var(--title-shadow, var(--credits-shadow));
+
+    text-shadow:
+        6px 6px 15px
+        var(--title-text-shadow, rgba(34, 242, 239, 0.35));
+
+    overflow-wrap: anywhere;
+
+    transition:
+        color 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+#credits > h1::after,
+#credits > h2::after,
+.credits-page-header h1::after,
+.credits-page-header h2::after {
+    display: block;
+
+    width: 55%;
+    height: 3px;
+
+    margin: 12px auto 0;
+
+    content: "";
+
+    background:
+        linear-gradient(
+            to right,
+            transparent,
+            currentColor,
+            transparent
+        );
+
+    box-shadow: 0 0 12px currentColor;
+}
+
+
+/* =========================================================
+   3. CONTENEUR PRINCIPAL
+========================================================= */
+
+#credits {
+    width: min(94%, 1800px);
+    margin: 0 auto;
+    padding: 40px 0 90px;
+}
+
+#credits p {
+    font-family:
+        "Lucida Sans",
+        "Lucida Sans Regular",
+        "Lucida Grande",
+        "Lucida Sans Unicode",
+        Geneva,
+        Verdana,
+        sans-serif;
+
+    font-style: italic;
+}
+
+
+/* La réserve source ne doit jamais apparaître. */
+
+#credits-card-source[hidden] {
+    display: none !important;
+}
+
+
+/* =========================================================
+   4. FILTRE GLOBAL
+========================================================= */
+
+.credits-global-filter {
+    width: 100%;
+    margin: 0 auto 70px;
+    padding: 32px clamp(20px, 4vw, 48px);
+
+    color: #ffffff;
+    text-align: center;
 
     background: var(--credits-filter-bg);
-    color: var(--credits-text);
 
-    text-align: center;
+    border: 2px solid var(--credits-border);
+    border-radius: 35px;
 
     box-shadow:
         0 15px 35px var(--credits-shadow),
         inset 0 0 20px rgba(34, 242, 239, 0.12);
 
+    box-sizing: border-box;
+
     transition:
         background 0.35s ease,
         border-color 0.35s ease,
-        color 0.35s ease,
         box-shadow 0.35s ease;
 }
 
 .credits-global-filter label {
     display: block;
-    margin-bottom: 13px;
+    margin-bottom: 15px;
 
     color: #ffffff;
 
-    font-family: "Courier New", monospace;
-    font-size: clamp(1.1rem, 3vw, 1.45rem);
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
     font-weight: 900;
 }
 
@@ -846,27 +217,24 @@ body.dark-theme .theme-icon{
     content: "▼";
 
     color: var(--credits-title);
-
     font-size: 0.9rem;
 
     transform: translateY(-50%);
     pointer-events: none;
-
-    transition: color 0.35s ease;
 }
 
 #credits-category-filter {
     width: 100%;
-    min-height: 58px;
+    min-height: 60px;
     padding: 12px 55px 12px 20px;
 
     appearance: none;
 
+    color: var(--credits-select-text);
+    background: var(--credits-select-bg);
+
     border: 3px solid var(--credits-border-secondary);
     border-radius: 16px;
-
-    background: var(--credits-select-bg);
-    color: var(--credits-select-text);
 
     font: inherit;
     font-size: 1rem;
@@ -889,144 +257,93 @@ body.dark-theme .theme-icon{
 
     box-shadow:
         0 10px 22px var(--credits-shadow),
-        0 0 15px rgba(34, 242, 239, 0.3);
+        0 0 15px rgba(34, 242, 239, 0.30);
 }
 
-#credits-category-filter:focus {
+#credits-category-filter:focus-visible {
     border-color: var(--credits-accent);
+
     outline: 3px solid rgba(34, 242, 239, 0.35);
     outline-offset: 4px;
 }
 
 #credits-category-filter optgroup {
-    background: var(--credits-select-bg);
     color: var(--credits-title);
+    background: var(--credits-select-bg);
 
     font-weight: 900;
 }
 
 #credits-category-filter option {
-    background: var(--credits-select-bg);
     color: var(--credits-select-text);
+    background: var(--credits-select-bg);
 
     font-weight: 600;
 }
 
 .credits-global-results {
     min-height: 22px;
-    margin: 14px 0 0;
+    margin: 15px 0 0;
 
     color: #ffffff;
 
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 700;
 }
-.credits-banner{
-    width:100%;
-    min-height:280px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    padding:55px;
-    border-radius:0;
-    margin:0;
-    overflow:hidden;
-    position:relative;
-    background-size:cover;
-    background-position:center;
-}
-[data-gallery="couaxia"] .credits-banner{
-    background-image:url("../images/Arts/Anwedia.png");
-}
-[data-gallery="compagnons"] .credits-banner{
-    background-image:url("../images/Arts/DelvaRelva.png");
-}
-[data-gallery="stream"] .credits-banner{
-    background-image:url("../images/Arts/Xiria.jpg");
-}
-[data-gallery="collab"] .credits-banner{
-    background-image:url("../images/Arts/Anghyuwu_Chibi_trio.png");
-}
-[data-gallery="couple"] .credits-banner{
-    background-image:url("../images/Bubble_bg.png");
-}
-[data-gallery="fanart"] .credits-banner{
-    background-image:url("../images/Bubble_bg.png");
-}
 
 
-.credits-banner-overline {
-    color: var(--credits-accent) !important;
-
-    font-size: 0.85rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-}
-.artist-card {
-    background: var(--credits-surface);
-    color: var(--credits-text);
-
-    border: 2px solid var(--credits-border);
-    border-radius: 20px;
-
-    box-shadow: 0 10px 25px var(--credits-shadow);
-
-    transition:
-        background 0.35s ease,
-        color 0.35s ease,
-        border-color 0.35s ease,
-        box-shadow 0.35s ease,
-        transform 0.25s ease;
-}
-
-.artist-card:hover {
-    transform: translateY(-5px);
-
-    border-color: var(--credits-border-secondary);
-
-    box-shadow:
-        0 16px 32px var(--credits-shadow),
-        0 0 18px rgba(34, 242, 239, 0.2);
-}
-
-.artist-card h3 {
-    color: var(--credits-title);
-}
-
-.artist-card p {
-    color: var(--credits-text-secondary);
-}
-
-.artist-card a {
-    color: var(--credits-cyan);
-}
-
-.artist-card a:hover {
-    color: var(--credits-accent);
-}
 /* =========================================================
-   ANIMATION DES GALERIES
+   5. CONTENEUR DES GALERIES GÉNÉRÉES
 ========================================================= */
 
-.credits-gallery-section{
-    width:100%;
-    margin:80px 0;
-    border:3px solid var(--credits-border);
-    border-radius:35px;
-    overflow:hidden;
-    background:
-        rgba(23,15,45,.82);
-    backdrop-filter:blur(12px);
-    box-shadow:
-        0 0 25px rgba(34,242,239,.15),
-        inset 0 0 25px rgba(255,0,166,.08);
-    padding-bottom:45px;
+#credits-generated-galleries {
+    width: 100%;
+    max-width: none;
+
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
 }
 
-/*
- * Le JavaScript attribue une hauteur exacte à chaque section.
- */
+
+/* =========================================================
+   6. SECTIONS DE GALERIE
+========================================================= */
+
+.credits-gallery-section {
+    width: 100%;
+    max-width: none;
+
+    margin: 70px 0;
+    padding: 0 0 45px;
+
+    overflow: hidden;
+
+    background: var(--credits-surface-secondary);
+
+    border: 3px solid var(--credits-border);
+    border-radius: 38px;
+
+    box-shadow:
+        0 18px 38px var(--credits-shadow),
+        0 0 20px rgba(34, 242, 239, 0.16);
+
+    box-sizing: border-box;
+
+    opacity: 1;
+    transform: translateY(0);
+
+    transition:
+        max-height 0.55s ease,
+        opacity 0.35s ease,
+        transform 0.45s ease,
+        margin 0.55s ease,
+        padding 0.55s ease,
+        background 0.35s ease,
+        border-color 0.35s ease;
+}
+
 .credits-gallery-section.is-collapsed {
     max-height: 0 !important;
 
@@ -1042,8 +359,9 @@ body.dark-theme .theme-icon{
     pointer-events: none;
 }
 
-
-/* Contenu intérieur de la galerie */
+.credits-gallery-section[hidden] {
+    display: none;
+}
 
 .credits-section-content {
     overflow: hidden;
@@ -1051,27 +369,370 @@ body.dark-theme .theme-icon{
     opacity: 1;
 
     transition:
-        opacity 0.3s ease,
-        transform 0.4s ease;
+        opacity 0.30s ease,
+        transform 0.40s ease;
 }
 
-.credits-gallery-section.is-collapsed
-.credits-section-content {
+.credits-gallery-section.is-collapsed .credits-section-content {
     opacity: 0;
     transform: translateY(-12px);
 }
 
 
 /* =========================================================
-   ANIMATION DES CARTES
+   7. BANNIÈRES COMMUNES
 ========================================================= */
 
-.artist-card {
+.credits-gallery-section .credits-banner {
+    position: relative;
+    isolation: isolate;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    max-width: none;
+    min-height: 520px;
+    height: 520px;
+
+    margin: 0;
+    padding: 55px clamp(25px, 5vw, 75px);
+
+    overflow: hidden;
+
+    border: 0;
+    border-radius: 34px 34px 0 0;
+
+    background-image:
+        linear-gradient(
+            180deg,
+            rgba(15, 5, 35, 0.12) 0%,
+            rgba(15, 5, 35, 0.24) 48%,
+            rgba(15, 5, 35, 0.78) 100%
+        ),
+        var(--gallery-background);
+
+    background-repeat: no-repeat;
+    background-size: var(--gallery-background-size, cover);
+    background-position: var(--gallery-background-position, center);
+
+    box-shadow:
+        inset 0 -35px 45px rgba(14, 4, 35, 0.55);
+
+    box-sizing: border-box;
+
+    transition:
+        background-position 0.35s ease,
+        background-size 0.35s ease,
+        height 0.35s ease;
+}
+
+.credits-gallery-section .credits-banner::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+
+    content: "";
+
+    background:
+        radial-gradient(
+            circle at center,
+            transparent 20%,
+            rgba(16, 4, 39, 0.17) 70%,
+            rgba(16, 4, 39, 0.42) 100%
+        );
+
+    pointer-events: none;
+}
+
+.credits-gallery-section .credits-banner > * {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* Titre de bannière : écrase le style global des h2. */
+
+.credits-gallery-section .credits-banner h2 {
+    display: block;
+
+    width: min(90%, 1300px);
+    max-width: none;
+
+    margin: 0 auto 30px;
+    padding: 28px 40px;
+
+    color: #22f2ef;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(169, 231, 255, 0.94),
+            rgba(47, 78, 164, 0.92)
+        );
+
+    border: 3px solid rgba(34, 242, 239, 0.75);
+    border-radius: 50% 50% 12% 12% / 42% 42% 16% 16%;
+
+    box-shadow:
+        0 14px 25px rgba(255, 0, 166, 0.42),
+        inset 0 0 18px rgba(255, 255, 255, 0.22);
+
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    text-align: center;
+
+    text-shadow:
+        0 0 12px rgba(34, 242, 239, 0.75),
+        5px 5px 12px rgba(109, 0, 163, 0.65);
+
+    box-sizing: border-box;
+}
+
+.credits-gallery-section .credits-banner h2::after {
+    display: block;
+
+    width: 50%;
+    height: 3px;
+
+    margin: 15px auto 0;
+
+    content: "";
+
+    background:
+        linear-gradient(
+            to right,
+            transparent,
+            #22f2ef,
+            transparent
+        );
+
+    box-shadow: 0 0 12px #22f2ef;
+}
+
+.credits-gallery-section .credits-banner p {
+    width: min(900px, 90%);
+    margin: 25px auto 0;
+
+    color: #ffffff;
+
+    font-size: clamp(1.1rem, 2vw, 1.45rem);
+    font-weight: 700;
+    line-height: 1.6;
+    text-align: center;
+
+    text-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.95),
+        0 0 12px rgba(0, 0, 0, 0.80);
+}
+
+
+/* =========================================================
+   8. IMAGES DE FOND PAR CATÉGORIE
+   Ajuste ici le chemin, le zoom et le cadrage.
+========================================================= */
+
+.credits-gallery-section[data-gallery="couaxia"] {
+    --gallery-background:
+        url("../images/Arts/Anwedia.png");
+
+    --gallery-background-size:
+        cover;
+
+    --gallery-background-position:
+        center 28%;
+}
+
+.credits-gallery-section[data-gallery="compagnons"] {
+    --gallery-background:
+        url("../images/Arts/DelvaRelva.png");
+
+    --gallery-background-size:
+        cover;
+
+    --gallery-background-position:
+        center 38%;
+}
+
+.credits-gallery-section[data-gallery="stream"] {
+    --gallery-background:
+        url("../images/Arts/Couaxia_flat.jpg");
+
+    --gallery-background-size:
+        cover;
+
+    --gallery-background-position:
+        center 35%;
+}
+
+.credits-gallery-section[data-gallery="collab"] {
+    --gallery-background:
+        url("../images/Arts/Anghyuwu_Chibi_trio.png");
+
+    --gallery-background-size:
+        cover;
+
+    --gallery-background-position:
+        center 30%;
+}
+
+.credits-gallery-section[data-gallery="couple"] {
+    --gallery-background:
+        url("../images/Arts/Couaxia_Myo_Bar_YYuuikura.png");
+
+    --gallery-background-size:
+        115% auto;
+
+    --gallery-background-position:
+        center 42%;
+}
+
+.credits-gallery-section[data-gallery="fanart"] {
+    --gallery-background:
+        url("../images/Arts/couaxiaboobiii_kao.png");
+
+    --gallery-background-size:
+        cover;
+
+    --gallery-background-position:
+        center 32%;
+}
+
+
+/* Voile adapté au thème. */
+
+html[data-theme="light"]
+.credits-gallery-section
+.credits-banner {
+    background-image:
+        linear-gradient(
+            180deg,
+            rgba(55, 9, 79, 0.08) 0%,
+            rgba(55, 9, 79, 0.20) 48%,
+            rgba(55, 9, 79, 0.68) 100%
+        ),
+        var(--gallery-background);
+}
+
+html[data-theme="dark"]
+.credits-gallery-section
+.credits-banner {
+    background-image:
+        linear-gradient(
+            180deg,
+            rgba(8, 2, 22, 0.12) 0%,
+            rgba(8, 2, 22, 0.28) 50%,
+            rgba(8, 2, 22, 0.84) 100%
+        ),
+        var(--gallery-background);
+}
+
+
+/* =========================================================
+   9. SOUS-SECTIONS DE COUAXIA
+========================================================= */
+
+.credits-subsection {
+    width: 100%;
+    padding-top: 10px;
+}
+
+.credits-subtitle {
+    width: min(92%, 1200px);
+    margin: 35px auto 5px;
+    padding: 18px 25px;
+
+    color: var(--credits-title);
+    text-align: center;
+
+    background: var(--credits-surface);
+
+    border: 2px solid var(--credits-border-secondary);
+    border-radius: 20px;
+
+    box-shadow:
+        0 10px 22px var(--credits-shadow),
+        0 0 14px rgba(34, 242, 239, 0.15);
+
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(1.5rem, 3vw, 2.3rem);
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   10. GRILLE DES CARTES
+========================================================= */
+
+#credits-generated-galleries .credits-grid,
+.credits-gallery-section .credits-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    align-items: stretch;
+    gap: 42px;
+
+    width: 100%;
+    margin: 0;
+    padding: 48px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   11. CARTES ARTISTES
+========================================================= */
+
+#credits-generated-galleries .artist-card,
+.credits-gallery-section .artist-card {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    min-height: 620px;
+
+    margin: 0;
+    padding: 24px;
+    gap: 0;
+
+    overflow: hidden;
+
+    color: var(--credits-text);
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--credits-card-start),
+            var(--credits-card-end)
+        );
+
+    border: 3px solid var(--credits-border);
+    border-radius: 28px;
+
+    box-shadow:
+        0 14px 30px var(--credits-shadow),
+        0 0 16px rgba(34, 242, 239, 0.22);
+
+    box-sizing: border-box;
+
     opacity: 1;
     transform: translateY(0) scale(1);
 
     transition:
-        opacity 0.3s ease,
+        opacity 0.30s ease,
         transform 0.35s ease,
         background 0.35s ease,
         color 0.35s ease,
@@ -1079,13 +740,391 @@ body.dark-theme .theme-icon{
         box-shadow 0.35s ease;
 }
 
+#credits-generated-galleries .artist-card:hover,
+.credits-gallery-section .artist-card:hover {
+    transform: translateY(-6px);
+
+    border-color: var(--credits-border-secondary);
+
+    box-shadow:
+        0 20px 38px var(--credits-shadow),
+        0 0 24px rgba(34, 242, 239, 0.35);
+}
+
+.artist-card[hidden],
 .artist-card.is-hidden-card {
     display: none;
 }
 
+.artist-card.is-filtered-in,
 .artist-card.is-visible-card {
     animation: credits-card-enter 0.45s ease both;
 }
+
+
+/* =========================================================
+   12. IMAGE / VIDÉO NORMALE
+========================================================= */
+
+#credits-generated-galleries
+.artist-card
+.image-container,
+.credits-gallery-section
+.artist-card
+.image-container {
+    position: relative;
+
+    flex: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    max-width: none;
+    height: 360px;
+
+    margin: 0 0 25px;
+
+    overflow: hidden;
+
+    background: rgba(10, 2, 18, 0.82);
+
+    border-radius: 21px;
+
+    cursor: zoom-in;
+    z-index: 2;
+
+    box-sizing: border-box;
+
+    transition:
+        transform 0.35s ease,
+        border-radius 0.35s ease,
+        background-color 0.35s ease;
+}
+
+#credits-generated-galleries
+.artist-card
+.image-container img,
+#credits-generated-galleries
+.artist-card
+.image-container video,
+.credits-gallery-section
+.artist-card
+.image-container img,
+.credits-gallery-section
+.artist-card
+.image-container video {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+    object-position: center;
+
+    border-radius: inherit;
+
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+
+    pointer-events: none;
+
+    transition: transform 0.45s ease;
+}
+
+
+/* =========================================================
+   13. CONTENU DE LA CARTE
+========================================================= */
+
+#credits-generated-galleries
+.artist-card
+.artist-content,
+.credits-gallery-section
+.artist-card
+.artist-content {
+    position: relative;
+    z-index: 3;
+
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    width: 100%;
+    min-width: 0;
+
+    text-align: center;
+
+    box-sizing: border-box;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+#credits-generated-galleries
+.artist-card
+.artist-content h3,
+.credits-gallery-section
+.artist-card
+.artist-content h3 {
+    width: 100%;
+    margin: 0 0 12px;
+
+    color: var(--credits-title);
+
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    line-height: 1.15;
+    text-align: center;
+
+    text-shadow:
+        0 0 10px rgba(132, 0, 255, 0.55);
+
+    overflow-wrap: anywhere;
+}
+
+#credits-generated-galleries
+.artist-card
+.artist-role,
+.credits-gallery-section
+.artist-card
+.artist-role {
+    width: 100%;
+    margin: 0 0 17px;
+
+    color: var(--credits-text-secondary);
+
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+    font-weight: 800;
+    line-height: 1.35;
+    text-align: center;
+
+    overflow-wrap: anywhere;
+}
+
+#credits-generated-galleries
+.artist-card
+.artist-description,
+.credits-gallery-section
+.artist-card
+.artist-description {
+    width: 100%;
+    margin: 0 0 22px;
+
+    color: var(--credits-text);
+
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    line-height: 1.65;
+    text-align: center;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   14. BOUTON DE CARTE
+========================================================= */
+
+#credits-generated-galleries
+.artist-card
+.artist-btn,
+.credits-gallery-section
+.artist-card
+.artist-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: min(100%, 330px);
+    min-width: 0;
+    min-height: 54px;
+
+    margin: auto auto 0;
+    padding: 12px 20px;
+
+    color: #ffffff;
+    background: #6d00a3;
+
+    border: 2px solid transparent;
+    border-radius: 14px;
+
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1.3;
+    text-align: center;
+    text-decoration: none;
+
+    box-sizing: border-box;
+
+    transition:
+        color 0.30s ease,
+        background-color 0.30s ease,
+        border-color 0.30s ease,
+        transform 0.30s ease,
+        box-shadow 0.30s ease;
+}
+
+#credits-generated-galleries
+.artist-card
+.artist-btn:hover,
+.credits-gallery-section
+.artist-card
+.artist-btn:hover {
+    color: #260238;
+    background: #22f2ef;
+
+    border-color: #22f2ef;
+
+    transform: scale(1.03);
+
+    box-shadow:
+        0 0 18px rgba(34, 242, 239, 0.75);
+}
+
+.artist-btn:focus-visible {
+    outline: 3px solid var(--credits-accent);
+    outline-offset: 4px;
+}
+
+
+/* =========================================================
+   15. ZOOM COMPLET SUR ORDINATEUR
+========================================================= */
+
+@media (hover: hover) and (pointer: fine) {
+    #credits-generated-galleries
+    .artist-card
+    .image-container:hover,
+    .credits-gallery-section
+    .artist-card
+    .image-container:hover {
+        position: absolute;
+
+        inset: 0;
+
+        width: 100% !important;
+        max-width: none !important;
+        height: 100% !important;
+
+        margin: 0;
+
+        background: rgba(5, 0, 12, 0.97);
+
+        border-radius: 25px;
+
+        cursor: zoom-out;
+        z-index: 50;
+    }
+
+    #credits-generated-galleries
+    .artist-card
+    .image-container:hover img,
+    #credits-generated-galleries
+    .artist-card
+    .image-container:hover video,
+    .credits-gallery-section
+    .artist-card
+    .image-container:hover img,
+    .credits-gallery-section
+    .artist-card
+    .image-container:hover video {
+        width: 100%;
+        height: 100%;
+
+        object-fit: contain;
+        object-position: center;
+
+        transform: scale(0.96);
+    }
+
+    #credits-generated-galleries
+    .artist-card:has(.image-container:hover)
+    .artist-content,
+    .credits-gallery-section
+    .artist-card:has(.image-container:hover)
+    .artist-content {
+        opacity: 0;
+        visibility: hidden;
+
+        pointer-events: none;
+    }
+}
+
+
+/* =========================================================
+   16. BOUTON JOUR / NUIT
+========================================================= */
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    padding: 12px 20px;
+
+    color: var(--credits-title);
+    background: var(--credits-surface);
+
+    border: 2px solid var(--credits-border);
+    border-radius: 15px;
+
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow: 0 6px 15px var(--credits-shadow);
+
+    transition:
+        background 0.30s ease,
+        color 0.30s ease,
+        border-color 0.30s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.theme-toggle:hover {
+    transform: translateY(-2px);
+
+    border-color: var(--credits-border-secondary);
+
+    box-shadow:
+        0 9px 20px var(--credits-shadow),
+        0 0 12px rgba(34, 242, 239, 0.25);
+}
+
+.theme-toggle:active {
+    transform: scale(0.96);
+}
+
+.theme-toggle:focus-visible {
+    outline: 3px solid var(--credits-accent);
+    outline-offset: 4px;
+}
+
+.theme-icon {
+    display: inline-block;
+
+    font-size: 1.2rem;
+
+    transition: transform 0.40s ease;
+}
+
+html[data-theme="dark"] .theme-icon {
+    transform: rotate(180deg);
+}
+
+
+/* =========================================================
+   17. ANIMATIONS
+========================================================= */
 
 @keyframes credits-card-enter {
     from {
@@ -1100,13 +1139,227 @@ body.dark-theme .theme-icon{
 }
 
 
-/* Respecte les préférences d’accessibilité */
+/* =========================================================
+   18. RESPONSIVE — TABLETTE
+========================================================= */
+
+@media (max-width: 1050px) {
+    .credits-gallery-section .credits-banner {
+        min-height: 440px;
+        height: 440px;
+
+        padding: 40px 25px;
+    }
+
+    #credits-generated-galleries .credits-grid,
+    .credits-gallery-section .credits-grid {
+        grid-template-columns: 1fr;
+
+        padding: 35px;
+    }
+
+    #credits-generated-galleries .artist-card,
+    .credits-gallery-section .artist-card {
+        width: min(100%, 850px);
+        max-width: 850px;
+        min-height: 600px;
+
+        margin-inline: auto;
+    }
+}
+
+
+/* =========================================================
+   19. RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+    #credits {
+        width: 95%;
+        padding: 25px 0 70px;
+    }
+
+    #credits > h1,
+    #credits > h2,
+    .credits-page-header h1,
+    .credits-page-header h2 {
+        width: 96%;
+        padding: 24px 18px;
+    }
+
+    .credits-global-filter {
+        width: 100%;
+        margin-bottom: 40px;
+        padding: 18px;
+
+        border-radius: 20px;
+    }
+
+    #credits-category-filter {
+        min-height: 54px;
+        padding-left: 14px;
+
+        font-size: 0.9rem;
+    }
+
+    .credits-gallery-section {
+        margin-block: 45px;
+
+        border-radius: 25px;
+    }
+
+    .credits-gallery-section .credits-banner {
+        min-height: 390px;
+        height: 390px;
+
+        padding: 25px 14px;
+
+        border-radius: 22px 22px 0 0;
+    }
+
+    .credits-gallery-section .credits-banner h2 {
+        width: 96%;
+
+        padding: 22px 15px;
+
+        font-size: clamp(2rem, 12vw, 3.2rem);
+    }
+
+    .credits-gallery-section .credits-banner p {
+        font-size: 1rem;
+    }
+
+    .credits-subtitle {
+        width: 92%;
+
+        font-size: 1.5rem;
+    }
+
+    #credits-generated-galleries .credits-grid,
+    .credits-gallery-section .credits-grid {
+        grid-template-columns: 1fr;
+
+        gap: 25px;
+
+        padding: 22px 14px;
+    }
+
+    #credits-generated-galleries .artist-card,
+    .credits-gallery-section .artist-card {
+        width: 100%;
+        min-height: auto;
+
+        padding: 17px;
+
+        border-radius: 22px;
+    }
+
+    #credits-generated-galleries
+    .artist-card
+    .image-container,
+    .credits-gallery-section
+    .artist-card
+    .image-container {
+        width: 100%;
+        max-width: 460px;
+        height: 270px;
+
+        margin-inline: auto;
+        margin-bottom: 20px;
+    }
+
+    #credits-generated-galleries
+    .artist-card
+    .artist-content h3,
+    .credits-gallery-section
+    .artist-card
+    .artist-content h3 {
+        font-size: 1.8rem;
+    }
+
+    #credits-generated-galleries
+    .artist-card
+    .artist-btn,
+    .credits-gallery-section
+    .artist-card
+    .artist-btn {
+        width: 100%;
+        max-width: 320px;
+    }
+}
+
+
+/* =========================================================
+   20. TRÈS PETITS ÉCRANS
+========================================================= */
+
+@media (max-width: 400px) {
+    .credits-gallery-section .credits-banner {
+        min-height: 340px;
+        height: 340px;
+    }
+
+    #credits-generated-galleries
+    .artist-card
+    .image-container,
+    .credits-gallery-section
+    .artist-card
+    .image-container {
+        height: 210px;
+    }
+
+    #credits-generated-galleries
+    .artist-card
+    .artist-content h3,
+    .credits-gallery-section
+    .artist-card
+    .artist-content h3 {
+        font-size: 1.5rem;
+    }
+
+    #credits-generated-galleries
+    .artist-card
+    .artist-role,
+    .credits-gallery-section
+    .artist-card
+    .artist-role {
+        font-size: 1.1rem;
+    }
+
+    #credits-generated-galleries
+    .artist-card
+    .artist-description,
+    .credits-gallery-section
+    .artist-card
+    .artist-description {
+        font-size: 1rem;
+    }
+}
+
+
+/* =========================================================
+   21. ACCESSIBILITÉ
+========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
     .credits-gallery-section,
     .credits-section-content,
-    .artist-card {
-        transition: none;
-        animation: none;
+    .artist-card,
+    .image-container,
+    .image-container img,
+    .image-container video,
+    .artist-content,
+    .artist-btn,
+    .theme-toggle {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .artist-card:hover,
+    .artist-btn:hover,
+    .theme-toggle:hover,
+    .image-container:hover img,
+    .image-container:hover video {
+        transform: none !important;
     }
 }
