@@ -150,18 +150,13 @@ h3 {
 
     width: 100%;
     max-height: 320px;
-
     object-fit: contain;
-
     border: 2px solid #22F2EF;
     border-radius: 18px;
-
     background: rgba(0, 0, 0, 0.4);
-
     box-shadow:
         0 0 18px rgba(34, 242, 239, 0.65),
         inset 0 0 20px rgba(109, 0, 163, 0.35);
-
     user-select: none;
     -webkit-user-select: none;
     -webkit-user-drag: none;
@@ -180,17 +175,14 @@ h3 {
 .codex-content {
     position: relative;
     z-index: 2;
-
     text-align: left;
 }
 
 .codex-content h3 {
     margin-top: 0;
     margin-bottom: 15px;
-
     color: #22F2EF;
     font-size: 2rem;
-
     text-shadow:
         0 0 8px #8400ff,
         0 0 16px rgba(34, 242, 239, 0.5);
@@ -204,21 +196,16 @@ h3 {
     display: grid;
     grid-template-columns: repeat(2, minmax(180px, 1fr));
     gap: 12px;
-
     margin: 20px 0;
 }
 
 .codex-info p {
     margin: 0;
     padding: 12px 15px;
-
     color: white;
-
     background: rgba(109, 0, 163, 0.72);
-
     border: 1px solid #22F2EF;
     border-radius: 15px;
-
     box-shadow: 0 0 10px rgba(34, 242, 239, 0.15);
 }
 
@@ -231,7 +218,6 @@ h3 {
 .codex-info a {
     color: white;
     text-decoration: none;
-
     transition: color 0.25s ease;
 }
 
@@ -247,17 +233,12 @@ h3 {
 .codex-description {
     margin-top: 20px;
     padding: 18px;
-
     color: white;
-
     font-size: 1.05rem;
     line-height: 1.7;
-
     background: rgba(0, 0, 0, 0.35);
-
     border-left: 5px solid #F22292;
     border-radius: 14px;
-
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
 }
 
@@ -268,33 +249,25 @@ h3 {
 .codex-skills {
     margin-top: 25px;
     padding: 20px;
-
     background: rgba(17, 48, 158, 0.35);
-
     border: 2px solid #11309E;
     border-radius: 18px;
-
     box-shadow: 0 0 15px rgba(17, 48, 158, 0.4);
 }
 
 .codex-skills h3 {
     margin-top: 0;
     margin-bottom: 15px;
-
     color: #22F2EF;
-
     text-align: center;
     font-size: 1.3rem;
-
     text-shadow: 0 0 10px #11309E;
 }
 
 .codex-skills ul {
     list-style: none;
-
     margin: 15px 0 0;
     padding: 0;
-
     display: flex;
     flex-wrap: wrap;
     justify-content: center;

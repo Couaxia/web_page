@@ -1,176 +1,123 @@
 /* =========================
    VARIABLES — MODE JOUR
 ========================= */
-
 :root {
     color-scheme: light;
-
-    --page-background:
-        url("../images/background/background_day.jpg");
-
+    --page-background: url("../images/background/background_day.jpg");
     --page-background-color: #f7dbe7;
     --page-overlay: rgba(255, 255, 255, 0.06);
-
     --text-color: #3c124f;
     --link-color: #006c75;
-
     --primary-color: #6D00A3;
     --secondary-color: #F22292;
     --accent-color: #008f91;
-
     --title-color: #008f91;
     --title-border: #6D00A3;
     --title-shadow: rgba(189, 36, 168, 0.7);
     --title-text-shadow: #8400ff;
-
     --navbar-background: rgba(255, 240, 255, 0.9);
     --navbar-text: #3c124f;
-
     --nav-link-background: rgba(255, 255, 255, 0.72);
     --nav-link-border: #6D00A3;
-
     --button-background: #6D00A3;
     --button-text: #ffffff;
-
     --shadow-color: rgba(109, 0, 163, 0.45);
 }
 
 /* =========================
    VARIABLES — MODE NUIT
 ========================= */
-
 html[data-theme="dark"] {
     color-scheme: dark;
-
-    --page-background:
-        url("../images/background/bg_night.png");
-
+    --page-background: url("../images/background/bg_night.png");
     --page-background-color: #10051f;
     --page-overlay: rgba(4, 2, 18, 0.15);
-
     --text-color: #ffffff;
     --link-color: #22F2EF;
-
     --primary-color: #6D00A3;
     --secondary-color: #F22292;
     --accent-color: #22F2EF;
-
     --title-color: #00ffc8;
     --title-border: #373B44;
     --title-shadow: #bd24a8;
     --title-text-shadow: #8400ff;
-
     --navbar-background: rgba(20, 10, 40, 0.91);
     --navbar-text: #ffffff;
-
     --nav-link-background: rgba(109, 0, 163, 0.45);
     --nav-link-border: #6D00A3;
-
     --button-background: #6D00A3;
     --button-text: #ffffff;
-
     --shadow-color: rgba(34, 242, 239, 0.45);
 }
 
 /* =========================
    RÉGLAGES GÉNÉRAUX
 ========================= */
-
 * {
     box-sizing: border-box;
 }
 
 html {
     min-height: 100%;
-
     background-color: var(--page-background-color);
 }
 
 body {
     position: relative;
-
     min-height: 100vh;
-
     margin: 0;
-
     background-color: var(--page-background-color);
     background-image: var(--page-background);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
-
     color: var(--text-color);
-
     text-align: center;
-
-    transition:
-        color 0.35s ease,
-        background-color 0.35s ease;
+    transition: color 0.35s ease, background-color 0.35s ease;
 }
 
 /* Voile placé au-dessus du fond */
-
 body::before {
     content: "";
-
     position: fixed;
     inset: 0;
-
     z-index: -1;
-
     background: var(--page-overlay);
-
     pointer-events: none;
 }
-
 
 /* =========================
    BOUTONS DE PAGE
 ========================= */
-
 button {
     margin: 8px;
     padding: 0;
-
     background: none;
     border: none;
 }
 
 button a {
     display: inline-block;
-
     padding: 12px 25px;
-
     color: var(--button-text);
     background: var(--button-background);
-
     border: 2px solid var(--accent-color);
     border-radius: 15px;
-
     text-decoration: none;
-
-    transition:
-        color 0.3s ease,
-        background-color 0.3s ease,
-        border-color 0.3s ease,
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
+    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 button a:hover {
     color: #000000;
     background: var(--accent-color);
-
     transform: scale(1.08);
-
     box-shadow: 0 0 20px var(--accent-color);
 }
 
 /* =========================
    LIENS
 ========================= */
-
 a {
     color: var(--link-color);
 }
@@ -182,10 +129,10 @@ li a i {
 /* =========================
    IMAGES
 ========================= */
-
 img {
     position: relative;
-
+    max-width: 100%;
+    height: auto;
     user-select: none;
     -webkit-user-select: none;
     -webkit-user-drag: none;
@@ -195,7 +142,6 @@ img {
     position: relative;
     top: 0;
     left: 0;
-
     width: min(30%, 320px);
     height: auto;
 }
@@ -203,19 +149,13 @@ img {
 /* =========================
    PAGES HISTOIRE
 ========================= */
-
-#page_histoire0,
-#page_histoire1,
-#page_histoire3,
-#page_annexe_chp1,
-#page_annexe_chp2 {
+#page_histoire0, #page_histoire1, #page_histoire3, #page_annexe_chp1, #page_annexe_chp2 {
     font-size: 3em;
 }
 
 /* =========================
    CLASSES COMMUNES
 ========================= */
-
 .follow {
     color: #F22245;
 }
@@ -240,29 +180,25 @@ img {
    BARRE DE NAVIGATION PRINCIPALE
    Logo vidéo + liens avec contour lumineux
 ================================================== */
-
-
 /* ==================================================
    CONTENEUR EXTÉRIEUR
 ================================================== */
-
 .site-header {
     position: sticky;
     top: 0;
     z-index: 1000;
     width: 100%;
+    max-width: 100%;
+    overflow: visible;
     padding: 12px 20px;
     background: transparent;
     border: none;
     box-shadow: none;
 }
 
-
-
 /* ==================================================
    BARRE DE NAVIGATION
 ================================================== */
-
 .navbar {
     display: flex;
     align-items: center;
@@ -270,25 +206,22 @@ img {
     flex-wrap: nowrap;
     gap: 18px;
     width: min(100%, 1250px);
+    max-width: 100%;
     min-height: 78px;
     margin: 0 auto;
     padding: 6px 24px;
     background: var(--navbar-background);
     border: 1px solid rgba(109, 0, 163, 0.18);
     border-radius: 28px;
-    box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.22),
-        0 0 18px rgba(109, 0, 163, 0.12);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22), 0 0 18px rgba(109, 0, 163, 0.12);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    transition:
-        background-color 0.35s ease,
-        box-shadow 0.35s ease;
+    transition: background-color 0.35s ease, box-shadow 0.35s ease;
 }
+
 /* ==================================================
    LOGO VIDÉO
 ================================================== */
-
 .navbar-logo {
     position: relative;
     display: flex;
@@ -304,79 +237,44 @@ img {
     overflow: visible;
     text-decoration: none;
     cursor: pointer;
-    transition:
-        transform 0.3s ease,
-        filter 0.3s ease;
+    transition: transform 0.3s ease, filter 0.3s ease;
 }
 
 .navbar-logo video {
     display: block;
-
     width: 100%;
     height: 100%;
-
     object-fit: contain;
     object-position: center;
-
     background: transparent;
     border: none;
-
     pointer-events: none;
-
-    filter:
-        drop-shadow(
-            0 0 7px rgba(255, 255, 255, 0.35)
-        )
-        drop-shadow(
-            0 0 15px rgba(242, 34, 146, 0.35)
-        );
-
-    transition:
-        transform 0.3s ease,
-        filter 0.3s ease;
+    filter: drop-shadow( 0 0 7px rgba(255, 255, 255, 0.35) ) drop-shadow( 0 0 15px rgba(242, 34, 146, 0.35) );
+    transition: transform 0.3s ease, filter 0.3s ease;
 }
 
 /* Survol du logo */
-
 .navbar-logo:hover {
-    transform:
-        translateY(-3px)
-        scale(1.04);
+    transform: translateY(-3px) scale(1.04);
 }
-
 
 .navbar-logo:hover video {
-    transform:
-        scale(1.08)
-        rotate(-3deg);
-
-    filter:
-        drop-shadow(
-            0 0 10px
-            rgba(255, 255, 255, 0.65)
-        )
-        drop-shadow(
-            0 0 22px
-            var(--accent-color)
-        );
+    transform: scale(1.08) rotate(-3deg);
+    filter: drop-shadow( 0 0 10px rgba(255, 255, 255, 0.65) ) drop-shadow( 0 0 22px var(--accent-color) );
 }
-
 
 .navbar-logo:active {
     transform: scale(0.97);
 }
-
 
 .navbar-logo:focus-visible {
     outline: 2px solid var(--accent-color);
     outline-offset: 6px;
 }
 
-
 /* ==================================================
    CONTENEUR DES LIENS
 ================================================== */
-
 .navbar-links {
     display: flex;
     align-items: center;
@@ -388,11 +286,9 @@ img {
     padding: 4px 8px;
 }
 
-
 /* ==================================================
    LIENS DE NAVIGATION
 ================================================== */
-
 .navbar-links a {
     position: relative;
     display: inline-flex;
@@ -405,192 +301,112 @@ img {
     border: none;
     border-radius: 0;
     outline: none;
-    font-family:        Arial,        Helvetica,        sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 1rem;
     font-weight: 700;
     line-height: 1.2;
     text-align: center;
     text-decoration: none;
     white-space: nowrap;
-    text-shadow:        0 0 4px rgba(255, 255, 255, 0.18),        0 0 7px rgba(242, 34, 146, 0.22);
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.18), 0 0 7px rgba(242, 34, 146, 0.22);
     overflow: hidden;
-    transition:        color 0.25s ease,        text-shadow 0.25s ease,        transform 0.25s ease;
+    transition: color 0.25s ease, text-shadow 0.25s ease, transform 0.25s ease;
 }
+
 /* ==================================================
    PETIT TRAIT LUMINEUX SOUS LE TEXTE
 ================================================== */
-
 .navbar-links a::after {
     content: "";
-
     position: absolute;
-
     left: 50%;
     bottom: 2px;
-
     width: 0;
     height: 2px;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(34, 242, 239, 0.9),
-            rgba(242, 34, 146, 0.9),
-            transparent
-        );
-
-    box-shadow:
-        0 0 5px rgba(34, 242, 239, 0.45),
-        0 0 8px rgba(242, 34, 146, 0.3);
-
+    background: linear-gradient( 90deg, transparent, rgba(34, 242, 239, 0.9), rgba(242, 34, 146, 0.9), transparent );
+    box-shadow: 0 0 5px rgba(34, 242, 239, 0.45), 0 0 8px rgba(242, 34, 146, 0.3);
     transform: translateX(-50%);
-
-    transition:
-        width 0.3s ease,
-        opacity 0.3s ease;
-
+    transition: width 0.3s ease, opacity 0.3s ease;
     opacity: 0.7;
-
     pointer-events: none;
 }
-
 
 /* ==================================================
    FLASH LUMINEUX QUI PASSE SUR LE TEXTE
 ================================================== */
-
 .navbar-links a::before {
     content: "";
-
     position: absolute;
-
     top: -20%;
     left: -45%;
-
     width: 26%;
     height: 140%;
-
-    background:
-        linear-gradient(
-            110deg,
-            transparent,
-            rgba(255, 255, 255, 0.8),
-            transparent
-        );
-
-    transform:
-        skewX(-18deg)
-        translateX(0);
-
+    background: linear-gradient( 110deg, transparent, rgba(255, 255, 255, 0.8), transparent );
+    transform: skewX(-18deg) translateX(0);
     opacity: 0;
-
     pointer-events: none;
 }
+
 /* ==================================================
    SURVOL
 ================================================== */
-
 .navbar-links a:hover {
     color: #ffffff;
-
     background: transparent;
-
     border: none;
-
-    transform:
-        translateY(-2px)
-        scale(1.03);
-
-    text-shadow:
-        0 0 5px rgba(255, 255, 255, 0.75),
-        0 0 9px rgba(34, 242, 239, 0.55),
-        0 0 14px rgba(242, 34, 146, 0.42);
+    transform: translateY(-2px) scale(1.03);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.75), 0 0 9px rgba(34, 242, 239, 0.55), 0 0 14px rgba(242, 34, 146, 0.42);
 }
-
 
 .navbar-links a:hover::after {
     width: 82%;
     opacity: 1;
 }
 
-
 .navbar-links a:hover::before {
     opacity: 1;
-
-    animation:
-        navbarTextFlash
-        0.7s
-        ease
-        forwards;
+    animation: navbarTextFlash 0.7s ease forwards;
 }
-
-
 
 /* ==================================================
    PAGE ACTIVE
 ================================================== */
-
-.navbar-links a.active,
-.navbar-links a[aria-current="page"] {
+.navbar-links a.active, .navbar-links a[aria-current="page"] {
     color: #ffffff;
-
     background: transparent;
-
     border: none;
-
-    text-shadow:
-        0 0 5px rgba(255, 255, 255, 0.65),
-        0 0 10px rgba(242, 34, 146, 0.55),
-        0 0 14px rgba(109, 0, 163, 0.45);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.65), 0 0 10px rgba(242, 34, 146, 0.55), 0 0 14px rgba(109, 0, 163, 0.45);
 }
-.navbar-links a.active::after,
-.navbar-links a[aria-current="page"]::after {
+
+.navbar-links a.active::after, .navbar-links a[aria-current="page"]::after {
     width: 70%;
-
     opacity: 0.9;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(242, 34, 146, 0.95),
-            rgba(34, 242, 239, 0.8),
-            transparent
-        );
+    background: linear-gradient( 90deg, transparent, rgba(242, 34, 146, 0.95), rgba(34, 242, 239, 0.8), transparent );
 }
+
 /* ==================================================
    CLIC
 ================================================== */
-
 .navbar-links a:active {
-    transform:
-        translateY(0)
-        scale(0.97);
+    transform: translateY(0) scale(0.97);
 }
-
 
 /* ==================================================
    NAVIGATION AU CLAVIER
 ================================================== */
-
 .navbar-links a:focus-visible {
     outline: none;
-    text-shadow:
-        0 0 6px rgba(255, 255, 255, 0.8),
-        0 0 12px rgba(34, 242, 239, 0.65),
-        0 0 18px rgba(242, 34, 146, 0.45);
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(34, 242, 239, 0.65), 0 0 18px rgba(242, 34, 146, 0.45);
 }
+
 .navbar-links a:focus-visible::after {
     width: 82%;
     opacity: 1;
 }
 
-
 /* ==================================================
    BOUTON MODE JOUR / NUIT
 ================================================== */
-
 .theme-toggle {
     position: relative;
     display: inline-flex;
@@ -604,455 +420,302 @@ img {
     margin: 0 0 0 auto;
     box-sizing: border-box;
     color: var(--button-text);
-    background:
-        rgba(
-            35,
-            8,
-            58,
-            0.25
-        );
-    border:
-        1px solid
-        rgba(
-            197,
-            111,
-            255,
-            0.8
-        );
+    background: rgba( 35, 8, 58, 0.25 );
+    border: 1px solid rgba( 197, 111, 255, 0.8 );
     border-radius: 999px;
     font: inherit;
     font-size: 1rem;
     font-weight: 700;
     line-height: 1;
-
     cursor: pointer;
-
-    box-shadow:
-        0 0 8px
-        rgba(
-            197,
-            111,
-            255,
-            0.32
-        );
-
+    box-shadow: 0 0 8px rgba( 197, 111, 255, 0.32 );
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-
-    transition:
-        color 0.28s ease,
-        background-color 0.28s ease,
-        border-color 0.28s ease,
-        box-shadow 0.28s ease,
-        transform 0.28s ease;
+    transition: color 0.28s ease, background-color 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease, transform 0.28s ease;
 }
-
 
 .theme-toggle:hover {
     color: #ffffff;
-
-    background:
-        rgba(
-            109,
-            0,
-            163,
-            0.22
-        );
-
-    border-color:
-        var(--accent-color);
-
-    transform:
-        translateY(-3px);
-
-    box-shadow:
-        0 0 10px
-        rgba(
-            34,
-            242,
-            239,
-            0.55
-        ),
-        0 0 18px
-        rgba(
-            109,
-            0,
-            163,
-            0.35
-        );
+    background: rgba( 109, 0, 163, 0.22 );
+    border-color: var(--accent-color);
+    transform: translateY(-3px);
+    box-shadow: 0 0 10px rgba( 34, 242, 239, 0.55 ), 0 0 18px rgba( 109, 0, 163, 0.35 );
 }
-
 
 .theme-toggle:active {
     transform: scale(0.96);
 }
-
 
 .theme-toggle:focus-visible {
     outline: 2px solid var(--secondary-color);
     outline-offset: 5px;
 }
 
-
 .theme-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     font-size: 1.35rem;
     line-height: 1;
-
-    transition:
-        transform 0.35s ease;
+    transition: transform 0.35s ease;
 }
-
 
 .theme-toggle:hover .theme-icon {
-    transform:
-        rotate(18deg)
-        scale(1.1);
+    transform: rotate(18deg) scale(1.1);
 }
-
 
 .theme-text {
     white-space: nowrap;
 }
 
-
 /* ==================================================
    MODE JOUR
 ================================================== */
-
 html[data-theme="light"] .navbar-links a {
     color: #4d145d;
-
-    text-shadow:
-        0 0 4px rgba(255, 255, 255, 0.4),
-        0 0 7px rgba(109, 0, 163, 0.18);
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.4), 0 0 7px rgba(109, 0, 163, 0.18);
 }
-
 
 html[data-theme="light"] .navbar-links a:hover {
     color: #6d00a3;
-
-    text-shadow:
-        0 0 5px rgba(255, 255, 255, 0.85),
-        0 0 9px rgba(242, 34, 146, 0.45),
-        0 0 13px rgba(109, 0, 163, 0.35);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.85), 0 0 9px rgba(242, 34, 146, 0.45), 0 0 13px rgba(109, 0, 163, 0.35);
 }
 
-
-html[data-theme="light"] .navbar-links a.active,
-html[data-theme="light"]
-.navbar-links a[aria-current="page"] {
+html[data-theme="light"] .navbar-links a.active, html[data-theme="light"] .navbar-links a[aria-current="page"] {
     color: #6d00a3;
 }
-
 
 html[data-theme="light"] .theme-toggle {
     color: #3c124f;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.35
-        );
-
-    border-color:
-        rgba(
-            109,
-            0,
-            163,
-            0.55
-        );
+    background: rgba( 255, 255, 255, 0.35 );
+    border-color: rgba( 109, 0, 163, 0.55 );
 }
-
 
 html[data-theme="light"] .theme-toggle:hover {
     color: #6d00a3;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.55
-        );
-
-    border-color:
-        rgba(
-            109,
-            0,
-            163,
-            0.9
-        );
+    background: rgba( 255, 255, 255, 0.55 );
+    border-color: rgba( 109, 0, 163, 0.9 );
 }
-
 
 /* ==================================================
    MODE NUIT
 ================================================== */
-
 html[data-theme="dark"] .navbar-links a {
     color: #ffffff;
-
-    text-shadow:
-        0 0 4px rgba(255, 255, 255, 0.22),
-        0 0 7px rgba(34, 242, 239, 0.18);
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.22), 0 0 7px rgba(34, 242, 239, 0.18);
 }
-
 
 html[data-theme="dark"] .navbar-links a:hover {
     color: #ffffff;
-
-    text-shadow:
-        0 0 5px rgba(255, 255, 255, 0.8),
-        0 0 10px rgba(34, 242, 239, 0.55),
-        0 0 15px rgba(242, 34, 146, 0.4);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(34, 242, 239, 0.55), 0 0 15px rgba(242, 34, 146, 0.4);
 }
 
 /* ==================================================
    GRAND ÉCRAN INTERMÉDIAIRE
 ================================================== */
-
 @media (max-width: 1400px) {
-    .navbar {
+    .navbar
+    {
         gap: 18px;
-
-        padding:
-            12px
-            20px;
+        padding: 12px 20px;
     }
 
-    .navbar-logo {
+    .navbar-logo
+    {
         width: 150px;
         height: 108px;
     }
 
-    .navbar-links {
+    .navbar-links
+    {
         gap: 14px;
     }
 
-    .navbar-links a {
+    .navbar-links a
+    {
         min-height: 50px;
-
-        padding:
-            11px
-            19px;
-
+        padding: 11px 19px;
         font-size: 0.98rem;
     }
 
-    .theme-toggle {
+    .theme-toggle
+    {
         min-width: 145px;
     }
-}
 
+}
 
 /* ==================================================
    TABLETTE ET PETIT ORDINATEUR
 ================================================== */
-
 @media (max-width: 1100px) {
-    .navbar {
+    .navbar
+    {
         justify-content: center;
         flex-wrap: wrap;
-
         gap: 14px;
-
         min-height: auto;
-
-        padding:
-            12px
-            16px;
+        padding: 12px 16px;
     }
 
-    .navbar-logo {
+    .navbar-logo
+    {
         width: 135px;
         height: 98px;
     }
 
-    .navbar-links {
+    .navbar-links
+    {
         order: 3;
-
         flex-basis: 100%;
-
         gap: 12px;
-
         padding-top: 6px;
     }
 
-    .navbar-links a {
-        flex:
-            1
-            1
-            180px;
-
+    .navbar-links a
+    {
+        flex: 1 1 180px;
         max-width: 270px;
-
         min-height: 50px;
-
-        padding:
-            11px
-            17px;
-
+        padding: 11px 17px;
         white-space: normal;
     }
 
-    .theme-toggle {
+    .theme-toggle
+    {
         margin-left: auto;
     }
-}
 
+}
 
 /* ==================================================
    TABLETTE
 ================================================== */
-
 @media (max-width: 750px) {
-    .navbar {
+    .navbar
+    {
         width: 100%;
-
-        padding:
-            10px
-            12px;
+        padding: 10px 12px;
     }
 
-    .navbar-logo {
+    .navbar-logo
+    {
         width: 118px;
         height: 86px;
     }
 
-    .navbar-links {
+    .navbar-links
+    {
         gap: 20px;
     }
 
-    .navbar-links a {
+    .navbar-links a
+    {
         font-size: 1rem;
     }
 
-    .theme-toggle {
+    .theme-toggle
+    {
         min-width: 52px;
         width: 52px;
-
         min-height: 52px;
         height: 52px;
-
         padding: 0;
-
         border-radius: 50%;
     }
 
-    .theme-text {
+    .theme-text
+    {
         display: none;
     }
-}
 
+}
 
 /* ==================================================
    TÉLÉPHONE
 ================================================== */
-
 @media (max-width: 480px) {
-    .navbar {
+    .navbar
+    {
         flex-direction: column;
-
         gap: 10px;
-
-        padding:
-            10px
-            8px;
+        padding: 10px 8px;
     }
 
-    .navbar-logo {
+    .navbar-logo
+    {
         width: 112px;
         height: 82px;
     }
 
-    .navbar-links {
+    .navbar-links
+    {
         display: grid;
-
-        grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
-
+        grid-template-columns: repeat( 2, minmax(0, 1fr) );
         gap: 12px;
-
         width: 100%;
     }
 
-    .navbar-links a {
+    .navbar-links a
+    {
         width: 100%;
-
         padding: 10px 6px;
-
         font-size: 0.92rem;
-
         white-space: normal;
     }
 
-    .theme-toggle {
-        margin:
-            4px
-            auto
-            0;
+    .theme-toggle
+    {
+        margin: 4px auto 0;
     }
+
 }
 
 /* ==================================================
    ANIMATION DU FLASH
 ================================================== */
-
 @keyframes navbarTextFlash {
-    0% {
+    0%
+    {
         left: -45%;
         opacity: 0;
     }
-    20% {
+
+    20%
+    {
         opacity: 0.75;
     }
-    100% {
+
+    100%
+    {
         left: 125%;
         opacity: 0;
     }
+
 }
 
 /* ==================================================
    RÉDUCTION DES ANIMATIONS
 ================================================== */
-
 @media (prefers-reduced-motion: reduce) {
-    .site-header,
-    .navbar-logo,
-    .navbar-logo video,
-    .navbar-links a,
-    .theme-toggle,
-    .theme-icon {
+    .site-header, .navbar-logo, .navbar-logo video, .navbar-links a, .theme-toggle, .theme-icon
+    {
         transition: none;
     }
 
-    .navbar-logo:hover,
-    .navbar-logo:hover video,
-    .navbar-links a:hover,
-    .navbar-links a.active,
-    .navbar-links a[aria-current="page"],
-    .theme-toggle:hover {
+    .navbar-logo:hover, .navbar-logo:hover video, .navbar-links a:hover, .navbar-links a.active, .navbar-links a[aria-current="page"], .theme-toggle:hover
+    {
         transform: none;
     }
+
 }
 
 /* ==========================================
    VARIABLES DE LA MASCOTTE
 ========================================== */
-
 :root {
     --mascotte-bulle-fond: rgba(255, 245, 255, 0.96);
     --mascotte-bulle-texte: #3b1454;
-
     --mascotte-cyan: #22f2ef;
     --mascotte-rose: #f22292;
     --mascotte-violet: #6d00a3;
@@ -1063,11 +726,9 @@ html[data-theme="dark"] {
     --mascotte-bulle-texte: #ffffff;
 }
 
-
 /* ==========================================
    CONTENEUR GLOBAL
 ========================================== */
-
 .mascotte-widget {
     position: fixed;
     right: 20px;
@@ -1078,17 +739,16 @@ html[data-theme="dark"] {
     align-items: flex-end;
     gap: 14px;
     pointer-events: none;
+    max-width: calc(100vw - 20px);
 }
-
 
 /* ==========================================
    BULLE DE DIALOGUE
 ========================================== */
-
 .mascotte-bulle {
     position: relative;
     width: max-content;
-    max-width: 320px;
+    max-width: min(320px, calc(100vw - 40px));
     padding: 16px 22px;
     color: var(--mascotte-bulle-texte);
     background: var(--mascotte-bulle-fond);
@@ -1098,16 +758,16 @@ html[data-theme="dark"] {
     font-weight: bold;
     line-height: 1.5;
     text-align: center;
-    box-shadow:        0 0 14px rgba(34, 242, 239, 0.45),        0 0 28px rgba(109, 0, 163, 0.35);
+    box-shadow: 0 0 14px rgba(34, 242, 239, 0.45), 0 0 28px rgba(109, 0, 163, 0.35);
     opacity: 0;
     visibility: hidden;
-    transform:        translateY(10px)        scale(0.92);
-    transition:        opacity 0.3s ease,        visibility 0.3s ease,        transform 0.3s ease;
+    transform: translateY(10px) scale(0.92);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
     pointer-events: none;
-    -webkit-transition:        opacity 0.3s ease,        visibility 0.3s ease,        transform 0.3s ease;
-    -moz-transition:        opacity 0.3s ease,        visibility 0.3s ease,        transform 0.3s ease;
-    -ms-transition:        opacity 0.3s ease,        visibility 0.3s ease,        transform 0.3s ease;
-    -o-transition:        opacity 0.3s ease,        visibility 0.3s ease,        transform 0.3s ease;
+    -webkit-transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    -moz-transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    -ms-transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    -o-transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
 }
 
 .mascotte-bulle::after {
@@ -1126,13 +786,12 @@ html[data-theme="dark"] {
 .mascotte-bulle.visible {
     opacity: 1;
     visibility: visible;
-    transform:        translateY(0)        scale(1);
-    -webkit-transform:        translateY(0)        scale(1);
-    -moz-transform:        translateY(0)        scale(1);
-    -ms-transform:        translateY(0)        scale(1);
-    -o-transform:        translateY(0)        scale(1);
+    transform: translateY(0) scale(1);
+    -webkit-transform: translateY(0) scale(1);
+    -moz-transform: translateY(0) scale(1);
+    -ms-transform: translateY(0) scale(1);
+    -o-transform: translateY(0) scale(1);
 }
-
 
 /* ==========================================
    BOUTON DE LA MASCOTTE
@@ -1150,21 +809,19 @@ html[data-theme="dark"] {
     pointer-events: auto;
     animation: mascotteFloat 4s ease-in-out infinite;
     /**IMPORTANT:;
-    *aucunfilteretaucunbox-shadowici.*/filter: none;
+    *aucunfilteretaucunbox-shadowici.*/
+    filter: none;
     box-shadow: none;
     -webkit-animation: mascotteFloat 4s ease-in-out infinite;
 }
 
-
 /* ==========================================
    LUMIÈRE DERRIÈRE LA MASCOTTE
 ========================================== */
-
 /*
  * La lumière est créée avec un cercle flou.
  * Elle ne dépend donc plus des limites du PNG.
  */
-
 .mascotte-button::before {
     content: "";
     position: absolute;
@@ -1173,27 +830,17 @@ html[data-theme="dark"] {
     width: 68px;
     height: 68px;
     border-radius: 50%;
-    background: radial-gradient(
-        circle,
-        rgba(34, 242, 239, 0.42) 0%,
-        rgba(242, 34, 146, 0.25) 42%,
-        rgba(109, 0, 163, 0.12) 65%,
-        transparent 75%
-    );
+    background: radial-gradient( circle, rgba(34, 242, 239, 0.42) 0%, rgba(242, 34, 146, 0.25) 42%, rgba(109, 0, 163, 0.12) 65%, transparent 75% );
     transform: translate(-50%, -50%);
     filter: blur(8px);
     opacity: 0.75;
     pointer-events: none;
-    transition:
-        opacity 0.3s ease,
-        transform 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
-
 
 /* ==========================================
    IMAGE DE LA MASCOTTE
 ========================================== */
-
 .mascotte {
     position: relative;
     z-index: 2;
@@ -1213,192 +860,201 @@ html[data-theme="dark"] {
      */
     filter: none;
     box-shadow: none;
-    transition:
-        transform 0.25s ease,
-        brightness 0.25s ease;
+    transition: transform 0.25s ease, brightness 0.25s ease;
 }
-
 
 /* ==========================================
    SURVOL
 ========================================== */
-
 .mascotte-button:hover .mascotte {
     transform: scale(1.05);
 }
 
 .mascotte-button:hover::before {
     opacity: 1;
-
-    transform:
-        translate(-50%, -50%)
-        scale(1.12);
+    transform: translate(-50%, -50%) scale(1.12);
 }
-
 
 /* ==========================================
    MASCOTTE QUI PARLE
 ========================================== */
-
 .mascotte-button.is-talking {
-    animation:
-        mascotteTalking 0.3s ease-in-out infinite alternate;
+    animation: mascotteTalking 0.3s ease-in-out infinite alternate;
 }
 
 .mascotte-button.is-talking::before {
     opacity: 1;
-
-    transform:
-        translate(-50%, -50%)
-        scale(1.15);
+    transform: translate(-50%, -50%) scale(1.15);
 }
 
 .mascotte-button.is-talking .mascotte {
     filter: brightness(1.08);
 }
 
-
 /* ==========================================
    ANIMATION DE FLOTTEMENT
 ========================================== */
-
 @keyframes mascotteFloat {
-    0%,
-    100% {
-        transform:
-            translateY(0)
-            rotate(-2deg);
+    0%, 100%
+    {
+        transform: translateY(0) rotate(-2deg);
     }
-    50% {
-        transform:
-            translateY(-8px)
-            rotate(2deg);
-    }
-}
 
+    50%
+    {
+        transform: translateY(-8px) rotate(2deg);
+    }
+
+}
 
 /* ==========================================
    ANIMATION DE PAROLE
 ========================================== */
-
 @keyframes mascotteTalking {
-    0% {
-        transform:
-            translateY(0)
-            rotate(-1deg)
-            scale(1);
+    0%
+    {
+        transform: translateY(0) rotate(-1deg) scale(1);
     }
 
-    100% {
-        transform:
-            translateY(-4px)
-            rotate(1deg)
-            scale(1.025);
+    100%
+    {
+        transform: translateY(-4px) rotate(1deg) scale(1.025);
     }
+
 }
-
 
 /* ==========================================
    CLAVIER ET ACCESSIBILITÉ
 ========================================== */
-
 .mascotte-button:focus-visible {
     outline: 3px solid var(--mascotte-cyan);
     outline-offset: 7px;
     border-radius: 30px;
 }
 
-
 /* ==========================================
    RESPONSIVE TABLETTE
 ========================================== */
-
 @media (max-width: 900px) {
-    .mascotte-widget {
+    .mascotte-widget
+    {
         right: 12px;
         bottom: 12px;
     }
 
-    .mascotte-button {
+    .mascotte-button
+    {
         width: 72px;
     }
 
-    .mascotte-button::before {
+    .mascotte-button::before
+    {
         width: 52px;
         height: 52px;
-
         filter: blur(7px);
     }
 
-    .mascotte-bulle {
+    .mascotte-bulle
+    {
         max-width: 220px;
-
         padding: 12px 15px;
-
         font-size: 0.85rem;
     }
-}
 
+}
 
 /* ==========================================
    RESPONSIVE TÉLÉPHONE
 ========================================== */
-
 @media (max-width: 600px) {
-    .mascotte-widget {
+    .mascotte-widget
+    {
         right: 7px;
         bottom: 7px;
-
         gap: 8px;
     }
 
-    .mascotte-button {
+    .mascotte-button
+    {
         width: 55px;
     }
 
-    .mascotte-button::before {
+    .mascotte-button::before
+    {
         width: 41px;
         height: 41px;
-
         filter: blur(6px);
     }
 
-    .mascotte-bulle {
+    .mascotte-bulle
+    {
         max-width: 170px;
-
         padding: 9px 11px;
-
         border-width: 2px;
         border-radius: 16px;
-
         font-size: 0.75rem;
         line-height: 1.4;
     }
 
-    .mascotte-bulle::after {
+    .mascotte-bulle::after
+    {
         right: 20px;
         bottom: -9px;
-
         width: 14px;
         height: 14px;
-
         border-right-width: 2px;
         border-bottom-width: 2px;
     }
+
 }
 
 /* ==========================================
    RÉDUCTION DES ANIMATIONS
 ========================================== */
-
 @media (prefers-reduced-motion: reduce) {
-    .mascotte-button,
-    .mascotte-button.is-talking,
-    .mascotte-bulle,
-    .mascotte-button::before,
-    .mascotte {
+    .mascotte-button, .mascotte-button.is-talking, .mascotte-bulle, .mascotte-button::before, .mascotte
+    {
         animation: none;
         transition: none;
     }
+
 }
 
+/* ==================================================
+   CORRECTION DE LA BARRE HORIZONTALE EN BAS
+================================================== */
+html, body {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+body {
+    min-height: 100vh;
+}
+
+main, header, footer, section, article, nav {
+    max-width: 100%;
+}
+
+img, video {
+    max-width: 100%;
+}
+
+.site-header {
+    width: 100%;
+    max-width: 100%;
+}
+
+.navbar {
+    max-width: 100%;
+}
+
+.mascotte-widget {
+    max-width: calc(100vw - 20px);
+}
+
+.mascotte-bulle {
+    max-width: min(320px, calc(100vw - 40px));
+}
