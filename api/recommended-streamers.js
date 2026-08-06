@@ -38,7 +38,61 @@ const RECOMMENDED_STREAMERS = [
         login: "maman_mikii"
     },
     {
-        login: "yaochy_vt"
+        login: "babyhawk_vt"
+    },
+    {
+        login: "Nymya_VT"
+    },
+    {
+        login: "LykaMonarch"
+    },
+    {
+        login: "rvbyabyss"
+    },
+    {
+        login: "YuTo_Mbc"
+    },
+    {
+        login: "louxifr"
+    },
+    {
+        login: "kimori_004"
+    },
+    {
+        login: "Lunyvee"
+    },
+    {
+        login: "Subbarath"
+    },
+    {
+        login: "leareinepoulpe"
+    },
+    {
+        login: "frouxyi"
+    },
+    {
+        login: "sayarhe"
+    },
+    {
+        login: "omelyth"
+    },
+    {
+        login: "petiteorca"
+    },
+    {
+        login: "000dracko000"
+    },
+    {
+        login: "xiriavt"
+    },
+    {
+        login: "dreagonm"
+    },
+    {
+        login: "vtyukiuwu"
+    },
+    {
+        login: "kuroka59"
     }
 ];
 
