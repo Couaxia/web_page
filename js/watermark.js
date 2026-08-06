@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const headingName =
             heading?.textContent?.trim();
 
-        return headingName || "l’artiste";
+        return headingName || "Artiste inconnu";
     }
 
 
@@ -57,29 +57,35 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        const title =
-            document.createElement("span");
-
-        title.className =
-            "image-watermark-title";
-
-        title.textContent =
-            "© Couaxia";
-
-
+        /*
+         * Nom de l’artiste mis en avant.
+         */
         const artist =
             document.createElement("span");
 
         artist.className =
-            "image-watermark-artist";
+            "image-watermark-title";
 
         artist.textContent =
-            `Illustration par ${artistName}`;
+            `🎨 ${artistName}`;
+
+
+        /*
+         * Mention Couaxia plus discrète.
+         */
+        const copyright =
+            document.createElement("span");
+
+        copyright.className =
+            "image-watermark-artist";
+
+        copyright.textContent =
+            "© Couaxia";
 
 
         message.append(
-            title,
-            artist
+            artist,
+            copyright
         );
 
         return message;
