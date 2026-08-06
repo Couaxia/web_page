@@ -14,78 +14,37 @@ import {
 ========================================================= */
 
 /*
- * Tu modifies uniquement cette liste pour ajouter,
- * supprimer ou réorganiser les chaînes.
+ * Pour ajouter une personne :
  *
- * Utilise le login Twitch exact, sans l’adresse complète.
+ * {
+ *     login: "login_twitch"
+ * }
+ *
+ * Le login doit correspondre au nom présent
+ * dans l’adresse twitch.tv/login_twitch.
  */
 
 const RECOMMENDED_STREAMERS = [
     {
-        login: "myo_faunette",
-
-        description:
-            "Faunette, streameuse et grande partenaire de bêtises.",
-
-        tags: [
-            "VTuber",
-            "Multi-gaming",
-            "Collab"
-        ]
+        login: "myo_faunette"
     },
-
     {
-        login: "celanyavt",
-
-        description:
-            "Une créatrice pleine de douceur et d’énergie.",
-
-        tags: [
-            "VTuber",
-            "Folle"
-        ]
+        login: "celanyavt"
     },
-
     {
-        login: "sorine_e",
-
-        description:
-            "Des streams chaleureux et beaucoup de bonne humeur.",
-
-        tags: [
-            "Gaming",
-            "Chill"
-        ]
+        login: "sorine_e"
     },
-
     {
-        login: "maman_mikii",
-
-        description:
-            "Une communauté accueillante et des moments très drôles.",
-
-        tags: [
-            "VTuber",
-            "Chill"
-        ]
+        login: "maman_mikii"
     },
-
     {
-        login: "babyhawk_yt",
-
-        description:
-            "Un créateur à découvrir un peu plus chaque jour, avec des streams variés et fun.",
-
-        tags: [
-            "VTuber",
-            "Multi-gaming"
-        ]
+        login: "yaochy_vt"
     }
 ];
 
 
 /* =========================================================
-   CORS
+   CORS ET CACHE
 ========================================================= */
 
 function setCorsHeaders(response) {
@@ -106,10 +65,6 @@ function setCorsHeaders(response) {
 }
 
 
-/* =========================================================
-   CACHE
-========================================================= */
-
 function setCacheHeaders(response) {
     response.setHeader(
         "Cache-Control",
@@ -127,7 +82,7 @@ function setCacheHeaders(response) {
 ========================================================= */
 
 /**
- * Nettoie un login Twitch.
+ * Normalise un login Twitch.
  *
  * @param {unknown} value
  * @returns {string}
@@ -161,8 +116,8 @@ function getErrorMessage(error) {
 
 
 /**
- * Construit une requête Twitch possédant
- * plusieurs paramètres identiques.
+ * Construit une requête avec plusieurs
+ * paramètres identiques.
  *
  * Exemple :
  *
@@ -190,43 +145,17 @@ function createRepeatedParameters(
 }
 
 
-/**
- * Remplace les variables de taille
- * d’une miniature Twitch.
- *
- * @param {unknown} value
- * @param {number} width
- * @param {number} height
- * @returns {string}
- */
-function formatThumbnail(
-    value,
-    width = 640,
-    height = 360
-) {
-    return String(value ?? "")
-        .replace(
-            "{width}",
-            String(width)
-        )
-        .replace(
-            "{height}",
-            String(height)
-        );
-}
-
-
 /* =========================================================
-   REQUÊTES TWITCH
+   TWITCH
 ========================================================= */
 
 /**
- * Récupère les utilisateurs Twitch.
+ * Récupère les profils Twitch.
  *
  * @param {string[]} logins
  * @returns {Promise<object[]>}
  */
-async function getRecommendedUsers(logins) {
+async function getUsers(logins) {
     if (logins.length === 0) {
         return [];
     }
@@ -249,15 +178,15 @@ async function getRecommendedUsers(logins) {
 
 
 /**
- * Récupère les lives actuellement actifs.
+ * Récupère les lives actifs.
  *
- * Les chaînes hors ligne ne sont pas renvoyées
- * par Twitch dans cette réponse.
+ * Les chaînes hors ligne ne sont pas
+ * retournées par Twitch.
  *
  * @param {string[]} logins
  * @returns {Promise<object[]>}
  */
-async function getRecommendedStreams(logins) {
+async function getStreams(logins) {
     if (logins.length === 0) {
         return [];
     }
@@ -280,21 +209,17 @@ async function getRecommendedStreams(logins) {
 
 
 /* =========================================================
-   FORMATAGE DE LA RÉPONSE
+   FUSION DES DONNÉES
 ========================================================= */
 
 /**
- * Fusionne :
- *
- * - la configuration manuelle ;
- * - le profil Twitch ;
- * - le statut du live.
+ * Fusionne les profils et les lives.
  *
  * @param {object[]} users
  * @param {object[]} streams
  * @returns {object[]}
  */
-function createRecommendedStreamerResults(
+function createStreamerResults(
     users,
     streams
 ) {
@@ -338,44 +263,52 @@ function createRecommendedStreamerResults(
         .map(
             (
                 configuredStreamer,
-                originalPosition
+                originalIndex
             ) => {
-                const login =
+                const configuredLogin =
                     normalizeLogin(
                         configuredStreamer.login
                     );
 
                 const user =
-                    usersByLogin.get(login);
+                    usersByLogin.get(
+                        configuredLogin
+                    );
 
                 /*
-                 * Le compte peut avoir été supprimé
-                 * ou le login peut être incorrect.
+                 * Login invalide ou compte absent.
                  */
                 if (!user) {
                     return null;
                 }
 
+                const login =
+                    normalizeLogin(
+                        user.login
+                    );
+
                 const stream =
-                    streamsByLogin.get(login);
+                    streamsByLogin.get(
+                        login
+                    );
 
                 const live =
                     Boolean(stream);
 
                 return {
                     id:
-                        String(user.id ?? ""),
-
-                    login:
-                        normalizeLogin(
-                            user.login
+                        String(
+                            user.id ??
+                            ""
                         ),
+
+                    login,
 
                     displayName:
                         String(
                             user.display_name ||
                             user.login ||
-                            configuredStreamer.login
+                            configuredLogin
                         ),
 
                     profileImageUrl:
@@ -384,40 +317,12 @@ function createRecommendedStreamerResults(
                             ""
                         ),
 
-                    description:
-                        String(
-                            configuredStreamer.description ||
-                            user.description ||
-                            ""
-                        ),
-
-                    twitchDescription:
-                        String(
-                            user.description ||
-                            ""
-                        ),
-
-                    tags:
-                        Array.isArray(
-                            configuredStreamer.tags
-                        )
-                            ? configuredStreamer.tags
-                            : [],
-
                     channelUrl:
                         `https://www.twitch.tv/${encodeURIComponent(
                             login
                         )}`,
 
                     live,
-
-                    gameId:
-                        live
-                            ? String(
-                                stream.game_id ||
-                                ""
-                            )
-                            : "",
 
                     gameName:
                         live
@@ -443,39 +348,7 @@ function createRecommendedStreamerResults(
                             )
                             : 0,
 
-                    startedAt:
-                        live
-                            ? String(
-                                stream.started_at ||
-                                ""
-                            )
-                            : "",
-
-                    language:
-                        live
-                            ? String(
-                                stream.language ||
-                                ""
-                            )
-                            : "",
-
-                    thumbnailUrl:
-                        live
-                            ? formatThumbnail(
-                                stream.thumbnail_url,
-                                640,
-                                360
-                            )
-                            : "",
-
-                    isMature:
-                        live
-                            ? Boolean(
-                                stream.is_mature
-                            )
-                            : false,
-
-                    originalPosition
+                    originalIndex
                 };
             }
         )
@@ -486,48 +359,35 @@ function createRecommendedStreamerResults(
                 secondStreamer
             ) => {
                 /*
-                 * Les lives passent devant.
+                 * Les lives apparaissent en premier.
                  */
                 if (
                     firstStreamer.live !==
                     secondStreamer.live
                 ) {
-                    return Number(
-                        secondStreamer.live
-                    ) - Number(
-                        firstStreamer.live
-                    );
-                }
-
-                /*
-                 * Parmi les lives :
-                 * plus grand nombre de viewers en premier.
-                 */
-                if (
-                    firstStreamer.live &&
-                    secondStreamer.live &&
-                    firstStreamer.viewerCount !==
-                    secondStreamer.viewerCount
-                ) {
                     return (
-                        secondStreamer.viewerCount -
-                        firstStreamer.viewerCount
+                        Number(
+                            secondStreamer.live
+                        ) -
+                        Number(
+                            firstStreamer.live
+                        )
                     );
                 }
 
                 /*
-                 * Sinon on garde l’ordre
-                 * de ta configuration.
+                 * Ensuite, on conserve l’ordre
+                 * de ta liste.
                  */
                 return (
-                    firstStreamer.originalPosition -
-                    secondStreamer.originalPosition
+                    firstStreamer.originalIndex -
+                    secondStreamer.originalIndex
                 );
             }
         )
         .map((streamer) => {
             const {
-                originalPosition,
+                originalIndex,
                 ...publicStreamer
             } = streamer;
 
@@ -541,8 +401,6 @@ function createRecommendedStreamerResults(
 ========================================================= */
 
 /**
- * Route :
- *
  * GET /api/recommended-streamers
  */
 export default async function handler(
@@ -597,47 +455,26 @@ export default async function handler(
                 })
                 .filter(Boolean);
 
-        if (logins.length === 0) {
-            setCacheHeaders(response);
-
-            response
-                .status(200)
-                .json({
-                    success:
-                        true,
-
-                    fetchedAt:
-                        new Date()
-                            .toISOString(),
-
-                    streamers:
-                        []
-                });
-
-            return;
-        }
-
-
         const [
             users,
             streams
         ] = await Promise.all([
-            getRecommendedUsers(
-                logins
-            ),
-
-            getRecommendedStreams(
-                logins
-            )
+            getUsers(logins),
+            getStreams(logins)
         ]);
 
-
         const streamers =
-            createRecommendedStreamerResults(
+            createStreamerResults(
                 users,
                 streams
             );
 
+        const liveCount =
+            streamers.filter(
+                (streamer) => {
+                    return streamer.live;
+                }
+            ).length;
 
         setCacheHeaders(response);
 
@@ -654,12 +491,7 @@ export default async function handler(
                 returned:
                     streamers.length,
 
-                liveCount:
-                    streamers.filter(
-                        (streamer) => {
-                            return streamer.live;
-                        }
-                    ).length,
+                liveCount,
 
                 streamers
             });
@@ -670,7 +502,7 @@ export default async function handler(
             );
 
         console.error(
-            "[Twitch API] Erreur recommended-streamers :",
+            "[Twitch API] Streamers recommandés :",
             error
         );
 
@@ -681,12 +513,8 @@ export default async function handler(
                     false,
 
                 error:
-                    "Impossible de récupérer les streamers recommandés.",
+                    "Impossible de récupérer les chaînes recommandées.",
 
-                /*
-                 * Garde temporairement ce champ
-                 * pour faciliter les tests.
-                 */
                 details:
                     errorMessage
             });

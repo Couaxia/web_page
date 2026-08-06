@@ -1,7 +1,7 @@
 "use strict";
 
 /* =========================================================
-   STREAMERS RECOMMANDÉS PAR COUAXIA
+   STREAMERS RECOMMANDÉS — ACCUEIL
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -10,96 +10,26 @@ document.addEventListener("DOMContentLoaded", () => {
             "#recommended-streamers-list"
         );
 
+    const resultsElement =
+        document.querySelector(
+            "#recommended-streamers-results"
+        );
+
     if (!streamersContainer) {
         return;
     }
 
-    /*
-     * Ajoute ou retire ici les streamers que tu recommandes.
-     *
-     * Pour les images, utilise de préférence des fichiers
-     * enregistrés dans ton propre dossier :
-     *
-     * images/streamers/
-     */
-    const recommendedStreamers = [
-        {
-            login: "myo_faunette",
-            displayName: "Myo_Faunette",
-            avatar:
-                "/images/streamers/myo_faunette.png",
-            description:
-                "Faunette, streameuse et grande partenaire de bêtises.",
-            tags: [
-                "VTuber",
-                "Multi-gaming",
-                "Collab"
-            ],
-            isLive: false,
-            game: ""
-        },
-        {
-            login: "celanyavt",
-            displayName: "CelanyaVT",
-            avatar:
-                "/images/streamers/celanyavt.png",
-            description:
-                "Une créatrice pleine de douceur et d’énergie.",
-            tags: [
-                "VTuber",
-                "Chill",
-                "Folle"
-            ],
-            isLive: false,
-            game: ""
-        },
-        {
-            login: "sorine_e",
-            displayName: "sorine_e",
-            avatar:
-                "/images/streamers/sorine_e.png",
-            description:
-                "Des streams chaleureux et beaucoup de bonne humeur.",
-            tags: [
-                "Gaming",
-                "Collab"
-            ],
-            isLive: false,
-            game: ""
-        },
-        {
-            login: "maman_mikii",
-            displayName: "Maman_Mikii",
-            avatar:
-                "/images/streamers/maman_mikii.png",
-            description:
-                "Une communauté accueillante et des moments très drôles.",
-            tags: [
-                "VTuber",
-                "Chill"
-            ],
-            isLive: false,
-            game: ""
-        },
-        {
-            login: "yaochy_vt",
-            displayName: "Yaochy_VT",
-            avatar:
-                "/images/streamers/yaochy_vt.png",
-            description:
-                "Une créatrice à découvrir pour son univers original.",
-            tags: [
-                "VTuber",
-                "Multi-gaming"
-            ],
-            isLive: false,
-            game: ""
-        }
-    ];
 
+    const API_URL =
+        "/api/recommended-streamers";
+
+
+    /* =====================================================
+       OUTILS
+    ====================================================== */
 
     /**
-     * Échappe une valeur avant de l’insérer dans du HTML.
+     * Échappe une valeur HTML.
      *
      * @param {unknown} value
      * @returns {string}
@@ -115,167 +45,400 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /**
-     * Crée les tags d’une chaîne.
+     * Formate un nombre en français.
      *
-     * @param {string[]} tags
+     * @param {unknown} value
      * @returns {string}
      */
-    function createTags(tags) {
-        if (!Array.isArray(tags)) {
-            return "";
+    function formatNumber(value) {
+        const number =
+            Number(value);
+
+        if (!Number.isFinite(number)) {
+            return "0";
         }
 
-        return tags
-            .map((tag) => {
-                return `
-                    <span class="recommended-streamer-tag">
-                        ${escapeHtml(tag)}
-                    </span>
-                `;
-            })
-            .join("");
+        return new Intl.NumberFormat(
+            "fr-FR"
+        ).format(number);
     }
 
 
     /**
-     * Crée une carte de streamer.
+     * Retourne l’avatar du streamer
+     * ou le logo de secours.
+     *
+     * @param {object} streamer
+     * @returns {string}
+     */
+    function getAvatarUrl(streamer) {
+        const avatarUrl =
+            String(
+                streamer?.profileImageUrl ||
+                ""
+            ).trim();
+
+        if (avatarUrl) {
+            return avatarUrl;
+        }
+
+        return (
+            "/images/logo/" +
+            "Logo Transparents 2.png"
+        );
+    }
+
+
+    /**
+     * Crée un texte pour l’infobulle.
+     *
+     * @param {object} streamer
+     * @returns {string}
+     */
+    function createTooltipText(streamer) {
+        if (!streamer.live) {
+            return (
+                `${streamer.displayName} est hors ligne.`
+            );
+        }
+
+        const parts = [
+            `${streamer.displayName} est en direct`
+        ];
+
+        if (streamer.gameName) {
+            parts.push(
+                `Catégorie : ${streamer.gameName}`
+            );
+        }
+
+        if (
+            Number.isFinite(
+                Number(streamer.viewerCount)
+            )
+        ) {
+            parts.push(
+                `${formatNumber(
+                    streamer.viewerCount
+                )} spectateur(s)`
+            );
+        }
+
+        return parts.join(" — ");
+    }
+
+
+    /* =====================================================
+       CARTE COMPACTE
+    ====================================================== */
+
+    /**
+     * Crée une carte d’avatar Twitch.
      *
      * @param {object} streamer
      * @returns {string}
      */
     function createStreamerCard(streamer) {
-        const channelUrl =
-            `https://www.twitch.tv/${encodeURIComponent(
-                streamer.login
-            )}`;
+        const isLive =
+            Boolean(
+                streamer.live
+            );
 
         const statusClass =
-            streamer.isLive
+            isLive
                 ? "is-live"
                 : "is-offline";
 
-        const statusText =
-            streamer.isLive
+        const statusLabel =
+            isLive
                 ? "En direct"
                 : "Hors ligne";
 
-        const gameText =
-            streamer.isLive && streamer.game
-                ? `
-                    <span class="recommended-streamer-game">
-                        🎮 ${escapeHtml(streamer.game)}
-                    </span>
-                `
-                : "";
+        const avatarUrl =
+            getAvatarUrl(
+                streamer
+            );
+
+        const channelUrl =
+            String(
+                streamer.channelUrl ||
+                `https://www.twitch.tv/${encodeURIComponent(
+                    streamer.login ||
+                    ""
+                )}`
+            );
+
+        const tooltipText =
+            createTooltipText(
+                streamer
+            );
 
         return `
             <article
-                class="recommended-streamer-card ${statusClass}"
-                data-streamer="${escapeHtml(streamer.login)}"
+                class="
+                    recommended-streamer-item
+                    ${statusClass}
+                "
+                data-streamer-login="${escapeHtml(
+                    streamer.login
+                )}"
+                data-messages="${
+                    isLive
+                        ? `${escapeHtml(
+                            streamer.displayName
+                        )} est actuellement en direct !`
+                        : `Découvre la chaîne de ${escapeHtml(
+                            streamer.displayName
+                        )} !`
+                }"
             >
-                <a
-                    class="recommended-streamer-avatar-link"
-                    href="${channelUrl}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Voir la chaîne Twitch de ${escapeHtml(
-                        streamer.displayName
+                <div
+                    class="recommended-streamer-circle"
+                    title="${escapeHtml(
+                        tooltipText
                     )}"
                 >
-                    <span class="recommended-streamer-avatar-wrapper">
-                        <img
-                            class="recommended-streamer-avatar"
-                            src="${escapeHtml(streamer.avatar)}"
-                            alt="Avatar Twitch de ${escapeHtml(
-                                streamer.displayName
-                            )}"
-                            loading="lazy"
-                            decoding="async"
-                        >
+                    <img
+                        class="recommended-streamer-avatar"
+                        src="${escapeHtml(
+                            avatarUrl
+                        )}"
+                        alt="Avatar Twitch de ${escapeHtml(
+                            streamer.displayName
+                        )}"
+                        loading="lazy"
+                        decoding="async"
+                        draggable="false"
+                    >
 
-                        <span
-                            class="recommended-streamer-status-dot"
-                            aria-hidden="true"
-                        ></span>
-                    </span>
-                </a>
-
-                <div class="recommended-streamer-content">
-                    <h3>
-                        <a
-                            href="${channelUrl}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            ${escapeHtml(streamer.displayName)}
-                        </a>
-                    </h3>
-
-                    <p class="recommended-streamer-status">
-                        <span aria-hidden="true">
-                            ${streamer.isLive ? "🔴" : "⚫"}
-                        </span>
-
-                        ${statusText}
-                    </p>
-
-                    ${gameText}
-
-                    <p class="recommended-streamer-description">
-                        ${escapeHtml(streamer.description)}
-                    </p>
-
-                    <div class="recommended-streamer-tags">
-                        ${createTags(streamer.tags)}
-                    </div>
 
                     <a
-                        class="recommended-streamer-button"
-                        href="${channelUrl}"
+                        class="recommended-streamer-external-link"
+                        href="${escapeHtml(
+                            channelUrl
+                        )}"
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label="Ouvrir la chaîne Twitch de ${escapeHtml(
+                            streamer.displayName
+                        )}"
+                        title="Voir la chaîne Twitch"
                     >
-                        Voir la chaîne
-                        <span aria-hidden="true">↗</span>
+                        <span aria-hidden="true">
+                            ↗
+                        </span>
                     </a>
+
+
+                    <span
+                        class="recommended-streamer-status-light"
+                        role="img"
+                        aria-label="${statusLabel}"
+                        title="${statusLabel}"
+                    ></span>
+
+
+                    ${
+                        isLive
+                            ? `
+                                <span
+                                    class="recommended-streamer-live-label"
+                                >
+                                    LIVE
+                                </span>
+                            `
+                            : ""
+                    }
                 </div>
+
+
+                <h3 class="recommended-streamer-name">
+                    ${escapeHtml(
+                        streamer.displayName
+                    )}
+                </h3>
             </article>
         `;
     }
 
 
+    /* =====================================================
+       AFFICHAGE
+    ====================================================== */
+
     /**
-     * Affiche toutes les cartes.
+     * Affiche les streamers.
+     *
+     * @param {object[]} streamers
      */
-    function renderRecommendedStreamers() {
-        if (recommendedStreamers.length === 0) {
+    function renderStreamers(streamers) {
+        if (
+            !Array.isArray(streamers) ||
+            streamers.length === 0
+        ) {
             streamersContainer.innerHTML = `
                 <p class="recommended-streamers-empty">
-                    Aucune suggestion pour le moment.
+                    Aucune chaîne recommandée
+                    disponible pour le moment.
                 </p>
             `;
+
+            if (resultsElement) {
+                resultsElement.textContent =
+                    "Aucune chaîne disponible.";
+            }
 
             return;
         }
 
-        /*
-         * Les streamers en direct apparaissent en premier.
-         */
-        const sortedStreamers = [
-            ...recommendedStreamers
-        ].sort((firstStreamer, secondStreamer) => {
-            return (
-                Number(secondStreamer.isLive) -
-                Number(firstStreamer.isLive)
-            );
-        });
-
         streamersContainer.innerHTML =
-            sortedStreamers
+            streamers
                 .map(createStreamerCard)
                 .join("");
+
+        if (resultsElement) {
+            const liveCount =
+                streamers.filter(
+                    (streamer) => {
+                        return streamer.live;
+                    }
+                ).length;
+
+            resultsElement.textContent =
+                `${streamers.length} chaîne${
+                    streamers.length > 1
+                        ? "s"
+                        : ""
+                } recommandée${
+                    streamers.length > 1
+                        ? "s"
+                        : ""
+                } — ${liveCount} en direct.`;
+        }
+
+        document.dispatchEvent(
+            new CustomEvent(
+                "couaxia:recommended-streamers-ready",
+                {
+                    detail: {
+                        streamers
+                    }
+                }
+            )
+        );
     }
 
 
-    renderRecommendedStreamers();
+    /**
+     * Affiche l’erreur.
+     *
+     * @param {string} message
+     */
+    function renderError(message) {
+        streamersContainer.innerHTML = `
+            <div
+                class="recommended-streamers-error"
+                role="alert"
+            >
+                <p>
+                    Impossible de charger
+                    les chaînes recommandées.
+                </p>
+
+                <button
+                    type="button"
+                    class="recommended-streamers-retry"
+                >
+                    Réessayer
+                </button>
+            </div>
+        `;
+
+        console.error(
+            "[Streamers recommandés]",
+            message
+        );
+
+        const retryButton =
+            streamersContainer.querySelector(
+                ".recommended-streamers-retry"
+            );
+
+        retryButton?.addEventListener(
+            "click",
+            loadRecommendedStreamers
+        );
+    }
+
+
+    /* =====================================================
+       API
+    ====================================================== */
+
+    async function loadRecommendedStreamers() {
+        streamersContainer.innerHTML = `
+            <p class="recommended-streamers-loading">
+                Chargement des chaînes Twitch…
+            </p>
+        `;
+
+        streamersContainer.setAttribute(
+            "aria-busy",
+            "true"
+        );
+
+        try {
+            const response =
+                await fetch(
+                    API_URL,
+                    {
+                        method:
+                            "GET",
+
+                        headers: {
+                            Accept:
+                                "application/json"
+                        },
+
+                        cache:
+                            "no-store"
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (
+                !response.ok ||
+                data.success !== true
+            ) {
+                throw new Error(
+                    data.details ||
+                    data.error ||
+                    `Erreur HTTP ${response.status}`
+                );
+            }
+
+            renderStreamers(
+                data.streamers
+            );
+        } catch (error) {
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : String(error);
+
+            renderError(
+                message
+            );
+        } finally {
+            streamersContainer.setAttribute(
+                "aria-busy",
+                "false"
+            );
+        }
+    }
+
+
+    loadRecommendedStreamers();
 });

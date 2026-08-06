@@ -4124,21 +4124,21 @@ body.light-mode .hero-tag-warning{
 }
 
 /* =========================================================
-   STREAMERS RECOMMANDÉS
+   STREAMERS RECOMMANDÉS — VERSION COMPACTE
 ========================================================= */
 
 .recommended-streamers-section {
-    width: min(94%, 1700px);
+    width: min(94%, 1750px);
     margin: 80px auto;
-    padding: clamp(25px, 4vw, 55px);
+    padding: clamp(25px, 4vw, 52px);
 
-    color: var(--text-color);
+    color: #ffffff;
 
     background:
         linear-gradient(
             135deg,
-            rgba(28, 7, 49, 0.92),
-            rgba(74, 11, 96, 0.88)
+            rgba(25, 7, 46, 0.94),
+            rgba(67, 10, 91, 0.90)
         );
 
     border: 3px solid var(--accent-color);
@@ -4151,15 +4151,15 @@ body.light-mode .hero-tag-warning{
     box-sizing: border-box;
 }
 
+
+/* =========================================================
+   EN-TÊTE
+========================================================= */
+
 .recommended-streamers-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 30px;
+    margin-bottom: 28px;
 
-    margin-bottom: 42px;
-
-    text-align: left;
+    text-align: center;
 }
 
 .recommended-streamers-eyebrow {
@@ -4167,10 +4167,11 @@ body.light-mode .hero-tag-warning{
 
     color: #ff5fc1;
 
-    font-size: 1rem;
-    font-weight: 800;
-    text-transform: uppercase;
+    font-size: 0.95rem;
+    font-style: normal;
+    font-weight: 900;
     letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
 .recommended-streamers-header h2 {
@@ -4187,137 +4188,76 @@ body.light-mode .hero-tag-warning{
 }
 
 .recommended-streamers-description {
-    max-width: 800px;
-    margin: 14px 0 0;
+    max-width: 750px;
+    margin: 14px auto 0;
 
-    color: rgba(255, 255, 255, 0.82);
+    color: rgba(255, 255, 255, 0.78);
 
-    font-size: 1.05rem;
-    line-height: 1.65;
+    font-size: 1rem;
+    font-style: normal;
+    line-height: 1.6;
 }
 
-.recommended-streamers-twitch-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+.recommended-streamers-results {
+    min-height: 22px;
+    margin: 0 0 28px;
 
-    flex: 0 0 auto;
+    color: rgba(255, 255, 255, 0.70);
 
-    padding: 14px 22px;
-
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.08);
-
-    border: 2px solid rgba(255, 255, 255, 0.22);
-    border-radius: 999px;
-
-    font-weight: 800;
-    text-decoration: none;
-    white-space: nowrap;
-
-    transition:
-        transform 0.25s ease,
-        background-color 0.25s ease,
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
-}
-
-.recommended-streamers-twitch-link:hover {
-    color: #ffffff;
-    background: rgba(145, 70, 255, 0.30);
-
-    border-color: #a970ff;
-
-    transform: translateY(-3px);
-
-    box-shadow: 0 0 20px rgba(169, 112, 255, 0.35);
+    font-size: 0.9rem;
+    font-style: normal;
+    font-weight: 700;
+    text-align: center;
 }
 
 
 /* =========================================================
-   GRILLE
+   GRILLE COMPACTE
 ========================================================= */
 
 .recommended-streamers-list {
     display: grid;
 
     grid-template-columns:
-        repeat(5, minmax(170px, 1fr));
+        repeat(
+            auto-fit,
+            minmax(135px, 1fr)
+        );
 
-    gap: 28px;
+    align-items: start;
+    justify-items: center;
+    gap: 34px 24px;
+
+    width: 100%;
 }
 
 
 /* =========================================================
-   CARTE
+   ITEM
 ========================================================= */
 
-.recommended-streamer-card {
-    position: relative;
-
+.recommended-streamer-item {
     display: flex;
     flex-direction: column;
     align-items: center;
 
+    width: 100%;
     min-width: 0;
-    padding: 25px 18px;
-
-    overflow: hidden;
-
-    background: rgba(11, 5, 22, 0.75);
-
-    border: 2px solid rgba(255, 255, 255, 0.14);
-    border-radius: 28px;
+    max-width: 180px;
 
     text-align: center;
-
-    box-shadow:
-        0 12px 25px rgba(0, 0, 0, 0.28);
-
-    transition:
-        transform 0.30s ease,
-        border-color 0.30s ease,
-        box-shadow 0.30s ease;
-}
-
-.recommended-streamer-card:hover {
-    transform: translateY(-7px);
-
-    border-color: rgba(34, 242, 239, 0.72);
-
-    box-shadow:
-        0 18px 32px rgba(0, 0, 0, 0.34),
-        0 0 20px rgba(34, 242, 239, 0.18);
-}
-
-.recommended-streamer-card.is-live {
-    border-color: rgba(255, 62, 120, 0.75);
-
-    box-shadow:
-        0 12px 28px rgba(0, 0, 0, 0.30),
-        0 0 18px rgba(255, 62, 120, 0.22);
 }
 
 
 /* =========================================================
-   AVATAR
+   CERCLE
 ========================================================= */
 
-.recommended-streamer-avatar-link {
-    display: block;
-
-    color: inherit;
-    text-decoration: none;
-}
-
-.recommended-streamer-avatar-wrapper {
+.recommended-streamer-circle {
     position: relative;
 
-    display: block;
-
-    width: 145px;
-    height: 145px;
+    width: clamp(115px, 10vw, 155px);
+    aspect-ratio: 1;
 
     padding: 5px;
 
@@ -4325,32 +4265,36 @@ body.light-mode .hero-tag-warning{
         linear-gradient(
             135deg,
             #22f2ef,
-            #a970ff,
+            #8774ff,
             #ff5fc1
         );
 
     border-radius: 50%;
 
     box-shadow:
-        0 0 18px rgba(34, 242, 239, 0.22);
+        0 0 14px rgba(34, 242, 239, 0.24),
+        0 0 24px rgba(255, 95, 193, 0.15);
+
+    transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease;
 }
 
-.recommended-streamer-card.is-live
-.recommended-streamer-avatar-wrapper {
-    background:
-        linear-gradient(
-            135deg,
-            #ff1744,
-            #ff5fc1,
-            #a970ff
-        );
+.recommended-streamer-item:hover
+.recommended-streamer-circle {
+    transform:
+        translateY(-5px)
+        scale(1.04);
 
-    animation:
-        recommendedStreamerLivePulse
-        2s
-        ease-in-out
-        infinite;
+    box-shadow:
+        0 0 22px rgba(34, 242, 239, 0.42),
+        0 0 34px rgba(255, 95, 193, 0.24);
 }
+
+
+/* =========================================================
+   AVATAR
+========================================================= */
 
 .recommended-streamer-avatar {
     display: block;
@@ -4359,170 +4303,253 @@ body.light-mode .hero-tag-warning{
     height: 100%;
 
     object-fit: cover;
+    object-position: center;
 
     background: #13061f;
 
     border: 5px solid #13061f;
     border-radius: 50%;
-}
 
-.recommended-streamer-status-dot {
-    position: absolute;
-    right: 8px;
-    bottom: 12px;
-
-    width: 23px;
-    height: 23px;
-
-    background: #707070;
-
-    border: 4px solid #13061f;
-    border-radius: 50%;
-}
-
-.recommended-streamer-card.is-live
-.recommended-streamer-status-dot {
-    background: #ff1744;
-
-    box-shadow: 0 0 12px #ff1744;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
 }
 
 
 /* =========================================================
-   CONTENU
+   LIEN TWITCH ↗
 ========================================================= */
 
-.recommended-streamer-content {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    align-items: center;
+.recommended-streamer-external-link {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    z-index: 5;
 
-    width: 100%;
-}
-
-.recommended-streamer-content h3 {
-    width: 100%;
-    margin: 20px 0 5px;
-
-    font-size: 1.25rem;
-    line-height: 1.3;
-
-    overflow-wrap: anywhere;
-}
-
-.recommended-streamer-content h3 a {
-    color: #ffffff;
-    text-decoration: none;
-}
-
-.recommended-streamer-content h3 a:hover {
-    color: #22f2ef;
-}
-
-.recommended-streamer-status {
-    margin: 0 0 10px;
-
-    color: rgba(255, 255, 255, 0.75);
-
-    font-size: 0.95rem;
-    font-style: normal;
-    font-weight: 700;
-}
-
-.recommended-streamer-card.is-live
-.recommended-streamer-status {
-    color: #ff8bab;
-}
-
-.recommended-streamer-game {
-    display: inline-block;
-
-    margin-bottom: 10px;
-    padding: 6px 10px;
-
-    color: #ffffff;
-    background: rgba(145, 70, 255, 0.28);
-
-    border: 1px solid rgba(169, 112, 255, 0.55);
-    border-radius: 999px;
-
-    font-size: 0.82rem;
-    font-weight: 700;
-}
-
-.recommended-streamer-description {
-    flex: 1;
-
-    margin: 8px 0 16px;
-
-    color: rgba(255, 255, 255, 0.74);
-
-    font-size: 0.92rem;
-    line-height: 1.55;
-}
-
-.recommended-streamer-tags {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 7px;
-
-    margin-bottom: 20px;
-}
-
-.recommended-streamer-tag {
-    padding: 5px 9px;
-
-    color: #dffeff;
-    background: rgba(34, 242, 239, 0.10);
-
-    border: 1px solid rgba(34, 242, 239, 0.28);
-    border-radius: 999px;
-
-    font-size: 0.75rem;
-    font-weight: 700;
-}
-
-.recommended-streamer-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
 
-    width: 100%;
-    min-height: 45px;
-    padding: 10px 14px;
+    width: 35px;
+    height: 35px;
 
     color: #ffffff;
-    background:
-        linear-gradient(
-            135deg,
-            #6d00a3,
-            #9146ff
-        );
+    background: rgba(48, 9, 73, 0.95);
 
-    border: 2px solid transparent;
-    border-radius: 14px;
+    border: 2px solid #22f2ef;
+    border-radius: 50%;
 
-    font-weight: 800;
+    font-size: 1.2rem;
+    font-weight: 900;
+    line-height: 1;
     text-decoration: none;
 
+    box-shadow:
+        0 0 12px rgba(34, 242, 239, 0.45);
+
     transition:
-        transform 0.25s ease,
+        color 0.25s ease,
+        background-color 0.25s ease,
         border-color 0.25s ease,
+        transform 0.25s ease,
         box-shadow 0.25s ease;
 }
 
-.recommended-streamer-button:hover {
-    color: #ffffff;
+.recommended-streamer-external-link:hover {
+    color: #230030;
+    background: #22f2ef;
 
-    border-color: #22f2ef;
+    border-color: #ffffff;
 
-    transform: scale(1.03);
+    transform:
+        translateY(-2px)
+        scale(1.08);
 
     box-shadow:
-        0 0 17px rgba(34, 242, 239, 0.28);
+        0 0 18px rgba(34, 242, 239, 0.72);
+}
+
+.recommended-streamer-external-link:focus-visible {
+    outline: 3px solid #ff5fc1;
+    outline-offset: 4px;
+}
+
+
+/* =========================================================
+   LUMIÈRE DU STATUT
+========================================================= */
+
+.recommended-streamer-status-light {
+    position: absolute;
+    right: 5px;
+    bottom: 7px;
+    z-index: 5;
+
+    width: 25px;
+    height: 25px;
+
+    background: #818181;
+
+    border: 4px solid #13061f;
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 7px rgba(129, 129, 129, 0.50);
+
+    transition:
+        background-color 0.30s ease,
+        box-shadow 0.30s ease;
+}
+
+
+/* En ligne */
+
+.recommended-streamer-item.is-live
+.recommended-streamer-status-light {
+    background: #33e878;
+
+    box-shadow:
+        0 0 10px rgba(51, 232, 120, 0.90),
+        0 0 20px rgba(51, 232, 120, 0.55);
+
+    animation:
+        recommendedStreamerOnlinePulse
+        1.8s
+        ease-in-out
+        infinite;
+}
+
+
+/* =========================================================
+   PETIT BADGE LIVE
+========================================================= */
+
+.recommended-streamer-live-label {
+    position: absolute;
+    left: 50%;
+    bottom: -9px;
+    z-index: 6;
+
+    padding: 4px 9px;
+
+    color: #ffffff;
+    background: #e9194b;
+
+    border: 2px solid #13061f;
+    border-radius: 999px;
+
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+
+    transform: translateX(-50%);
+
+    box-shadow:
+        0 0 11px rgba(233, 25, 75, 0.55);
+}
+
+
+/* =========================================================
+   PSEUDO
+========================================================= */
+
+.recommended-streamer-name {
+    width: 100%;
+    margin: 16px 0 0;
+
+    color: #ffffff;
+
+    font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+    font-weight: 800;
+    line-height: 1.3;
+    text-align: center;
+
+    overflow-wrap: anywhere;
+
+    transition:
+        color 0.25s ease,
+        text-shadow 0.25s ease;
+}
+
+.recommended-streamer-item:hover
+.recommended-streamer-name {
+    color: #22f2ef;
+
+    text-shadow:
+        0 0 8px rgba(34, 242, 239, 0.32);
+}
+
+
+/* =========================================================
+   CHARGEMENT ET ERREUR
+========================================================= */
+
+.recommended-streamers-loading,
+.recommended-streamers-empty {
+    grid-column: 1 / -1;
+
+    width: 100%;
+    padding: 38px 20px;
+
+    color: rgba(255, 255, 255, 0.82);
+
+    font-style: normal;
+    font-weight: 700;
+    text-align: center;
+}
+
+.recommended-streamers-error {
+    grid-column: 1 / -1;
+
+    width: min(100%, 650px);
+    padding: 30px 20px;
+
+    color: #ffffff;
+    background: rgba(91, 10, 68, 0.62);
+
+    border: 2px solid rgba(255, 95, 193, 0.55);
+    border-radius: 20px;
+
+    text-align: center;
+}
+
+.recommended-streamers-error p {
+    margin: 0 0 16px;
+
+    font-style: normal;
+}
+
+.recommended-streamers-retry {
+    min-height: 44px;
+    margin: 0;
+    padding: 10px 21px;
+
+    color: #ffffff;
+    background: #6d00a3;
+
+    border: 2px solid #22f2ef;
+    border-radius: 13px;
+
+    font: inherit;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        color 0.25s ease,
+        background-color 0.25s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.recommended-streamers-retry:hover {
+    color: #230030;
+    background: #22f2ef;
+
+    transform: scale(1.04);
+
+    box-shadow:
+        0 0 17px rgba(34, 242, 239, 0.42);
 }
 
 
@@ -4537,8 +4564,8 @@ html[data-theme="light"]
     background:
         linear-gradient(
             135deg,
-            rgba(255, 246, 253, 0.96),
-            rgba(240, 221, 251, 0.94)
+            rgba(255, 248, 253, 0.96),
+            rgba(242, 225, 251, 0.94)
         );
 
     border-color: #6d00a3;
@@ -4556,26 +4583,10 @@ html[data-theme="light"]
 }
 
 html[data-theme="light"]
-.recommended-streamers-description {
+.recommended-streamers-description,
+html[data-theme="light"]
+.recommended-streamers-results {
     color: #654c70;
-}
-
-html[data-theme="light"]
-.recommended-streamers-twitch-link {
-    color: #4b115d;
-    background: rgba(255, 255, 255, 0.72);
-
-    border-color: rgba(109, 0, 163, 0.28);
-}
-
-html[data-theme="light"]
-.recommended-streamer-card {
-    background: rgba(255, 255, 255, 0.84);
-
-    border-color: rgba(109, 0, 163, 0.22);
-
-    box-shadow:
-        0 10px 24px rgba(65, 18, 86, 0.14);
 }
 
 html[data-theme="light"]
@@ -4585,28 +4596,37 @@ html[data-theme="light"]
 }
 
 html[data-theme="light"]
-.recommended-streamer-status-dot {
+.recommended-streamer-status-light {
     border-color: #ffffff;
 }
 
 html[data-theme="light"]
-.recommended-streamer-content h3 a {
+.recommended-streamer-external-link {
+    color: #ffffff;
+    background: rgba(109, 0, 163, 0.94);
+
+    border-color: #ffffff;
+
+    box-shadow:
+        0 0 11px rgba(109, 0, 163, 0.35);
+}
+
+html[data-theme="light"]
+.recommended-streamer-name {
     color: #4b115d;
 }
 
 html[data-theme="light"]
-.recommended-streamer-status,
-html[data-theme="light"]
-.recommended-streamer-description {
-    color: #654c70;
+.recommended-streamer-item:hover
+.recommended-streamer-name {
+    color: #008c91;
 }
 
 html[data-theme="light"]
-.recommended-streamer-tag {
-    color: #006f73;
-    background: rgba(0, 174, 179, 0.10);
-
-    border-color: rgba(0, 174, 179, 0.30);
+.recommended-streamers-loading,
+html[data-theme="light"]
+.recommended-streamers-empty {
+    color: #654c70;
 }
 
 
@@ -4614,241 +4634,102 @@ html[data-theme="light"]
    RESPONSIVE
 ========================================================= */
 
-@media (max-width: 1350px) {
-    .recommended-streamers-list {
-        grid-template-columns:
-            repeat(3, minmax(190px, 1fr));
-    }
-}
-
 @media (max-width: 850px) {
-    .recommended-streamers-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
     .recommended-streamers-list {
         grid-template-columns:
-            repeat(2, minmax(180px, 1fr));
+            repeat(
+                auto-fit,
+                minmax(120px, 1fr)
+            );
+
+        gap: 30px 18px;
     }
 }
 
-@media (max-width: 560px) {
+
+@media (max-width: 550px) {
     .recommended-streamers-section {
         width: 95%;
-        padding: 25px 16px;
+        padding: 28px 14px;
 
         border-radius: 25px;
     }
 
     .recommended-streamers-list {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 28px 12px;
+    }
+
+    .recommended-streamer-item {
+        max-width: 150px;
+    }
+
+    .recommended-streamer-circle {
+        width: 112px;
+    }
+
+    .recommended-streamer-external-link {
+        top: -5px;
+        right: -5px;
+
+        width: 31px;
+        height: 31px;
+
+        font-size: 1.05rem;
+    }
+
+    .recommended-streamer-status-light {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+
+@media (max-width: 350px) {
+    .recommended-streamers-list {
         grid-template-columns: 1fr;
-    }
-
-    .recommended-streamer-card {
-        width: min(100%, 420px);
-        margin-inline: auto;
-    }
-
-    .recommended-streamer-avatar-wrapper {
-        width: 130px;
-        height: 130px;
-    }
-
-    .recommended-streamers-twitch-link {
-        width: 100%;
     }
 }
 
 
 /* =========================================================
-   ANIMATION LIVE
+   ANIMATION DU STATUT EN LIGNE
 ========================================================= */
 
-@keyframes recommendedStreamerLivePulse {
+@keyframes recommendedStreamerOnlinePulse {
     0%,
     100% {
         box-shadow:
-            0 0 12px rgba(255, 23, 68, 0.30);
+            0 0 8px rgba(51, 232, 120, 0.70),
+            0 0 14px rgba(51, 232, 120, 0.35);
     }
 
     50% {
         box-shadow:
-            0 0 26px rgba(255, 23, 68, 0.70);
+            0 0 13px rgba(51, 232, 120, 1),
+            0 0 25px rgba(51, 232, 120, 0.72);
     }
 }
-/* =========================================================
-   INFORMATIONS DU LIVE RECOMMANDÉ
-========================================================= */
-
-.recommended-streamers-results {
-    min-height: 22px;
-    margin: -25px 0 35px;
-
-    color: rgba(255, 255, 255, 0.72);
-
-    font-size: 0.95rem;
-    font-style: normal;
-    font-weight: 700;
-    text-align: left;
-}
-
-.recommended-streamer-live-title {
-    display: -webkit-box;
-
-    width: 100%;
-    margin: 2px 0 10px;
-
-    overflow: hidden;
-
-    color: #ffffff;
-
-    font-size: 0.88rem;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 1.4;
-    text-align: center;
-
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-}
-
-.recommended-streamer-viewers,
-.recommended-streamer-started-at {
-    margin: 0 0 7px;
-
-    color: #ff9dbb;
-
-    font-size: 0.82rem;
-    font-style: normal;
-    font-weight: 700;
-}
-
-.recommended-streamer-started-at {
-    color: rgba(255, 255, 255, 0.65);
-}
-
-.recommended-streamer-mature {
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    z-index: 4;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 32px;
-    height: 32px;
-
-    background: rgba(35, 5, 51, 0.94);
-
-    border: 2px solid #ff5fc1;
-    border-radius: 50%;
-
-    font-size: 0.95rem;
-
-    box-shadow:
-        0 0 12px rgba(255, 95, 193, 0.45);
-}
-
-.recommended-streamers-loading,
-.recommended-streamers-empty {
-    grid-column: 1 / -1;
-
-    padding: 40px 20px;
-
-    color: rgba(255, 255, 255, 0.82);
-
-    font-size: 1.05rem;
-    font-style: normal;
-    font-weight: 700;
-    text-align: center;
-}
-
-.recommended-streamers-error {
-    grid-column: 1 / -1;
-
-    padding: 35px 20px;
-
-    color: #ffffff;
-    text-align: center;
-
-    background: rgba(90, 10, 65, 0.55);
-
-    border: 2px solid rgba(255, 95, 193, 0.55);
-    border-radius: 22px;
-}
-
-.recommended-streamers-error p {
-    margin: 0 0 18px;
-
-    font-style: normal;
-}
-
-.recommended-streamers-retry {
-    min-height: 45px;
-    margin: 0;
-    padding: 10px 22px;
-
-    color: #ffffff;
-    background: #6d00a3;
-
-    border: 2px solid #22f2ef;
-    border-radius: 14px;
-
-    font: inherit;
-    font-weight: 800;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.25s ease,
-        background-color 0.25s ease,
-        box-shadow 0.25s ease;
-}
-
-.recommended-streamers-retry:hover {
-    color: #22002f;
-    background: #22f2ef;
-
-    transform: scale(1.04);
-
-    box-shadow:
-        0 0 17px rgba(34, 242, 239, 0.45);
-}
 
 
 /* =========================================================
-   MODE JOUR
+   ACCESSIBILITÉ
 ========================================================= */
 
-html[data-theme="light"]
-.recommended-streamers-results {
-    color: #654c70;
-}
+@media (prefers-reduced-motion: reduce) {
+    .recommended-streamer-circle,
+    .recommended-streamer-external-link,
+    .recommended-streamer-status-light,
+    .recommended-streamer-name {
+        transition: none;
+        animation: none;
+    }
 
-html[data-theme="light"]
-.recommended-streamer-live-title {
-    color: #4b115d;
-}
-
-html[data-theme="light"]
-.recommended-streamer-started-at {
-    color: #654c70;
-}
-
-html[data-theme="light"]
-.recommended-streamers-loading,
-html[data-theme="light"]
-.recommended-streamers-empty {
-    color: #654c70;
-}
-
-html[data-theme="light"]
-.recommended-streamers-error {
-    color: #4b115d;
-    background: rgba(255, 232, 247, 0.88);
-
-    border-color: rgba(109, 0, 163, 0.32);
+    .recommended-streamer-item:hover
+    .recommended-streamer-circle,
+    .recommended-streamer-external-link:hover {
+        transform: none;
+    }
 }
