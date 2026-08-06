@@ -805,16 +805,16 @@ html[data-theme="dark"]
 
 #credits-generated-galleries
 .artist-card
-.image-container img,
+.image-container > img,
 #credits-generated-galleries
 .artist-card
-.image-container video,
+.image-container > video,
 .credits-gallery-section
 .artist-card
-.image-container img,
+.image-container > img,
 .credits-gallery-section
 .artist-card
-.image-container video {
+.image-container > video {
     display: block;
 
     width: 100%;
@@ -1023,16 +1023,16 @@ html[data-theme="dark"]
 
     #credits-generated-galleries
     .artist-card
-    .image-container:hover img,
+    .image-container:hover > img:not(.image-watermark-logo),
     #credits-generated-galleries
     .artist-card
-    .image-container:hover video,
+    .image-container:hover > video,
     .credits-gallery-section
     .artist-card
-    .image-container:hover img,
+    .image-container:hover > img:not(.image-watermark-logo),
     .credits-gallery-section
     .artist-card
-    .image-container:hover video {
+    .image-container:hover > video {
         width: 100%;
         height: 100%;
 
@@ -1361,5 +1361,314 @@ html[data-theme="dark"] .theme-icon {
     .image-container:hover img,
     .image-container:hover video {
         transform: none !important;
+    }
+}
+
+/* =========================================================
+   22. WATERMARK TEXTE DES ILLUSTRATIONS
+========================================================= */
+
+.image-container {
+    position: relative;
+}
+
+
+/* =========================================================
+   BANDEAU TOUJOURS VISIBLE HORS ZOOM
+========================================================= */
+
+.image-watermark-message {
+    position: absolute;
+    left: 50%;
+    bottom: 22px;
+    z-index: 60;
+
+    width: min(82%, 480px);
+
+    padding: 16px 22px;
+
+    color: #ffffff;
+    text-align: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(25, 5, 47, 0.86),
+            rgba(88, 7, 111, 0.80)
+        );
+
+    border: 2px solid rgba(34, 242, 239, 0.78);
+    border-radius: 18px;
+
+    box-shadow:
+        0 8px 22px rgba(0, 0, 0, 0.45),
+        0 0 15px rgba(34, 242, 239, 0.20);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    opacity: 1;
+    visibility: visible;
+
+    transform: translateX(-50%);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.30s ease,
+        visibility 0.30s ease,
+        transform 0.30s ease;
+}
+
+
+/* =========================================================
+   TITRE © COUAXIA
+========================================================= */
+
+.image-watermark-title {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #22f2ef;
+
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(1.2rem, 2vw, 1.7rem);
+    font-weight: 900;
+    line-height: 1.2;
+
+    text-shadow:
+        0 0 10px rgba(34, 242, 239, 0.70);
+}
+
+
+/* =========================================================
+   NOM DE L’ARTISTE
+========================================================= */
+
+.image-watermark-artist {
+    display: block;
+
+    color: #ffffff;
+
+    font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   TRAITS DÉCORATIFS
+========================================================= */
+
+.image-watermark-message::before,
+.image-watermark-message::after {
+    display: block;
+
+    width: 70%;
+    height: 1px;
+
+    margin-inline: auto;
+
+    content: "";
+
+    background:
+        linear-gradient(
+            to right,
+            transparent,
+            rgba(34, 242, 239, 0.82),
+            transparent
+        );
+}
+
+.image-watermark-message::before {
+    margin-bottom: 10px;
+}
+
+.image-watermark-message::after {
+    margin-top: 10px;
+}
+
+
+/* =========================================================
+   RESPONSIVE MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+    .image-watermark-message {
+        bottom: 16px;
+
+        width: 90%;
+
+        padding: 12px 14px;
+
+        border-radius: 14px;
+    }
+
+    .image-watermark-title {
+        font-size: 1.05rem;
+    }
+
+    .image-watermark-artist {
+        font-size: 0.82rem;
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITÉ
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .image-watermark-message {
+        transition: none;
+    }
+}
+/* =========================================================
+   ILLUSTRATIONS RÉSERVÉES AUX ADULTES
+========================================================= */
+
+/*
+ * L’œuvre principale est floutée.
+ * Le sélecteur direct ">" évite de flouter
+ * les autres éléments ajoutés dans le conteneur.
+ */
+
+.artist-card[data-sensitive="true"]
+.image-container
+> img,
+.artist-card[data-sensitive="true"]
+.image-container
+> video {
+    filter:
+        blur(22px)
+        brightness(0.55);
+
+    transform: scale(1.08);
+
+    transition:
+        filter 0.45s ease,
+        transform 0.45s ease;
+}
+
+
+/* Voile sombre placé devant l’illustration */
+
+.artist-card[data-sensitive="true"]
+.image-container::before {
+    position: absolute;
+    z-index: 45;
+    inset: 0;
+
+    content: "";
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(68, 4, 82, 0.18),
+            rgba(7, 1, 15, 0.68)
+        );
+
+    pointer-events: none;
+
+    opacity: 1;
+
+    transition:
+        opacity 0.35s ease,
+        visibility 0.35s ease;
+}
+
+
+/* Avertissement central */
+
+.artist-card[data-sensitive="true"]
+.image-container::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 50;
+
+    width: min(82%, 390px);
+
+    padding: 20px 25px;
+
+    content:
+        "🔞  CONTENU +18\A"
+        "Survolez pour afficher l’illustration";
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(65, 6, 91, 0.94),
+            rgba(130, 8, 91, 0.92)
+        );
+
+    border: 3px solid #ff5fc1;
+    border-radius: 20px;
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.55),
+        0 0 22px rgba(255, 95, 193, 0.45);
+
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(1rem, 2vw, 1.35rem);
+    font-weight: 900;
+    line-height: 1.6;
+    text-align: center;
+    white-space: pre-line;
+
+    opacity: 1;
+
+    transform:
+        translate(-50%, -50%)
+        scale(1);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.35s ease,
+        visibility 0.35s ease,
+        transform 0.35s ease;
+}
+
+
+/* =========================================================
+   RETRAIT DU FLOU PENDANT LE ZOOM
+========================================================= */
+
+@media (hover: hover) and (pointer: fine) {
+    .artist-card[data-sensitive="true"]
+    .image-container:hover
+    > img,
+
+    .artist-card[data-sensitive="true"]
+    .image-container:hover
+    > video {
+        filter: none;
+
+        /*
+         * Ton zoom utilise déjà scale(0.96).
+         */
+        transform: scale(0.96);
+    }
+
+
+    .artist-card[data-sensitive="true"]
+    .image-container:hover::before,
+
+    .artist-card[data-sensitive="true"]
+    .image-container:hover::after {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+
+    .artist-card[data-sensitive="true"]
+    .image-container:hover::after {
+        transform:
+            translate(-50%, -50%)
+            scale(0.92);
     }
 }

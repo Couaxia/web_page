@@ -1,156 +1,189 @@
 "use strict";
 
-// ==========================================
-// Protection du site — Couaxia
-// ==========================================
+/* =========================================================
+   PROTECTION LÉGÈRE DES MÉDIAS — COUAXIA
+========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+    /**
+     * Sélecteurs qui doivent rester entièrement interactifs.
+     */
+    const interactiveSelector = [
+        "a",
+        "button",
+        "input",
+        "textarea",
+        "select",
+        "option",
+        "label",
+        "[contenteditable='true']",
+        ".oc-color"
+    ].join(", ");
 
-    // ==========================================
-    // PROTECTION DES IMAGES
-    // ==========================================
 
-    document.querySelectorAll("img").forEach((image) => {
+    /**
+     * Vérifie si la cible appartient à un élément interactif.
+     *
+     * @param {EventTarget|null} target
+     * @returns {boolean}
+     */
+    function isInteractiveTarget(target) {
+        return (
+            target instanceof Element &&
+            Boolean(target.closest(interactiveSelector))
+        );
+    }
 
-        image.setAttribute("draggable", "false");
 
-        image.addEventListener("contextmenu", (event) => {
+    /**
+     * Protège une image ou une vidéo.
+     *
+     * Cette fonction peut être appelée plusieurs fois
+     * sans ajouter plusieurs fois les mêmes écouteurs.
+     *
+     * @param {HTMLImageElement|HTMLVideoElement} media
+     */
+    function protectMedia(media) {
+        if (media.dataset.protectionReady === "true") {
+            return;
+        }
+
+        media.dataset.protectionReady = "true";
+
+        media.setAttribute("draggable", "false");
+
+        /*
+         * Évite le menu contextuel uniquement sur le média.
+         */
+        media.addEventListener("contextmenu", (event) => {
             event.preventDefault();
         });
 
-        image.addEventListener("dragstart", (event) => {
+        /*
+         * Empêche le glisser-déposer du fichier.
+         */
+        media.addEventListener("dragstart", (event) => {
             event.preventDefault();
         });
 
-        image.addEventListener("selectstart", (event) => {
+        /*
+         * Évite la sélection involontaire.
+         */
+        media.addEventListener("selectstart", (event) => {
             event.preventDefault();
         });
+    }
 
+
+    /**
+     * Protège tous les médias présents dans un conteneur.
+     *
+     * @param {ParentNode} root
+     */
+    function protectMediaInside(root) {
+        root
+            .querySelectorAll("img, video")
+            .forEach((media) => {
+                if (
+                    media instanceof HTMLImageElement ||
+                    media instanceof HTMLVideoElement
+                ) {
+                    protectMedia(media);
+                }
+            });
+    }
+
+
+    /*
+     * Médias présents au chargement initial.
+     */
+    protectMediaInside(document);
+
+
+    /*
+     * Ton fichier credits-gallery.js crée et clone des cartes
+     * après le chargement de la page.
+     *
+     * MutationObserver protège automatiquement les nouveaux médias.
+     */
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (!(node instanceof Element)) {
+                    return;
+                }
+
+                if (
+                    node.matches("img, video") &&
+                    (
+                        node instanceof HTMLImageElement ||
+                        node instanceof HTMLVideoElement
+                    )
+                ) {
+                    protectMedia(node);
+                }
+
+                protectMediaInside(node);
+            });
+        });
     });
 
-});
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 
 
-// ==========================================
-// CLIC DROIT SUR LA PAGE
-// ==========================================
+    /* =====================================================
+       GLISSER-DÉPOSER GLOBAL
+    ====================================================== */
 
-document.addEventListener("contextmenu", (event) => {
+    document.addEventListener("dragstart", (event) => {
+        const target = event.target;
 
-    /*
-     * Autorise les interactions sur les couleurs
-     * de la palette.
-     */
-    if (event.target.closest(".oc-color")) {
-        return;
-    }
+        if (!(target instanceof Element)) {
+            return;
+        }
 
-    event.preventDefault();
+        /*
+         * Les liens, boutons et champs restent utilisables.
+         */
+        if (isInteractiveTarget(target)) {
+            return;
+        }
 
-});
-
-
-// ==========================================
-// RACCOURCIS CLAVIER
-// ==========================================
-
-document.addEventListener("keydown", (event) => {
-
-    const target = event.target;
-
-    /*
-     * Ne bloque pas les interactions dans :
-     * - les champs de texte ;
-     * - les zones de texte ;
-     * - les éléments modifiables ;
-     * - les boutons de couleur.
-     */
-    const isEditableElement =
-        target instanceof HTMLElement &&
-        (
-            target.matches("input, textarea, select") ||
-            target.isContentEditable ||
-            target.closest(".oc-color")
-        );
-
-    if (isEditableElement) {
-        return;
-    }
+        /*
+         * On bloque uniquement les médias.
+         */
+        if (target.closest("img, video")) {
+            event.preventDefault();
+        }
+    });
 
 
-    // F12
+    /* =====================================================
+       RACCOURCI D’ENREGISTREMENT DES IMAGES
+    ====================================================== */
 
-    if (event.key === "F12") {
-        event.preventDefault();
-        return;
-    }
+    document.addEventListener("keydown", (event) => {
+        const target = event.target;
 
+        if (isInteractiveTarget(target)) {
+            return;
+        }
 
-    // Ctrl + Shift + I
+        /*
+         * Ctrl + S / Cmd + S
+         *
+         * Tu peux retirer ce bloc si tu souhaites laisser
+         * le navigateur enregistrer normalement la page.
+         */
+        const isSaveShortcut =
+            (event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase() === "s";
 
-    if (
-        event.ctrlKey &&
-        event.shiftKey &&
-        event.key.toLowerCase() === "i"
-    ) {
-        event.preventDefault();
-        return;
-    }
-
-
-    // Ctrl + Shift + J
-
-    if (
-        event.ctrlKey &&
-        event.shiftKey &&
-        event.key.toLowerCase() === "j"
-    ) {
-        event.preventDefault();
-        return;
-    }
-
-
-    // Ctrl + U
-
-    if (
-        event.ctrlKey &&
-        event.key.toLowerCase() === "u"
-    ) {
-        event.preventDefault();
-        return;
-    }
-
-
-    // Ctrl + S
-
-    if (
-        event.ctrlKey &&
-        event.key.toLowerCase() === "s"
-    ) {
-        event.preventDefault();
-    }
-
-});
-
-
-// ==========================================
-// GLISSER-DÉPOSER
-// ==========================================
-
-document.addEventListener("dragstart", (event) => {
-
-    /*
-     * On laisse les boutons et contrôles interactifs
-     * fonctionner normalement.
-     */
-    if (
-        event.target.closest(
-            "button, a, input, textarea, select, .oc-color"
-        )
-    ) {
-        return;
-    }
-
-    event.preventDefault();
-
+        if (isSaveShortcut) {
+            event.preventDefault();
+        }
+    });
 });

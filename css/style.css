@@ -1058,3 +1058,20 @@ img, video {
 .mascotte-bulle {
     max-width: min(320px, calc(100vw - 40px));
 }
+
+/* =========================================================
+   PROTECTION VISUELLE DES MÉDIAS
+========================================================= */
+
+img,
+video {
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.image-container,
+.artist-card img,
+.artist-card video {
+    -webkit-touch-callout: none;
+}
