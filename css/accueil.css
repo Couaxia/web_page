@@ -4122,3 +4122,733 @@ body.light-mode .hero-tag-warning{
         font-size: 0.9rem;
     }
 }
+
+/* =========================================================
+   STREAMERS RECOMMANDÉS
+========================================================= */
+
+.recommended-streamers-section {
+    width: min(94%, 1700px);
+    margin: 80px auto;
+    padding: clamp(25px, 4vw, 55px);
+
+    color: var(--text-color);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(28, 7, 49, 0.92),
+            rgba(74, 11, 96, 0.88)
+        );
+
+    border: 3px solid var(--accent-color);
+    border-radius: 38px;
+
+    box-shadow:
+        0 20px 45px rgba(0, 0, 0, 0.35),
+        0 0 24px rgba(34, 242, 239, 0.18);
+
+    box-sizing: border-box;
+}
+
+.recommended-streamers-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+
+    margin-bottom: 42px;
+
+    text-align: left;
+}
+
+.recommended-streamers-eyebrow {
+    margin: 0 0 8px;
+
+    color: #ff5fc1;
+
+    font-size: 1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.recommended-streamers-header h2 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    line-height: 1.15;
+
+    text-shadow:
+        0 0 12px rgba(34, 242, 239, 0.35);
+}
+
+.recommended-streamers-description {
+    max-width: 800px;
+    margin: 14px 0 0;
+
+    color: rgba(255, 255, 255, 0.82);
+
+    font-size: 1.05rem;
+    line-height: 1.65;
+}
+
+.recommended-streamers-twitch-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    flex: 0 0 auto;
+
+    padding: 14px 22px;
+
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+
+    border: 2px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+
+    transition:
+        transform 0.25s ease,
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.recommended-streamers-twitch-link:hover {
+    color: #ffffff;
+    background: rgba(145, 70, 255, 0.30);
+
+    border-color: #a970ff;
+
+    transform: translateY(-3px);
+
+    box-shadow: 0 0 20px rgba(169, 112, 255, 0.35);
+}
+
+
+/* =========================================================
+   GRILLE
+========================================================= */
+
+.recommended-streamers-list {
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(170px, 1fr));
+
+    gap: 28px;
+}
+
+
+/* =========================================================
+   CARTE
+========================================================= */
+
+.recommended-streamer-card {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    min-width: 0;
+    padding: 25px 18px;
+
+    overflow: hidden;
+
+    background: rgba(11, 5, 22, 0.75);
+
+    border: 2px solid rgba(255, 255, 255, 0.14);
+    border-radius: 28px;
+
+    text-align: center;
+
+    box-shadow:
+        0 12px 25px rgba(0, 0, 0, 0.28);
+
+    transition:
+        transform 0.30s ease,
+        border-color 0.30s ease,
+        box-shadow 0.30s ease;
+}
+
+.recommended-streamer-card:hover {
+    transform: translateY(-7px);
+
+    border-color: rgba(34, 242, 239, 0.72);
+
+    box-shadow:
+        0 18px 32px rgba(0, 0, 0, 0.34),
+        0 0 20px rgba(34, 242, 239, 0.18);
+}
+
+.recommended-streamer-card.is-live {
+    border-color: rgba(255, 62, 120, 0.75);
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.30),
+        0 0 18px rgba(255, 62, 120, 0.22);
+}
+
+
+/* =========================================================
+   AVATAR
+========================================================= */
+
+.recommended-streamer-avatar-link {
+    display: block;
+
+    color: inherit;
+    text-decoration: none;
+}
+
+.recommended-streamer-avatar-wrapper {
+    position: relative;
+
+    display: block;
+
+    width: 145px;
+    height: 145px;
+
+    padding: 5px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #22f2ef,
+            #a970ff,
+            #ff5fc1
+        );
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 18px rgba(34, 242, 239, 0.22);
+}
+
+.recommended-streamer-card.is-live
+.recommended-streamer-avatar-wrapper {
+    background:
+        linear-gradient(
+            135deg,
+            #ff1744,
+            #ff5fc1,
+            #a970ff
+        );
+
+    animation:
+        recommendedStreamerLivePulse
+        2s
+        ease-in-out
+        infinite;
+}
+
+.recommended-streamer-avatar {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    background: #13061f;
+
+    border: 5px solid #13061f;
+    border-radius: 50%;
+}
+
+.recommended-streamer-status-dot {
+    position: absolute;
+    right: 8px;
+    bottom: 12px;
+
+    width: 23px;
+    height: 23px;
+
+    background: #707070;
+
+    border: 4px solid #13061f;
+    border-radius: 50%;
+}
+
+.recommended-streamer-card.is-live
+.recommended-streamer-status-dot {
+    background: #ff1744;
+
+    box-shadow: 0 0 12px #ff1744;
+}
+
+
+/* =========================================================
+   CONTENU
+========================================================= */
+
+.recommended-streamer-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+}
+
+.recommended-streamer-content h3 {
+    width: 100%;
+    margin: 20px 0 5px;
+
+    font-size: 1.25rem;
+    line-height: 1.3;
+
+    overflow-wrap: anywhere;
+}
+
+.recommended-streamer-content h3 a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.recommended-streamer-content h3 a:hover {
+    color: #22f2ef;
+}
+
+.recommended-streamer-status {
+    margin: 0 0 10px;
+
+    color: rgba(255, 255, 255, 0.75);
+
+    font-size: 0.95rem;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.recommended-streamer-card.is-live
+.recommended-streamer-status {
+    color: #ff8bab;
+}
+
+.recommended-streamer-game {
+    display: inline-block;
+
+    margin-bottom: 10px;
+    padding: 6px 10px;
+
+    color: #ffffff;
+    background: rgba(145, 70, 255, 0.28);
+
+    border: 1px solid rgba(169, 112, 255, 0.55);
+    border-radius: 999px;
+
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.recommended-streamer-description {
+    flex: 1;
+
+    margin: 8px 0 16px;
+
+    color: rgba(255, 255, 255, 0.74);
+
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.recommended-streamer-tags {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 7px;
+
+    margin-bottom: 20px;
+}
+
+.recommended-streamer-tag {
+    padding: 5px 9px;
+
+    color: #dffeff;
+    background: rgba(34, 242, 239, 0.10);
+
+    border: 1px solid rgba(34, 242, 239, 0.28);
+    border-radius: 999px;
+
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.recommended-streamer-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    width: 100%;
+    min-height: 45px;
+    padding: 10px 14px;
+
+    color: #ffffff;
+    background:
+        linear-gradient(
+            135deg,
+            #6d00a3,
+            #9146ff
+        );
+
+    border: 2px solid transparent;
+    border-radius: 14px;
+
+    font-weight: 800;
+    text-decoration: none;
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.recommended-streamer-button:hover {
+    color: #ffffff;
+
+    border-color: #22f2ef;
+
+    transform: scale(1.03);
+
+    box-shadow:
+        0 0 17px rgba(34, 242, 239, 0.28);
+}
+
+
+/* =========================================================
+   MODE JOUR
+========================================================= */
+
+html[data-theme="light"]
+.recommended-streamers-section {
+    color: #351044;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 246, 253, 0.96),
+            rgba(240, 221, 251, 0.94)
+        );
+
+    border-color: #6d00a3;
+
+    box-shadow:
+        0 18px 38px rgba(65, 18, 86, 0.18);
+}
+
+html[data-theme="light"]
+.recommended-streamers-header h2 {
+    color: #6d00a3;
+
+    text-shadow:
+        0 0 8px rgba(109, 0, 163, 0.18);
+}
+
+html[data-theme="light"]
+.recommended-streamers-description {
+    color: #654c70;
+}
+
+html[data-theme="light"]
+.recommended-streamers-twitch-link {
+    color: #4b115d;
+    background: rgba(255, 255, 255, 0.72);
+
+    border-color: rgba(109, 0, 163, 0.28);
+}
+
+html[data-theme="light"]
+.recommended-streamer-card {
+    background: rgba(255, 255, 255, 0.84);
+
+    border-color: rgba(109, 0, 163, 0.22);
+
+    box-shadow:
+        0 10px 24px rgba(65, 18, 86, 0.14);
+}
+
+html[data-theme="light"]
+.recommended-streamer-avatar {
+    background: #ffffff;
+    border-color: #ffffff;
+}
+
+html[data-theme="light"]
+.recommended-streamer-status-dot {
+    border-color: #ffffff;
+}
+
+html[data-theme="light"]
+.recommended-streamer-content h3 a {
+    color: #4b115d;
+}
+
+html[data-theme="light"]
+.recommended-streamer-status,
+html[data-theme="light"]
+.recommended-streamer-description {
+    color: #654c70;
+}
+
+html[data-theme="light"]
+.recommended-streamer-tag {
+    color: #006f73;
+    background: rgba(0, 174, 179, 0.10);
+
+    border-color: rgba(0, 174, 179, 0.30);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1350px) {
+    .recommended-streamers-list {
+        grid-template-columns:
+            repeat(3, minmax(190px, 1fr));
+    }
+}
+
+@media (max-width: 850px) {
+    .recommended-streamers-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .recommended-streamers-list {
+        grid-template-columns:
+            repeat(2, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .recommended-streamers-section {
+        width: 95%;
+        padding: 25px 16px;
+
+        border-radius: 25px;
+    }
+
+    .recommended-streamers-list {
+        grid-template-columns: 1fr;
+    }
+
+    .recommended-streamer-card {
+        width: min(100%, 420px);
+        margin-inline: auto;
+    }
+
+    .recommended-streamer-avatar-wrapper {
+        width: 130px;
+        height: 130px;
+    }
+
+    .recommended-streamers-twitch-link {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   ANIMATION LIVE
+========================================================= */
+
+@keyframes recommendedStreamerLivePulse {
+    0%,
+    100% {
+        box-shadow:
+            0 0 12px rgba(255, 23, 68, 0.30);
+    }
+
+    50% {
+        box-shadow:
+            0 0 26px rgba(255, 23, 68, 0.70);
+    }
+}
+/* =========================================================
+   INFORMATIONS DU LIVE RECOMMANDÉ
+========================================================= */
+
+.recommended-streamers-results {
+    min-height: 22px;
+    margin: -25px 0 35px;
+
+    color: rgba(255, 255, 255, 0.72);
+
+    font-size: 0.95rem;
+    font-style: normal;
+    font-weight: 700;
+    text-align: left;
+}
+
+.recommended-streamer-live-title {
+    display: -webkit-box;
+
+    width: 100%;
+    margin: 2px 0 10px;
+
+    overflow: hidden;
+
+    color: #ffffff;
+
+    font-size: 0.88rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.recommended-streamer-viewers,
+.recommended-streamer-started-at {
+    margin: 0 0 7px;
+
+    color: #ff9dbb;
+
+    font-size: 0.82rem;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.recommended-streamer-started-at {
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.recommended-streamer-mature {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    z-index: 4;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    background: rgba(35, 5, 51, 0.94);
+
+    border: 2px solid #ff5fc1;
+    border-radius: 50%;
+
+    font-size: 0.95rem;
+
+    box-shadow:
+        0 0 12px rgba(255, 95, 193, 0.45);
+}
+
+.recommended-streamers-loading,
+.recommended-streamers-empty {
+    grid-column: 1 / -1;
+
+    padding: 40px 20px;
+
+    color: rgba(255, 255, 255, 0.82);
+
+    font-size: 1.05rem;
+    font-style: normal;
+    font-weight: 700;
+    text-align: center;
+}
+
+.recommended-streamers-error {
+    grid-column: 1 / -1;
+
+    padding: 35px 20px;
+
+    color: #ffffff;
+    text-align: center;
+
+    background: rgba(90, 10, 65, 0.55);
+
+    border: 2px solid rgba(255, 95, 193, 0.55);
+    border-radius: 22px;
+}
+
+.recommended-streamers-error p {
+    margin: 0 0 18px;
+
+    font-style: normal;
+}
+
+.recommended-streamers-retry {
+    min-height: 45px;
+    margin: 0;
+    padding: 10px 22px;
+
+    color: #ffffff;
+    background: #6d00a3;
+
+    border: 2px solid #22f2ef;
+    border-radius: 14px;
+
+    font: inherit;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s ease,
+        background-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.recommended-streamers-retry:hover {
+    color: #22002f;
+    background: #22f2ef;
+
+    transform: scale(1.04);
+
+    box-shadow:
+        0 0 17px rgba(34, 242, 239, 0.45);
+}
+
+
+/* =========================================================
+   MODE JOUR
+========================================================= */
+
+html[data-theme="light"]
+.recommended-streamers-results {
+    color: #654c70;
+}
+
+html[data-theme="light"]
+.recommended-streamer-live-title {
+    color: #4b115d;
+}
+
+html[data-theme="light"]
+.recommended-streamer-started-at {
+    color: #654c70;
+}
+
+html[data-theme="light"]
+.recommended-streamers-loading,
+html[data-theme="light"]
+.recommended-streamers-empty {
+    color: #654c70;
+}
+
+html[data-theme="light"]
+.recommended-streamers-error {
+    color: #4b115d;
+    background: rgba(255, 232, 247, 0.88);
+
+    border-color: rgba(109, 0, 163, 0.32);
+}
