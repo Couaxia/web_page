@@ -5492,8 +5492,424 @@ html[data-theme="light"]
     .recommended-streamer-external-link,
     .recommended-streamer-status-light,
     .recommended-streamer-name {
-        transition:            none;
-        animation:            none;
+        transition:
+            none;
+
+        animation:
+            none;
+    }
+
 }
+/* =========================================================
+   CORRECTION GRILLE STREAMERS RECOMMANDÉS
+========================================================= */
+
+.recommended-streamers-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 45px;
+
+    width: 100%;
+    max-width: 100%;
+}
+
+
+/* Chaque catégorie prend toute la largeur */
+
+.recommended-streamers-category {
+    display: block;
+
+    width: 100%;
+    max-width: 100%;
+
+    margin: 0;
+    padding: 28px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   GRILLE DES STREAMERS
+========================================================= */
+
+.recommended-category-grid {
+    display: grid !important;
+
+    /*
+     * Plusieurs personnes par ligne.
+     * Chaque case mesure au minimum 125px.
+     */
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(125px, 1fr)
+        ) !important;
+
+    align-items: start;
+    justify-items: center;
+
+    gap: 32px 20px;
+
+    width: 100% !important;
+    max-width: 100% !important;
+
+    margin: 0;
+    padding: 10px 0;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   STREAMER INDIVIDUEL
+========================================================= */
+
+.recommended-streamer-item {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    width: 100%;
+    max-width: 155px;
+
+    margin: 0;
+    padding: 0;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   CERCLE
+========================================================= */
+
+.recommended-streamer-circle {
+    position: relative;
+
+    flex: 0 0 auto;
+
+    width: 125px !important;
+    height: 125px !important;
+
+    margin: 0 auto;
+
+    padding: 5px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #22f2ef,
+            #8774ff,
+            #ff5fc1
+        );
+
+    border-radius: 50%;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 0 13px rgba(34, 242, 239, 0.22),
+        0 0 22px rgba(255, 95, 193, 0.13);
+
+    transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease;
+}
+
+
+/* =========================================================
+   AVATAR
+========================================================= */
+
+.recommended-streamer-avatar {
+    display: block;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    object-fit: cover;
+    object-position: center;
+
+    margin: 0;
+    padding: 0;
+
+    background: #13061f;
+
+    border: 4px solid #ffffff;
+    border-radius: 50%;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PSEUDO
+========================================================= */
+
+.recommended-streamer-name {
+    width: 100%;
+
+    margin: 14px 0 0;
+
+    color: #ffffff;
+
+    font-size: 0.95rem;
+    font-weight: 800;
+    line-height: 1.25;
+
+    text-align: center;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   BOUTON ↗ TWITCH
+========================================================= */
+
+.recommended-streamer-external-link {
+    position: absolute;
+
+    top: -6px;
+    right: -6px;
+    z-index: 10;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    margin: 0;
+    padding: 0;
+
+    color: #ffffff;
+    background: #6d00a3;
+
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+
+    font-size: 1.15rem;
+    font-weight: 900;
+    line-height: 1;
+
+    text-decoration: none;
+
+    box-shadow:
+        0 0 10px rgba(109, 0, 163, 0.55);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   POINT OFFLINE / ONLINE
+========================================================= */
+
+.recommended-streamer-status-light {
+    position: absolute;
+
+    right: 3px;
+    bottom: 4px;
+    z-index: 10;
+
+    width: 24px;
+    height: 24px;
+
+    background: #999999;
+
+    border: 4px solid #ffffff;
+    border-radius: 50%;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 0 6px rgba(100, 100, 100, 0.55);
+}
+
+
+/* LIVE */
+
+.recommended-streamer-item.is-live
+.recommended-streamer-status-light {
+    background: #31e875;
+
+    box-shadow:
+        0 0 9px rgba(49, 232, 117, 0.95),
+        0 0 18px rgba(49, 232, 117, 0.60);
+
+    animation:
+        recommendedStreamerOnlinePulse
+        1.8s
+        ease-in-out
+        infinite;
+}
+
+
+/* =========================================================
+   MODE JOUR
+========================================================= */
+
+html[data-theme="light"]
+.recommended-streamer-name {
+    color: #4b115d;
+}
+
+
+html[data-theme="light"]
+.recommended-streamer-avatar {
+    background: #ffffff;
+}
+
+
+html[data-theme="light"]
+.recommended-streamer-external-link {
+    color: #ffffff;
+    background: #6d00a3;
+}
+
+
+html[data-theme="light"]
+.recommended-streamer-status-light {
+    border-color: #ffffff;
+}
+
+
+/* =========================================================
+   MODE NUIT
+========================================================= */
+
+html[data-theme="dark"]
+.recommended-streamer-name {
+    color: #ffffff;
+}
+
+
+html[data-theme="dark"]
+.recommended-streamer-avatar {
+    background: #13061f;
+    border-color: #ffffff;
+}
+
+
+html[data-theme="dark"]
+.recommended-streamer-status-light {
+    border-color: #13061f;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (min-width: 1400px) {
+
+    .recommended-category-grid {
+        /*
+         * Sur grand écran, beaucoup de streamers
+         * peuvent tenir sur une seule ligne.
+         */
+        grid-template-columns:
+            repeat(
+                auto-fill,
+                minmax(130px, 1fr)
+            ) !important;
+    }
+
+}
+
+
+@media (max-width: 900px) {
+
+    .recommended-category-grid {
+        grid-template-columns:
+            repeat(
+                auto-fill,
+                minmax(115px, 1fr)
+            ) !important;
+
+        gap: 28px 14px;
+    }
+
+
+    .recommended-streamer-circle {
+        width: 110px !important;
+        height: 110px !important;
+    }
+
+}
+
+
+@media (max-width: 550px) {
+
+    .recommended-streamers-category {
+        padding: 20px 12px;
+    }
+
+
+    .recommended-category-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            ) !important;
+
+        gap: 26px 10px;
+    }
+
+
+    .recommended-streamer-item {
+        max-width: 140px;
+    }
+
+
+    .recommended-streamer-circle {
+        width: 100px !important;
+        height: 100px !important;
+    }
+
+
+    .recommended-streamer-name {
+        font-size: 0.82rem;
+    }
+
+
+    .recommended-streamer-external-link {
+        width: 30px;
+        height: 30px;
+
+        font-size: 1rem;
+    }
+
+
+    .recommended-streamer-status-light {
+        width: 21px;
+        height: 21px;
+    }
+
+}
+
+
+/* =========================================================
+   ANIMATION LIVE
+========================================================= */
+
+@keyframes recommendedStreamerOnlinePulse {
+
+    0%,
+    100% {
+        box-shadow:
+            0 0 7px rgba(49, 232, 117, 0.65),
+            0 0 13px rgba(49, 232, 117, 0.32);
+    }
+
+    50% {
+        box-shadow:
+            0 0 12px rgba(49, 232, 117, 1),
+            0 0 22px rgba(49, 232, 117, 0.68);
+    }
 
 }
