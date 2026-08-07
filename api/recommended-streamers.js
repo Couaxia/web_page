@@ -26,73 +26,152 @@ import {
 
 const RECOMMENDED_STREAMERS = [
     {
-        login: "myo_faunette"
+        login: "myo_faunette",
+        category: "friends"
     },
     {
-        login: "celanyavt"
+        login: "celanyavt",
+        category: "friends"
     },
     {
-        login: "sorine_e"
+        login: "sorine_e",
+        category: "friends"
     },
     {
-        login: "maman_mikii"
+        login: "maman_mikii",
+        category: "friends"
     },
     {
-        login: "babyhawk_vt"
+        login: "babyhawk_vt",
+        category: "friends"
     },
     {
-        login: "Nymya_VT"
+        login: "Nymya_VT",
+        category: "friends"
     },
     {
-        login: "LykaMonarch"
+        login: "LykaMonarch",
+        category: "favorites"
     },
     {
-        login: "rvbyabyss"
+        login: "rvbyabyss",
+        category: "friends"
     },
     {
-        login: "YuTo_Mbc"
+        login: "YuTo_Mbc",
+        category: "friends"
     },
     {
-        login: "louxifr"
+        login: "louxifr",
+        category: "friends"
     },
     {
-        login: "kimori_004"
+        login: "kimori_004",
+        category: "friends"
     },
     {
-        login: "Lunyvee"
+        login: "Lunyvee",
+        category: "friends"
     },
     {
-        login: "Subbarath"
+        login: "Subbarath",
+        category: "friends"
     },
     {
-        login: "leareinepoulpe"
+        login: "leareinepoulpe",
+        category: "friends"
     },
     {
-        login: "frouxyi"
+        login: "frouxyi",
+        category: "friends"
     },
     {
-        login: "sayarhe"
+        login: "sayarhe",
+        category: "favorites"
     },
     {
-        login: "omelyth"
+        login: "omelyth",
+        category: "friends"
     },
     {
-        login: "petiteorca"
+        login: "petiteorca",
+        category: "friends"
     },
     {
-        login: "000dracko000"
+        login: "000dracko000",
+        category: "friends"
     },
     {
-        login: "xiriavt"
+        login: "xiriavt",
+        category: "friends"
     },
     {
-        login: "dreagonm"
+        login: "dreagonm",
+        category: "friends"
     },
     {
-        login: "vtyukiuwu"
+        login: "vtyukiuwu",
+        category: "favorites"
     },
     {
-        login: "kuroka59"
+        login: "kuroka59",
+        category: "friends"
+    },
+    {
+        login: "ironmouse",
+        category: "international"
+    },
+    {
+        login: "natomiie",
+        category: "international"
+    },
+    {
+        login: "queenie",
+        category: "international"
+    },
+    {
+        login: "sinder",
+        category: "international"
+    },
+    {
+        login: "melibellule",
+        category: "favorites"
+    },
+    {
+        login: "keola",
+        category: "favorites"
+    },
+    {
+        login: "AuroraLeonisVT",
+        category: "international"
+    },
+    {
+        login: "biyona",
+        category: "favorites"
+    },
+    {
+        login: "yesseniavo",
+        category: "international"
+    },
+    {
+        login: "laynalazar",
+        category: "international"
+    },
+    {
+        login: "pakyotille",
+        category: "favorites"
+    },
+    {
+        login: "wankilstudio",
+        category: "favorites"
+    },
+    {
+        login: "nallena_vwolf",
+        category: "favorites"
+    },
+    {
+        login: "fengaryx",
+        category: "favorites"
     }
 ];
 
@@ -145,6 +224,29 @@ function normalizeLogin(value) {
     return String(value ?? "")
         .trim()
         .toLowerCase();
+}
+
+/**
+ * Normalise une catégorie de recommandation.
+ *
+ * @param {unknown} value
+ * @returns {"friends"|"international"|"favorites"}
+ */
+function normalizeCategory(value) {
+    const category =
+        String(value ?? "")
+            .trim()
+            .toLowerCase();
+
+    const allowedCategories = [
+        "friends",
+        "international",
+        "favorites"
+    ];
+
+    return allowedCategories.includes(category)
+        ? category
+        : "favorites";
 }
 
 
@@ -375,7 +477,10 @@ function createStreamerResults(
                         `https://www.twitch.tv/${encodeURIComponent(
                             login
                         )}`,
-
+                        category:
+                        normalizeCategory(
+                            configuredStreamer.category
+                        ),
                     live,
 
                     gameName:
@@ -408,37 +513,70 @@ function createStreamerResults(
         )
         .filter(Boolean)
         .sort(
-            (
-                firstStreamer,
-                secondStreamer
-            ) => {
-                /*
-                 * Les lives apparaissent en premier.
-                 */
-                if (
-                    firstStreamer.live !==
-                    secondStreamer.live
-                ) {
+                (
+                    firstStreamer,
+                    secondStreamer
+                ) => {
+                    const categoryOrder = {
+                        friends: 0,
+                        international: 1,
+                        favorites: 2
+                    };
+
+                    /*
+                    * 1. On range d'abord
+                    * les streamers par catégorie.
+                    */
+                    const firstCategoryPosition =
+                        categoryOrder[
+                            firstStreamer.category
+                        ] ?? 999;
+
+                    const secondCategoryPosition =
+                        categoryOrder[
+                            secondStreamer.category
+                        ] ?? 999;
+
+                    if (
+                        firstCategoryPosition !==
+                        secondCategoryPosition
+                    ) {
+                        return (
+                            firstCategoryPosition -
+                            secondCategoryPosition
+                        );
+                    }
+
+
+                    /*
+                    * 2. À l'intérieur d'une catégorie,
+                    * les streamers en live passent devant.
+                    */
+                    if (
+                        firstStreamer.live !==
+                        secondStreamer.live
+                    ) {
+                        return (
+                            Number(
+                                secondStreamer.live
+                            ) -
+                            Number(
+                                firstStreamer.live
+                            )
+                        );
+                    }
+
+
+                    /*
+                    * 3. Pour le reste,
+                    * on respecte ton ordre manuel.
+                    */
                     return (
-                        Number(
-                            secondStreamer.live
-                        ) -
-                        Number(
-                            firstStreamer.live
-                        )
+                        firstStreamer.originalIndex -
+                        secondStreamer.originalIndex
                     );
                 }
-
-                /*
-                 * Ensuite, on conserve l’ordre
-                 * de ta liste.
-                 */
-                return (
-                    firstStreamer.originalIndex -
-                    secondStreamer.originalIndex
-                );
-            }
-        )
+            )
         .map((streamer) => {
             const {
                 originalIndex,
