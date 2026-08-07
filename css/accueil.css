@@ -5913,3 +5913,215 @@ html[data-theme="dark"]
     }
 
 }
+
+/* =========================================================
+   FIX FINAL — STREAMERS RECOMMANDÉS EN LIGNE
+========================================================= */
+
+#recommended-streamers {
+    display: block !important;
+
+    width: min(94%, 1750px) !important;
+    max-width: 1750px !important;
+
+    margin-left: auto !important;
+    margin-right: auto !important;
+
+    box-sizing: border-box !important;
+}
+
+
+#recommended-streamers-list {
+    display: block !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* Chaque catégorie prend toute la largeur */
+
+#recommended-streamers-list
+.recommended-streamers-category {
+    display: block !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 0 42px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* =========================================================
+   GRILLE DES AVATARS
+========================================================= */
+
+#recommended-streamers-list
+.recommended-category-grid {
+    display: grid !important;
+
+    /*
+     * On force 8 colonnes sur grand écran.
+     */
+    grid-template-columns:
+        repeat(8, minmax(0, 1fr)) !important;
+
+    align-items: start !important;
+    justify-items: center !important;
+
+    gap: 32px 18px !important;
+
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+
+    margin: 0 !important;
+    padding: 12px 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* =========================================================
+   STREAMER
+========================================================= */
+
+#recommended-streamers-list
+.recommended-streamer-item {
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    align-items: center !important;
+    justify-content: flex-start !important;
+
+    width: 100% !important;
+    max-width: 150px !important;
+    min-width: 0 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* Cercle */
+
+#recommended-streamers-list
+.recommended-streamer-circle {
+    position: relative !important;
+
+    width: 120px !important;
+    height: 120px !important;
+
+    flex: 0 0 120px !important;
+
+    margin: 0 auto !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* Avatar */
+
+#recommended-streamers-list
+.recommended-streamer-avatar {
+    display: block !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    object-fit: cover !important;
+    object-position: center !important;
+
+    border-radius: 50% !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* Pseudo */
+
+#recommended-streamers-list
+.recommended-streamer-name {
+    display: block !important;
+
+    width: 100% !important;
+
+    margin: 14px 0 0 !important;
+
+    text-align: center !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1350px) {
+
+    #recommended-streamers-list
+    .recommended-category-grid {
+        grid-template-columns:
+            repeat(6, minmax(0, 1fr)) !important;
+    }
+
+}
+
+
+@media (max-width: 1050px) {
+
+    #recommended-streamers-list
+    .recommended-category-grid {
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr)) !important;
+    }
+
+}
+
+
+@media (max-width: 750px) {
+
+    #recommended-streamers-list
+    .recommended-category-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr)) !important;
+    }
+
+}
+
+
+@media (max-width: 520px) {
+
+    #recommended-streamers-list
+    .recommended-category-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr)) !important;
+
+        gap: 26px 8px !important;
+    }
+
+
+    #recommended-streamers-list
+    .recommended-streamer-circle {
+        width: 100px !important;
+        height: 100px !important;
+
+        flex-basis: 100px !important;
+    }
+
+
+    #recommended-streamers-list
+    .recommended-streamer-item {
+        max-width: 120px !important;
+    }
+
+}
