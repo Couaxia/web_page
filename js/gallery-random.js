@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
     /**
      * Récupère les cartes originales.
      *
-     * On utilise volontairement la réserve source
-     * afin d'éviter les doublons créés par
+     * On utilise la réserve source afin
+     * d'éviter les doublons créés par
      * credits-gallery.js.
      */
     function getOriginalCards() {
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /**
-     * Nom de l'artiste.
+     * Retourne le nom de l'artiste.
      */
     function getArtistName(card) {
 
@@ -111,10 +111,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /**
-     * Recherche l'œuvre principale.
-     *
-     * Important :
-     * on exclut les éventuels logos / watermarks.
+     * Retourne l'identifiant unique
+     * de l'œuvre.
+     */
+    function getArtId(card) {
+
+        return String(
+            card.dataset.artId ||
+            ""
+        ).trim();
+    }
+
+
+    /**
+     * Recherche l'œuvre principale
+     * sans récupérer les watermarks.
      */
     function getArtwork(card) {
 
@@ -129,9 +140,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        /*
-         * Priorité à la vidéo.
-         */
+        /* =============================================
+           VIDÉO
+        ============================================= */
+
         const video =
             imageContainer.querySelector(
                 ":scope > video"
@@ -143,17 +155,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        /*
-         * Puis on recherche l'image principale
-         * sans récupérer un watermark.
-         */
+        /* =============================================
+           IMAGE
+        ============================================= */
+
         const images =
             Array.from(
                 imageContainer.children
             ).filter(
                 (element) =>
                     element instanceof
-                        HTMLImageElement
+                    HTMLImageElement
             );
 
 
@@ -165,6 +177,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     ) &&
                     !image.classList.contains(
                         "watermark-logo"
+                    ) &&
+                    !image.classList.contains(
+                        "image-zoom-watermark"
                     ) &&
                     !image.classList.contains(
                         "random-art-copyright-logo"
@@ -186,6 +201,168 @@ document.addEventListener("DOMContentLoaded", () => {
         return (
             card.dataset.sensitive ===
             "true"
+        );
+    }
+
+
+    /* =====================================================
+       FAVORIS
+    ====================================================== */
+
+    /**
+     * Vérifie si une œuvre est favorite.
+     */
+    function isFavorite(artId) {
+
+        if (!artId) {
+            return false;
+        }
+
+
+        if (
+            window.CouaxiaGalleryFavorites &&
+            typeof window
+                .CouaxiaGalleryFavorites
+                .isFavorite ===
+                "function"
+        ) {
+            return Boolean(
+                window
+                    .CouaxiaGalleryFavorites
+                    .isFavorite(
+                        artId
+                    )
+            );
+        }
+
+
+        return false;
+    }
+
+
+    /**
+     * Met à jour visuellement
+     * le bouton favori du modal.
+     */
+    function updateFavoriteButton(
+        button,
+        artId
+    ) {
+
+        if (
+            !button ||
+            !artId
+        ) {
+            return;
+        }
+
+
+        const favorite =
+            isFavorite(
+                artId
+            );
+
+
+        const icon =
+            button.querySelector(
+                ".random-art-favorite-icon"
+            );
+
+
+        button.dataset.artId =
+            artId;
+
+
+        button.classList.toggle(
+            "is-favorite",
+            favorite
+        );
+
+
+        button.setAttribute(
+            "aria-pressed",
+            String(
+                favorite
+            )
+        );
+
+
+        button.setAttribute(
+            "aria-label",
+            favorite
+                ? "Retirer cette œuvre des favoris"
+                : "Ajouter cette œuvre aux favoris"
+        );
+
+
+        button.title =
+            favorite
+                ? "Retirer des favoris"
+                : "Ajouter aux favoris";
+
+
+        if (icon) {
+            icon.textContent =
+                favorite
+                    ? "♥"
+                    : "♡";
+        }
+    }
+
+
+    /**
+     * Ajoute / retire l'œuvre
+     * des favoris.
+     */
+    function toggleRandomFavorite(
+        button
+    ) {
+
+        const artId =
+            String(
+                button.dataset.artId ||
+                ""
+            ).trim();
+
+
+        if (!artId) {
+            return;
+        }
+
+
+        if (
+            !window.CouaxiaGalleryFavorites ||
+            typeof window
+                .CouaxiaGalleryFavorites
+                .toggle !==
+                "function"
+        ) {
+            console.warn(
+                "[Œuvre aléatoire] gallery-favorites.js n'est pas disponible."
+            );
+
+            return;
+        }
+
+
+        /*
+         * gallery-favorites.js gère :
+         *
+         * - le localStorage ;
+         * - la synchronisation des clones ;
+         * - la mascotte ;
+         * - l'événement de changement.
+         */
+        window
+            .CouaxiaGalleryFavorites
+            .toggle(
+                artId
+            );
+
+
+        updateFavoriteButton(
+            button,
+            artId
         );
     }
 
@@ -213,6 +390,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 aria-modal="true"
                 aria-label="Œuvre aléatoire"
             >
+
+                <!-- =====================================
+                     FAVORI
+                ====================================== -->
+
+                <button
+                    type="button"
+                    class="random-art-favorite"
+                    aria-label="Ajouter cette œuvre aux favoris"
+                    aria-pressed="false"
+                    title="Ajouter aux favoris"
+                >
+                    <span
+                        class="random-art-favorite-icon"
+                        aria-hidden="true"
+                    >
+                        ♡
+                    </span>
+                </button>
+
 
                 <!-- =====================================
                      FERMETURE
@@ -271,7 +468,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                     <!-- =================================
-                         LOGO COPYRIGHT PERMANENT
+                         LOGO COPYRIGHT
                     ================================== -->
 
                     <img
@@ -294,7 +491,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         <span
                             class="random-art-credit-artist"
                         ></span>
-
 
                         <span
                             class="random-art-credit-owner"
@@ -360,13 +556,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-            /*
-             * On utilise d'abord getAttribute("src").
-             *
-             * C'est important car les cartes originales
-             * sont dans un conteneur hidden et currentSrc
-             * peut parfois être vide.
-             */
             const originalSource =
                 artwork.getAttribute(
                     "src"
@@ -378,9 +567,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 artwork.src;
 
 
-            /*
-             * srcset / sizes si présents.
-             */
             const srcset =
                 artwork.getAttribute(
                     "srcset"
@@ -458,20 +644,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             } else {
 
-                /*
-                 * Certaines vidéos utilisent :
-                 *
-                 * <video>
-                 *     <source ...>
-                 * </video>
-                 */
-
                 artwork
                     .querySelectorAll(
                         "source"
                     )
                     .forEach(
-                        (originalSource) => {
+                        (
+                            originalSource
+                        ) => {
 
                             const source =
                                 document.createElement(
@@ -550,6 +730,12 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
+        const favoriteButton =
+            modal.querySelector(
+                ".random-art-favorite"
+            );
+
+
         const warning =
             modal.querySelector(
                 ".random-art-sensitive-warning"
@@ -588,12 +774,11 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            mediaContainer.innerHTML =
-                `
-                    <p class="random-art-error">
-                        Impossible d'afficher cette œuvre.
-                    </p>
-                `;
+            mediaContainer.innerHTML = `
+                <p class="random-art-error">
+                    Impossible d'afficher cette œuvre.
+                </p>
+            `;
 
 
             return;
@@ -639,7 +824,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* =================================================
-           DEBUG ERREUR IMAGE
+           DEBUG IMAGE
         ================================================= */
 
         if (
@@ -681,6 +866,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* =================================================
+           FAVORI
+        ================================================= */
+
+        const artId =
+            getArtId(
+                card
+            );
+
+
+        if (
+            favoriteButton &&
+            artId
+        ) {
+
+            updateFavoriteButton(
+                favoriteButton,
+                artId
+            );
+
+        }
+
+
+        /* =================================================
            +18
         ================================================= */
 
@@ -696,15 +904,9 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        /*
-         * Le modal reste fonctionnel même
-         * si le bloc +18 est absent du HTML.
-         */
         if (warning) {
-
             warning.hidden =
                 !sensitive;
-
         }
 
 
@@ -742,9 +944,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        /*
-         * Recharge les sources d'une vidéo.
-         */
+        /* =================================================
+           VIDÉO
+        ================================================= */
+
         if (
             clone instanceof
             HTMLVideoElement
@@ -900,9 +1103,6 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        /*
-         * Coupe toutes les vidéos.
-         */
         modal
             .querySelectorAll(
                 "video"
@@ -927,9 +1127,10 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    /*
-     * Délégation d'événements du modal.
-     */
+    /* =====================================================
+       DÉLÉGATION DES CLICS DU MODAL
+    ====================================================== */
+
     document.addEventListener(
         "click",
         (event) => {
@@ -974,7 +1175,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /* =============================================
-               AUTRE ŒUVRE
+               ♥ FAVORI
+            ============================================= */
+
+            const favoriteButton =
+                event.target.closest(
+                    ".random-art-favorite"
+                );
+
+
+            if (favoriteButton) {
+
+                toggleRandomFavorite(
+                    favoriteButton
+                );
+
+                return;
+            }
+
+
+            /* =============================================
+               🎲 AUTRE ŒUVRE
             ============================================= */
 
             if (
@@ -1003,6 +1224,62 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
             }
+
+        }
+    );
+
+
+    /* =====================================================
+       SYNCHRONISATION DES FAVORIS
+    ====================================================== */
+
+    /*
+     * Si le favori change ailleurs pendant
+     * que le modal est ouvert, le cœur
+     * du random se synchronise aussi.
+     */
+    document.addEventListener(
+        "couaxia:gallery-favorites-changed",
+        () => {
+
+            const modal =
+                document.querySelector(
+                    ".random-art-modal.is-open"
+                );
+
+
+            if (!modal) {
+                return;
+            }
+
+
+            const favoriteButton =
+                modal.querySelector(
+                    ".random-art-favorite"
+                );
+
+
+            if (!favoriteButton) {
+                return;
+            }
+
+
+            const artId =
+                String(
+                    favoriteButton.dataset.artId ||
+                    ""
+                ).trim();
+
+
+            if (!artId) {
+                return;
+            }
+
+
+            updateFavoriteButton(
+                favoriteButton,
+                artId
+            );
 
         }
     );

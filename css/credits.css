@@ -3111,3 +3111,188 @@ html[data-theme="dark"]
     }
 
 }
+
+/* =========================================================
+   FAVORI — MODAL RANDOM
+========================================================= */
+
+.random-art-favorite {
+    position: absolute;
+
+    top: 15px;
+    right: 76px;
+
+    z-index: 30;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 46px;
+    height: 46px;
+
+    padding: 0;
+
+    color: var(--credits-title);
+
+    background:
+        var(--credits-surface);
+
+    border:
+        2px solid
+        var(--credits-border);
+
+    border-radius: 50%;
+
+    font: inherit;
+    font-size: 1.6rem;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 6px 16px
+        var(--credits-shadow);
+
+    transition:
+        transform 0.22s ease,
+        color 0.22s ease,
+        background 0.22s ease,
+        border-color 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+
+.random-art-favorite:hover {
+    transform:
+        translateY(-2px)
+        scale(1.08);
+
+    border-color:
+        var(--credits-border-secondary);
+
+    box-shadow:
+        0 8px 20px
+        var(--credits-shadow),
+        0 0 14px
+        rgba(255, 95, 193, 0.30);
+}
+
+
+.random-art-favorite-icon {
+    pointer-events: none;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
+   FAVORI ACTIF
+========================================================= */
+
+.random-art-favorite.is-favorite {
+    color: #ff5fae;
+
+    border-color:
+        #ff5fae;
+}
+
+
+.random-art-favorite.is-favorite
+.random-art-favorite-icon {
+    animation:
+        galleryFavoritePop
+        0.35s ease;
+}
+
+
+/* =========================================================
+   JOUR
+========================================================= */
+
+html[data-theme="light"]
+.random-art-favorite {
+    color:
+        #6d00a3;
+
+    background:
+        rgba(255, 255, 255, 0.94);
+
+    border-color:
+        rgba(109, 0, 163, 0.55);
+}
+
+
+html[data-theme="light"]
+.random-art-favorite.is-favorite {
+    color:
+        #ff3f98;
+
+    background:
+        rgba(255, 235, 247, 0.96);
+
+    border-color:
+        #ff3f98;
+}
+
+
+/* =========================================================
+   NUIT
+========================================================= */
+
+html[data-theme="dark"]
+.random-art-favorite {
+    color:
+        #ffffff;
+
+    background:
+        rgba(46, 17, 70, 0.94);
+
+    border-color:
+        #22f2ef;
+}
+
+
+html[data-theme="dark"]
+.random-art-favorite.is-favorite {
+    color:
+        #ff74bd;
+
+    background:
+        rgba(55, 10, 48, 0.94);
+
+    border-color:
+        #ff74bd;
+}
+
+
+/* =========================================================
+   CLAVIER
+========================================================= */
+
+.random-art-favorite:focus-visible {
+    outline:
+        3px solid
+        var(--credits-accent);
+
+    outline-offset:
+        4px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .random-art-favorite {
+        top: 8px;
+        right: 58px;
+
+        width: 40px;
+        height: 40px;
+
+        font-size: 1.4rem;
+    }
+
+}
