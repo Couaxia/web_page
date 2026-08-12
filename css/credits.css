@@ -588,7 +588,7 @@ html[data-theme="dark"] {
         115% auto;
 
     --gallery-background-position:
-        center 42%;
+        center 38%;
 }
 
 .credits-gallery-section[data-gallery="fanart"] {
@@ -600,6 +600,18 @@ html[data-theme="dark"] {
 
     --gallery-background-position:
         center 32%;
+}
+
+/* Galerie spéciale ♥ Mes favoris */
+.credits-gallery-section[data-gallery="favorites"] {
+    --gallery-background:
+        url("../images/Arts/YYuuikura.png");
+
+    --gallery-background-size:
+        cover;
+
+    --gallery-background-position:
+        center 35%;
 }
 
 
@@ -1697,4 +1709,417 @@ html[data-theme="light"]
     backdrop-filter:blur(10px);
     border:
         2px solid rgba(255,95,193,.45);
+}
+
+/* =========================================================
+   FAVORIS — GALERIE COUAXIA
+========================================================= */
+
+
+/* =========================================================
+   BOUTON FAVORI
+========================================================= */
+
+.gallery-favorite-button {
+    position: absolute;
+
+    top: 14px;
+    right: 14px;
+
+    z-index: 25;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 46px;
+    height: 46px;
+
+    margin: 0;
+    padding: 0;
+
+    border: 2px solid rgba(255, 255, 255, 0.75);
+    border-radius: 50%;
+
+    background:
+        rgba(25, 10, 40, 0.72);
+
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 1.65rem;
+    line-height: 1;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.28);
+
+    transition:
+        transform 0.22s ease,
+        background 0.22s ease,
+        color 0.22s ease,
+        border-color 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+
+/* =========================================================
+   ICÔNE ♡ / ♥
+========================================================= */
+
+.gallery-favorite-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+
+    transform: translateY(-1px);
+
+    transition:
+        transform 0.22s ease;
+}
+
+
+/* =========================================================
+   SURVOL
+========================================================= */
+
+.gallery-favorite-button:hover {
+    transform:
+        translateY(-2px)
+        scale(1.08);
+
+    background:
+        rgba(109, 0, 163, 0.90);
+
+    border-color:
+        rgba(255, 255, 255, 0.95);
+
+    box-shadow:
+        0 6px 18px rgba(109, 0, 163, 0.35),
+        0 0 14px rgba(255, 95, 193, 0.30);
+}
+
+
+.gallery-favorite-button:hover
+.gallery-favorite-icon {
+    transform:
+        translateY(-1px)
+        scale(1.08);
+}
+
+
+/* =========================================================
+   FAVORI ACTIF ♥
+========================================================= */
+
+.gallery-favorite-button.is-favorite {
+    color: #ff5fae;
+
+    background:
+        rgba(65, 10, 55, 0.90);
+
+    border-color:
+        rgba(255, 130, 190, 0.95);
+
+    box-shadow:
+        0 5px 16px rgba(0, 0, 0, 0.28),
+        0 0 14px rgba(255, 95, 174, 0.42);
+}
+
+
+.gallery-favorite-button.is-favorite
+.gallery-favorite-icon {
+    animation:
+        galleryFavoritePop
+        0.35s
+        ease;
+}
+
+
+/* =========================================================
+   SURVOL FAVORI ACTIF
+========================================================= */
+
+.gallery-favorite-button.is-favorite:hover {
+    color: #ffffff;
+
+    background:
+        rgba(255, 70, 145, 0.92);
+
+    border-color:
+        #ffffff;
+
+    box-shadow:
+        0 6px 18px rgba(255, 70, 145, 0.35),
+        0 0 18px rgba(255, 95, 174, 0.50);
+}
+
+
+/* =========================================================
+   CLAVIER
+========================================================= */
+
+.gallery-favorite-button:focus-visible {
+    outline:
+        3px solid #22f2ef;
+
+    outline-offset:
+        4px;
+}
+
+
+/* =========================================================
+   MODE JOUR
+========================================================= */
+
+html[data-theme="light"]
+.gallery-favorite-button {
+    color:
+        #6d00a3;
+
+    background:
+        rgba(255, 255, 255, 0.82);
+
+    border-color:
+        rgba(109, 0, 163, 0.35);
+
+    box-shadow:
+        0 4px 14px rgba(80, 20, 100, 0.16);
+
+    backdrop-filter:
+        blur(8px);
+
+    -webkit-backdrop-filter:
+        blur(8px);
+}
+
+
+html[data-theme="light"]
+.gallery-favorite-button:hover {
+    color:
+        #ffffff;
+
+    background:
+        rgba(109, 0, 163, 0.90);
+
+    border-color:
+        #ffffff;
+}
+
+
+html[data-theme="light"]
+.gallery-favorite-button.is-favorite {
+    color:
+        #ff3f98;
+
+    background:
+        rgba(255, 235, 247, 0.94);
+
+    border-color:
+        rgba(255, 63, 152, 0.60);
+
+    box-shadow:
+        0 4px 14px rgba(80, 20, 100, 0.14),
+        0 0 14px rgba(255, 63, 152, 0.24);
+}
+
+
+html[data-theme="light"]
+.gallery-favorite-button.is-favorite:hover {
+    color:
+        #ffffff;
+
+    background:
+        #ff3f98;
+
+    border-color:
+        #ffffff;
+}
+
+
+/* =========================================================
+   MODE NUIT
+========================================================= */
+
+html[data-theme="dark"]
+.gallery-favorite-button {
+    color:
+        #ffffff;
+
+    background:
+        rgba(25, 10, 40, 0.76);
+
+    border-color:
+        rgba(255, 255, 255, 0.70);
+}
+
+
+html[data-theme="dark"]
+.gallery-favorite-button:hover {
+    background:
+        rgba(109, 0, 163, 0.92);
+}
+
+
+html[data-theme="dark"]
+.gallery-favorite-button.is-favorite {
+    color:
+        #ff74bd;
+
+    background:
+        rgba(55, 10, 48, 0.92);
+
+    border-color:
+        rgba(255, 116, 189, 0.80);
+}
+
+
+/* =========================================================
+   CONTENU +18
+========================================================= */
+
+/*
+ * Le bouton reste parfaitement visible
+ * même lorsque l'illustration est floutée.
+ */
+
+.artist-card[data-sensitive="true"]
+.gallery-favorite-button {
+    z-index: 40;
+}
+
+
+/*
+ * Important :
+ * le bouton lui-même ne doit jamais être flouté.
+ */
+
+.artist-card[data-sensitive="true"]
+.gallery-favorite-button,
+.artist-card[data-sensitive="true"]
+.gallery-favorite-icon {
+    filter: none !important;
+}
+
+
+/* =========================================================
+   ZOOM
+========================================================= */
+
+/*
+ * Le bouton appartient à la carte de galerie.
+ * S'il se retrouve dans un élément utilisé comme zoom,
+ * on le masque.
+ */
+
+.image-container.is-zoomed
+.gallery-favorite-button,
+.artist-card.is-zoomed
+.gallery-favorite-button,
+.zoom-overlay
+.gallery-favorite-button,
+.image-zoom
+.gallery-favorite-button,
+.lightbox
+.gallery-favorite-button {
+    display: none !important;
+}
+
+
+/* =========================================================
+   TÉLÉPHONE / TABLETTE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .gallery-favorite-button {
+        top: 10px;
+        right: 10px;
+
+        width: 42px;
+        height: 42px;
+
+        font-size: 1.5rem;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .gallery-favorite-button {
+        width: 38px;
+        height: 38px;
+
+        font-size: 1.35rem;
+
+        border-width: 2px;
+    }
+
+}
+
+
+/* =========================================================
+   ANIMATION DU CŒUR
+========================================================= */
+
+@keyframes galleryFavoritePop {
+
+    0% {
+        transform:
+            translateY(-1px)
+            scale(1);
+    }
+
+    40% {
+        transform:
+            translateY(-1px)
+            scale(1.35);
+    }
+
+    70% {
+        transform:
+            translateY(-1px)
+            scale(0.92);
+    }
+
+    100% {
+        transform:
+            translateY(-1px)
+            scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   ACCESSIBILITÉ — ANIMATIONS RÉDUITES
+========================================================= */
+
+@media (
+    prefers-reduced-motion: reduce
+) {
+
+    .gallery-favorite-button,
+    .gallery-favorite-icon {
+        transition: none;
+    }
+
+
+    .gallery-favorite-button.is-favorite
+    .gallery-favorite-icon {
+        animation: none;
+    }
+
 }
