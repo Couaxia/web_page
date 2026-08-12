@@ -1,10 +1,15 @@
 "use strict";
 
 /* =========================================================
-   WATERMARK TEXTE DES ILLUSTRATIONS — COUAXIA
+   WATERMARK DES ILLUSTRATIONS — COUAXIA
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    /* =====================================================
+       NOM DE L'ARTISTE
+    ====================================================== */
+
     /**
      * Cherche le nom de l’artiste.
      *
@@ -17,27 +22,42 @@ document.addEventListener("DOMContentLoaded", () => {
      * @returns {string}
      */
     function getArtistName(card) {
+
         const dataArtist =
             card.dataset.artist?.trim();
+
 
         if (dataArtist) {
             return dataArtist;
         }
+
 
         const heading =
             card.querySelector(
                 ".artist-content h3"
             );
 
+
         const headingName =
             heading?.textContent?.trim();
 
-        return headingName || "Artiste inconnu";
+
+        return (
+            headingName ||
+            "Artiste inconnu"
+        );
     }
 
 
+    /* =====================================================
+       WATERMARK TEXTE
+    ====================================================== */
+
     /**
-     * Crée le bandeau du watermark.
+     * Crée la plaque avec :
+     *
+     * 🎨 Nom artiste
+     * © Couaxia
      *
      * @param {string} artistName
      * @returns {HTMLDivElement}
@@ -45,11 +65,16 @@ document.addEventListener("DOMContentLoaded", () => {
     function createWatermarkMessage(
         artistName
     ) {
+
         const message =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         message.className =
             "image-watermark-message";
+
 
         message.setAttribute(
             "aria-hidden",
@@ -57,27 +82,37 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        /*
-         * Nom de l’artiste mis en avant.
-         */
+        /* =============================================
+           ARTISTE
+        ============================================= */
+
         const artist =
-            document.createElement("span");
+            document.createElement(
+                "span"
+            );
+
 
         artist.className =
             "image-watermark-title";
+
 
         artist.textContent =
             `🎨 ${artistName}`;
 
 
-        /*
-         * Mention Couaxia plus discrète.
-         */
+        /* =============================================
+           COPYRIGHT
+        ============================================= */
+
         const copyright =
-            document.createElement("span");
+            document.createElement(
+                "span"
+            );
+
 
         copyright.className =
             "image-watermark-artist";
+
 
         copyright.textContent =
             "© Couaxia";
@@ -88,76 +123,196 @@ document.addEventListener("DOMContentLoaded", () => {
             copyright
         );
 
+
         return message;
     }
 
 
+    /* =====================================================
+       LOGO WATERMARK DU ZOOM
+    ====================================================== */
+
     /**
-     * Initialise le watermark d’une carte.
+     * Crée le logo Couaxia affiché
+     * uniquement pendant le zoom.
+     *
+     * @returns {HTMLImageElement}
+     */
+    function createZoomWatermark() {
+
+        const logo =
+            document.createElement(
+                "img"
+            );
+
+
+        logo.src =
+            "./images/logo/Logo_Glow.png";
+
+
+        logo.className =
+            "image-zoom-watermark";
+
+
+        logo.alt =
+            "";
+
+
+        logo.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        logo.setAttribute(
+            "draggable",
+            "false"
+        );
+
+
+        logo.loading =
+            "lazy";
+
+
+        logo.decoding =
+            "async";
+
+
+        return logo;
+    }
+
+
+    /* =====================================================
+       INITIALISATION D'UNE CARTE
+    ====================================================== */
+
+    /**
+     * Initialise tous les watermarks
+     * d'un conteneur d'image.
      *
      * @param {HTMLElement} imageContainer
      */
     function initializeWatermark(
         imageContainer
     ) {
+
         if (
             imageContainer.dataset
-                .watermarkReady === "true"
+                .watermarkReady ===
+            "true"
         ) {
             return;
         }
+
 
         const card =
             imageContainer.closest(
                 ".artist-card"
             );
 
+
         if (!card) {
             return;
         }
 
-        /*
-         * Évite de créer un second bandeau
-         * si le HTML en contient déjà un.
-         */
+
+        const artistName =
+            getArtistName(
+                card
+            );
+
+
+        /* =================================================
+           WATERMARK TEXTE
+        ================================================= */
+
         const existingMessage =
             imageContainer.querySelector(
                 ".image-watermark-message"
             );
 
-        if (existingMessage) {
-            imageContainer.dataset
-                .watermarkReady = "true";
 
-            return;
-        }
+        if (!existingMessage) {
 
-        const artistName =
-            getArtistName(card);
+            const message =
+                createWatermarkMessage(
+                    artistName
+                );
 
-        const message =
-            createWatermarkMessage(
-                artistName
+
+            imageContainer.appendChild(
+                message
             );
 
-        imageContainer.appendChild(
-            message
-        );
+        }
+
+
+        /* =================================================
+           LOGO DU ZOOM
+        ================================================= */
+
+        const existingZoomWatermark =
+            imageContainer.querySelector(
+                ".image-zoom-watermark"
+            );
+
+
+        if (!existingZoomWatermark) {
+
+            const zoomWatermark =
+                createZoomWatermark();
+
+
+            imageContainer.appendChild(
+                zoomWatermark
+            );
+
+        }
+
+
+        /* =================================================
+           TERMINÉ
+        ================================================= */
 
         imageContainer.dataset
-            .watermarkReady = "true";
+            .watermarkReady =
+            "true";
     }
 
 
+    /* =====================================================
+       INITIALISER PLUSIEURS CARTES
+    ====================================================== */
+
     /**
-     * Initialise les cartes présentes
-     * dans un conteneur.
+     * Initialise toutes les cartes
+     * présentes dans root.
      *
      * @param {ParentNode} root
      */
     function initializeWatermarksInside(
         root
     ) {
+
+        /*
+         * Si root est directement
+         * un image-container.
+         */
+        if (
+            root instanceof HTMLElement &&
+            root.matches(
+                ".artist-card .image-container"
+            )
+        ) {
+            initializeWatermark(
+                root
+            );
+        }
+
+
+        /*
+         * Recherche les cartes enfants.
+         */
         root
             .querySelectorAll(
                 ".artist-card .image-container"
@@ -168,62 +323,74 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /*
-     * Cartes déjà présentes au chargement.
-     */
+    /* =====================================================
+       CARTES PRÉSENTES AU CHARGEMENT
+    ====================================================== */
+
     initializeWatermarksInside(
         document
     );
 
 
+    /* =====================================================
+       CARTES GÉNÉRÉES DYNAMIQUEMENT
+    ====================================================== */
+
     /*
-     * Les galeries étant créées dynamiquement
-     * par credits-gallery.js, on surveille
-     * l’apparition de nouvelles cartes.
+     * credits-gallery.js clone les cartes.
+     *
+     * Le MutationObserver permet donc
+     * d'ajouter automatiquement :
+     *
+     * - la plaque artiste ;
+     * - le logo de zoom.
      */
+
     const observer =
         new MutationObserver(
             (mutations) => {
+
                 mutations.forEach(
                     (mutation) => {
-                        mutation.addedNodes
+
+                        mutation
+                            .addedNodes
                             .forEach(
                                 (node) => {
+
                                     if (
                                         !(
-                                            node
-                                            instanceof
+                                            node instanceof
                                             Element
                                         )
                                     ) {
                                         return;
                                     }
 
-                                    if (
-                                        node.matches(
-                                            ".artist-card .image-container"
-                                        )
-                                    ) {
-                                        initializeWatermark(
-                                            node
-                                        );
-                                    }
 
                                     initializeWatermarksInside(
                                         node
                                     );
+
                                 }
                             );
+
                     }
                 );
+
             }
         );
+
 
     observer.observe(
         document.body,
         {
-            childList: true,
-            subtree: true
+            childList:
+                true,
+
+            subtree:
+                true
         }
     );
+
 });

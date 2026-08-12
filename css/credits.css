@@ -26,6 +26,19 @@ html[data-theme="light"] {
 
     --credits-shadow: rgba(17, 48, 158, 0.20);
 
+    /* Boutons interactifs */
+    --random-btn-text: #ffffff;
+    --random-btn-start: #6d00a3;
+    --random-btn-end: #d02b9e;
+    --random-btn-hover-start: #8700c9;
+    --random-btn-hover-end: #e63eb1;
+    --random-btn-border: #00aeb3;
+    --random-btn-glow: rgba(109, 0, 163, 0.28);
+
+    --modal-close-bg: rgba(255, 255, 255, 0.92);
+    --modal-close-text: #6d00a3;
+    --modal-close-border: #6d00a3;
+
     --credits-filter-bg:
         linear-gradient(
             135deg,
@@ -56,6 +69,19 @@ html[data-theme="dark"] {
     --credits-card-end: rgba(177, 17, 130, 0.90);
 
     --credits-shadow: rgba(0, 0, 0, 0.50);
+
+    /* Boutons interactifs */
+    --random-btn-text: #ffffff;
+    --random-btn-start: #4a086b;
+    --random-btn-end: #8f126f;
+    --random-btn-hover-start: #650a8f;
+    --random-btn-hover-end: #bd168e;
+    --random-btn-border: #22f2ef;
+    --random-btn-glow: rgba(34, 242, 239, 0.34);
+
+    --modal-close-bg: rgba(46, 17, 70, 0.94);
+    --modal-close-text: #ffffff;
+    --modal-close-border: #22f2ef;
 
     --credits-filter-bg:
         linear-gradient(
@@ -817,13 +843,13 @@ html[data-theme="dark"]
 
 #credits-generated-galleries
 .artist-card
-.image-container > img,
+.image-container > img:not(.image-zoom-watermark),
 #credits-generated-galleries
 .artist-card
 .image-container > video,
 .credits-gallery-section
 .artist-card
-.image-container > img,
+.image-container > img:not(.image-zoom-watermark),
 .credits-gallery-section
 .artist-card
 .image-container > video {
@@ -1035,13 +1061,13 @@ html[data-theme="dark"]
 
     #credits-generated-galleries
     .artist-card
-    .image-container:hover > img:not(.image-watermark-logo),
+    .image-container:hover > img:not(.image-watermark-logo):not(.image-zoom-watermark),
     #credits-generated-galleries
     .artist-card
     .image-container:hover > video,
     .credits-gallery-section
     .artist-card
-    .image-container:hover > img:not(.image-watermark-logo),
+    .image-container:hover > img:not(.image-watermark-logo):not(.image-zoom-watermark),
     .credits-gallery-section
     .artist-card
     .image-container:hover > video {
@@ -1548,7 +1574,7 @@ html[data-theme="light"] .image-watermark-artist{
 
 .artist-card[data-sensitive="true"]
 .image-container
-> img,
+> img:not(.image-watermark-logo):not(.image-zoom-watermark),
 .artist-card[data-sensitive="true"]
 .image-container
 > video {
@@ -1654,7 +1680,7 @@ html[data-theme="light"] .image-watermark-artist{
 @media (hover: hover) and (pointer: fine) {
     .artist-card[data-sensitive="true"]
     .image-container:hover
-    > img,
+    > img:not(.image-watermark-logo):not(.image-zoom-watermark),
 
     .artist-card[data-sensitive="true"]
     .image-container:hover
@@ -2120,6 +2146,968 @@ html[data-theme="dark"]
     .gallery-favorite-button.is-favorite
     .gallery-favorite-icon {
         animation: none;
+    }
+
+}
+
+/* =========================================================
+   MODAL — ŒUVRE AU HASARD
+========================================================= */
+
+.random-art-open {
+    overflow: hidden;
+}
+
+
+.random-art-modal {
+    position: fixed;
+    z-index: 99999;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+
+    background:
+        rgba(5, 0, 12, 0.92);
+
+    backdrop-filter:
+        blur(12px);
+
+    -webkit-backdrop-filter:
+        blur(12px);
+
+    opacity: 0;
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.30s ease,
+        visibility 0.30s ease;
+}
+
+
+.random-art-modal.is-open {
+    opacity: 1;
+    visibility: visible;
+
+    pointer-events: auto;
+}
+
+
+/* =========================================================
+   FENÊTRE
+========================================================= */
+
+.random-art-dialog {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    width: min(96vw, 1500px);
+    max-height: 94vh;
+
+    padding: 24px;
+
+    background:
+        var(--credits-surface-secondary);
+
+    border:
+        3px solid
+        var(--credits-border);
+
+    border-radius:
+        30px;
+
+    box-shadow:
+        0 25px 70px
+        rgba(0, 0, 0, 0.65),
+
+        0 0 30px
+        rgba(34, 242, 239, 0.30);
+
+    box-sizing: border-box;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   BOUTON FERMER
+========================================================= */
+
+.random-art-close {
+    position: absolute;
+
+    top: 15px;
+    right: 15px;
+    z-index: 30;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 46px;
+    height: 46px;
+
+    padding: 0;
+
+    color: var(--modal-close-text);
+
+    background:
+        var(--modal-close-bg);
+
+    border:
+        2px solid var(--modal-close-border);
+
+    border-radius:
+        50%;
+
+    font-size:
+        1.25rem;
+
+    font-weight:
+        900;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 14px
+        rgba(34, 242, 239, 0.42);
+}
+
+
+/* =========================================================
+   ZONE DE L'ŒUVRE
+========================================================= */
+
+.random-art-stage {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 0;
+
+    flex: 1;
+
+    overflow: hidden;
+
+    background:
+        #06000d;
+
+    border-radius:
+        22px;
+}
+
+
+.random-art-media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: min(74vh, 900px);
+
+    overflow: hidden;
+}
+
+
+.random-artwork {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain !important;
+    object-position: center !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    border-radius: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    filter: none;
+    transform: none;
+}
+
+
+/* =========================================================
+   LOGO COPYRIGHT
+========================================================= */
+
+/* =========================================================
+   LOGO COPYRIGHT — CENTRE DE L'ŒUVRE
+========================================================= */
+
+.random-art-copyright-logo {
+    position: absolute;
+
+    /* Centre parfait */
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    width: clamp(160px, 18vw, 280px);
+    opacity: 0.27;
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 15;
+
+    width:
+        clamp(
+            130px,
+            15vw,
+            240px
+        );
+
+    height: auto;
+
+    /* Discret pour laisser voir l'œuvre */
+    opacity: 0.32;
+
+    pointer-events: none;
+
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+
+    filter:
+        drop-shadow(
+            0 0 10px
+            rgba(34, 242, 239, 0.35)
+        )
+        drop-shadow(
+            0 0 18px
+            rgba(255, 0, 166, 0.22)
+        );
+}
+
+
+/* =========================================================
+   CRÉDIT ARTISTE
+========================================================= */
+
+.random-art-credit {
+    position: absolute;
+
+    left: 22px;
+    bottom: 22px;
+    z-index: 15;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    padding:
+        12px 18px;
+
+    background:
+        rgba(25, 8, 45, 0.72);
+
+    backdrop-filter:
+        blur(8px);
+
+    -webkit-backdrop-filter:
+        blur(8px);
+
+    border:
+        1px solid
+        rgba(34, 242, 239, 0.50);
+
+    border-radius:
+        14px;
+
+    color:
+        #ffffff;
+
+    pointer-events:
+        none;
+}
+
+
+.random-art-credit-artist {
+    font-size:
+        1rem;
+
+    font-weight:
+        900;
+
+    color:
+        #22f2ef;
+}
+
+
+.random-art-credit-owner {
+    font-size:
+        0.82rem;
+
+    opacity:
+        0.78;
+}
+
+
+/* =========================================================
+   +18
+========================================================= */
+
+.random-art-media.is-sensitive
+.random-artwork {
+    filter:
+        blur(16px)
+        brightness(0.62);
+
+    transform:
+        scale(1.04);
+
+    transition:
+        filter 0.35s ease,
+        transform 0.35s ease;
+}
+
+
+.random-art-sensitive-warning {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        rgba(10, 2, 20, 0.10);
+
+    pointer-events: none;
+}
+
+
+/* Important : respecte l'attribut hidden */
+
+.random-art-sensitive-warning[hidden] {
+    display: none !important;
+}
+
+
+
+.random-art-sensitive-reveal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: min(42vw, 430px);
+    max-width: 70%;
+
+    padding: 0;
+
+    background: transparent;
+
+    border: 0;
+
+    cursor: pointer;
+
+    pointer-events: auto;
+
+    transition:
+        transform 0.25s ease,
+        opacity 0.25s ease;
+}
+
+
+.random-art-sensitive-reveal:hover {
+    transform:
+        scale(1.05);
+}
+
+.random-art-sensitive-reveal:focus-visible {
+    outline: 3px solid var(--credits-accent);
+    outline-offset: 8px;
+    border-radius: 22px;
+}
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.random-art-sensitive-logo {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    opacity: 0.42;
+
+    pointer-events: none;
+
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+
+    filter:
+        drop-shadow(
+            0 0 14px
+            rgba(34, 242, 239, 0.45)
+        )
+        drop-shadow(
+            0 0 22px
+            rgba(255, 0, 166, 0.25)
+        );
+
+    transition:
+        opacity 0.25s ease,
+        filter 0.25s ease;
+}
+
+
+.random-art-sensitive-reveal:hover
+.random-art-sensitive-logo {
+    opacity: 0.58;
+
+    filter:
+        drop-shadow(
+            0 0 18px
+            rgba(34, 242, 239, 0.65)
+        )
+        drop-shadow(
+            0 0 30px
+            rgba(255, 0, 166, 0.35)
+        );
+}
+
+
+/* =========================================================
+   MODE JOUR
+========================================================= */
+
+html[data-theme="light"]
+.random-art-sensitive-warning {
+    background:
+        rgba(255, 255, 255, 0.06);
+}
+
+
+html[data-theme="light"]
+.random-art-sensitive-logo {
+    opacity: 0.38;
+}
+
+
+/* =========================================================
+   MODE NUIT
+========================================================= */
+
+html[data-theme="dark"]
+.random-art-sensitive-warning {
+    background:
+        rgba(5, 0, 12, 0.12);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .random-art-sensitive-reveal {
+        width: min(58vw, 280px);
+    }
+
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.random-art-actions {
+    display: flex;
+    justify-content: center;
+    padding-top:
+        18px;
+}
+
+.random-art-again {
+    min-height:
+        52px;
+    padding:
+        12px 24px;
+    color:
+        var(--random-btn-text);
+    background:
+        linear-gradient(
+            135deg,
+            var(--random-btn-start),
+            var(--random-btn-end)
+        );
+
+    border:
+        2px solid
+        var(--random-btn-border);
+    border-radius:
+        16px;
+    font:
+        inherit;
+    font-size:
+        1rem;
+    font-weight:
+        900;
+    cursor:
+        pointer;
+    box-shadow:
+        0 7px 18px rgba(0, 0, 0, 0.30),
+        0 0 12px var(--random-btn-glow);
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.random-art-again:hover {
+    transform: translateY(-2px) scale(1.03);
+    background:
+        linear-gradient(
+            135deg,
+            var(--random-btn-hover-start),
+            var(--random-btn-hover-end)
+        );
+    box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.30),
+        0 0 18px var(--random-btn-glow);
+}
+
+.random-art-again:active {
+    transform: scale(0.96);
+}
+
+.random-art-again:focus-visible {
+    outline: 3px solid var(--credits-accent);
+    outline-offset: 4px;
+}
+
+
+/* =========================================================
+   MODE JOUR
+========================================================= */
+
+html[data-theme="light"]
+.random-art-dialog {
+    background:
+        rgba(255, 248, 253, 0.98);
+}
+
+html[data-theme="light"]
+.random-art-credit {
+    background:
+        rgba(255, 255, 255, 0.82);
+    color:
+        #4b115d;
+    border-color:
+        rgba(109, 0, 163, 0.40);
+}
+
+
+html[data-theme="light"]
+.random-art-credit-artist {
+    color:
+        #6d00a3;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+    .random-art-modal {
+        padding:
+            12px;
+    }
+    .random-art-dialog {
+        width:
+            100%;
+        max-height:
+            96vh;
+        padding:
+            12px;
+        border-radius:
+            22px;
+    }
+    .random-art-media {
+        height:
+            70vh;
+    }
+    .random-art-credit {
+        left:
+            10px;
+        bottom:
+            10px;
+        padding:
+            8px 11px;
+    }
+
+
+    .random-art-copyright-logo {
+        top: 50%;
+        left: 50%;
+        right: auto;
+        bottom: auto;
+
+        width: clamp(110px, 32vw, 170px);
+
+        transform: translate(-50%, -50%);
+    }
+
+
+    .random-art-close {
+        top:
+            8px;
+
+        right:
+            8px;
+
+        width:
+            40px;
+
+        height:
+            40px;
+    }
+
+}
+/* =========================================================
+   BOUTON — ŒUVRE AU HASARD
+========================================================= */
+
+.credits-random-wrapper {
+    display: flex;
+    justify-content: center;
+
+    width: 100%;
+    margin: 22px 0 10px;
+}
+
+
+.credits-random-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    min-height: 56px;
+
+    padding: 13px 26px;
+
+    color: var(--random-btn-text);
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--random-btn-start),
+            var(--random-btn-end)
+        );
+
+    border: 2px solid var(--random-btn-border);
+    border-radius: 18px;
+
+    font: inherit;
+    font-size: 1.05rem;
+    font-weight: 900;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.28),
+        0 0 14px var(--random-btn-glow);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.credits-random-button:hover {
+    transform:
+        translateY(-3px)
+        scale(1.03);
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--random-btn-hover-start),
+            var(--random-btn-hover-end)
+        );
+
+    box-shadow:
+        0 12px 26px rgba(0, 0, 0, 0.32),
+        0 0 22px var(--random-btn-glow);
+}
+
+
+.credits-random-button:active {
+    transform: scale(0.96);
+}
+
+.credits-random-button:focus-visible {
+    outline: 3px solid var(--credits-accent);
+    outline-offset: 4px;
+}
+
+
+.credits-random-icon {
+    display: inline-block;
+
+    font-size: 1.45rem;
+
+    transition:
+        transform 0.35s ease;
+}
+
+
+.credits-random-button:hover
+.credits-random-icon {
+    transform:
+        rotate(18deg)
+        scale(1.15);
+}
+
+
+@media (max-width: 650px) {
+
+    .credits-random-button {
+        width: 100%;
+        max-width: 360px;
+
+        font-size: 0.95rem;
+    }
+
+}
+
+/* =========================================================
+   BOUTONS ŒUVRE ALÉATOIRE — JOUR / NUIT
+========================================================= */
+
+
+/* =========================================================
+   MODE JOUR
+========================================================= */
+
+html[data-theme="light"]
+.credits-random-button,
+html[data-theme="light"]
+.random-art-again {
+    color: #5d086f;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff4fb,
+            #f2d4ef
+        );
+
+    border-color: #6d00a3;
+
+    box-shadow:
+        0 8px 20px rgba(80, 20, 100, 0.16),
+        0 0 14px rgba(109, 0, 163, 0.18);
+}
+
+
+html[data-theme="light"]
+.credits-random-button:hover,
+html[data-theme="light"]
+.random-art-again:hover {
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6d00a3,
+            #d02b9e
+        );
+
+    border-color: #00aeb3;
+
+    box-shadow:
+        0 12px 26px rgba(80, 20, 100, 0.22),
+        0 0 20px rgba(0, 174, 179, 0.32);
+}
+
+
+/* Bouton fermer */
+
+html[data-theme="light"]
+.random-art-close {
+    color: #6d00a3;
+
+    background:
+        rgba(255, 255, 255, 0.94);
+
+    border-color: #6d00a3;
+}
+
+
+html[data-theme="light"]
+.random-art-close:hover {
+    color: #ffffff;
+
+    background:
+        #6d00a3;
+
+    border-color: #00aeb3;
+}
+
+
+/* =========================================================
+   MODE NUIT
+========================================================= */
+
+html[data-theme="dark"]
+.credits-random-button,
+html[data-theme="dark"]
+.random-art-again {
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #48105f,
+            #8f126f
+        );
+
+    border-color: #22f2ef;
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.42),
+        0 0 16px rgba(34, 242, 239, 0.25);
+}
+
+
+html[data-theme="dark"]
+.credits-random-button:hover,
+html[data-theme="dark"]
+.random-art-again:hover {
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6d00a3,
+            #d61b9f
+        );
+
+    border-color: #22f2ef;
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.48),
+        0 0 22px rgba(34, 242, 239, 0.48);
+}
+
+
+/* Bouton fermer */
+
+html[data-theme="dark"]
+.random-art-close {
+    color: #ffffff;
+
+    background:
+        rgba(50, 10, 70, 0.92);
+
+    border-color: #22f2ef;
+}
+
+
+html[data-theme="dark"]
+.random-art-close:hover {
+    color: #16021f;
+
+    background: #22f2ef;
+
+    border-color: #ff5fc1;
+}
+
+
+/* =========================================================
+   FOCUS CLAVIER
+========================================================= */
+
+.credits-random-button:focus-visible,
+.random-art-again:focus-visible,
+.random-art-close:focus-visible {
+    outline: 3px solid var(--credits-accent);
+    outline-offset: 4px;
+}
+
+/* =========================================================
+   LOGO WATERMARK PENDANT LE ZOOM
+========================================================= */
+
+.image-zoom-watermark {
+    position: absolute !important;
+
+    top: 50%;
+    left: 50%;
+
+    z-index: 75;
+
+    width: clamp(150px, 18vw, 280px) !important;
+    height: auto !important;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform:
+        translate(-50%, -50%)
+        scale(0.94);
+
+    pointer-events: none;
+
+    user-select: none;
+
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+
+    object-fit: contain !important;
+    object-position: center !important;
+    border-radius: 0 !important;
+
+    filter:
+        drop-shadow(
+            0 0 14px
+            rgba(34, 242, 239, 0.30)
+        );
+
+    transition:
+        opacity 0.30s ease,
+        visibility 0.30s ease,
+        transform 0.30s ease;
+}
+
+
+/* =========================================================
+   AFFICHAGE UNIQUEMENT PENDANT LE ZOOM
+========================================================= */
+
+@media (hover: hover) and (pointer: fine) {
+
+    .artist-card
+    .image-container:hover
+    .image-zoom-watermark {
+        opacity: 0.30;
+
+        visibility: visible;
+
+        transform:
+            translate(-50%, -50%)
+            scale(1);
     }
 
 }
