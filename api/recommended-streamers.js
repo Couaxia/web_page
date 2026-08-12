@@ -102,7 +102,7 @@ const RECOMMENDED_STREAMERS = [
         category: "friends"
     },
     {
-        login: "xiriavt",
+        login: "vaxiria",
         category: "friends"
     },
     {
@@ -172,6 +172,34 @@ const RECOMMENDED_STREAMERS = [
     {
         login: "fengaryx",
         category: "favorites"
+    },
+    {
+        login: "kammy64",
+        category: "favorites"
+    },
+    {
+        login: "sunray",
+        category: "favorites"
+    },
+    {
+        login: "Maiyasu",
+        category: "friends"
+    },
+    {
+        login: "yuutooushiro",
+        category: "friends"
+    },
+    {
+        login: "selini_s",
+        category: "friends"
+    },
+    {
+        login: "MrButler_17",
+        category: "favorites"
+    },
+    {
+        login: "PiikaNya",
+        category: "friends"
     }
 ];
 
