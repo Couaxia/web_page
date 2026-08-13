@@ -519,4 +519,4 @@ export async function twitchFetch(
 
 
     return data;
-}s
+}
