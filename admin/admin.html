@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Administration | Couaxia
+    </title>
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="../images/logo/Logo Transparents 2.png"
+    >
+
+    <!-- =====================================================
+         CSS
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="./admin.css"
+    >
+</head>
+
+
+<body class="admin-page">
+
+
+    <!-- =====================================================
+         EN-TÊTE ADMIN
+    ====================================================== -->
+
+    <header class="admin-header">
+
+        <a
+            href="../accueil.html"
+            class="admin-brand"
+            aria-label="Retour au site Couaxia"
+        >
+
+            <video
+                autoplay
+                muted
+                loop
+                playsinline
+                aria-hidden="true"
+            >
+                <source
+                    src="../images/logo/Transparents.webm"
+                    type="video/webm"
+                >
+            </video>
+
+
+            <div class="admin-brand-text">
+
+                <span class="admin-brand-title">
+                    Couaxia
+                </span>
+
+                <span class="admin-brand-subtitle">
+                    Administration
+                </span>
+
+            </div>
+
+        </a>
+
+
+        <div class="admin-header-actions">
+
+            <a
+                href="../accueil.html"
+                class="admin-site-link"
+            >
+                ↗ Voir le site
+            </a>
+
+
+            <button
+                id="theme-toggle"
+                class="theme-toggle"
+                type="button"
+                aria-label="Changer le thème"
+                title="Changer le thème"
+            >
+
+                <span
+                    class="theme-icon"
+                    aria-hidden="true"
+                >
+                    🌙
+                </span>
+
+                <span class="theme-text">
+                    Mode nuit
+                </span>
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         LAYOUT ADMIN
+    ====================================================== -->
+
+    <div class="admin-layout">
+
+
+        <!-- =================================================
+             SIDEBAR
+        ================================================== -->
+
+        <aside class="admin-sidebar">
+
+
+            <!-- =============================================
+                 NAVIGATION
+            ============================================== -->
+
+            <nav
+                class="admin-nav"
+                aria-label="Navigation administration"
+            >
+
+                <button
+                    type="button"
+                    class="admin-nav-button is-active"
+                    data-admin-section="dashboard"
+                >
+
+                    <span
+                        class="admin-nav-icon"
+                        aria-hidden="true"
+                    >
+                        🏠
+                    </span>
+
+                    <span>
+                        Tableau de bord
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="admin-nav-button"
+                    data-admin-section="games"
+                >
+
+                    <span
+                        class="admin-nav-icon"
+                        aria-hidden="true"
+                    >
+                        🎮
+                    </span>
+
+                    <span>
+                        Jeux
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="admin-nav-button"
+                    data-admin-section="gallery"
+                >
+
+                    <span
+                        class="admin-nav-icon"
+                        aria-hidden="true"
+                    >
+                        🎨
+                    </span>
+
+                    <span>
+                        Galerie
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="admin-nav-button"
+                    data-admin-section="poll"
+                >
+
+                    <span
+                        class="admin-nav-icon"
+                        aria-hidden="true"
+                    >
+                        🗳️
+                    </span>
+
+                    <span>
+                        Sondage
+                    </span>
+
+                </button>
+
+            </nav>
+
+
+
+            <!-- =============================================
+                 UTILISATEUR ADMIN
+            ============================================== -->
+
+            <div class="admin-user">
+
+                <div class="admin-user-avatar">
+
+                    <img
+                        id="admin-user-avatar"
+                        src="../images/logo/Logo Transparents 2.png"
+                        alt=""
+                        draggable="false"
+                    >
+
+                </div>
+
+
+                <div class="admin-user-info">
+
+                    <strong id="admin-user-name">
+                        Couaxia
+                    </strong>
+
+                    <span id="admin-user-role">
+                        Administratrice
+                    </span>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- =================================================
+             CONTENU PRINCIPAL
+        ================================================== -->
+
+        <main class="admin-main">
+
+
+
+            <!-- =================================================
+                 TABLEAU DE BORD
+            ================================================== -->
+
+            <section
+                class="admin-section is-active"
+                data-admin-panel="dashboard"
+            >
+
+
+                <!-- =============================================
+                     EN-TÊTE
+                ============================================== -->
+
+                <header class="admin-section-header">
+
+                    <div>
+
+                        <span class="admin-eyebrow">
+                            🏠 Administration
+                        </span>
+
+                        <h1>
+                            Tableau de bord
+                        </h1>
+
+                        <p>
+                            Gère les jeux, les illustrations
+                            et les sondages du site Couaxia.
+                        </p>
+
+                    </div>
+
+                </header>
+
+
+
+                <!-- =============================================
+                     STATISTIQUES
+                ============================================== -->
+
+                <div class="admin-dashboard-grid">
+
+
+                    <article class="admin-stat-card">
+
+                        <span
+                            class="admin-stat-icon"
+                            aria-hidden="true"
+                        >
+                            🎮
+                        </span>
+
+                        <strong
+                            id="admin-stat-games"
+                            class="admin-stat-number"
+                        >
+                            0
+                        </strong>
+
+                        <span>
+                            Jeux
+                        </span>
+
+                    </article>
+
+
+                    <article class="admin-stat-card">
+
+                        <span
+                            class="admin-stat-icon"
+                            aria-hidden="true"
+                        >
+                            🎨
+                        </span>
+
+                        <strong
+                            id="admin-stat-artworks"
+                            class="admin-stat-number"
+                        >
+                            0
+                        </strong>
+
+                        <span>
+                            Illustrations
+                        </span>
+
+                    </article>
+
+
+                    <article class="admin-stat-card">
+
+                        <span
+                            class="admin-stat-icon"
+                            aria-hidden="true"
+                        >
+                            🗳️
+                        </span>
+
+                        <strong
+                            id="admin-stat-poll"
+                            class="admin-stat-number"
+                        >
+                            —
+                        </strong>
+
+                        <span>
+                            Sondage
+                        </span>
+
+                    </article>
+
+
+                    <article class="admin-stat-card">
+
+                        <span
+                            class="admin-stat-icon"
+                            aria-hidden="true"
+                        >
+                            💜
+                        </span>
+
+                        <strong
+                            id="admin-stat-votes"
+                            class="admin-stat-number"
+                        >
+                            0
+                        </strong>
+
+                        <span>
+                            Votes
+                        </span>
+
+                    </article>
+
+                </div>
+
+
+
+                <!-- =============================================
+                     ACTIONS RAPIDES
+                ============================================== -->
+
+                <section class="admin-block">
+
+                    <div class="admin-block-header">
+
+                        <div>
+
+                            <span class="admin-block-eyebrow">
+                                ⚡ Actions rapides
+                            </span>
+
+                            <h2>
+                                Que veux-tu faire ?
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="admin-quick-actions">
+
+
+                        <button
+                            type="button"
+                            class="admin-quick-action"
+                            data-open-section="games"
+                            data-admin-action="new-game"
+                        >
+
+                            <span
+                                class="admin-quick-action-icon"
+                                aria-hidden="true"
+                            >
+                                ➕
+                            </span>
+
+                            <strong>
+                                Ajouter un jeu
+                            </strong>
+
+                            <small>
+                                Créer une nouvelle fiche
+                            </small>
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="admin-quick-action"
+                            data-open-section="gallery"
+                            data-admin-action="new-artwork"
+                        >
+
+                            <span
+                                class="admin-quick-action-icon"
+                                aria-hidden="true"
+                            >
+                                🖼️
+                            </span>
+
+                            <strong>
+                                Ajouter une illustration
+                            </strong>
+
+                            <small>
+                                Ajouter une œuvre à la galerie
+                            </small>
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="admin-quick-action"
+                            data-open-section="poll"
+                        >
+
+                            <span
+                                class="admin-quick-action-icon"
+                                aria-hidden="true"
+                            >
+                                🗳️
+                            </span>
+
+                            <strong>
+                                Gérer le sondage
+                            </strong>
+
+                            <small>
+                                Préparer les choix proposés
+                            </small>
+
+                        </button>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 JEUX
+            ================================================== -->
+
+            <section
+                class="admin-section"
+                data-admin-panel="games"
+                hidden
+            >
+
+
+                <!-- =============================================
+                     EN-TÊTE
+                ============================================== -->
+
+                <header class="admin-section-header">
+
+                    <div>
+
+                        <span class="admin-eyebrow">
+                            🎮 Bibliothèque
+                        </span>
+
+                        <h1>
+                            Gestion des jeux
+                        </h1>
+
+                        <p>
+                            Ajoute, modifie ou supprime les jeux
+                            affichés sur la page Jeux.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        id="admin-new-game"
+                        class="admin-primary-button"
+                        type="button"
+                    >
+                        ➕ Ajouter un jeu
+                    </button>
+
+                </header>
+
+
+
+                <!-- =============================================
+                     FORMULAIRE JEU
+                ============================================== -->
+
+                <section
+                    id="admin-game-form-panel"
+                    class="admin-form-panel"
+                >
+
+                    <div class="admin-form-heading">
+
+                        <div>
+
+                            <span class="admin-block-eyebrow">
+                                ✏️ Édition
+                            </span>
+
+                            <h2 id="admin-game-form-title">
+                                Ajouter un jeu
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <form
+                        id="admin-game-form"
+                        class="admin-form"
+                    >
+
+
+                        <!-- =====================================
+                             ID INTERNE
+                        ====================================== -->
+
+                        <input
+                            type="hidden"
+                            id="admin-game-id"
+                            name="gameId"
+                        >
+
+
+
+                        <!-- =====================================
+                             TWITCH
+                        ====================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label for="admin-game-twitch-id">
+                                ID du jeu Twitch
+                            </label>
+
+
+                            <div class="admin-input-with-action">
+
+                                <input
+                                    type="text"
+                                    id="admin-game-twitch-id"
+                                    name="twitchGameId"
+                                    inputmode="numeric"
+                                    autocomplete="off"
+                                    placeholder="Ex : 509658"
+                                    required
+                                >
+
+
+                                <button
+                                    id="admin-game-twitch-preview"
+                                    class="admin-secondary-button"
+                                    type="button"
+                                >
+                                    🔎 Vérifier
+                                </button>
+
+                            </div>
+
+
+                            <small>
+                                Le nom et la jaquette seront
+                                récupérés automatiquement depuis Twitch.
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             APERÇU TWITCH
+                        ====================================== -->
+
+                        <div
+                            id="admin-game-twitch-result"
+                            class="admin-twitch-preview"
+                            hidden
+                        >
+
+                            <div class="admin-twitch-preview-cover">
+
+                                <img
+                                    id="admin-game-preview-cover"
+                                    src=""
+                                    alt=""
+                                    draggable="false"
+                                >
+
+                            </div>
+
+
+                            <div class="admin-twitch-preview-content">
+
+                                <span class="admin-twitch-label">
+                                    Twitch
+                                </span>
+
+                                <strong
+                                    id="admin-game-preview-name"
+                                >
+                                    —
+                                </strong>
+
+                                <span
+                                    id="admin-game-preview-id"
+                                    class="admin-twitch-id"
+                                >
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             STATUT
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-game-status">
+                                Statut
+                            </label>
+
+                            <select
+                                id="admin-game-status"
+                                name="status"
+                                required
+                            >
+
+                                <option value="current">
+                                    🔥 En cours
+                                </option>
+
+                                <option value="regular">
+                                    🔁 Régulier
+                                </option>
+
+                                <option value="backlog">
+                                    📚 À faire
+                                </option>
+
+                                <option value="paused">
+                                    ⏸️ En pause
+                                </option>
+
+                                <option value="finished">
+                                    🏆 Terminé
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             PROGRESSION
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-game-progress">
+                                Progression
+                            </label>
+
+
+                            <div class="admin-range-wrapper">
+
+                                <input
+                                    type="range"
+                                    id="admin-game-progress"
+                                    name="progress"
+                                    min="0"
+                                    max="100"
+                                    step="1"
+                                    value="0"
+                                >
+
+                                <output
+                                    id="admin-game-progress-value"
+                                    for="admin-game-progress"
+                                >
+                                    0 %
+                                </output>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             TAGS
+                        ====================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label for="admin-game-tags">
+                                Tags
+                            </label>
+
+                            <input
+                                type="text"
+                                id="admin-game-tags"
+                                name="tags"
+                                autocomplete="off"
+                                placeholder="horreur, coop, solo, communauté..."
+                            >
+
+                            <small>
+                                Sépare les tags avec des virgules.
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             DESCRIPTION
+                        ====================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label for="admin-game-description">
+                                Description
+                            </label>
+
+                            <textarea
+                                id="admin-game-description"
+                                name="description"
+                                rows="5"
+                                maxlength="600"
+                                placeholder="Ton petit commentaire sur le jeu..."
+                            ></textarea>
+
+                            <small>
+                                Maximum 600 caractères.
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             NOTE
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-game-rating">
+                                Ma note
+                            </label>
+
+                            <select
+                                id="admin-game-rating"
+                                name="rating"
+                            >
+
+                                <option value="">
+                                    Pas encore noté
+                                </option>
+
+                                <option value="1">
+                                    💜 1/10
+                                </option>
+
+                                <option value="2">
+                                    💜 2/10
+                                </option>
+
+                                <option value="3">
+                                    💜 3/10
+                                </option>
+
+                                <option value="4">
+                                    💜 4/10
+                                </option>
+
+                                <option value="5">
+                                    💜 5/10
+                                </option>
+
+                                <option value="6">
+                                    💜 6/10
+                                </option>
+
+                                <option value="7">
+                                    💜 7/10
+                                </option>
+
+                                <option value="8">
+                                    💜 8/10
+                                </option>
+
+                                <option value="9">
+                                    💜 9/10
+                                </option>
+
+                                <option value="10">
+                                    💜 10/10
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             PLAYLIST YOUTUBE
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-game-youtube">
+                                Playlist YouTube
+                            </label>
+
+                            <input
+                                type="text"
+                                id="admin-game-youtube"
+                                name="youtubePlaylist"
+                                autocomplete="off"
+                                placeholder="PLxxxxxxxx..."
+                            >
+
+                            <small>
+                                Facultatif.
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             ÉLIGIBLE AU SONDAGE
+                        ====================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label
+                                class="admin-toggle-field"
+                                for="admin-game-poll"
+                            >
+
+                                <input
+                                    type="checkbox"
+                                    id="admin-game-poll"
+                                    name="pollEnabled"
+                                >
+
+
+                                <span
+                                    class="admin-toggle"
+                                    aria-hidden="true"
+                                ></span>
+
+
+                                <span class="admin-toggle-text">
+
+                                    <strong>
+                                        🗳️ Peut participer au sondage
+                                    </strong>
+
+                                    <small>
+                                        Le jeu pourra être proposé
+                                        automatiquement dans les sondages.
+                                    </small>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             ACTIONS
+                        ====================================== -->
+
+                        <div class="admin-form-actions">
+
+                            <button
+                                id="admin-game-cancel"
+                                class="admin-secondary-button"
+                                type="button"
+                            >
+                                Annuler
+                            </button>
+
+
+                            <button
+                                id="admin-game-submit"
+                                class="admin-primary-button"
+                                type="submit"
+                            >
+                                💾 Enregistrer
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     LISTE DES JEUX
+                ============================================== -->
+
+                <section class="admin-block">
+
+                    <div class="admin-block-header">
+
+                        <div>
+
+                            <span class="admin-block-eyebrow">
+                                📚 Bibliothèque
+                            </span>
+
+                            <h2>
+                                Jeux enregistrés
+                            </h2>
+
+                        </div>
+
+
+                        <div class="admin-list-tools">
+
+                            <label
+                                class="sr-only"
+                                for="admin-games-search"
+                            >
+                                Rechercher un jeu
+                            </label>
+
+                            <input
+                                type="search"
+                                id="admin-games-search"
+                                placeholder="Rechercher un jeu..."
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="admin-games-list"
+                        class="admin-games-list"
+                    >
+
+                        <p class="admin-empty-state">
+                            Chargement des jeux...
+                        </p>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 GALERIE
+            ================================================== -->
+
+            <section
+                class="admin-section"
+                data-admin-panel="gallery"
+                hidden
+            >
+
+                <header class="admin-section-header">
+
+                    <div>
+
+                        <span class="admin-eyebrow">
+                            🎨 Illustrations
+                        </span>
+
+                        <h1>
+                            Gestion de la galerie
+                        </h1>
+
+                        <p>
+                            Ajoute, modifie ou supprime
+                            les œuvres de la galerie.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        id="admin-new-artwork"
+                        class="admin-primary-button"
+                        type="button"
+                    >
+                        ➕ Ajouter une illustration
+                    </button>
+
+                </header>
+
+
+
+                <!-- =============================================
+                     FUTUR FORMULAIRE GALERIE
+                ============================================== -->
+
+                <div class="admin-coming-soon">
+
+                    <span
+                        class="admin-coming-soon-icon"
+                        aria-hidden="true"
+                    >
+                        🎨
+                    </span>
+
+                    <h2>
+                        Galerie admin
+                    </h2>
+
+                    <p>
+                        Cette partie permettra bientôt
+                        de gérer toutes les illustrations
+                        sans modifier credits.html.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 SONDAGE
+            ================================================== -->
+
+            <section
+                class="admin-section"
+                data-admin-panel="poll"
+                hidden
+            >
+
+                <header class="admin-section-header">
+
+                    <div>
+
+                        <span class="admin-eyebrow">
+                            🗳️ Communauté
+                        </span>
+
+                        <h1>
+                            Gestion du sondage
+                        </h1>
+
+                        <p>
+                            Prépare et suis les votes
+                            qui pourront influencer
+                            les prochains streams.
+                        </p>
+
+                    </div>
+
+                </header>
+
+
+
+                <!-- =============================================
+                     ÉTAT DU SONDAGE
+                ============================================== -->
+
+                <section class="admin-block">
+
+                    <div class="admin-block-header">
+
+                        <div>
+
+                            <span class="admin-block-eyebrow">
+                                📡 État
+                            </span>
+
+                            <h2>
+                                Sondage actuel
+                            </h2>
+
+                        </div>
+
+
+                        <span
+                            id="admin-poll-status"
+                            class="admin-poll-status is-inactive"
+                        >
+                            Inactif
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-poll-overview">
+
+                        <div>
+
+                            <span>
+                                Votes
+                            </span>
+
+                            <strong id="admin-poll-vote-count">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Jeux proposés
+                            </span>
+
+                            <strong id="admin-poll-game-count">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Fin du vote
+                            </span>
+
+                            <strong id="admin-poll-end-date">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     CONFIGURATION SONDAGE
+                ============================================== -->
+
+                <section class="admin-block">
+
+                    <div class="admin-block-header">
+
+                        <div>
+
+                            <span class="admin-block-eyebrow">
+                                ⚙️ Configuration
+                            </span>
+
+                            <h2>
+                                Préparer le vote
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <form
+                        id="admin-poll-form"
+                        class="admin-form"
+                    >
+
+
+                        <div class="admin-field">
+
+                            <label for="admin-poll-end-date-input">
+                                Date de fin
+                            </label>
+
+                            <input
+                                type="date"
+                                id="admin-poll-end-date-input"
+                                name="pollEndDate"
+                            >
+
+                        </div>
+
+
+                        <div class="admin-field">
+
+                            <label for="admin-poll-end-time-input">
+                                Heure de fin
+                            </label>
+
+                            <input
+                                type="time"
+                                id="admin-poll-end-time-input"
+                                name="pollEndTime"
+                            >
+
+                        </div>
+
+
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label>
+                                Jeux proposés
+                            </label>
+
+                            <p class="admin-field-help">
+                                Les jeux marqués comme
+                                éligibles au sondage apparaîtront
+                                automatiquement ici.
+                            </p>
+
+
+                            <div
+                                id="admin-poll-games-list"
+                                class="admin-poll-games-list"
+                            >
+
+                                <p class="admin-empty-state">
+                                    Aucun jeu disponible pour le moment.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="admin-form-actions">
+
+                            <button
+                                id="admin-poll-close"
+                                class="admin-danger-button"
+                                type="button"
+                            >
+                                Fermer le sondage
+                            </button>
+
+
+                            <button
+                                id="admin-poll-save"
+                                class="admin-secondary-button"
+                                type="submit"
+                            >
+                                💾 Enregistrer
+                            </button>
+
+
+                            <button
+                                id="admin-poll-open"
+                                class="admin-primary-button"
+                                type="button"
+                            >
+                                🗳️ Ouvrir le sondage
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     RÉSULTATS
+                ============================================== -->
+
+                <section class="admin-block">
+
+                    <div class="admin-block-header">
+
+                        <div>
+
+                            <span class="admin-block-eyebrow">
+                                📊 Résultats
+                            </span>
+
+                            <h2>
+                                Votes de la communauté
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="admin-poll-results"
+                        class="admin-poll-results"
+                    >
+
+                        <p class="admin-empty-state">
+                            Aucun résultat pour le moment.
+                        </p>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CONFIRMATION DE SUPPRESSION
+    ====================================================== -->
+
+    <div
+        id="admin-confirm-modal"
+        class="admin-modal"
+        hidden
+    >
+
+        <div
+            class="admin-modal-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="admin-confirm-title"
+        >
+
+            <button
+                id="admin-confirm-close"
+                class="admin-modal-close"
+                type="button"
+                aria-label="Fermer"
+            >
+                ✕
+            </button>
+
+
+            <span
+                class="admin-modal-icon"
+                aria-hidden="true"
+            >
+                ⚠️
+            </span>
+
+
+            <h2 id="admin-confirm-title">
+                Confirmer la suppression
+            </h2>
+
+
+            <p id="admin-confirm-message">
+                Veux-tu vraiment supprimer cet élément ?
+            </p>
+
+
+            <div class="admin-modal-actions">
+
+                <button
+                    id="admin-confirm-cancel"
+                    class="admin-secondary-button"
+                    type="button"
+                >
+                    Annuler
+                </button>
+
+
+                <button
+                    id="admin-confirm-delete"
+                    class="admin-danger-button"
+                    type="button"
+                >
+                    🗑️ Supprimer
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         NOTIFICATIONS
+    ====================================================== -->
+
+    <div
+        id="admin-toast-container"
+        class="admin-toast-container"
+        aria-live="polite"
+        aria-atomic="true"
+    ></div>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="../js/theme.js"></script>
+
+
+    <!--
+        admin.js sera un module car il pourra importer :
+
+        ../js/game.js
+        ../js/auth.js
+
+        puis appeler nos futures API admin.
+    -->
+
+    <script type="module" src="./admin.js"></script>
+
+
+</body>
+
+</html>
