@@ -24,6 +24,13 @@ const TABLE_NAME =
 const STORAGE_BUCKET =
     "artworks";
 
+const ALLOWED_MEDIA_TYPES =
+    new Set([
+        "image",
+        "gif",
+        "video"
+    ]);
+
 
 /* =========================================================
    OUTILS
@@ -35,7 +42,9 @@ const STORAGE_BUCKET =
  * @param {unknown} value
  * @returns {string}
  */
-function normalizeText(value) {
+function normalizeText(
+    value
+) {
 
     return String(
         value ?? ""
@@ -44,47 +53,83 @@ function normalizeText(value) {
 
 
 /**
- * Transforme une valeur en texte nullable.
- *
- * "" devient null.
+ * Retourne null pour un texte vide.
  *
  * @param {unknown} value
  * @returns {string|null}
  */
-function normalizeNullableText(value) {
+function normalizeNullableText(
+    value
+) {
 
     const text =
-        normalizeText(value);
+        normalizeText(
+            value
+        );
 
-    return text || null;
+    return (
+        text ||
+        null
+    );
 }
 
 
 /**
- * Transforme différentes formes de données
- * en tableau de chaînes.
+ * Retourne le body de la requête.
+ *
+ * Compatible Express / serverless.
+ *
+ * @param {object} request
+ * @returns {object}
+ */
+function getRequestBody(
+    request
+) {
+
+    if (
+        request?.body &&
+        typeof request.body ===
+        "object"
+    ) {
+
+        return request.body;
+    }
+
+
+    return {};
+}
+
+
+/**
+ * Transforme une valeur en tableau.
  *
  * Accepte :
  *
  * ["couaxia", "stream"]
- *
  * "couaxia, stream"
- *
  * "couaxia|stream"
  *
  * @param {unknown} value
  * @returns {string[]}
  */
-function normalizeArray(value) {
+function normalizeArray(
+    value
+) {
 
-    if (Array.isArray(value)) {
+    if (
+        Array.isArray(
+            value
+        )
+    ) {
 
         return [
             ...new Set(
                 value
                     .map(
                         item =>
-                            normalizeText(item)
+                            normalizeText(
+                                item
+                            )
                     )
                     .filter(Boolean)
             )
@@ -93,10 +138,15 @@ function normalizeArray(value) {
 
 
     const text =
-        normalizeText(value);
+        normalizeText(
+            value
+        );
 
 
-    if (!text) {
+    if (
+        !text
+    ) {
+
         return [];
     }
 
@@ -118,20 +168,16 @@ function normalizeArray(value) {
 /**
  * Normalise les tags.
  *
- * Les tags sont mis en minuscules pour éviter :
- *
- * Stream
- * stream
- * STREAM
- *
- * d'être considérés comme trois tags différents.
- *
  * @param {unknown} value
  * @returns {string[]}
  */
-function normalizeTags(value) {
+function normalizeTags(
+    value
+) {
 
-    return normalizeArray(value)
+    return normalizeArray(
+        value
+    )
         .map(
             tag =>
                 tag.toLowerCase()
@@ -140,7 +186,7 @@ function normalizeTags(value) {
 
 
 /**
- * Convertit proprement une valeur en booléen.
+ * Convertit en booléen.
  *
  * @param {unknown} value
  * @param {boolean} defaultValue
@@ -156,22 +202,36 @@ function normalizeBoolean(
         value === null ||
         value === ""
     ) {
+
         return defaultValue;
     }
 
 
-    if (typeof value === "boolean") {
+    if (
+        typeof value ===
+        "boolean"
+    ) {
+
         return value;
     }
 
 
-    if (typeof value === "number") {
-        return value !== 0;
+    if (
+        typeof value ===
+        "number"
+    ) {
+
+        return (
+            value !==
+            0
+        );
     }
 
 
     const normalized =
-        String(value)
+        String(
+            value
+        )
             .trim()
             .toLowerCase();
 
@@ -183,8 +243,11 @@ function normalizeBoolean(
             "yes",
             "oui",
             "on"
-        ].includes(normalized)
+        ].includes(
+            normalized
+        )
     ) {
+
         return true;
     }
 
@@ -196,8 +259,11 @@ function normalizeBoolean(
             "no",
             "non",
             "off"
-        ].includes(normalized)
+        ].includes(
+            normalized
+        )
     ) {
+
         return false;
     }
 
@@ -207,7 +273,7 @@ function normalizeBoolean(
 
 
 /**
- * Convertit une valeur en entier.
+ * Convertit en entier.
  *
  * @param {unknown} value
  * @param {number} defaultValue
@@ -227,23 +293,28 @@ function normalizeInteger(
         );
 
 
-    return Number.isFinite(number)
+    return Number.isFinite(
+        number
+    )
         ? number
         : defaultValue;
 }
 
 
 /**
- * Vérifie qu'une URL HTTP/HTTPS est valide.
- *
- * Les URLs null sont autorisées.
+ * Vérifie une URL HTTP/HTTPS facultative.
  *
  * @param {string|null} value
  * @returns {boolean}
  */
-function isValidOptionalUrl(value) {
+function isValidOptionalUrl(
+    value
+) {
 
-    if (!value) {
+    if (
+        !value
+    ) {
+
         return true;
     }
 
@@ -251,12 +322,16 @@ function isValidOptionalUrl(value) {
     try {
 
         const url =
-            new URL(value);
+            new URL(
+                value
+            );
 
 
         return (
-            url.protocol === "http:" ||
-            url.protocol === "https:"
+            url.protocol ===
+                "http:" ||
+            url.protocol ===
+                "https:"
         );
 
     } catch {
@@ -267,16 +342,18 @@ function isValidOptionalUrl(value) {
 
 
 /* =========================================================
-   FORMATAGE D'UNE ŒUVRE
+   FORMATAGE ARTWORK
 ========================================================= */
 
 /**
- * Construit une œuvre à partir du body.
+ * Construit une œuvre au format Supabase.
  *
  * @param {object} body
  * @returns {object}
  */
-function buildArtwork(body = {}) {
+function buildArtwork(
+    body = {}
+) {
 
     return {
 
@@ -286,12 +363,10 @@ function buildArtwork(body = {}) {
                 body.artId
             ),
 
-
         artist:
             normalizeText(
                 body.artist
             ),
-
 
         artist_role:
             normalizeNullableText(
@@ -299,12 +374,10 @@ function buildArtwork(body = {}) {
                 body.artistRole
             ),
 
-
         description:
             normalizeNullableText(
                 body.description
             ),
-
 
         image_url:
             normalizeText(
@@ -312,13 +385,11 @@ function buildArtwork(body = {}) {
                 body.imageUrl
             ),
 
-
         image_alt:
             normalizeNullableText(
                 body.image_alt ??
                 body.imageAlt
             ),
-
 
         media_type:
             normalizeText(
@@ -328,12 +399,10 @@ function buildArtwork(body = {}) {
             )
                 .toLowerCase(),
 
-
         tags:
             normalizeTags(
                 body.tags
             ),
-
 
         image_messages:
             normalizeArray(
@@ -341,13 +410,11 @@ function buildArtwork(body = {}) {
                 body.imageMessages
             ),
 
-
         artist_url:
             normalizeNullableText(
                 body.artist_url ??
                 body.artistUrl
             ),
-
 
         button_text:
             normalizeText(
@@ -357,20 +424,17 @@ function buildArtwork(body = {}) {
             ) ||
             "Voir son profil",
 
-
         button_messages:
             normalizeArray(
                 body.button_messages ??
                 body.buttonMessages
             ),
 
-
         sensitive:
             normalizeBoolean(
                 body.sensitive,
                 false
             ),
-
 
         favorite_enabled:
             normalizeBoolean(
@@ -379,13 +443,11 @@ function buildArtwork(body = {}) {
                 true
             ),
 
-
         visible:
             normalizeBoolean(
                 body.visible,
                 true
             ),
-
 
         sort_order:
             normalizeInteger(
@@ -393,6 +455,7 @@ function buildArtwork(body = {}) {
                 body.sortOrder,
                 0
             )
+
     };
 }
 
@@ -402,14 +465,18 @@ function buildArtwork(body = {}) {
 ========================================================= */
 
 /**
- * Vérifie les données obligatoires.
+ * Valide une œuvre.
  *
  * @param {object} artwork
  * @returns {string|null}
  */
-function validateArtwork(artwork) {
+function validateArtwork(
+    artwork
+) {
 
-    if (!artwork.art_id) {
+    if (
+        !artwork.art_id
+    ) {
 
         return (
             "L'ID de l'œuvre est obligatoire."
@@ -417,7 +484,9 @@ function validateArtwork(artwork) {
     }
 
 
-    if (!artwork.artist) {
+    if (
+        !artwork.artist
+    ) {
 
         return (
             "Le nom de l'artiste est obligatoire."
@@ -425,7 +494,9 @@ function validateArtwork(artwork) {
     }
 
 
-    if (!artwork.image_url) {
+    if (
+        !artwork.image_url
+    ) {
 
         return (
             "Une image est obligatoire."
@@ -434,11 +505,7 @@ function validateArtwork(artwork) {
 
 
     if (
-        ![
-            "image",
-            "gif",
-            "video"
-        ].includes(
+        !ALLOWED_MEDIA_TYPES.has(
             artwork.media_type
         )
     ) {
@@ -469,21 +536,13 @@ function validateArtwork(artwork) {
    ERREURS SUPABASE
 ========================================================= */
 
-/**
- * Transforme certaines erreurs Supabase/PostgreSQL
- * en messages plus compréhensibles.
- *
- * @param {object} error
- * @returns {string}
- */
-function getSupabaseErrorMessage(error) {
+function getSupabaseErrorMessage(
+    error
+) {
 
-    /*
-     * PostgreSQL :
-     * unique_violation
-     */
     if (
-        error?.code === "23505"
+        error?.code ===
+        "23505"
     ) {
 
         return (
@@ -500,21 +559,12 @@ function getSupabaseErrorMessage(error) {
 
 
 /* =========================================================
-   SUPPRESSION DU FICHIER STORAGE
+   STORAGE
 ========================================================= */
 
 /**
- * Essaie de retrouver le chemin Storage à partir
- * de l'URL publique Supabase.
- *
- * Exemple :
- *
- * https://xxx.supabase.co/storage/v1/object/public/
- * artworks/05/image.png
- *
- * devient :
- *
- * 05/image.png
+ * Retourne le chemin interne du bucket
+ * à partir d'une URL publique Supabase.
  *
  * @param {string|null} imageUrl
  * @returns {string|null}
@@ -529,7 +579,10 @@ function getStoragePathFromPublicUrl(
         );
 
 
-    if (!url) {
+    if (
+        !url
+    ) {
+
         return null;
     }
 
@@ -539,12 +592,16 @@ function getStoragePathFromPublicUrl(
 
 
     const markerIndex =
-        url.indexOf(marker);
+        url.indexOf(
+            marker
+        );
 
 
     if (
-        markerIndex === -1
+        markerIndex ===
+        -1
     ) {
+
         return null;
     }
 
@@ -556,7 +613,10 @@ function getStoragePathFromPublicUrl(
         );
 
 
-    if (!encodedPath) {
+    if (
+        !encodedPath
+    ) {
+
         return null;
     }
 
@@ -575,10 +635,10 @@ function getStoragePathFromPublicUrl(
 
 
 /**
- * Supprime l'image associée à une œuvre.
+ * Supprime un fichier Storage.
  *
- * Une erreur Storage ne bloque pas la suppression
- * de l'enregistrement en base.
+ * Une erreur Storage ne bloque pas
+ * la suppression de la ligne Supabase.
  *
  * @param {string|null} imageUrl
  */
@@ -592,7 +652,10 @@ async function removeArtworkFile(
         );
 
 
-    if (!storagePath) {
+    if (
+        !storagePath
+    ) {
+
         return;
     }
 
@@ -610,10 +673,12 @@ async function removeArtworkFile(
             ]);
 
 
-    if (error) {
+    if (
+        error
+    ) {
 
         console.error(
-            "[Gallery] Impossible de supprimer l'image :",
+            "[Admin Gallery Storage] Suppression impossible :",
             error
         );
     }
@@ -625,7 +690,6 @@ async function removeArtworkFile(
 ========================================================= */
 
 async function handleGet(
-    request,
     response
 ) {
 
@@ -641,21 +705,25 @@ async function handleGet(
             .order(
                 "sort_order",
                 {
-                    ascending: true
+                    ascending:
+                        true
                 }
             )
             .order(
                 "created_at",
                 {
-                    ascending: true
+                    ascending:
+                        true
                 }
             );
 
 
-    if (error) {
+    if (
+        error
+    ) {
 
         console.error(
-            "[Gallery GET]",
+            "[Admin Gallery GET] Supabase :",
             error
         );
 
@@ -663,6 +731,9 @@ async function handleGet(
         response
             .status(500)
             .json({
+                success:
+                    false,
+
                 error:
                     getSupabaseErrorMessage(
                         error
@@ -677,11 +748,17 @@ async function handleGet(
     response
         .status(200)
         .json({
+
             success:
                 true,
 
             artworks:
-                data ?? []
+                Array.isArray(
+                    data
+                )
+                    ? data
+                    : []
+
         });
 }
 
@@ -695,9 +772,15 @@ async function handlePost(
     response
 ) {
 
+    const body =
+        getRequestBody(
+            request
+        );
+
+
     const artwork =
         buildArtwork(
-            request.body
+            body
         );
 
 
@@ -707,11 +790,16 @@ async function handlePost(
         );
 
 
-    if (validationError) {
+    if (
+        validationError
+    ) {
 
         response
             .status(400)
             .json({
+                success:
+                    false,
+
                 error:
                     validationError
             });
@@ -721,17 +809,91 @@ async function handlePost(
     }
 
 
+    /* =====================================================
+       VÉRIFIER SI art_id EXISTE DÉJÀ
+    ====================================================== */
+
+    const {
+        data: existingArtwork,
+        error: existingError
+    } =
+        await supabaseAdmin
+            .from(
+                TABLE_NAME
+            )
+            .select(
+                "id"
+            )
+            .eq(
+                "art_id",
+                artwork.art_id
+            )
+            .maybeSingle();
+
+
+    if (
+        existingError
+    ) {
+
+        console.error(
+            "[Admin Gallery POST] Vérification doublon :",
+            existingError
+        );
+
+
+        response
+            .status(500)
+            .json({
+                success:
+                    false,
+
+                error:
+                    "Impossible de vérifier si cette œuvre existe déjà."
+            });
+
+
+        return;
+    }
+
+
+    if (
+        existingArtwork
+    ) {
+
+        response
+            .status(409)
+            .json({
+                success:
+                    false,
+
+                error:
+                    "Une œuvre utilise déjà cet ID."
+            });
+
+
+        return;
+    }
+
+
+    /* =====================================================
+       INSERT
+    ====================================================== */
+
+    const now =
+        new Date()
+            .toISOString();
+
+
     const payload = {
 
         ...artwork,
 
         created_at:
-            new Date()
-                .toISOString(),
+            now,
 
         updated_at:
-            new Date()
-                .toISOString()
+            now
+
     };
 
 
@@ -750,21 +912,27 @@ async function handlePost(
             .single();
 
 
-    if (error) {
+    if (
+        error
+    ) {
 
         console.error(
-            "[Gallery POST]",
+            "[Admin Gallery POST] Supabase :",
             error
         );
 
 
         response
             .status(
-                error.code === "23505"
+                error.code ===
+                    "23505"
                     ? 409
                     : 500
             )
             .json({
+                success:
+                    false,
+
                 error:
                     getSupabaseErrorMessage(
                         error
@@ -779,11 +947,13 @@ async function handlePost(
     response
         .status(201)
         .json({
+
             success:
                 true,
 
             artwork:
                 data
+
         });
 }
 
@@ -797,17 +967,28 @@ async function handlePut(
     response
 ) {
 
-    const id =
-        normalizeText(
-            request.body?.id
+    const body =
+        getRequestBody(
+            request
         );
 
 
-    if (!id) {
+    const id =
+        normalizeText(
+            body.id
+        );
+
+
+    if (
+        !id
+    ) {
 
         response
             .status(400)
             .json({
+                success:
+                    false,
+
                 error:
                     "L'identifiant Supabase de l'œuvre est obligatoire."
             });
@@ -817,18 +998,13 @@ async function handlePut(
     }
 
 
-    /*
-     * On récupère d'abord l'ancienne œuvre.
-     *
-     * Cela permettra de supprimer l'ancienne image
-     * si l'utilisateur en a envoyé une nouvelle.
-     */
+    /* =====================================================
+       ANCIENNE ŒUVRE
+    ====================================================== */
 
     const {
-        data:
-            previousArtwork,
-        error:
-            previousError
+        data: previousArtwork,
+        error: previousError
     } =
         await supabaseAdmin
             .from(
@@ -842,10 +1018,12 @@ async function handlePut(
             .maybeSingle();
 
 
-    if (previousError) {
+    if (
+        previousError
+    ) {
 
         console.error(
-            "[Gallery PUT - lecture]",
+            "[Admin Gallery PUT] Lecture ancienne œuvre :",
             previousError
         );
 
@@ -853,6 +1031,9 @@ async function handlePut(
         response
             .status(500)
             .json({
+                success:
+                    false,
+
                 error:
                     getSupabaseErrorMessage(
                         previousError
@@ -864,11 +1045,16 @@ async function handlePut(
     }
 
 
-    if (!previousArtwork) {
+    if (
+        !previousArtwork
+    ) {
 
         response
             .status(404)
             .json({
+                success:
+                    false,
+
                 error:
                     "Cette œuvre n'existe pas."
             });
@@ -878,15 +1064,14 @@ async function handlePut(
     }
 
 
-    /*
-     * On fusionne les anciennes données avec
-     * celles envoyées par l'admin.
-     */
+    /* =====================================================
+       FUSION
+    ====================================================== */
 
     const artwork =
         buildArtwork({
             ...previousArtwork,
-            ...request.body
+            ...body
         });
 
 
@@ -896,11 +1081,16 @@ async function handlePut(
         );
 
 
-    if (validationError) {
+    if (
+        validationError
+    ) {
 
         response
             .status(400)
             .json({
+                success:
+                    false,
+
                 error:
                     validationError
             });
@@ -910,6 +1100,80 @@ async function handlePut(
     }
 
 
+    /* =====================================================
+       VÉRIFIER art_id SUR UNE AUTRE ŒUVRE
+    ====================================================== */
+
+    const {
+        data: duplicateArtwork,
+        error: duplicateError
+    } =
+        await supabaseAdmin
+            .from(
+                TABLE_NAME
+            )
+            .select(
+                "id"
+            )
+            .eq(
+                "art_id",
+                artwork.art_id
+            )
+            .neq(
+                "id",
+                id
+            )
+            .maybeSingle();
+
+
+    if (
+        duplicateError
+    ) {
+
+        console.error(
+            "[Admin Gallery PUT] Vérification art_id :",
+            duplicateError
+        );
+
+
+        response
+            .status(500)
+            .json({
+                success:
+                    false,
+
+                error:
+                    "Impossible de vérifier l'ID de l'œuvre."
+            });
+
+
+        return;
+    }
+
+
+    if (
+        duplicateArtwork
+    ) {
+
+        response
+            .status(409)
+            .json({
+                success:
+                    false,
+
+                error:
+                    "Une œuvre utilise déjà cet ID."
+            });
+
+
+        return;
+    }
+
+
+    /* =====================================================
+       UPDATE
+    ====================================================== */
+
     const payload = {
 
         ...artwork,
@@ -917,6 +1181,7 @@ async function handlePut(
         updated_at:
             new Date()
                 .toISOString()
+
     };
 
 
@@ -936,24 +1201,30 @@ async function handlePut(
                 id
             )
             .select()
-            .single();
+            .maybeSingle();
 
 
-    if (error) {
+    if (
+        error
+    ) {
 
         console.error(
-            "[Gallery PUT]",
+            "[Admin Gallery PUT] Supabase :",
             error
         );
 
 
         response
             .status(
-                error.code === "23505"
+                error.code ===
+                    "23505"
                     ? 409
                     : 500
             )
             .json({
+                success:
+                    false,
+
                 error:
                     getSupabaseErrorMessage(
                         error
@@ -965,10 +1236,28 @@ async function handlePut(
     }
 
 
-    /*
-     * Si l'image a changé, on supprime
-     * l'ancien fichier Storage.
-     */
+    if (
+        !data
+    ) {
+
+        response
+            .status(404)
+            .json({
+                success:
+                    false,
+
+                error:
+                    "Cette œuvre n'existe plus."
+            });
+
+
+        return;
+    }
+
+
+    /* =====================================================
+       SUPPRESSION ANCIENNE IMAGE
+    ====================================================== */
 
     if (
         previousArtwork.image_url &&
@@ -985,11 +1274,13 @@ async function handlePut(
     response
         .status(200)
         .json({
+
             success:
                 true,
 
             artwork:
                 data
+
         });
 }
 
@@ -1003,18 +1294,29 @@ async function handleDelete(
     response
 ) {
 
+    const body =
+        getRequestBody(
+            request
+        );
+
+
     const id =
         normalizeText(
-            request.body?.id ??
+            body.id ??
             request.query?.id
         );
 
 
-    if (!id) {
+    if (
+        !id
+    ) {
 
         response
             .status(400)
             .json({
+                success:
+                    false,
+
                 error:
                     "L'identifiant Supabase de l'œuvre est obligatoire."
             });
@@ -1024,16 +1326,13 @@ async function handleDelete(
     }
 
 
-    /*
-     * On récupère l'œuvre avant suppression
-     * pour connaître son image.
-     */
+    /* =====================================================
+       RÉCUPÉRER ŒUVRE
+    ====================================================== */
 
     const {
-        data:
-            artwork,
-        error:
-            artworkError
+        data: artwork,
+        error: artworkError
     } =
         await supabaseAdmin
             .from(
@@ -1049,10 +1348,12 @@ async function handleDelete(
             .maybeSingle();
 
 
-    if (artworkError) {
+    if (
+        artworkError
+    ) {
 
         console.error(
-            "[Gallery DELETE - lecture]",
+            "[Admin Gallery DELETE] Lecture :",
             artworkError
         );
 
@@ -1060,6 +1361,9 @@ async function handleDelete(
         response
             .status(500)
             .json({
+                success:
+                    false,
+
                 error:
                     getSupabaseErrorMessage(
                         artworkError
@@ -1071,11 +1375,16 @@ async function handleDelete(
     }
 
 
-    if (!artwork) {
+    if (
+        !artwork
+    ) {
 
         response
             .status(404)
             .json({
+                success:
+                    false,
+
                 error:
                     "Cette œuvre n'existe pas."
             });
@@ -1085,13 +1394,12 @@ async function handleDelete(
     }
 
 
-    /*
-     * Suppression de la ligne.
-     */
+    /* =====================================================
+       SUPPRIMER LIGNE
+    ====================================================== */
 
     const {
-        error:
-            deleteError
+        error: deleteError
     } =
         await supabaseAdmin
             .from(
@@ -1104,10 +1412,12 @@ async function handleDelete(
             );
 
 
-    if (deleteError) {
+    if (
+        deleteError
+    ) {
 
         console.error(
-            "[Gallery DELETE]",
+            "[Admin Gallery DELETE] Supabase :",
             deleteError
         );
 
@@ -1115,6 +1425,9 @@ async function handleDelete(
         response
             .status(500)
             .json({
+                success:
+                    false,
+
                 error:
                     getSupabaseErrorMessage(
                         deleteError
@@ -1126,10 +1439,9 @@ async function handleDelete(
     }
 
 
-    /*
-     * La ligne a bien été supprimée.
-     * On peut maintenant retirer son fichier.
-     */
+    /* =====================================================
+       SUPPRIMER IMAGE STORAGE
+    ====================================================== */
 
     await removeArtworkFile(
         artwork.image_url
@@ -1139,11 +1451,13 @@ async function handleDelete(
     response
         .status(200)
         .json({
+
             success:
                 true,
 
             deletedId:
                 id
+
         });
 }
 
@@ -1158,7 +1472,17 @@ export default async function handler(
 ) {
 
     /* =====================================================
-       AUTHENTIFICATION ADMIN
+       CACHE
+    ====================================================== */
+
+    response.setHeader(
+        "Cache-Control",
+        "no-store, max-age=0"
+    );
+
+
+    /* =====================================================
+       AUTHENTIFICATION
     ====================================================== */
 
     const admin =
@@ -1168,7 +1492,10 @@ export default async function handler(
         );
 
 
-    if (!admin) {
+    if (
+        !admin
+    ) {
+
         return;
     }
 
@@ -1186,7 +1513,6 @@ export default async function handler(
             case "GET":
 
                 await handleGet(
-                    request,
                     response
                 );
 
@@ -1227,37 +1553,51 @@ export default async function handler(
 
                 response.setHeader(
                     "Allow",
-                    [
-                        "GET",
-                        "POST",
-                        "PUT",
-                        "DELETE"
-                    ]
+                    "GET, POST, PUT, DELETE"
                 );
 
 
                 response
                     .status(405)
                     .json({
+                        success:
+                            false,
+
                         error:
                             "Méthode non autorisée."
                     });
 
+
                 return;
         }
 
-    } catch (error) {
+
+    } catch (
+        error
+    ) {
 
         console.error(
-            "[Gallery API] Erreur inattendue :",
+            "[Admin Gallery API] Erreur inattendue :",
             error
         );
+
+
+        if (
+            response.headersSent
+        ) {
+
+            return;
+        }
 
 
         response
             .status(500)
             .json({
+                success:
+                    false,
+
                 error:
+                    error?.message ||
                     "Erreur interne de l'API galerie."
             });
     }

@@ -21,10 +21,8 @@ import {
 const ARTWORKS_BUCKET =
     "artworks";
 
-
 const MAX_FILE_SIZE =
     10 * 1024 * 1024;
-
 
 const ALLOWED_MIME_TYPES =
     new Set([
@@ -39,19 +37,53 @@ const ALLOWED_MIME_TYPES =
    OUTILS
 ========================================================= */
 
+/**
+ * Transforme une valeur en texte propre.
+ *
+ * @param {unknown} value
+ * @returns {string}
+ */
 function normalizeText(
     value
 ) {
+
     return String(
-        value ??
-        ""
+        value ?? ""
     ).trim();
 }
 
 
 /**
- * Nettoie un identifiant pour l'utiliser
- * dans un chemin Supabase Storage.
+ * Retourne le body d'une requête.
+ *
+ * Compatible Express / serverless.
+ *
+ * @param {object} request
+ * @returns {object}
+ */
+function getRequestBody(
+    request
+) {
+
+    if (
+        request?.body &&
+        typeof request.body ===
+        "object"
+    ) {
+
+        return request.body;
+    }
+
+
+    return {};
+}
+
+
+/**
+ * Nettoie un segment de chemin Storage.
+ *
+ * @param {unknown} value
+ * @returns {string}
  */
 function sanitizePathSegment(
     value
@@ -61,7 +93,9 @@ function sanitizePathSegment(
         value
     )
         .toLowerCase()
-        .normalize("NFD")
+        .normalize(
+            "NFD"
+        )
         .replace(
             /[\u0300-\u036f]/g,
             ""
@@ -79,6 +113,9 @@ function sanitizePathSegment(
 
 /**
  * Nettoie le nom du fichier.
+ *
+ * @param {unknown} filename
+ * @returns {string}
  */
 function sanitizeFilename(
     filename
@@ -90,13 +127,18 @@ function sanitizeFilename(
         );
 
 
-    if (!raw) {
+    if (
+        !raw
+    ) {
+
         return "artwork";
     }
 
 
     const dotIndex =
-        raw.lastIndexOf(".");
+        raw.lastIndexOf(
+            "."
+        );
 
 
     let base =
@@ -139,23 +181,118 @@ function sanitizeFilename(
 }
 
 
-/* =========================================================
-   LECTURE DU BODY
-========================================================= */
-
-/*
- * Cette version attend un fichier envoyé
- * en base64 depuis admin.js.
+/**
+ * Retourne une extension correspondant
+ * au MIME si le fichier n'en contient pas.
  *
- * Format attendu :
- *
- * {
- *   artId: "05",
- *   filename: "EilionFate_panels.png",
- *   mimeType: "image/png",
- *   fileBase64: "iVBORw0KGgo..."
- * }
+ * @param {string} mimeType
+ * @returns {string}
  */
+function getExtensionFromMimeType(
+    mimeType
+) {
+
+    const extensions = {
+
+        "image/png":
+            ".png",
+
+        "image/jpeg":
+            ".jpg",
+
+        "image/webp":
+            ".webp",
+
+        "image/gif":
+            ".gif"
+
+    };
+
+
+    return (
+        extensions[mimeType] ||
+        ""
+    );
+}
+
+
+/**
+ * S'assure que le nom possède une extension.
+ *
+ * @param {string} filename
+ * @param {string} mimeType
+ * @returns {string}
+ */
+function ensureFileExtension(
+    filename,
+    mimeType
+) {
+
+    if (
+        filename.includes(
+            "."
+        )
+    ) {
+
+        return filename;
+    }
+
+
+    return (
+        filename +
+        getExtensionFromMimeType(
+            mimeType
+        )
+    );
+}
+
+
+/**
+ * Nettoie éventuellement le préfixe
+ * data:image/...;base64,...
+ *
+ * @param {string} value
+ * @returns {string}
+ */
+function cleanBase64(
+    value
+) {
+
+    const text =
+        normalizeText(
+            value
+        );
+
+
+    if (
+        !text
+    ) {
+
+        return "";
+    }
+
+
+    const commaIndex =
+        text.indexOf(
+            ","
+        );
+
+
+    if (
+        text.startsWith(
+            "data:"
+        ) &&
+        commaIndex >= 0
+    ) {
+
+        return text.slice(
+            commaIndex + 1
+        );
+    }
+
+
+    return text;
+}
 
 
 /* =========================================================
@@ -168,6 +305,16 @@ export default async function handler(
 ) {
 
     /* =====================================================
+       CACHE
+    ====================================================== */
+
+    response.setHeader(
+        "Cache-Control",
+        "no-store, max-age=0"
+    );
+
+
+    /* =====================================================
        PROTECTION ADMIN
     ====================================================== */
 
@@ -178,7 +325,10 @@ export default async function handler(
         );
 
 
-    if (!admin) {
+    if (
+        !admin
+    ) {
+
         return;
     }
 
@@ -201,6 +351,9 @@ export default async function handler(
         response
             .status(405)
             .json({
+                success:
+                    false,
+
                 error:
                     "Méthode non autorisée."
             });
@@ -213,34 +366,40 @@ export default async function handler(
     try {
 
         /* =================================================
-           DONNÉES ENTRANTES
+           BODY
         ================================================== */
+
+        const body =
+            getRequestBody(
+                request
+            );
+
 
         const artId =
             normalizeText(
-                request.body
-                    ?.artId
+                body.artId ??
+                body.art_id
             );
 
 
         const filename =
             normalizeText(
-                request.body
-                    ?.filename
+                body.filename
             );
 
 
         const mimeType =
             normalizeText(
-                request.body
-                    ?.mimeType
-            );
+                body.mimeType ??
+                body.mime_type
+            )
+                .toLowerCase();
 
 
         const fileBase64 =
-            normalizeText(
-                request.body
-                    ?.fileBase64
+            cleanBase64(
+                body.fileBase64 ??
+                body.file_base64
             );
 
 
@@ -248,11 +407,16 @@ export default async function handler(
            VALIDATION
         ================================================== */
 
-        if (!artId) {
+        if (
+            !artId
+        ) {
 
             response
                 .status(400)
                 .json({
+                    success:
+                        false,
+
                     error:
                         "L'ID de l'œuvre est obligatoire."
                 });
@@ -262,11 +426,16 @@ export default async function handler(
         }
 
 
-        if (!filename) {
+        if (
+            !filename
+        ) {
 
             response
                 .status(400)
                 .json({
+                    success:
+                        false,
+
                     error:
                         "Le nom du fichier est obligatoire."
                 });
@@ -276,11 +445,16 @@ export default async function handler(
         }
 
 
-        if (!mimeType) {
+        if (
+            !mimeType
+        ) {
 
             response
                 .status(400)
                 .json({
+                    success:
+                        false,
+
                     error:
                         "Le type du fichier est obligatoire."
                 });
@@ -299,6 +473,9 @@ export default async function handler(
             response
                 .status(400)
                 .json({
+                    success:
+                        false,
+
                     error:
                         "Format non autorisé. Utilise PNG, JPG, WEBP ou GIF."
                 });
@@ -308,11 +485,16 @@ export default async function handler(
         }
 
 
-        if (!fileBase64) {
+        if (
+            !fileBase64
+        ) {
 
             response
                 .status(400)
                 .json({
+                    success:
+                        false,
+
                     error:
                         "Aucune image n'a été reçue."
                 });
@@ -323,7 +505,7 @@ export default async function handler(
 
 
         /* =================================================
-           CONVERSION BASE64 -> BUFFER
+           BASE64 -> BUFFER
         ================================================== */
 
         let fileBuffer;
@@ -337,11 +519,22 @@ export default async function handler(
                     "base64"
                 );
 
-        } catch {
+        } catch (
+            error
+        ) {
+
+            console.error(
+                "[Gallery Upload] Base64 invalide :",
+                error
+            );
+
 
             response
                 .status(400)
                 .json({
+                    success:
+                        false,
+
                     error:
                         "Le fichier envoyé est invalide."
                 });
@@ -359,6 +552,9 @@ export default async function handler(
             response
                 .status(400)
                 .json({
+                    success:
+                        false,
+
                     error:
                         "Le fichier envoyé est vide."
                 });
@@ -376,6 +572,9 @@ export default async function handler(
             response
                 .status(413)
                 .json({
+                    success:
+                        false,
+
                     error:
                         "L'image dépasse la limite de 10 Mo."
                 });
@@ -395,17 +594,16 @@ export default async function handler(
             );
 
 
-        const safeFilename =
-            sanitizeFilename(
-                filename
-            );
-
-
-        if (!safeArtId) {
+        if (
+            !safeArtId
+        ) {
 
             response
                 .status(400)
                 .json({
+                    success:
+                        false,
+
                     error:
                         "L'ID de l'œuvre est invalide."
                 });
@@ -413,6 +611,19 @@ export default async function handler(
 
             return;
         }
+
+
+        let safeFilename =
+            sanitizeFilename(
+                filename
+            );
+
+
+        safeFilename =
+            ensureFileExtension(
+                safeFilename,
+                mimeType
+            );
 
 
         /*
@@ -430,10 +641,8 @@ export default async function handler(
         ================================================== */
 
         const {
-            data:
-                uploadData,
-            error:
-                uploadError
+            data: uploadData,
+            error: uploadError
         } =
             await supabaseAdmin
                 .storage
@@ -456,7 +665,9 @@ export default async function handler(
                 );
 
 
-        if (uploadError) {
+        if (
+            uploadError
+        ) {
 
             console.error(
                 "[Gallery Upload] Supabase Storage :",
@@ -467,7 +678,11 @@ export default async function handler(
             response
                 .status(500)
                 .json({
+                    success:
+                        false,
+
                     error:
+                        uploadError?.message ||
                         "Impossible d'envoyer l'image dans Supabase Storage."
                 });
 
@@ -481,8 +696,7 @@ export default async function handler(
         ================================================== */
 
         const {
-            data:
-                publicUrlData
+            data: publicUrlData
         } =
             supabaseAdmin
                 .storage
@@ -499,7 +713,9 @@ export default async function handler(
                 ?.publicUrl;
 
 
-        if (!publicUrl) {
+        if (
+            !publicUrl
+        ) {
 
             console.error(
                 "[Gallery Upload] URL publique introuvable.",
@@ -512,6 +728,9 @@ export default async function handler(
             response
                 .status(500)
                 .json({
+                    success:
+                        false,
+
                     error:
                         "L'image a été envoyée mais son URL publique est introuvable."
                 });
@@ -528,10 +747,12 @@ export default async function handler(
         response
             .status(201)
             .json({
+
                 success:
                     true,
 
                 file: {
+
                     bucket:
                         ARTWORKS_BUCKET,
 
@@ -549,9 +770,13 @@ export default async function handler(
                     size:
                         fileBuffer.length
                 }
+
             });
 
-    } catch (error) {
+
+    } catch (
+        error
+    ) {
 
         console.error(
             "[Gallery Upload] Erreur inattendue :",
@@ -559,10 +784,22 @@ export default async function handler(
         );
 
 
+        if (
+            response.headersSent
+        ) {
+
+            return;
+        }
+
+
         response
             .status(500)
             .json({
+                success:
+                    false,
+
                 error:
+                    error?.message ||
                     "Erreur interne pendant l'envoi de l'image."
             });
     }

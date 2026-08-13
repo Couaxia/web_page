@@ -7,6 +7,7 @@
 
 import express from "express";
 import path from "path";
+
 import {
     fileURLToPath
 } from "url";
@@ -63,6 +64,7 @@ const __filename =
         import.meta.url
     );
 
+
 const __dirname =
     path.dirname(
         __filename
@@ -79,20 +81,20 @@ const PORT =
     ) ||
     10000;
 
+
 const HOST =
     "0.0.0.0";
 
 
 /* =========================================================
-   TRUST PROXY
+   TRUST PROXY — RENDER
 ========================================================= */
 
 /*
- * Render termine le HTTPS côté proxy.
+ * Render utilise un proxy HTTPS devant Node.
  *
- * trust proxy permet notamment à Express
- * de comprendre correctement les requêtes
- * passant par Render.
+ * Ceci permet notamment à Express
+ * de connaître correctement le protocole HTTPS.
  */
 
 app.set(
@@ -106,18 +108,21 @@ app.set(
 ========================================================= */
 
 /*
- * gallery-upload.js envoie actuellement
- * les images en Base64.
+ * Une image de 10 Mo devient plus grosse
+ * lorsqu'elle est convertie en Base64.
  *
- * On autorise donc un body assez grand.
+ * On autorise donc jusqu'à 20 Mo
+ * pour éviter qu'Express bloque l'upload
+ * avant gallery-upload.js.
  */
 
 app.use(
     express.json({
         limit:
-            "15mb"
+            "20mb"
     })
 );
+
 
 app.use(
     express.urlencoded({
@@ -125,26 +130,25 @@ app.use(
             true,
 
         limit:
-            "15mb"
+            "20mb"
     })
 );
 
 
 /* =========================================================
-   ADAPTATEUR VERCEL -> EXPRESS
+   ADAPTATEUR HANDLER
 ========================================================= */
 
-/*
- * Tes fichiers API ont été écrits comme :
+/**
+ * Permet de continuer à utiliser les anciens fichiers :
  *
  * export default async function handler(req, res)
  *
- * Ce format reste utilisable avec Express.
+ * avec Express.
  *
- * Cette fonction ajoute simplement quelques propriétés
- * pratiques utilisées par les anciennes fonctions Vercel.
+ * @param {Function} handler
+ * @returns {Function}
  */
-
 function useHandler(
     handler
 ) {
@@ -158,24 +162,15 @@ function useHandler(
         try {
 
             /*
-             * Vercel fournissait parfois req.query.
-             * Express le fournit déjà.
+             * Express prépare déjà :
+             *
+             * request.query
+             * request.body
+             *
+             * IMPORTANT :
+             * on ne réassigne PAS request.query
+             * avec Express 5.
              */
-
-            request.query =
-                request.query ||
-                {};
-
-
-            /*
-             * Certaines fonctions peuvent lire req.body.
-             * Express l'a déjà préparé.
-             */
-
-            request.body =
-                request.body ||
-                {};
-
 
             await handler(
                 request,
@@ -184,8 +179,11 @@ function useHandler(
 
 
             /*
-             * Si le handler n'a envoyé aucune réponse,
-             * on laisse Express poursuivre.
+             * Normalement chaque API envoie
+             * elle-même sa réponse.
+             *
+             * Si ce n'est pas le cas,
+             * on continue vers le middleware suivant.
              */
 
             if (
@@ -221,6 +219,9 @@ app.get(
         response
             .status(200)
             .json({
+                success:
+                    true,
+
                 status:
                     "ok",
 
@@ -232,12 +233,8 @@ app.get(
 
 
 /* =========================================================
-   API PUBLIQUE
+   API PUBLIQUE — GALERIE
 ========================================================= */
-
-/*
- * Galerie publique.
- */
 
 app.get(
     "/api/gallery",
@@ -258,6 +255,7 @@ app.get(
     )
 );
 
+
 app.post(
     "/api/admin/gallery",
     useHandler(
@@ -265,12 +263,14 @@ app.post(
     )
 );
 
+
 app.put(
     "/api/admin/gallery",
     useHandler(
         adminGalleryHandler
     )
 );
+
 
 app.delete(
     "/api/admin/gallery",
@@ -303,6 +303,7 @@ app.get(
     )
 );
 
+
 app.post(
     "/api/admin/games",
     useHandler(
@@ -310,12 +311,14 @@ app.post(
     )
 );
 
+
 app.put(
     "/api/admin/games",
     useHandler(
         adminGamesHandler
     )
 );
+
 
 app.delete(
     "/api/admin/games",
@@ -329,9 +332,9 @@ app.delete(
    API ADMIN — AUTH TWITCH
 ========================================================= */
 
-/*
- * Connexion Twitch.
- */
+/* ---------------------------------------------------------
+   LOGIN
+--------------------------------------------------------- */
 
 app.get(
     "/api/admin/auth-login",
@@ -341,9 +344,9 @@ app.get(
 );
 
 
-/*
- * Retour OAuth Twitch.
- */
+/* ---------------------------------------------------------
+   CALLBACK TWITCH
+--------------------------------------------------------- */
 
 app.get(
     "/api/admin/auth-callback",
@@ -353,9 +356,9 @@ app.get(
 );
 
 
-/*
- * Session admin actuelle.
- */
+/* ---------------------------------------------------------
+   SESSION ACTUELLE
+--------------------------------------------------------- */
 
 app.get(
     "/api/admin/auth-me",
@@ -365,9 +368,9 @@ app.get(
 );
 
 
-/*
- * Déconnexion.
- */
+/* ---------------------------------------------------------
+   LOGOUT
+--------------------------------------------------------- */
 
 app.post(
     "/api/admin/auth-logout",
@@ -378,33 +381,19 @@ app.post(
 
 
 /* =========================================================
-   FICHIERS STATIQUES
+   ROUTES HTML
 ========================================================= */
 
 /*
- * Sert automatiquement :
+ * Je mets les routes importantes AVANT express.static().
  *
- * /css/...
- * /js/...
- * /images/...
- * /admin/...
- * etc.
+ * C'est particulièrement important pour /admin,
+ * puisque "admin" est aussi le nom d'un dossier.
  */
-
-app.use(
-    express.static(
-        __dirname,
-        {
-            extensions: [
-                "html"
-            ]
-        }
-    )
-);
 
 
 /* =========================================================
-   PAGE D'ACCUEIL
+   ACCUEIL
 ========================================================= */
 
 app.get(
@@ -424,10 +413,6 @@ app.get(
 );
 
 
-/* =========================================================
-   ROUTES HTML PROPRES
-========================================================= */
-
 app.get(
     "/accueil",
     (
@@ -446,6 +431,27 @@ app.get(
 
 
 app.get(
+    "/accueil.html",
+    (
+        request,
+        response
+    ) => {
+
+        response.sendFile(
+            path.join(
+                __dirname,
+                "accueil.html"
+            )
+        );
+    }
+);
+
+
+/* =========================================================
+   CRÉDITS
+========================================================= */
+
+app.get(
     "/credits",
     (
         request,
@@ -461,6 +467,10 @@ app.get(
     }
 );
 
+
+/* =========================================================
+   JEUX
+========================================================= */
 
 app.get(
     "/games",
@@ -478,6 +488,10 @@ app.get(
     }
 );
 
+
+/* =========================================================
+   À PROPOS
+========================================================= */
 
 app.get(
     "/a-propos",
@@ -497,11 +511,14 @@ app.get(
 
 
 /* =========================================================
-   ADMIN HTML
+   ADMIN
 ========================================================= */
 
 app.get(
-    "/admin",
+    [
+        "/admin",
+        "/admin/"
+    ],
     (
         request,
         response
@@ -519,8 +536,47 @@ app.get(
 
 
 /* =========================================================
+   FICHIERS STATIQUES
+========================================================= */
+
+/*
+ * Sert :
+ *
+ * /css/...
+ * /js/...
+ * /images/...
+ * /admin/admin.js
+ * /admin/admin.css
+ * etc.
+ */
+
+app.use(
+    express.static(
+        __dirname,
+        {
+            extensions: [
+                "html"
+            ],
+
+            /*
+             * Évite qu'Express transforme automatiquement
+             * certains dossiers en redirections.
+             */
+
+            redirect:
+                false
+        }
+    )
+);
+
+
+/* =========================================================
    404 API
 ========================================================= */
+
+/*
+ * À placer APRÈS toutes les routes API.
+ */
 
 app.use(
     "/api",
@@ -532,6 +588,9 @@ app.use(
         response
             .status(404)
             .json({
+                success:
+                    false,
+
                 error:
                     "Route API introuvable."
             });
@@ -540,7 +599,65 @@ app.use(
 
 
 /* =========================================================
-   ERREUR SERVEUR
+   404 SITE
+========================================================= */
+
+app.use(
+    (
+        request,
+        response
+    ) => {
+
+        response
+            .status(404)
+            .send(`
+                <!DOCTYPE html>
+
+                <html lang="fr">
+
+                <head>
+
+                    <meta charset="UTF-8">
+
+                    <meta
+                        name="viewport"
+                        content="width=device-width, initial-scale=1"
+                    >
+
+                    <title>
+                        Page introuvable | Couaxia
+                    </title>
+
+                </head>
+
+                <body>
+
+                    <main>
+
+                        <h1>
+                            🐙 Page introuvable
+                        </h1>
+
+                        <p>
+                            Cette page n'existe pas.
+                        </p>
+
+                        <a href="/">
+                            Retour à l'accueil
+                        </a>
+
+                    </main>
+
+                </body>
+
+                </html>
+            `);
+    }
+);
+
+
+/* =========================================================
+   ERREURS SERVEUR
 ========================================================= */
 
 app.use(
@@ -567,9 +684,36 @@ app.use(
         }
 
 
+        /*
+         * Erreur de body trop volumineux.
+         */
+
+        if (
+            error?.type ===
+            "entity.too.large"
+        ) {
+
+            response
+                .status(413)
+                .json({
+                    success:
+                        false,
+
+                    error:
+                        "Le fichier envoyé est trop volumineux."
+                });
+
+
+            return;
+        }
+
+
         response
             .status(500)
             .json({
+                success:
+                    false,
+
                 error:
                     "Erreur interne du serveur."
             });
@@ -590,17 +734,36 @@ app.listen(
             "========================================="
         );
 
+
         console.log(
             "🐙 Couaxia Web démarré"
         );
 
-        console.log(
-            `🌐 http://${HOST}:${PORT}`
-        );
 
         console.log(
-            `💚 Health : /health`
+            `🌐 Port : ${PORT}`
         );
+
+
+        console.log(
+            "💚 Health : /health"
+        );
+
+
+        console.log(
+            "🎮 Games API : /api/admin/games"
+        );
+
+
+        console.log(
+            "🎨 Gallery API : /api/admin/gallery"
+        );
+
+
+        console.log(
+            "🖼️ Upload API : /api/admin/gallery-upload"
+        );
+
 
         console.log(
             "========================================="
