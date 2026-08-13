@@ -1,12 +1,14 @@
 "use strict";
 
 /* =========================================================
-   IMPORTS
+   API TWITCH — UTILISATEUR
+   COUAXIA
 ========================================================= */
 
 import {
     clearTwitchAccessToken,
-    getTwitchApiHeaders
+    getTwitchApiHeaders,
+    getChannelLogin
 } from "./auth.js";
 
 
@@ -17,94 +19,200 @@ import {
 const TWITCH_USERS_URL =
     "https://api.twitch.tv/helix/users";
 
-const DEFAULT_CHANNEL =
-    process.env.TWITCH_CHANNEL_LOGIN
-        ?.trim()
-        .toLowerCase() ||
-    "couaxia";
-
 
 /* =========================================================
    OUTILS
 ========================================================= */
 
 /**
+ * Transforme une valeur en texte propre.
+ *
+ * @param {unknown} value
+ * @returns {string}
+ */
+function normalizeText(
+    value
+) {
+
+    return String(
+        value ?? ""
+    ).trim();
+}
+
+
+/**
  * Nettoie et normalise le nom d'une chaîne Twitch.
  *
- * @param {string} channelLogin
+ * @param {unknown} channelLogin
  * @returns {string}
  */
 function normalizeChannelLogin(
     channelLogin
 ) {
+
     const normalizedLogin =
-        String(channelLogin ?? "")
-            .trim()
+        normalizeText(
+            channelLogin
+        )
             .toLowerCase();
 
-    if (!normalizedLogin) {
+
+    if (
+        !normalizedLogin
+    ) {
+
         throw new Error(
             "Le nom de la chaîne Twitch est vide."
         );
     }
+
 
     return normalizedLogin;
 }
 
 
 /**
- * Effectue une requête vers l'API Twitch.
+ * Retourne la chaîne Twitch configurée.
+ *
+ * @returns {string}
+ */
+function getDefaultChannel() {
+
+    return getChannelLogin();
+}
+
+
+/* =========================================================
+   RÉPONSE TWITCH
+========================================================= */
+
+/**
+ * Lit proprement une réponse Twitch.
+ *
+ * @param {Response} response
+ * @returns {Promise<object>}
+ */
+async function readTwitchResponse(
+    response
+) {
+
+    const contentType =
+        response.headers.get(
+            "content-type"
+        ) || "";
+
+
+    if (
+        contentType.includes(
+            "application/json"
+        )
+    ) {
+
+        return response.json();
+    }
+
+
+    const text =
+        await response.text();
+
+
+    if (
+        !text
+    ) {
+
+        return {};
+    }
+
+
+    try {
+
+        return JSON.parse(
+            text
+        );
+
+    } catch {
+
+        return {
+            message:
+                text
+        };
+    }
+}
+
+
+/* =========================================================
+   REQUÊTE TWITCH
+========================================================= */
+
+/**
+ * Effectue une requête vers Twitch.
  *
  * Si le token est refusé avec une erreur 401,
- * un nouveau token est généré puis la requête
- * est retentée une seule fois.
+ * il est renouvelé puis la requête est retentée
+ * une seule fois.
  *
  * @param {URL} url
  * @returns {Promise<Response>}
  */
-async function fetchTwitchApi(url) {
-    let headers =
-        await getTwitchApiHeaders();
+async function fetchTwitchApi(
+    url
+) {
 
     let response =
         await fetch(
             url.toString(),
             {
-                method: "GET",
-                headers,
-                cache: "no-store"
+                method:
+                    "GET",
+
+                headers:
+                    await getTwitchApiHeaders(),
+
+                cache:
+                    "no-store"
             }
         );
 
-    if (response.status === 401) {
+
+    if (
+        response.status ===
+        401
+    ) {
+
         clearTwitchAccessToken();
 
-        headers =
-            await getTwitchApiHeaders({
-                forceRefresh: true
-            });
 
         response =
             await fetch(
                 url.toString(),
                 {
-                    method: "GET",
-                    headers,
-                    cache: "no-store"
+                    method:
+                        "GET",
+
+                    headers:
+                        await getTwitchApiHeaders({
+                            forceRefresh:
+                                true
+                        }),
+
+                    cache:
+                        "no-store"
                 }
             );
     }
+
 
     return response;
 }
 
 
 /* =========================================================
-   APPEL À L'ENDPOINT GET USERS
+   APPEL À TWITCH
 ========================================================= */
 
 /**
- * Demande les informations publiques d'une chaîne Twitch.
+ * Demande les informations publiques
+ * d'une chaîne Twitch.
  *
  * @param {string} channelLogin
  * @returns {Promise<object>}
@@ -112,28 +220,46 @@ async function fetchTwitchApi(url) {
 async function requestUserFromTwitch(
     channelLogin
 ) {
+
     const userUrl =
-        new URL(TWITCH_USERS_URL);
+        new URL(
+            TWITCH_USERS_URL
+        );
+
 
     userUrl.searchParams.set(
         "login",
         channelLogin
     );
 
-    const response =
-        await fetchTwitchApi(userUrl);
 
-    if (!response.ok) {
-        const errorBody =
-            await response.text();
+    const response =
+        await fetchTwitchApi(
+            userUrl
+        );
+
+
+    const twitchData =
+        await readTwitchResponse(
+            response
+        );
+
+
+    if (
+        !response.ok
+    ) {
 
         throw new Error(
-            `Erreur Twitch Get Users ` +
-            `(${response.status}) : ${errorBody}`
+            `Erreur Twitch Get Users (${response.status}) : ${
+                twitchData?.message ||
+                twitchData?.error ||
+                "Erreur Twitch inconnue."
+            }`
         );
     }
 
-    return response.json();
+
+    return twitchData;
 }
 
 
@@ -142,7 +268,8 @@ async function requestUserFromTwitch(
 ========================================================= */
 
 /**
- * Transforme un utilisateur Twitch en objet simplifié.
+ * Transforme un utilisateur Twitch
+ * en objet simplifié.
  *
  * @param {object} twitchUser
  * @param {string} requestedLogin
@@ -152,57 +279,66 @@ function formatUser(
     twitchUser,
     requestedLogin
 ) {
+
+    const login =
+        normalizeText(
+            twitchUser?.login
+        )
+            .toLowerCase() ||
+        requestedLogin;
+
+
     return {
-        found: true,
+
+        found:
+            true,
 
         id:
-            twitchUser.id ||
+            twitchUser?.id ||
             null,
 
-        login:
-            twitchUser.login ||
-            requestedLogin,
+        login,
 
         displayName:
-            twitchUser.display_name ||
-            requestedLogin,
+            twitchUser?.display_name ||
+            login,
 
         description:
-            twitchUser.description ||
+            twitchUser?.description ||
             "",
 
         profileImageUrl:
-            twitchUser.profile_image_url ||
+            twitchUser?.profile_image_url ||
             null,
 
         offlineImageUrl:
-            twitchUser.offline_image_url ||
+            twitchUser?.offline_image_url ||
             null,
 
         broadcasterType:
-            twitchUser.broadcaster_type ||
+            twitchUser?.broadcaster_type ||
             "",
 
         userType:
-            twitchUser.type ||
+            twitchUser?.type ||
             "",
 
         createdAt:
-            twitchUser.created_at ||
+            twitchUser?.created_at ||
             null,
 
         twitchUrl:
-            `https://www.twitch.tv/${
-                twitchUser.login ||
-                requestedLogin
-            }`
+            `https://www.twitch.tv/${encodeURIComponent(
+                login
+            )}`
+
     };
 }
 
 
 /**
- * Retourne un résultat cohérent lorsque la chaîne
- * demandée n'existe pas.
+ * Retourne un résultat cohérent
+ * lorsque la chaîne n'existe pas.
  *
  * @param {string} channelLogin
  * @returns {object}
@@ -210,10 +346,14 @@ function formatUser(
 function createUserNotFoundResult(
     channelLogin
 ) {
-    return {
-        found: false,
 
-        id: null,
+    return {
+
+        found:
+            false,
+
+        id:
+            null,
 
         login:
             channelLogin,
@@ -221,20 +361,29 @@ function createUserNotFoundResult(
         displayName:
             channelLogin,
 
-        description: "",
+        description:
+            "",
 
-        profileImageUrl: null,
+        profileImageUrl:
+            null,
 
-        offlineImageUrl: null,
+        offlineImageUrl:
+            null,
 
-        broadcasterType: "",
+        broadcasterType:
+            "",
 
-        userType: "",
+        userType:
+            "",
 
-        createdAt: null,
+        createdAt:
+            null,
 
         twitchUrl:
-            `https://www.twitch.tv/${channelLogin}`
+            `https://www.twitch.tv/${encodeURIComponent(
+                channelLogin
+            )}`
+
     };
 }
 
@@ -244,32 +393,46 @@ function createUserNotFoundResult(
 ========================================================= */
 
 /**
- * Récupère les informations publiques d'une chaîne Twitch.
+ * Récupère les informations publiques
+ * d'une chaîne Twitch.
  *
- * @param {string} channelLogin
+ * @param {string|null} channelLogin
  * @returns {Promise<object>}
  */
 export async function getTwitchUser(
-    channelLogin = DEFAULT_CHANNEL
+    channelLogin = null
 ) {
+
     const normalizedLogin =
         normalizeChannelLogin(
-            channelLogin
+            channelLogin ||
+            getDefaultChannel()
         );
+
 
     const twitchData =
         await requestUserFromTwitch(
             normalizedLogin
         );
 
-    const twitchUser =
-        twitchData?.data?.[0];
 
-    if (!twitchUser) {
+    const twitchUser =
+        Array.isArray(
+            twitchData?.data
+        )
+            ? twitchData.data[0]
+            : null;
+
+
+    if (
+        !twitchUser
+    ) {
+
         return createUserNotFoundResult(
             normalizedLogin
         );
     }
+
 
     return formatUser(
         twitchUser,
@@ -279,27 +442,39 @@ export async function getTwitchUser(
 
 
 /**
- * Récupère uniquement l'identifiant numérique Twitch.
+ * Récupère uniquement l'identifiant
+ * numérique Twitch.
  *
- * Cette fonction sera très pratique pour les futurs
- * modules followers, vidéos, clips et planning.
- *
- * @param {string} channelLogin
+ * @param {string|null} channelLogin
  * @returns {Promise<string>}
  */
 export async function getTwitchUserId(
-    channelLogin = DEFAULT_CHANNEL
+    channelLogin = null
 ) {
-    const user =
-        await getTwitchUser(
-            channelLogin
+
+    const normalizedLogin =
+        normalizeChannelLogin(
+            channelLogin ||
+            getDefaultChannel()
         );
 
-    if (!user.found || !user.id) {
+
+    const user =
+        await getTwitchUser(
+            normalizedLogin
+        );
+
+
+    if (
+        !user.found ||
+        !user.id
+    ) {
+
         throw new Error(
-            `La chaîne Twitch "${channelLogin}" est introuvable.`
+            `La chaîne Twitch "${normalizedLogin}" est introuvable.`
         );
     }
+
 
     return user.id;
 }
@@ -308,16 +483,178 @@ export async function getTwitchUserId(
 /**
  * Vérifie si une chaîne Twitch existe.
  *
- * @param {string} channelLogin
+ * @param {string|null} channelLogin
  * @returns {Promise<boolean>}
  */
 export async function twitchUserExists(
-    channelLogin = DEFAULT_CHANNEL
+    channelLogin = null
 ) {
+
     const user =
         await getTwitchUser(
-            channelLogin
+            channelLogin ||
+            getDefaultChannel()
         );
 
-    return user.found;
+
+    return Boolean(
+        user.found
+    );
+}
+
+
+/* =========================================================
+   API HTTP
+========================================================= */
+
+/**
+ * Exemples :
+ *
+ * GET /api/user
+ *
+ * GET /api/user?channel=couaxia
+ */
+export default async function handler(
+    request,
+    response
+) {
+
+    /* =====================================================
+       CACHE
+    ====================================================== */
+
+    response.setHeader(
+        "Cache-Control",
+        "no-store, max-age=0"
+    );
+
+
+    /* =====================================================
+       MÉTHODE
+    ====================================================== */
+
+    if (
+        request.method !==
+        "GET"
+    ) {
+
+        response.setHeader(
+            "Allow",
+            "GET"
+        );
+
+
+        response
+            .status(405)
+            .json({
+
+                success:
+                    false,
+
+                error:
+                    "Méthode non autorisée."
+
+            });
+
+
+        return;
     }
+
+
+    try {
+
+        /* =================================================
+           CHAÎNE
+        ================================================== */
+
+        const channel =
+            normalizeText(
+                request.query?.channel
+            ) ||
+            getDefaultChannel();
+
+
+        /* =================================================
+           TWITCH
+        ================================================== */
+
+        const user =
+            await getTwitchUser(
+                channel
+            );
+
+
+        if (
+            !user.found
+        ) {
+
+            response
+                .status(404)
+                .json({
+
+                    success:
+                        false,
+
+                    user,
+
+                    error:
+                        `La chaîne Twitch "${channel}" est introuvable.`
+
+                });
+
+
+            return;
+        }
+
+
+        /* =================================================
+           RÉPONSE
+        ================================================== */
+
+        response
+            .status(200)
+            .json({
+
+                success:
+                    true,
+
+                user
+
+            });
+
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "[User API]",
+            error
+        );
+
+
+        if (
+            response.headersSent
+        ) {
+
+            return;
+        }
+
+
+        response
+            .status(500)
+            .json({
+
+                success:
+                    false,
+
+                user:
+                    null,
+
+                error:
+                    error?.message ||
+                    "Impossible de récupérer l'utilisateur Twitch."
+
+            });
+    }
+}

@@ -51,7 +51,9 @@ document.addEventListener(
            VÉRIFICATION
         ====================================================== */
 
-        if (!source) {
+        if (
+            !source
+        ) {
 
             console.error(
                 "[Credits Data] #credits-card-source est introuvable."
@@ -62,49 +64,23 @@ document.addEventListener(
 
 
         /* =====================================================
-           SÉCURITÉ HTML
-        ====================================================== */
-
-        function escapeHtml(
-            value
-        ) {
-
-            const element =
-                document.createElement(
-                    "div"
-                );
-
-            element.textContent =
-                String(
-                    value ?? ""
-                );
-
-            return element.innerHTML;
-        }
-
-
-        function escapeHtmlAttribute(
-            value
-        ) {
-
-            return escapeHtml(
-                value
-            )
-                .replaceAll(
-                    '"',
-                    "&quot;"
-                )
-                .replaceAll(
-                    "'",
-                    "&#039;"
-                );
-        }
-
-
-        /* =====================================================
            NORMALISATION
         ====================================================== */
 
+        /**
+         * Transforme une valeur en tableau.
+         *
+         * Accepte :
+         *
+         * ["couaxia", "fanart"]
+         *
+         * "couaxia, fanart"
+         *
+         * "couaxia|fanart"
+         *
+         * @param {unknown} value
+         * @returns {string[]}
+         */
         function normalizeArray(
             value
         ) {
@@ -115,38 +91,75 @@ document.addEventListener(
                 )
             ) {
 
-                return value
-                    .map(
-                        item =>
-                            String(
-                                item ?? ""
-                            ).trim()
+                return [
+                    ...new Set(
+                        value
+                            .map(
+                                item =>
+                                    String(
+                                        item ??
+                                        ""
+                                    )
+                                        .trim()
+                            )
+                            .filter(
+                                Boolean
+                            )
                     )
-                    .filter(Boolean);
+                ];
             }
 
 
             if (
-                value === undefined ||
-                value === null
+                value ===
+                    undefined ||
+                value ===
+                    null
             ) {
 
                 return [];
             }
 
 
-            return String(
-                value
-            )
-                .split(/[|,]/)
-                .map(
-                    item =>
-                        item.trim()
+            const text =
+                String(
+                    value
                 )
-                .filter(Boolean);
+                    .trim();
+
+
+            if (
+                !text
+            ) {
+
+                return [];
+            }
+
+
+            return [
+                ...new Set(
+                    text
+                        .split(
+                            /[|,]/
+                        )
+                        .map(
+                            item =>
+                                item.trim()
+                        )
+                        .filter(
+                            Boolean
+                        )
+                )
+            ];
         }
 
 
+        /**
+         * Normalise les tags.
+         *
+         * @param {unknown} value
+         * @returns {string[]}
+         */
         function normalizeTags(
             value
         ) {
@@ -161,6 +174,12 @@ document.addEventListener(
         }
 
 
+        /**
+         * Normalise les messages mascotte.
+         *
+         * @param {unknown} value
+         * @returns {string[]}
+         */
         function normalizeMessages(
             value
         ) {
@@ -171,6 +190,13 @@ document.addEventListener(
         }
 
 
+        /**
+         * Transforme une liste de messages
+         * en attribut data-messages.
+         *
+         * @param {unknown} messages
+         * @returns {string}
+         */
         function messagesToDataset(
             messages
         ) {
@@ -178,7 +204,84 @@ document.addEventListener(
             return normalizeMessages(
                 messages
             )
-                .join("|");
+                .join(
+                    "|"
+                );
+        }
+
+
+        /**
+         * Normalise un booléen.
+         *
+         * @param {unknown} value
+         * @param {boolean} defaultValue
+         * @returns {boolean}
+         */
+        function normalizeBoolean(
+            value,
+            defaultValue = false
+        ) {
+
+            if (
+                value === undefined ||
+                value === null ||
+                value === ""
+            ) {
+
+                return defaultValue;
+            }
+
+
+            if (
+                typeof value ===
+                "boolean"
+            ) {
+
+                return value;
+            }
+
+
+            const normalized =
+                String(
+                    value
+                )
+                    .trim()
+                    .toLowerCase();
+
+
+            if (
+                [
+                    "true",
+                    "1",
+                    "yes",
+                    "oui",
+                    "on"
+                ].includes(
+                    normalized
+                )
+            ) {
+
+                return true;
+            }
+
+
+            if (
+                [
+                    "false",
+                    "0",
+                    "no",
+                    "non",
+                    "off"
+                ].includes(
+                    normalized
+                )
+            ) {
+
+                return false;
+            }
+
+
+            return defaultValue;
         }
 
 
@@ -186,6 +289,13 @@ document.addEventListener(
            FORMAT DES DONNÉES
         ====================================================== */
 
+        /**
+         * Transforme une ligne Supabase
+         * en objet utilisable par le frontend.
+         *
+         * @param {object} artwork
+         * @returns {object}
+         */
         function normalizeArtwork(
             artwork
         ) {
@@ -193,40 +303,46 @@ document.addEventListener(
             return {
 
                 id:
-                    artwork?.id || "",
+                    artwork?.id ??
+                    "",
 
                 artId:
                     String(
                         artwork?.art_id ??
                         artwork?.artId ??
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 artist:
                     String(
                         artwork?.artist ??
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 artistRole:
                     String(
                         artwork?.artist_role ??
                         artwork?.artistRole ??
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 description:
                     String(
                         artwork?.description ??
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 imageUrl:
                     String(
                         artwork?.image_url ??
                         artwork?.imageUrl ??
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 imageAlt:
                     String(
@@ -234,7 +350,8 @@ document.addEventListener(
                         artwork?.imageAlt ??
                         artwork?.artist ??
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 mediaType:
                     String(
@@ -261,14 +378,17 @@ document.addEventListener(
                         artwork?.artist_url ??
                         artwork?.artistUrl ??
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 buttonText:
                     String(
                         artwork?.button_text ??
                         artwork?.buttonText ??
                         "Voir son profil"
-                    ).trim(),
+                    )
+                        .trim() ||
+                    "Voir son profil",
 
                 buttonMessages:
                     normalizeMessages(
@@ -277,24 +397,32 @@ document.addEventListener(
                     ),
 
                 sensitive:
-                    Boolean(
-                        artwork?.sensitive
+                    normalizeBoolean(
+                        artwork?.sensitive,
+                        false
                     ),
 
                 favoriteEnabled:
-                    artwork?.favorite_enabled !==
-                    false,
+                    normalizeBoolean(
+                        artwork?.favorite_enabled ??
+                        artwork?.favoriteEnabled,
+                        true
+                    ),
 
                 visible:
-                    artwork?.visible !==
-                    false,
+                    normalizeBoolean(
+                        artwork?.visible,
+                        true
+                    ),
 
                 sortOrder:
                     Number(
                         artwork?.sort_order ??
                         artwork?.sortOrder ??
                         0
-                    )
+                    ) ||
+                    0
+
             };
         }
 
@@ -303,39 +431,56 @@ document.addEventListener(
            MÉDIA
         ====================================================== */
 
+        /**
+         * Crée une balise image.
+         *
+         * @param {object} artwork
+         * @returns {HTMLImageElement}
+         */
         function createImageMedia(
             artwork
         ) {
 
-            const img =
+            const image =
                 document.createElement(
                     "img"
                 );
 
-            img.src =
+
+            image.src =
                 artwork.imageUrl;
 
-            img.alt =
+
+            image.alt =
                 artwork.imageAlt ||
                 artwork.artist ||
                 "Illustration";
 
-            img.loading =
+
+            image.loading =
                 "lazy";
 
-            img.decoding =
+
+            image.decoding =
                 "async";
 
-            img.setAttribute(
+
+            image.setAttribute(
                 "draggable",
                 "false"
             );
 
 
-            return img;
+            return image;
         }
 
 
+        /**
+         * Crée une vidéo.
+         *
+         * @param {object} artwork
+         * @returns {HTMLVideoElement}
+         */
         function createVideoMedia(
             artwork
         ) {
@@ -344,6 +489,7 @@ document.addEventListener(
                 document.createElement(
                     "video"
                 );
+
 
             video.autoplay =
                 true;
@@ -357,29 +503,28 @@ document.addEventListener(
             video.playsInline =
                 true;
 
+            video.preload =
+                "metadata";
+
+
             video.setAttribute(
                 "draggable",
                 "false"
             );
 
 
-            const source =
+            const videoSource =
                 document.createElement(
                     "source"
                 );
 
-            source.src =
+
+            videoSource.src =
                 artwork.imageUrl;
 
 
-            /*
-             * Le MIME exact peut varier.
-             * Pour l'instant on laisse le navigateur
-             * déterminer le média à partir de l'URL.
-             */
-
             video.appendChild(
-                source
+                videoSource
             );
 
 
@@ -387,6 +532,14 @@ document.addEventListener(
         }
 
 
+        /**
+         * Choisit le média adapté.
+         *
+         * GIF utilise naturellement <img>.
+         *
+         * @param {object} artwork
+         * @returns {HTMLElement}
+         */
         function createMedia(
             artwork
         ) {
@@ -401,11 +554,6 @@ document.addEventListener(
                 );
             }
 
-
-            /*
-             * Les GIF fonctionnent
-             * naturellement avec <img>.
-             */
 
             return createImageMedia(
                 artwork
@@ -426,6 +574,7 @@ document.addEventListener(
                     "div"
                 );
 
+
             container.className =
                 "image-container";
 
@@ -436,21 +585,19 @@ document.addEventListener(
                 );
 
 
-            if (messages) {
+            if (
+                messages
+            ) {
 
                 container.dataset.messages =
                     messages;
             }
 
 
-            const media =
+            container.appendChild(
                 createMedia(
                     artwork
-                );
-
-
-            container.appendChild(
-                media
+                )
             );
 
 
@@ -471,6 +618,7 @@ document.addEventListener(
                     "div"
                 );
 
+
             content.className =
                 "artist-content";
 
@@ -484,9 +632,11 @@ document.addEventListener(
                     "h3"
                 );
 
+
             title.textContent =
                 artwork.artist ||
                 "Artiste inconnu";
+
 
             content.appendChild(
                 title
@@ -506,11 +656,14 @@ document.addEventListener(
                         "p"
                     );
 
+
                 role.className =
                     "artist-role";
 
+
                 role.textContent =
                     artwork.artistRole;
+
 
                 content.appendChild(
                     role
@@ -531,11 +684,14 @@ document.addEventListener(
                         "p"
                     );
 
+
                 description.className =
                     "artist-description";
 
+
                 description.textContent =
                     artwork.description;
+
 
                 content.appendChild(
                     description
@@ -556,17 +712,22 @@ document.addEventListener(
                         "a"
                     );
 
+
                 link.href =
                     artwork.artistUrl;
+
 
                 link.target =
                     "_blank";
 
+
                 link.rel =
                     "noopener noreferrer";
 
+
                 link.className =
                     "artist-btn";
+
 
                 link.textContent =
                     artwork.buttonText ||
@@ -602,6 +763,14 @@ document.addEventListener(
            CARTE
         ====================================================== */
 
+        /**
+         * Crée une .artist-card identique
+         * à celles que tu avais autrefois
+         * directement dans credits.html.
+         *
+         * @param {object} rawArtwork
+         * @returns {HTMLElement|null}
+         */
         function createArtworkCard(
             rawArtwork
         ) {
@@ -611,6 +780,10 @@ document.addEventListener(
                     rawArtwork
                 );
 
+
+            /*
+             * Une œuvre incomplète n'est pas affichée.
+             */
 
             if (
                 !artwork.artId ||
@@ -622,6 +795,7 @@ document.addEventListener(
                     "[Credits Data] Œuvre ignorée car incomplète :",
                     rawArtwork
                 );
+
 
                 return null;
             }
@@ -637,6 +811,10 @@ document.addEventListener(
                 "artist-card";
 
 
+            /* =============================================
+               ID ART
+            ============================================== */
+
             article.dataset.artId =
                 artwork.artId;
 
@@ -645,52 +823,30 @@ document.addEventListener(
                TAGS
             ============================================== */
 
-            if (
-                artwork.tags.length >
-                0
-            ) {
-
-                article.dataset.tags =
-                    artwork.tags.join(
-                        " "
-                    );
-
-            } else {
-
-                article.dataset.tags =
-                    "";
-            }
+            article.dataset.tags =
+                artwork.tags.join(
+                    " "
+                );
 
 
             /* =============================================
                SENSIBLE
             ============================================== */
 
-            if (
+            article.dataset.sensitive =
                 artwork.sensitive
-            ) {
-
-                article.dataset.sensitive =
-                    "true";
-            }
+                    ? "true"
+                    : "false";
 
 
             /* =============================================
                FAVORIS
             ============================================== */
 
-            if (
-                !artwork.favoriteEnabled
-            ) {
-
-                article.dataset.favoriteEnabled =
-                    "false";
-
-            } else {
-
-                article.dataset.favoriteEnabled =
-                    "true";
-            }
+            article.dataset.favoriteEnabled =
+                artwork.favoriteEnabled
+                    ? "true"
+                    : "false";
 
 
             /* =============================================
@@ -741,7 +897,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           ÉTAT CHARGEMENT
+           ÉTAT — CHARGEMENT
         ====================================================== */
 
         function showLoading() {
@@ -804,9 +960,18 @@ document.addEventListener(
 
 
         /* =====================================================
-           ÉVÉNEMENT GALERIE CHARGÉE
+           ÉVÉNEMENT — GALERIE CHARGÉE
         ====================================================== */
 
+        /**
+         * Informe les autres scripts que
+         * les cartes existent maintenant dans le DOM.
+         *
+         * Très important puisque les œuvres
+         * viennent désormais de Supabase.
+         *
+         * @param {object[]} artworks
+         */
         function dispatchCreditsLoaded(
             artworks
         ) {
@@ -816,13 +981,91 @@ document.addEventListener(
                     "couaxia:credits-loaded",
                     {
                         detail: {
+
                             count:
                                 artworks.length,
 
                             artworks
+
                         }
                     }
                 )
+            );
+        }
+
+
+        /* =====================================================
+           TRI
+        ====================================================== */
+
+        function sortArtworks(
+            artworks
+        ) {
+
+            return artworks.sort(
+                (
+                    firstArtwork,
+                    secondArtwork
+                ) => {
+
+                    const firstOrder =
+                        Number(
+                            firstArtwork?.sort_order ??
+                            firstArtwork?.sortOrder ??
+                            0
+                        ) ||
+                        0;
+
+
+                    const secondOrder =
+                        Number(
+                            secondArtwork?.sort_order ??
+                            secondArtwork?.sortOrder ??
+                            0
+                        ) ||
+                        0;
+
+
+                    if (
+                        firstOrder !==
+                        secondOrder
+                    ) {
+
+                        return (
+                            firstOrder -
+                            secondOrder
+                        );
+                    }
+
+
+                    const firstArtId =
+                        String(
+                            firstArtwork?.art_id ??
+                            firstArtwork?.artId ??
+                            ""
+                        );
+
+
+                    const secondArtId =
+                        String(
+                            secondArtwork?.art_id ??
+                            secondArtwork?.artId ??
+                            ""
+                        );
+
+
+                    return firstArtId.localeCompare(
+                        secondArtId,
+                        "fr",
+                        {
+                            numeric:
+                                true,
+
+                            sensitivity:
+                                "base"
+                        }
+                    );
+                }
             );
         }
 
@@ -836,11 +1079,18 @@ document.addEventListener(
             showLoading();
 
 
-            source.innerHTML =
-                "";
+            /*
+             * Évite les doublons lors d'un rechargement.
+             */
+
+            source.replaceChildren();
 
 
             try {
+
+                /* =============================================
+                   API
+                ============================================== */
 
                 const response =
                     await fetch(
@@ -853,12 +1103,18 @@ document.addEventListener(
                                 "no-store",
 
                             headers: {
+
                                 Accept:
                                     "application/json"
+
                             }
                         }
                     );
 
+
+                /* =============================================
+                   JSON
+                ============================================== */
 
                 const data =
                     await response
@@ -867,6 +1123,10 @@ document.addEventListener(
                             () => ({})
                         );
 
+
+                /* =============================================
+                   ERREUR HTTP
+                ============================================== */
 
                 if (
                     !response.ok
@@ -879,11 +1139,17 @@ document.addEventListener(
                 }
 
 
+                /* =============================================
+                   DONNÉES
+                ============================================== */
+
                 const artworks =
                     Array.isArray(
                         data?.artworks
                     )
-                        ? data.artworks
+                        ? [
+                            ...data.artworks
+                        ]
                         : [];
 
 
@@ -891,57 +1157,8 @@ document.addEventListener(
                    TRI
                 ============================================== */
 
-                artworks.sort(
-                    (
-                        a,
-                        b
-                    ) => {
-
-                        const orderA =
-                            Number(
-                                a?.sort_order ??
-                                a?.sortOrder ??
-                                0
-                            );
-
-                        const orderB =
-                            Number(
-                                b?.sort_order ??
-                                b?.sortOrder ??
-                                0
-                            );
-
-
-                        if (
-                            orderA !==
-                            orderB
-                        ) {
-
-                            return (
-                                orderA -
-                                orderB
-                            );
-                        }
-
-
-                        return String(
-                            a?.art_id ??
-                            a?.artId ??
-                            ""
-                        )
-                            .localeCompare(
-                                String(
-                                    b?.art_id ??
-                                    b?.artId ??
-                                    ""
-                                ),
-                                "fr",
-                                {
-                                    numeric:
-                                        true
-                                }
-                            );
-                    }
+                sortArtworks(
+                    artworks
                 );
 
 
@@ -958,55 +1175,70 @@ document.addEventListener(
                     [];
 
 
-                artworks.forEach(
-                    rawArtwork => {
+                for (
+                    const rawArtwork of
+                    artworks
+                ) {
 
-                        const artwork =
-                            normalizeArtwork(
-                                rawArtwork
-                            );
-
-
-                        /*
-                         * Sécurité supplémentaire :
-                         * même si /api/gallery filtre déjà,
-                         * on n'affiche jamais visible=false.
-                         */
-
-                        if (
-                            !artwork.visible
-                        ) {
-                            return;
-                        }
-
-
-                        const card =
-                            createArtworkCard(
-                                rawArtwork
-                            );
-
-
-                        if (!card) {
-                            return;
-                        }
-
-
-                        fragment.appendChild(
-                            card
+                    const artwork =
+                        normalizeArtwork(
+                            rawArtwork
                         );
 
 
-                        loadedArtworks.push(
-                            artwork
-                        );
+                    /*
+                     * Sécurité supplémentaire :
+                     *
+                     * même si /api/gallery filtre déjà
+                     * visible=true, on refait la vérification
+                     * côté navigateur.
+                     */
+
+                    if (
+                        !artwork.visible
+                    ) {
+
+                        continue;
                     }
-                );
 
+
+                    const card =
+                        createArtworkCard(
+                            rawArtwork
+                        );
+
+
+                    if (
+                        !card
+                    ) {
+
+                        continue;
+                    }
+
+
+                    fragment.appendChild(
+                        card
+                    );
+
+
+                    loadedArtworks.push(
+                        artwork
+                    );
+                }
+
+
+                /* =============================================
+                   INSERTION
+                ============================================== */
 
                 source.appendChild(
                     fragment
                 );
 
+
+                /* =============================================
+                   FIN CHARGEMENT
+                ============================================== */
 
                 hideLoading();
 
@@ -1025,12 +1257,21 @@ document.addEventListener(
                 );
 
 
+                /*
+                 * IMPORTANT :
+                 *
+                 * les autres scripts peuvent maintenant
+                 * distribuer / filtrer / animer les cartes.
+                 */
+
                 dispatchCreditsLoaded(
                     loadedArtworks
                 );
 
 
-            } catch (error) {
+            } catch (
+                error
+            ) {
 
                 console.error(
                     "[Credits Data] Chargement impossible :",
@@ -1038,8 +1279,7 @@ document.addEventListener(
                 );
 
 
-                source.innerHTML =
-                    "";
+                source.replaceChildren();
 
 
                 showError(
@@ -1049,10 +1289,8 @@ document.addEventListener(
 
 
                 /*
-                 * On déclenche quand même
-                 * l'événement pour que les autres
-                 * scripts sachent que le chargement
-                 * s'est terminé.
+                 * On informe quand même les autres scripts
+                 * que le chargement est terminé.
                  */
 
                 dispatchCreditsLoaded(
@@ -1077,18 +1315,20 @@ document.addEventListener(
 
 
         /* =====================================================
-           API PUBLIQUE OPTIONNELLE
+           API PUBLIQUE JS
         ====================================================== */
 
         /*
-         * Pratique si un autre script veut
-         * forcer le rechargement de la galerie.
+         * Un autre script peut utiliser :
+         *
+         * window.CouaxiaCreditsData.reload();
          */
 
         window.CouaxiaCreditsData = {
 
             reload:
                 loadCredits
+
         };
 
 
@@ -1097,6 +1337,5 @@ document.addEventListener(
         ====================================================== */
 
         loadCredits();
-
     }
 );

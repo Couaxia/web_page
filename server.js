@@ -2,7 +2,7 @@
 
 /* =========================================================
    SERVEUR EXPRESS — COUAXIA
-   COMPATIBLE RENDER
+   RENDER
 ========================================================= */
 
 import express from "express";
@@ -19,6 +19,33 @@ import {
 
 import galleryHandler
     from "./api/gallery.js";
+
+import gameHandler
+    from "./api/game.js";
+
+import gamesHandler
+    from "./api/games.js";
+
+import clipsHandler
+    from "./api/clips.js";
+
+import videosHandler
+    from "./api/videos.js";
+
+import followersHandler
+    from "./api/followers.js";
+
+import streamHandler
+    from "./api/stream.js";
+
+import userHandler
+    from "./api/user.js";
+
+import twitchStatusHandler
+    from "./api/twitch-status.js";
+
+import recommendedStreamersHandler
+    from "./api/recommended-streamers.js";
 
 
 /* =========================================================
@@ -64,7 +91,6 @@ const __filename =
         import.meta.url
     );
 
-
 const __dirname =
     path.dirname(
         __filename
@@ -81,7 +107,6 @@ const PORT =
     ) ||
     10000;
 
-
 const HOST =
     "0.0.0.0";
 
@@ -89,13 +114,6 @@ const HOST =
 /* =========================================================
    TRUST PROXY — RENDER
 ========================================================= */
-
-/*
- * Render utilise un proxy HTTPS devant Node.
- *
- * Ceci permet notamment à Express
- * de connaître correctement le protocole HTTPS.
- */
 
 app.set(
     "trust proxy",
@@ -107,22 +125,12 @@ app.set(
    BODY PARSERS
 ========================================================= */
 
-/*
- * Une image de 10 Mo devient plus grosse
- * lorsqu'elle est convertie en Base64.
- *
- * On autorise donc jusqu'à 20 Mo
- * pour éviter qu'Express bloque l'upload
- * avant gallery-upload.js.
- */
-
 app.use(
     express.json({
         limit:
             "20mb"
     })
 );
-
 
 app.use(
     express.urlencoded({
@@ -139,16 +147,6 @@ app.use(
    ADAPTATEUR HANDLER
 ========================================================= */
 
-/**
- * Permet de continuer à utiliser les anciens fichiers :
- *
- * export default async function handler(req, res)
- *
- * avec Express.
- *
- * @param {Function} handler
- * @returns {Function}
- */
 function useHandler(
     handler
 ) {
@@ -161,30 +159,10 @@ function useHandler(
 
         try {
 
-            /*
-             * Express prépare déjà :
-             *
-             * request.query
-             * request.body
-             *
-             * IMPORTANT :
-             * on ne réassigne PAS request.query
-             * avec Express 5.
-             */
-
             await handler(
                 request,
                 response
             );
-
-
-            /*
-             * Normalement chaque API envoie
-             * elle-même sa réponse.
-             *
-             * Si ce n'est pas le cas,
-             * on continue vers le middleware suivant.
-             */
 
             if (
                 !response.headersSent
@@ -219,6 +197,7 @@ app.get(
         response
             .status(200)
             .json({
+
                 success:
                     true,
 
@@ -227,6 +206,7 @@ app.get(
 
                 service:
                     "couaxia-web"
+
             });
     }
 );
@@ -245,6 +225,114 @@ app.get(
 
 
 /* =========================================================
+   API PUBLIQUE — UN JEU TWITCH
+========================================================= */
+
+app.get(
+    "/api/game",
+    useHandler(
+        gameHandler
+    )
+);
+
+
+/* =========================================================
+   API PUBLIQUE — BIBLIOTHÈQUE DE JEUX
+========================================================= */
+
+app.get(
+    "/api/games",
+    useHandler(
+        gamesHandler
+    )
+);
+
+
+/* =========================================================
+   API PUBLIQUE — CLIPS
+========================================================= */
+
+app.get(
+    "/api/clips",
+    useHandler(
+        clipsHandler
+    )
+);
+
+
+/* =========================================================
+   API PUBLIQUE — VIDÉOS
+========================================================= */
+
+app.get(
+    "/api/videos",
+    useHandler(
+        videosHandler
+    )
+);
+
+
+/* =========================================================
+   API PUBLIQUE — FOLLOWERS
+========================================================= */
+
+app.get(
+    "/api/followers",
+    useHandler(
+        followersHandler
+    )
+);
+
+
+/* =========================================================
+   API PUBLIQUE — STREAM
+========================================================= */
+
+app.get(
+    "/api/stream",
+    useHandler(
+        streamHandler
+    )
+);
+
+
+/* =========================================================
+   API PUBLIQUE — UTILISATEUR TWITCH
+========================================================= */
+
+app.get(
+    "/api/user",
+    useHandler(
+        userHandler
+    )
+);
+
+
+/* =========================================================
+   API PUBLIQUE — STATUT TWITCH GLOBAL
+========================================================= */
+
+app.get(
+    "/api/twitch-status",
+    useHandler(
+        twitchStatusHandler
+    )
+);
+
+
+/* =========================================================
+   API PUBLIQUE — STREAMERS RECOMMANDÉS
+========================================================= */
+
+app.get(
+    "/api/recommended-streamers",
+    useHandler(
+        recommendedStreamersHandler
+    )
+);
+
+
+/* =========================================================
    API ADMIN — GALERIE
 ========================================================= */
 
@@ -255,7 +343,6 @@ app.get(
     )
 );
 
-
 app.post(
     "/api/admin/gallery",
     useHandler(
@@ -263,14 +350,12 @@ app.post(
     )
 );
 
-
 app.put(
     "/api/admin/gallery",
     useHandler(
         adminGalleryHandler
     )
 );
-
 
 app.delete(
     "/api/admin/gallery",
@@ -303,7 +388,6 @@ app.get(
     )
 );
 
-
 app.post(
     "/api/admin/games",
     useHandler(
@@ -311,14 +395,12 @@ app.post(
     )
 );
 
-
 app.put(
     "/api/admin/games",
     useHandler(
         adminGamesHandler
     )
 );
-
 
 app.delete(
     "/api/admin/games",
@@ -332,21 +414,12 @@ app.delete(
    API ADMIN — AUTH TWITCH
 ========================================================= */
 
-/* ---------------------------------------------------------
-   LOGIN
---------------------------------------------------------- */
-
 app.get(
     "/api/admin/auth-login",
     useHandler(
         adminAuthLoginHandler
     )
 );
-
-
-/* ---------------------------------------------------------
-   CALLBACK TWITCH
---------------------------------------------------------- */
 
 app.get(
     "/api/admin/auth-callback",
@@ -355,22 +428,12 @@ app.get(
     )
 );
 
-
-/* ---------------------------------------------------------
-   SESSION ACTUELLE
---------------------------------------------------------- */
-
 app.get(
     "/api/admin/auth-me",
     useHandler(
         adminAuthMeHandler
     )
 );
-
-
-/* ---------------------------------------------------------
-   LOGOUT
---------------------------------------------------------- */
 
 app.post(
     "/api/admin/auth-logout",
@@ -383,14 +446,6 @@ app.post(
 /* =========================================================
    ROUTES HTML
 ========================================================= */
-
-/*
- * Je mets les routes importantes AVANT express.static().
- *
- * C'est particulièrement important pour /admin,
- * puisque "admin" est aussi le nom d'un dossier.
- */
-
 
 /* =========================================================
    ACCUEIL
@@ -412,7 +467,6 @@ app.get(
     }
 );
 
-
 app.get(
     "/accueil",
     (
@@ -428,7 +482,6 @@ app.get(
         );
     }
 );
-
 
 app.get(
     "/accueil.html",
@@ -467,6 +520,22 @@ app.get(
     }
 );
 
+app.get(
+    "/credits.html",
+    (
+        request,
+        response
+    ) => {
+
+        response.sendFile(
+            path.join(
+                __dirname,
+                "credits.html"
+            )
+        );
+    }
+);
+
 
 /* =========================================================
    JEUX
@@ -488,6 +557,22 @@ app.get(
     }
 );
 
+app.get(
+    "/games.html",
+    (
+        request,
+        response
+    ) => {
+
+        response.sendFile(
+            path.join(
+                __dirname,
+                "games.html"
+            )
+        );
+    }
+);
+
 
 /* =========================================================
    À PROPOS
@@ -495,6 +580,22 @@ app.get(
 
 app.get(
     "/a-propos",
+    (
+        request,
+        response
+    ) => {
+
+        response.sendFile(
+            path.join(
+                __dirname,
+                "a-propos.html"
+            )
+        );
+    }
+);
+
+app.get(
+    "/a-propos.html",
     (
         request,
         response
@@ -539,17 +640,6 @@ app.get(
    FICHIERS STATIQUES
 ========================================================= */
 
-/*
- * Sert :
- *
- * /css/...
- * /js/...
- * /images/...
- * /admin/admin.js
- * /admin/admin.css
- * etc.
- */
-
 app.use(
     express.static(
         __dirname,
@@ -557,11 +647,6 @@ app.use(
             extensions: [
                 "html"
             ],
-
-            /*
-             * Évite qu'Express transforme automatiquement
-             * certains dossiers en redirections.
-             */
 
             redirect:
                 false
@@ -574,10 +659,6 @@ app.use(
    404 API
 ========================================================= */
 
-/*
- * À placer APRÈS toutes les routes API.
- */
-
 app.use(
     "/api",
     (
@@ -588,11 +669,16 @@ app.use(
         response
             .status(404)
             .json({
+
                 success:
                     false,
 
                 error:
-                    "Route API introuvable."
+                    "Route API introuvable.",
+
+                path:
+                    request.originalUrl
+
             });
     }
 );
@@ -615,40 +701,40 @@ app.use(
 
                 <html lang="fr">
 
-                <head>
+                    <head>
 
-                    <meta charset="UTF-8">
+                        <meta charset="UTF-8">
 
-                    <meta
-                        name="viewport"
-                        content="width=device-width, initial-scale=1"
-                    >
+                        <meta
+                            name="viewport"
+                            content="width=device-width, initial-scale=1"
+                        >
 
-                    <title>
-                        Page introuvable | Couaxia
-                    </title>
+                        <title>
+                            Page introuvable | Couaxia
+                        </title>
 
-                </head>
+                    </head>
 
-                <body>
+                    <body>
 
-                    <main>
+                        <main>
 
-                        <h1>
-                            🐙 Page introuvable
-                        </h1>
+                            <h1>
+                                🐙 Page introuvable
+                            </h1>
 
-                        <p>
-                            Cette page n'existe pas.
-                        </p>
+                            <p>
+                                Cette page n'existe pas.
+                            </p>
 
-                        <a href="/">
-                            Retour à l'accueil
-                        </a>
+                            <a href="/">
+                                Retour à l'accueil
+                            </a>
 
-                    </main>
+                        </main>
 
-                </body>
+                    </body>
 
                 </html>
             `);
@@ -684,10 +770,6 @@ app.use(
         }
 
 
-        /*
-         * Erreur de body trop volumineux.
-         */
-
         if (
             error?.type ===
             "entity.too.large"
@@ -696,13 +778,14 @@ app.use(
             response
                 .status(413)
                 .json({
+
                     success:
                         false,
 
                     error:
                         "Le fichier envoyé est trop volumineux."
-                });
 
+                });
 
             return;
         }
@@ -711,11 +794,19 @@ app.use(
         response
             .status(500)
             .json({
+
                 success:
                     false,
 
                 error:
-                    "Erreur interne du serveur."
+                    "Erreur interne du serveur.",
+
+                details:
+                    process.env.NODE_ENV ===
+                        "development"
+                        ? error?.message
+                        : undefined
+
             });
     }
 );
@@ -734,36 +825,69 @@ app.listen(
             "========================================="
         );
 
-
         console.log(
             "🐙 Couaxia Web démarré"
         );
-
 
         console.log(
             `🌐 Port : ${PORT}`
         );
 
-
         console.log(
             "💚 Health : /health"
         );
 
-
         console.log(
-            "🎮 Games API : /api/admin/games"
+            "🎨 Gallery : /api/gallery"
         );
 
-
         console.log(
-            "🎨 Gallery API : /api/admin/gallery"
+            "🎮 Games : /api/games"
         );
 
-
         console.log(
-            "🖼️ Upload API : /api/admin/gallery-upload"
+            "🎮 Twitch Game : /api/game"
         );
 
+        console.log(
+            "📺 Twitch Status : /api/twitch-status"
+        );
+
+        console.log(
+            "🎬 Clips : /api/clips"
+        );
+
+        console.log(
+            "📼 Videos : /api/videos"
+        );
+
+        console.log(
+            "👥 Followers : /api/followers"
+        );
+
+        console.log(
+            "🔴 Stream : /api/stream"
+        );
+
+        console.log(
+            "👤 Twitch User : /api/user"
+        );
+
+        console.log(
+            "💜 Recommended : /api/recommended-streamers"
+        );
+
+        console.log(
+            "🔐 Admin Games : /api/admin/games"
+        );
+
+        console.log(
+            "🔐 Admin Gallery : /api/admin/gallery"
+        );
+
+        console.log(
+            "🖼️ Upload : /api/admin/gallery-upload"
+        );
 
         console.log(
             "========================================="

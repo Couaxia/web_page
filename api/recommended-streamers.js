@@ -1,7 +1,8 @@
 "use strict";
 
 /* =========================================================
-   IMPORTS
+   API TWITCH — STREAMERS RECOMMANDÉS
+   COUAXIA
 ========================================================= */
 
 import {
@@ -17,280 +18,313 @@ import {
  * Pour ajouter une personne :
  *
  * {
- *     login: "login_twitch"
+ *     login: "login_twitch",
+ *     category: "friends"
  * }
  *
- * Le login doit correspondre au nom présent
- * dans l’adresse twitch.tv/login_twitch.
+ * Catégories disponibles :
+ *
+ * friends
+ * international
+ * favorites
  */
 
 const RECOMMENDED_STREAMERS = [
+
     {
         login: "myo_faunette",
         category: "friends"
     },
+
     {
         login: "celanyavt",
         category: "friends"
     },
+
     {
         login: "sorine_e",
         category: "friends"
     },
+
     {
         login: "maman_mikii",
         category: "friends"
     },
+
     {
         login: "babyhawk_vt",
         category: "friends"
     },
+
     {
         login: "Nymya_VT",
         category: "friends"
     },
+
     {
         login: "LykaMonarch",
         category: "favorites"
     },
+
     {
         login: "rvbyabyss",
         category: "friends"
     },
+
     {
         login: "YuTo_Mbc",
         category: "friends"
     },
+
     {
         login: "louxifr",
         category: "friends"
     },
+
     {
         login: "kimori_004",
         category: "friends"
     },
+
     {
         login: "Lunyvee",
         category: "friends"
     },
+
     {
         login: "Subbarath",
         category: "friends"
     },
+
     {
         login: "leareinepoulpe",
         category: "friends"
     },
+
     {
         login: "frouxyi",
         category: "friends"
     },
+
     {
         login: "sayarhe",
         category: "favorites"
     },
+
     {
         login: "omelyth",
         category: "friends"
     },
+
     {
         login: "petiteorca",
         category: "friends"
     },
+
     {
         login: "000dracko000",
         category: "friends"
     },
+
     {
         login: "vaxiria",
         category: "friends"
     },
+
     {
         login: "dreagonm",
         category: "friends"
     },
+
     {
         login: "vtyukiuwu",
         category: "favorites"
     },
+
     {
         login: "kuroka59",
         category: "friends"
     },
+
     {
         login: "ironmouse",
         category: "international"
     },
+
     {
         login: "natomiie",
         category: "international"
     },
+
     {
         login: "queenie",
         category: "international"
     },
+
     {
         login: "sinder",
         category: "international"
     },
+
     {
         login: "melibellule",
         category: "favorites"
     },
+
     {
         login: "keola",
         category: "favorites"
     },
+
     {
         login: "AuroraLeonisVT",
         category: "international"
     },
+
     {
         login: "biyona",
         category: "favorites"
     },
+
     {
         login: "yesseniavo",
         category: "international"
     },
+
     {
         login: "laynalazar",
         category: "international"
     },
+
     {
         login: "pakyotille",
         category: "favorites"
     },
+
     {
         login: "wankilstudio",
         category: "favorites"
     },
+
     {
         login: "nallena_vwolf",
         category: "favorites"
     },
+
     {
         login: "fengaryx",
         category: "favorites"
     },
+
     {
         login: "kammy64",
         category: "favorites"
     },
+
     {
         login: "sunray",
         category: "favorites"
     },
+
     {
         login: "Maiyasu",
         category: "friends"
     },
+
     {
         login: "yuutooushiro",
         category: "friends"
     },
+
     {
         login: "selini_s",
         category: "friends"
     },
+
     {
         login: "MrButler_17",
         category: "favorites"
     },
+
     {
         login: "PiikaNya",
         category: "friends"
     }
+
 ];
 
 
 /* =========================================================
-   CORS ET CACHE
+   CATÉGORIES
 ========================================================= */
 
-function setCorsHeaders(response) {
-    response.setHeader(
-        "Access-Control-Allow-Origin",
-        "*"
-    );
+const CATEGORY_ORDER = {
 
-    response.setHeader(
-        "Access-Control-Allow-Methods",
-        "GET, OPTIONS"
-    );
+    friends: 0,
 
-    response.setHeader(
-        "Access-Control-Allow-Headers",
-        "Content-Type"
-    );
-}
+    international: 1,
+
+    favorites: 2
+
+};
 
 
-function setCacheHeaders(response) {
-    response.setHeader(
-        "Cache-Control",
-        [
-            "public",
-            "s-maxage=60",
-            "stale-while-revalidate=120"
-        ].join(", ")
+const ALLOWED_CATEGORIES =
+    new Set(
+        Object.keys(
+            CATEGORY_ORDER
+        )
     );
-}
 
 
 /* =========================================================
    OUTILS
 ========================================================= */
 
-/**
- * Normalise un login Twitch.
- *
- * @param {unknown} value
- * @returns {string}
- */
-function normalizeLogin(value) {
-    return String(value ?? "")
+function normalizeLogin(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
         .trim()
         .toLowerCase();
 }
 
-/**
- * Normalise une catégorie de recommandation.
- *
- * @param {unknown} value
- * @returns {"friends"|"international"|"favorites"}
- */
-function normalizeCategory(value) {
+
+function normalizeCategory(
+    value
+) {
+
     const category =
-        String(value ?? "")
+        String(
+            value ?? ""
+        )
             .trim()
             .toLowerCase();
 
-    const allowedCategories = [
-        "friends",
-        "international",
-        "favorites"
-    ];
 
-    return allowedCategories.includes(category)
+    return ALLOWED_CATEGORIES.has(
+        category
+    )
         ? category
         : "favorites";
 }
 
 
-/**
- * Retourne un message d’erreur lisible.
- *
- * @param {unknown} error
- * @returns {string}
- */
-function getErrorMessage(error) {
+function getErrorMessage(
+    error
+) {
+
     if (
         error instanceof Error &&
         error.message
     ) {
+
         return error.message;
     }
+
 
     return String(
         error ||
@@ -299,50 +333,63 @@ function getErrorMessage(error) {
 }
 
 
-/**
- * Construit une requête avec plusieurs
- * paramètres identiques.
- *
- * Exemple :
- *
- * login=myo_faunette&login=celanyavt
- *
- * @param {string} parameterName
- * @param {string[]} values
- * @returns {string}
- */
+function getRecommendedLogins() {
+
+    return [
+        ...new Set(
+            RECOMMENDED_STREAMERS
+                .map(
+                    streamer =>
+                        normalizeLogin(
+                            streamer.login
+                        )
+                )
+                .filter(Boolean)
+        )
+    ];
+}
+
+
 function createRepeatedParameters(
     parameterName,
     values
 ) {
+
     const parameters =
         new URLSearchParams();
 
-    values.forEach((value) => {
+
+    for (
+        const value of
+        values
+    ) {
+
         parameters.append(
             parameterName,
             value
         );
-    });
+    }
+
 
     return parameters.toString();
 }
 
 
 /* =========================================================
-   TWITCH
+   TWITCH — USERS
 ========================================================= */
 
-/**
- * Récupère les profils Twitch.
- *
- * @param {string[]} logins
- * @returns {Promise<object[]>}
- */
-async function getUsers(logins) {
-    if (logins.length === 0) {
+async function getUsers(
+    logins
+) {
+
+    if (
+        logins.length === 0
+    ) {
+
         return [];
     }
+
 
     const query =
         createRepeatedParameters(
@@ -350,30 +397,36 @@ async function getUsers(logins) {
             logins
         );
 
+
     const result =
         await twitchFetch(
             `/users?${query}`
         );
 
-    return Array.isArray(result?.data)
+
+    return Array.isArray(
+        result?.data
+    )
         ? result.data
         : [];
 }
 
 
-/**
- * Récupère les lives actifs.
- *
- * Les chaînes hors ligne ne sont pas
- * retournées par Twitch.
- *
- * @param {string[]} logins
- * @returns {Promise<object[]>}
- */
-async function getStreams(logins) {
-    if (logins.length === 0) {
+/* =========================================================
+   TWITCH — STREAMS
+========================================================= */
+
+async function getStreams(
+    logins
+) {
+
+    if (
+        logins.length === 0
+    ) {
+
         return [];
     }
+
 
     const query =
         createRepeatedParameters(
@@ -381,109 +434,135 @@ async function getStreams(logins) {
             logins
         );
 
+
     const result =
         await twitchFetch(
             `/streams?${query}`
         );
 
-    return Array.isArray(result?.data)
+
+    return Array.isArray(
+        result?.data
+    )
         ? result.data
         : [];
 }
 
 
 /* =========================================================
-   FUSION DES DONNÉES
+   FORMATAGE
 ========================================================= */
 
-/**
- * Fusionne les profils et les lives.
- *
- * @param {object[]} users
- * @param {object[]} streams
- * @returns {object[]}
- */
 function createStreamerResults(
     users,
     streams
 ) {
+
     const usersByLogin =
         new Map();
 
-    users.forEach((user) => {
+
+    for (
+        const user of
+        users
+    ) {
+
         const login =
             normalizeLogin(
                 user?.login
             );
 
-        if (login) {
+
+        if (
+            login
+        ) {
+
             usersByLogin.set(
                 login,
                 user
             );
         }
-    });
+    }
 
 
     const streamsByLogin =
         new Map();
 
-    streams.forEach((stream) => {
+
+    for (
+        const stream of
+        streams
+    ) {
+
         const login =
             normalizeLogin(
                 stream?.user_login
             );
 
-        if (login) {
+
+        if (
+            login
+        ) {
+
             streamsByLogin.set(
                 login,
                 stream
             );
         }
-    });
+    }
 
 
     return RECOMMENDED_STREAMERS
+
         .map(
             (
                 configuredStreamer,
                 originalIndex
             ) => {
+
                 const configuredLogin =
                     normalizeLogin(
                         configuredStreamer.login
                     );
+
 
                 const user =
                     usersByLogin.get(
                         configuredLogin
                     );
 
-                /*
-                 * Login invalide ou compte absent.
-                 */
-                if (!user) {
+
+                if (
+                    !user
+                ) {
+
                     return null;
                 }
+
 
                 const login =
                     normalizeLogin(
                         user.login
                     );
 
+
                 const stream =
                     streamsByLogin.get(
                         login
                     );
 
+
                 const live =
-                    Boolean(stream);
+                    Boolean(
+                        stream
+                    );
+
 
                 return {
+
                     id:
                         String(
-                            user.id ??
-                            ""
+                            user.id ?? ""
                         ),
 
                     login,
@@ -493,6 +572,12 @@ function createStreamerResults(
                             user.display_name ||
                             user.login ||
                             configuredLogin
+                        ),
+
+                    description:
+                        String(
+                            user.description ||
+                            ""
                         ),
 
                     profileImageUrl:
@@ -505,11 +590,21 @@ function createStreamerResults(
                         `https://www.twitch.tv/${encodeURIComponent(
                             login
                         )}`,
-                        category:
+
+                    category:
                         normalizeCategory(
                             configuredStreamer.category
                         ),
+
                     live,
+
+                    gameId:
+                        live
+                            ? String(
+                                stream.game_id ||
+                                ""
+                            )
+                            : "",
 
                     gameName:
                         live
@@ -535,172 +630,301 @@ function createStreamerResults(
                             )
                             : 0,
 
+                    startedAt:
+                        live
+                            ? stream.started_at ||
+                              null
+                            : null,
+
+                    language:
+                        live
+                            ? stream.language ||
+                              null
+                            : null,
+
+                    thumbnailUrl:
+                        live &&
+                        stream.thumbnail_url
+                            ? String(
+                                stream.thumbnail_url
+                            )
+                                .replace(
+                                    "{width}",
+                                    "440"
+                                )
+                                .replace(
+                                    "{height}",
+                                    "248"
+                                )
+                            : null,
+
                     originalIndex
+
                 };
             }
         )
+
         .filter(Boolean)
+
         .sort(
-                (
-                    firstStreamer,
-                    secondStreamer
-                ) => {
-                    const categoryOrder = {
-                        friends: 0,
-                        international: 1,
-                        favorites: 2
-                    };
+            (
+                firstStreamer,
+                secondStreamer
+            ) => {
 
-                    /*
-                    * 1. On range d'abord
-                    * les streamers par catégorie.
-                    */
-                    const firstCategoryPosition =
-                        categoryOrder[
-                            firstStreamer.category
-                        ] ?? 999;
-
-                    const secondCategoryPosition =
-                        categoryOrder[
-                            secondStreamer.category
-                        ] ?? 999;
-
-                    if (
-                        firstCategoryPosition !==
-                        secondCategoryPosition
-                    ) {
-                        return (
-                            firstCategoryPosition -
-                            secondCategoryPosition
-                        );
-                    }
+                const firstCategoryPosition =
+                    CATEGORY_ORDER[
+                        firstStreamer.category
+                    ] ??
+                    999;
 
 
-                    /*
-                    * 2. À l'intérieur d'une catégorie,
-                    * les streamers en live passent devant.
-                    */
-                    if (
-                        firstStreamer.live !==
-                        secondStreamer.live
-                    ) {
-                        return (
-                            Number(
-                                secondStreamer.live
-                            ) -
-                            Number(
-                                firstStreamer.live
-                            )
-                        );
-                    }
+                const secondCategoryPosition =
+                    CATEGORY_ORDER[
+                        secondStreamer.category
+                    ] ??
+                    999;
 
 
-                    /*
-                    * 3. Pour le reste,
-                    * on respecte ton ordre manuel.
-                    */
+                if (
+                    firstCategoryPosition !==
+                    secondCategoryPosition
+                ) {
+
                     return (
-                        firstStreamer.originalIndex -
-                        secondStreamer.originalIndex
+                        firstCategoryPosition -
+                        secondCategoryPosition
                     );
                 }
-            )
-        .map((streamer) => {
-            const {
-                originalIndex,
-                ...publicStreamer
-            } = streamer;
 
-            return publicStreamer;
-        });
+
+                if (
+                    firstStreamer.live !==
+                    secondStreamer.live
+                ) {
+
+                    return (
+                        Number(
+                            secondStreamer.live
+                        ) -
+                        Number(
+                            firstStreamer.live
+                        )
+                    );
+                }
+
+
+                return (
+                    firstStreamer.originalIndex -
+                    secondStreamer.originalIndex
+                );
+            }
+        )
+
+        .map(
+            streamer => {
+
+                const {
+                    originalIndex,
+                    ...publicStreamer
+                } =
+                    streamer;
+
+
+                return publicStreamer;
+            }
+        );
 }
 
 
 /* =========================================================
-   ROUTE VERCEL
+   API HTTP
 ========================================================= */
 
 /**
  * GET /api/recommended-streamers
+ *
+ * GET /api/recommended-streamers?category=friends
+ *
+ * GET /api/recommended-streamers?category=international
+ *
+ * GET /api/recommended-streamers?category=favorites
+ *
+ * GET /api/recommended-streamers?liveOnly=true
  */
 export default async function handler(
     request,
     response
 ) {
-    setCorsHeaders(response);
+
+    response.setHeader(
+        "Cache-Control",
+        "no-store, max-age=0"
+    );
+
+
+    /* =====================================================
+       MÉTHODE
+    ====================================================== */
 
     if (
-        request.method === "OPTIONS"
+        request.method !==
+        "GET"
     ) {
-        response
-            .status(204)
-            .end();
 
-        return;
-    }
-
-    if (
-        request.method !== "GET"
-    ) {
         response.setHeader(
             "Allow",
-            "GET, OPTIONS"
+            "GET"
         );
+
 
         response
             .status(405)
             .json({
+
                 success:
                     false,
 
-                error:
-                    "Méthode non autorisée.",
+                streamers:
+                    [],
 
-                allowedMethods: [
-                    "GET",
-                    "OPTIONS"
-                ]
+                error:
+                    "Méthode non autorisée."
+
             });
+
 
         return;
     }
 
+
     try {
+
+        /* =================================================
+           LOGINS
+        ================================================== */
+
         const logins =
-            RECOMMENDED_STREAMERS
-                .map((streamer) => {
-                    return normalizeLogin(
-                        streamer.login
-                    );
-                })
-                .filter(Boolean);
+            getRecommendedLogins();
+
+
+        /* =================================================
+           TWITCH
+        ================================================== */
 
         const [
             users,
             streams
-        ] = await Promise.all([
-            getUsers(logins),
-            getStreams(logins)
-        ]);
+        ] =
+            await Promise.all([
 
-        const streamers =
+                getUsers(
+                    logins
+                ),
+
+                getStreams(
+                    logins
+                )
+
+            ]);
+
+
+        /* =================================================
+           FUSION
+        ================================================== */
+
+        let streamers =
             createStreamerResults(
                 users,
                 streams
             );
 
+
+        /* =================================================
+           FILTRE CATÉGORIE
+        ================================================== */
+
+        const requestedCategory =
+            String(
+                request.query
+                    ?.category ??
+                ""
+            )
+                .trim()
+                .toLowerCase();
+
+
+        if (
+            requestedCategory &&
+            ALLOWED_CATEGORIES.has(
+                requestedCategory
+            )
+        ) {
+
+            streamers =
+                streamers.filter(
+                    streamer =>
+                        streamer.category ===
+                        requestedCategory
+                );
+        }
+
+
+        /* =================================================
+           LIVE UNIQUEMENT
+        ================================================== */
+
+        const liveOnly =
+            [
+                "true",
+                "1",
+                "yes",
+                "oui"
+            ].includes(
+                String(
+                    request.query
+                        ?.liveOnly ??
+                    request.query
+                        ?.live_only ??
+                    ""
+                )
+                    .trim()
+                    .toLowerCase()
+            );
+
+
+        if (
+            liveOnly
+        ) {
+
+            streamers =
+                streamers.filter(
+                    streamer =>
+                        streamer.live
+                );
+        }
+
+
+        /* =================================================
+           STATISTIQUES
+        ================================================== */
+
         const liveCount =
             streamers.filter(
-                (streamer) => {
-                    return streamer.live;
-                }
-            ).length;
+                streamer =>
+                    streamer.live
+            )
+                .length;
 
-        setCacheHeaders(response);
+
+        /* =================================================
+           RÉPONSE
+        ================================================== */
 
         response
             .status(200)
             .json({
+
                 success:
                     true,
 
@@ -714,29 +938,50 @@ export default async function handler(
                 liveCount,
 
                 streamers
+
             });
-    } catch (error) {
+
+
+    } catch (
+        error
+    ) {
+
         const errorMessage =
             getErrorMessage(
                 error
             );
 
+
         console.error(
-            "[Twitch API] Streamers recommandés :",
+            "[Recommended Streamers API]",
             error
         );
+
+
+        if (
+            response.headersSent
+        ) {
+
+            return;
+        }
+
 
         response
             .status(500)
             .json({
+
                 success:
                     false,
+
+                streamers:
+                    [],
 
                 error:
                     "Impossible de récupérer les chaînes recommandées.",
 
                 details:
                     errorMessage
+
             });
     }
 }

@@ -1,17 +1,21 @@
 "use strict";
 
 /* =========================================================
-   IMPORTS
+   API TWITCH — CLIPS
+   COUAXIA
 ========================================================= */
 
 import {
     clearTwitchAccessToken,
-    getTwitchApiHeaders
+    getTwitchApiHeaders,
+    getChannelLogin
 } from "./auth.js";
 
 import {
     getTwitchUserId
 } from "./user.js";
+
+
 /* =========================================================
    CONFIGURATION
 ========================================================= */
@@ -19,267 +23,443 @@ import {
 const TWITCH_CLIPS_URL =
     "https://api.twitch.tv/helix/clips";
 
-/*
- * Utilise la variable configurée dans Vercel.
- * La valeur "couaxia" sert uniquement de secours.
- */
-const DEFAULT_CHANNEL =
-    process.env.TWITCH_CHANNEL_LOGIN
-        ?.trim()
-        .toLowerCase() ||
-    "couaxia";
-
 const MAX_CLIPS_PER_REQUEST =
     100;
 
 
 /* =========================================================
-   NORMALISATION
+   OUTILS
 ========================================================= */
 
+function normalizeText(
+    value
+) {
+
+    return String(
+        value ?? ""
+    ).trim();
+}
+
+
 /**
- * Nettoie et normalise le nom d'une chaîne Twitch.
+ * Retourne le nom de chaîne configuré.
  *
- * @param {string} channelLogin
+ * @returns {string}
+ */
+function getDefaultChannel() {
+
+    return getChannelLogin();
+}
+
+
+/**
+ * Nettoie le login Twitch.
+ *
+ * @param {unknown} channelLogin
  * @returns {string}
  */
 function normalizeChannelLogin(
     channelLogin
 ) {
+
     const normalizedLogin =
-        String(channelLogin ?? "")
-            .trim()
+        normalizeText(
+            channelLogin
+        )
             .toLowerCase();
 
-    if (!normalizedLogin) {
+
+    if (
+        !normalizedLogin
+    ) {
+
         throw new Error(
             "Le nom de la chaîne Twitch est vide."
         );
     }
+
 
     return normalizedLogin;
 }
 
 
 /**
- * Limite le nombre de clips entre 1 et 100.
+ * Limite first entre 1 et 100.
  *
- * @param {number|string} value
+ * @param {unknown} value
+ * @param {number} defaultValue
  * @returns {number}
  */
-function normalizeLimit(value) {
-    const parsedValue =
-        Number.parseInt(value, 10);
+function normalizeLimit(
+    value,
+    defaultValue = 5
+) {
 
-    if (!Number.isFinite(parsedValue)) {
-        return 5;
+    const parsedValue =
+        Number.parseInt(
+            value,
+            10
+        );
+
+
+    if (
+        !Number.isFinite(
+            parsedValue
+        )
+    ) {
+
+        return defaultValue;
     }
 
+
     return Math.min(
-        Math.max(parsedValue, 1),
+        Math.max(
+            parsedValue,
+            1
+        ),
         MAX_CLIPS_PER_REQUEST
     );
 }
 
 
 /**
- * Convertit une date en format ISO compatible avec Twitch.
+ * Convertit une date au format ISO.
  *
  * @param {string|Date|null} value
  * @returns {string|null}
  */
-function normalizeDate(value) {
-    if (!value) {
+function normalizeDate(
+    value
+) {
+
+    if (
+        !value
+    ) {
+
         return null;
     }
+
 
     const date =
         value instanceof Date
             ? value
-            : new Date(value);
+            : new Date(
+                value
+            );
+
 
     if (
         Number.isNaN(
             date.getTime()
         )
     ) {
+
         throw new Error(
             `Date Twitch invalide : ${value}`
         );
     }
+
 
     return date.toISOString();
 }
 
 
 /**
- * Calcule une date de début à partir d'une période.
+ * Transforme une période en date de début.
  *
- * Pour Twitch Clips, une période utilisant started_at
- * est accompagnée automatiquement d'une date ended_at.
- *
- * @param {"day"|"week"|"month"|"year"|"all"} period
+ * @param {"day"|"week"|"month"|"year"|"all"|string|null} period
  * @returns {string|null}
  */
 function getStartedAtFromPeriod(
     period
 ) {
+
     const normalizedPeriod =
-        String(period ?? "all")
-            .trim()
+        normalizeText(
+            period || "all"
+        )
             .toLowerCase();
 
-    if (normalizedPeriod === "all") {
+
+    if (
+        normalizedPeriod ===
+        "all"
+    ) {
+
         return null;
     }
+
 
     const startedAt =
         new Date();
 
-    switch (normalizedPeriod) {
+
+    switch (
+        normalizedPeriod
+    ) {
+
         case "day":
+
             startedAt.setUTCDate(
-                startedAt.getUTCDate() - 1
+                startedAt.getUTCDate() -
+                1
             );
+
             break;
+
 
         case "week":
+
             startedAt.setUTCDate(
-                startedAt.getUTCDate() - 7
+                startedAt.getUTCDate() -
+                7
             );
+
             break;
+
 
         case "month":
+
             startedAt.setUTCMonth(
-                startedAt.getUTCMonth() - 1
+                startedAt.getUTCMonth() -
+                1
             );
+
             break;
+
 
         case "year":
+
             startedAt.setUTCFullYear(
-                startedAt.getUTCFullYear() - 1
+                startedAt.getUTCFullYear() -
+                1
             );
+
             break;
 
+
         default:
+
             throw new Error(
                 `Période de clips invalide : ${period}`
             );
     }
+
 
     return startedAt.toISOString();
 }
 
 
 /**
- * Nettoie un curseur de pagination Twitch.
+ * Nettoie un curseur Twitch.
  *
- * @param {string|null} cursor
+ * @param {unknown} cursor
  * @returns {string|null}
  */
-function normalizeCursor(cursor) {
-    const normalizedCursor =
-        String(cursor ?? "")
-            .trim();
+function normalizeCursor(
+    cursor
+) {
 
-    return normalizedCursor || null;
+    const normalizedCursor =
+        normalizeText(
+            cursor
+        );
+
+
+    return (
+        normalizedCursor ||
+        null
+    );
+}
+
+
+/**
+ * Convertit une valeur en booléen nullable.
+ *
+ * @param {unknown} value
+ * @returns {boolean|null}
+ */
+function normalizeOptionalBoolean(
+    value
+) {
+
+    if (
+        value === undefined ||
+        value === null ||
+        value === ""
+    ) {
+
+        return null;
+    }
+
+
+    if (
+        typeof value ===
+        "boolean"
+    ) {
+
+        return value;
+    }
+
+
+    const normalized =
+        normalizeText(
+            value
+        )
+            .toLowerCase();
+
+
+    if (
+        [
+            "true",
+            "1",
+            "yes",
+            "oui",
+            "on"
+        ].includes(
+            normalized
+        )
+    ) {
+
+        return true;
+    }
+
+
+    if (
+        [
+            "false",
+            "0",
+            "no",
+            "non",
+            "off"
+        ].includes(
+            normalized
+        )
+    ) {
+
+        return false;
+    }
+
+
+    return null;
 }
 
 
 /* =========================================================
-   REQUÊTES TWITCH
+   RÉPONSE TWITCH
 ========================================================= */
 
-/**
- * Effectue une requête vers Twitch.
- *
- * Si Twitch répond 401, le token en cache est supprimé,
- * un nouveau token est demandé et la requête est retentée
- * une seule fois.
- *
- * @param {URL} url
- * @returns {Promise<Response>}
- */
-async function fetchTwitchClipsApi(url) {
+async function readTwitchResponse(
+    response
+) {
+
+    const contentType =
+        response.headers.get(
+            "content-type"
+        ) || "";
+
+
+    if (
+        contentType.includes(
+            "application/json"
+        )
+    ) {
+
+        return response.json();
+    }
+
+
+    const text =
+        await response.text();
+
+
+    if (
+        !text
+    ) {
+
+        return {};
+    }
+
+
+    try {
+
+        return JSON.parse(
+            text
+        );
+
+    } catch {
+
+        return {
+            message:
+                text
+        };
+    }
+}
+
+
+/* =========================================================
+   REQUÊTE TWITCH
+========================================================= */
+
+async function fetchTwitchClipsApi(
+    url
+) {
+
     let response =
         await fetch(
             url.toString(),
             {
-                method: "GET",
+                method:
+                    "GET",
 
                 headers:
                     await getTwitchApiHeaders(),
 
-                cache: "no-store"
+                cache:
+                    "no-store"
             }
         );
 
-    if (response.status === 401) {
+
+    /*
+     * Si Twitch indique que le token n'est plus valide,
+     * on le supprime puis on retente une seule fois.
+     */
+
+    if (
+        response.status ===
+        401
+    ) {
+
         clearTwitchAccessToken();
+
 
         response =
             await fetch(
                 url.toString(),
                 {
-                    method: "GET",
+                    method:
+                        "GET",
 
                     headers:
                         await getTwitchApiHeaders({
-                            forceRefresh: true
+                            forceRefresh:
+                                true
                         }),
 
-                    cache: "no-store"
+                    cache:
+                        "no-store"
                 }
             );
     }
+
 
     return response;
 }
 
 
 /**
- * Lit et analyse une réponse Twitch.
- *
- * @param {Response} response
- * @returns {Promise<object>}
- */
-async function parseTwitchResponse(
-    response
-) {
-    const responseBody =
-        await response.text();
-
-    let twitchData = {};
-
-    if (responseBody) {
-        try {
-            twitchData =
-                JSON.parse(responseBody);
-        } catch {
-            throw new Error(
-                "Twitch a renvoyé une réponse illisible."
-            );
-        }
-    }
-
-    if (!response.ok) {
-        const twitchMessage =
-            twitchData?.message ||
-            responseBody ||
-            "Erreur Twitch inconnue.";
-
-        throw new Error(
-            `Erreur Twitch Get Clips ` +
-            `(${response.status}) : ${twitchMessage}`
-        );
-    }
-
-    return twitchData;
-}
-
-
-/**
- * Appelle Twitch avec l'URL fournie.
+ * Appelle Twitch et retourne les données JSON.
  *
  * @param {URL} clipsUrl
  * @returns {Promise<object>}
@@ -287,28 +467,41 @@ async function parseTwitchResponse(
 async function requestClipsFromTwitch(
     clipsUrl
 ) {
+
     const response =
         await fetchTwitchClipsApi(
             clipsUrl
         );
 
-    return parseTwitchResponse(
-        response
-    );
+
+    const twitchData =
+        await readTwitchResponse(
+            response
+        );
+
+
+    if (
+        !response.ok
+    ) {
+
+        throw new Error(
+            `Erreur Twitch Get Clips (${response.status}) : ${
+                twitchData?.message ||
+                twitchData?.error ||
+                "Erreur Twitch inconnue."
+            }`
+        );
+    }
+
+
+    return twitchData;
 }
 
 
 /* =========================================================
-   CONSTRUCTION DES URLS
+   FILTRES
 ========================================================= */
 
-/**
- * Ajoute les filtres communs à une URL Twitch Clips.
- *
- * @param {URL} clipsUrl
- * @param {object} options
- * @returns {object}
- */
 function applyClipFilters(
     clipsUrl,
     {
@@ -321,86 +514,142 @@ function applyClipFilters(
         featured = null
     } = {}
 ) {
+
     const normalizedFirst =
-        normalizeLimit(first);
+        normalizeLimit(
+            first
+        );
+
 
     let normalizedStartedAt =
-        normalizeDate(startedAt);
+        normalizeDate(
+            startedAt
+        );
+
 
     if (
         !normalizedStartedAt &&
         period
     ) {
+
         normalizedStartedAt =
             getStartedAtFromPeriod(
                 period
             );
     }
 
+
     let normalizedEndedAt =
-        normalizeDate(endedAt);
+        normalizeDate(
+            endedAt
+        );
+
 
     /*
-     * Lorsqu'une date de début est définie sans date de fin,
-     * on utilise la date actuelle comme date de fin.
+     * Pour nos filtres personnalisés,
+     * une période va jusqu'au moment actuel.
      */
+
     if (
         normalizedStartedAt &&
         !normalizedEndedAt
     ) {
+
         normalizedEndedAt =
-            new Date().toISOString();
+            new Date()
+                .toISOString();
     }
+
 
     clipsUrl.searchParams.set(
         "first",
-        String(normalizedFirst)
+        String(
+            normalizedFirst
+        )
     );
 
-    if (normalizedStartedAt) {
+
+    if (
+        normalizedStartedAt
+    ) {
+
         clipsUrl.searchParams.set(
             "started_at",
             normalizedStartedAt
         );
     }
 
-    if (normalizedEndedAt) {
+
+    if (
+        normalizedEndedAt
+    ) {
+
         clipsUrl.searchParams.set(
             "ended_at",
             normalizedEndedAt
         );
     }
 
+
     const normalizedAfter =
-        normalizeCursor(after);
+        normalizeCursor(
+            after
+        );
+
 
     const normalizedBefore =
-        normalizeCursor(before);
+        normalizeCursor(
+            before
+        );
+
 
     /*
-     * Twitch ne permet pas d'utiliser after et before
+     * after et before ne sont pas utilisés
      * simultanément.
      */
-    if (normalizedAfter) {
+
+    if (
+        normalizedAfter
+    ) {
+
         clipsUrl.searchParams.set(
             "after",
             normalizedAfter
         );
-    } else if (normalizedBefore) {
+
+    } else if (
+        normalizedBefore
+    ) {
+
         clipsUrl.searchParams.set(
             "before",
             normalizedBefore
         );
     }
 
-    if (typeof featured === "boolean") {
+
+    const normalizedFeatured =
+        normalizeOptionalBoolean(
+            featured
+        );
+
+
+    if (
+        typeof normalizedFeatured ===
+        "boolean"
+    ) {
+
         clipsUrl.searchParams.set(
             "is_featured",
-            String(featured)
+            String(
+                normalizedFeatured
+            )
         );
     }
 
+
     return {
+
         first:
             normalizedFirst,
 
@@ -417,39 +666,35 @@ function applyClipFilters(
             normalizedBefore,
 
         featured:
-            typeof featured === "boolean"
-                ? featured
-                : null
+            normalizedFeatured
+
     };
 }
 
 
 /* =========================================================
-   FORMATAGE
+   FORMATAGE CLIP
 ========================================================= */
 
-/**
- * Formate l'adresse de la miniature d'un clip.
- *
- * @param {string|null} thumbnailUrl
- * @returns {string|null}
- */
 function formatThumbnailUrl(
     thumbnailUrl
 ) {
-    if (
-        typeof thumbnailUrl !== "string" ||
-        !thumbnailUrl.trim()
-    ) {
-        return null;
-    }
 
-    return thumbnailUrl.trim();
+    const url =
+        normalizeText(
+            thumbnailUrl
+        );
+
+
+    return (
+        url ||
+        null
+    );
 }
 
 
 /**
- * Formate la durée d'un clip.
+ * Retourne une durée lisible.
  *
  * @param {number} duration
  * @returns {string}
@@ -457,29 +702,50 @@ function formatThumbnailUrl(
 function formatClipDuration(
     duration
 ) {
+
     const totalSeconds =
         Math.max(
-            Number(duration) || 0,
+            Number(
+                duration
+            ) ||
+            0,
             0
         );
 
-    if (totalSeconds < 60) {
-        return `${Math.round(totalSeconds)} s`;
+
+    if (
+        totalSeconds <
+        60
+    ) {
+
+        return `${Math.round(
+            totalSeconds
+        )} s`;
     }
+
 
     const minutes =
         Math.floor(
-            totalSeconds / 60
+            totalSeconds /
+            60
         );
+
 
     const seconds =
         Math.round(
-            totalSeconds % 60
+            totalSeconds %
+            60
         );
+
 
     return (
         `${minutes} min ` +
-        `${String(seconds).padStart(2, "0")} s`
+        `${String(
+            seconds
+        ).padStart(
+            2,
+            "0"
+        )} s`
     );
 }
 
@@ -490,17 +756,32 @@ function formatClipDuration(
  * @param {object} clip
  * @returns {object}
  */
-function formatClip(clip) {
+function formatClip(
+    clip
+) {
+
     const duration =
-        Number(clip?.duration) || 0;
+        Number(
+            clip?.duration
+        ) ||
+        0;
+
 
     const viewCount =
-        Number(clip?.view_count) || 0;
+        Number(
+            clip?.view_count
+        ) ||
+        0;
+
 
     const rawVodOffset =
-        Number(clip?.vod_offset);
+        Number(
+            clip?.vod_offset
+        );
+
 
     return {
+
         id:
             clip?.id ||
             null,
@@ -564,7 +845,9 @@ function formatClip(clip) {
             ),
 
         vodOffset:
-            Number.isFinite(rawVodOffset)
+            Number.isFinite(
+                rawVodOffset
+            )
                 ? rawVodOffset
                 : null,
 
@@ -572,12 +855,13 @@ function formatClip(clip) {
             Boolean(
                 clip?.is_featured
             )
+
     };
 }
 
 
 /**
- * Formate une liste de clips Twitch.
+ * Formate une réponse contenant plusieurs clips.
  *
  * @param {object} twitchData
  * @param {object} context
@@ -585,20 +869,28 @@ function formatClip(clip) {
  */
 function formatClipsResult(
     twitchData,
-    context
+    context = {}
 ) {
+
     const clips =
-        Array.isArray(twitchData?.data)
+        Array.isArray(
+            twitchData?.data
+        )
             ? twitchData.data.map(
                 formatClip
             )
             : [];
 
+
     const cursor =
-        twitchData?.pagination?.cursor ||
+        twitchData
+            ?.pagination
+            ?.cursor ||
         null;
 
+
     return {
+
         ...context,
 
         clips,
@@ -607,11 +899,16 @@ function formatClipsResult(
             clips.length,
 
         pagination: {
+
             cursor,
 
             hasNextPage:
-                Boolean(cursor)
+                Boolean(
+                    cursor
+                )
+
         }
+
     };
 }
 
@@ -620,22 +917,8 @@ function formatClipsResult(
    CLIPS D'UNE CHAÎNE
 ========================================================= */
 
-/**
- * Récupère les clips d'une chaîne Twitch.
- *
- * @param {string} channelLogin
- * @param {object} options
- * @param {number} options.first
- * @param {string|Date|null} options.startedAt
- * @param {string|Date|null} options.endedAt
- * @param {"day"|"week"|"month"|"year"|"all"|null} options.period
- * @param {string|null} options.after
- * @param {string|null} options.before
- * @param {boolean|null} options.featured
- * @returns {Promise<object>}
- */
 export async function getChannelClips(
-    channelLogin = DEFAULT_CHANNEL,
+    channelLogin = null,
     {
         first = 100,
         startedAt = null,
@@ -646,23 +929,41 @@ export async function getChannelClips(
         featured = null
     } = {}
 ) {
+
     const normalizedLogin =
         normalizeChannelLogin(
-            channelLogin
+            channelLogin ||
+            getDefaultChannel()
         );
+
 
     const broadcasterId =
         await getTwitchUserId(
             normalizedLogin
         );
 
+
+    if (
+        !broadcasterId
+    ) {
+
+        throw new Error(
+            `Chaîne Twitch introuvable : ${normalizedLogin}`
+        );
+    }
+
+
     const clipsUrl =
-        new URL(TWITCH_CLIPS_URL);
+        new URL(
+            TWITCH_CLIPS_URL
+        );
+
 
     clipsUrl.searchParams.set(
         "broadcaster_id",
         broadcasterId
     );
+
 
     const filters =
         applyClipFilters(
@@ -678,68 +979,84 @@ export async function getChannelClips(
             }
         );
 
+
     const twitchData =
         await requestClipsFromTwitch(
             clipsUrl
         );
 
+
     return formatClipsResult(
         twitchData,
         {
+
             channel:
                 normalizedLogin,
 
             broadcasterId,
 
             filters
+
         }
     );
 }
 
 
-/**
- * Récupère plusieurs pages de clips d'une chaîne.
- *
- * @param {string} channelLogin
- * @param {object} options
- * @param {number} options.maxClips
- * @returns {Promise<object>}
- */
+/* =========================================================
+   PLUSIEURS PAGES D'UNE CHAÎNE
+========================================================= */
+
 export async function getAllChannelClips(
-    channelLogin = DEFAULT_CHANNEL,
+    channelLogin = null,
     {
         maxClips = 300
     } = {}
 ) {
+
     const normalizedMaximum =
         Math.max(
             Number.parseInt(
                 maxClips,
                 10
-            ) || 100,
+            ) ||
+            100,
             1
         );
 
+
     const normalizedLogin =
         normalizeChannelLogin(
-            channelLogin
+            channelLogin ||
+            getDefaultChannel()
         );
 
-    const allClips = [];
 
-    let cursor = null;
-    let broadcasterId = null;
-    let filters = null;
+    const allClips =
+        [];
+
+
+    let cursor =
+        null;
+
+    let broadcasterId =
+        null;
+
+    let filters =
+        null;
+
 
     do {
+
         const remaining =
             normalizedMaximum -
             allClips.length;
+
 
         const result =
             await getChannelClips(
                 normalizedLogin,
                 {
+
                     first:
                         Math.min(
                             remaining,
@@ -748,27 +1065,36 @@ export async function getAllChannelClips(
 
                     after:
                         cursor
+
                 }
             );
+
 
         broadcasterId =
             result.broadcasterId;
 
+
         filters =
             result.filters;
+
 
         allClips.push(
             ...result.clips
         );
 
+
         cursor =
-            result.pagination?.cursor ||
+            result.pagination
+                ?.cursor ||
             null;
+
+
     } while (
         cursor &&
         allClips.length <
             normalizedMaximum
     );
+
 
     const clips =
         allClips.slice(
@@ -776,7 +1102,9 @@ export async function getAllChannelClips(
             normalizedMaximum
         );
 
+
     return {
+
         channel:
             normalizedLogin,
 
@@ -790,31 +1118,24 @@ export async function getAllChannelClips(
         filters,
 
         pagination: {
+
             cursor,
 
             hasNextPage:
-                Boolean(cursor)
+                Boolean(
+                    cursor
+                )
+
         }
+
     };
 }
+
+
 /* =========================================================
    CLIPS D'UN JEU
 ========================================================= */
 
-/**
- * Récupère les clips associés à une catégorie Twitch.
- *
- * @param {string} gameId
- * @param {object} options
- * @param {number} options.first
- * @param {string|Date|null} options.startedAt
- * @param {string|Date|null} options.endedAt
- * @param {"day"|"week"|"month"|"year"|"all"|null} options.period
- * @param {string|null} options.after
- * @param {string|null} options.before
- * @param {boolean|null} options.featured
- * @returns {Promise<object>}
- */
 export async function getGameClips(
     gameId,
     {
@@ -827,23 +1148,34 @@ export async function getGameClips(
         featured = null
     } = {}
 ) {
-    const normalizedGameId =
-        String(gameId ?? "")
-            .trim();
 
-    if (!normalizedGameId) {
+    const normalizedGameId =
+        normalizeText(
+            gameId
+        );
+
+
+    if (
+        !normalizedGameId
+    ) {
+
         throw new Error(
             "L'identifiant du jeu Twitch est vide."
         );
     }
 
+
     const clipsUrl =
-        new URL(TWITCH_CLIPS_URL);
+        new URL(
+            TWITCH_CLIPS_URL
+        );
+
 
     clipsUrl.searchParams.set(
         "game_id",
         normalizedGameId
     );
+
 
     const filters =
         applyClipFilters(
@@ -859,121 +1191,157 @@ export async function getGameClips(
             }
         );
 
+
     const twitchData =
         await requestClipsFromTwitch(
             clipsUrl
         );
 
+
     return formatClipsResult(
         twitchData,
         {
+
             gameId:
                 normalizedGameId,
 
             filters
+
         }
     );
 }
 
 
 /* =========================================================
-   CLIP PAR IDENTIFIANT
+   CLIP PAR ID
 ========================================================= */
 
-/**
- * Récupère un clip précis grâce à son identifiant.
- *
- * @param {string} clipId
- * @returns {Promise<object|null>}
- */
 export async function getClipById(
     clipId
 ) {
-    const normalizedClipId =
-        String(clipId ?? "")
-            .trim();
 
-    if (!normalizedClipId) {
+    const normalizedClipId =
+        normalizeText(
+            clipId
+        );
+
+
+    if (
+        !normalizedClipId
+    ) {
+
         throw new Error(
             "L'identifiant du clip Twitch est vide."
         );
     }
 
+
     const clipsUrl =
-        new URL(TWITCH_CLIPS_URL);
+        new URL(
+            TWITCH_CLIPS_URL
+        );
+
 
     clipsUrl.searchParams.append(
         "id",
         normalizedClipId
     );
 
+
     const twitchData =
         await requestClipsFromTwitch(
             clipsUrl
         );
 
+
     const clip =
-        twitchData?.data?.[0] ||
+        twitchData
+            ?.data
+            ?.[0] ||
         null;
 
-    return clip
-        ? formatClip(clip)
-        : null;
+
+    return (
+        clip
+            ? formatClip(
+                clip
+            )
+            : null
+    );
 }
 
 
-/**
- * Récupère plusieurs clips grâce à leurs identifiants.
- *
- * Twitch accepte au maximum 100 identifiants par requête.
- *
- * @param {string[]} clipIds
- * @returns {Promise<object[]>}
- */
+/* =========================================================
+   PLUSIEURS CLIPS PAR ID
+========================================================= */
+
 export async function getClipsByIds(
     clipIds
 ) {
-    if (!Array.isArray(clipIds)) {
+
+    if (
+        !Array.isArray(
+            clipIds
+        )
+    ) {
+
         throw new Error(
             "La liste des identifiants de clips est invalide."
         );
     }
 
-    const normalizedIds = [
-        ...new Set(
-            clipIds
-                .map((clipId) =>
-                    String(
-                        clipId ?? ""
-                    ).trim()
-                )
-                .filter(Boolean)
-        )
-    ].slice(
-        0,
-        MAX_CLIPS_PER_REQUEST
-    );
 
-    if (normalizedIds.length === 0) {
+    const normalizedIds =
+        [
+            ...new Set(
+                clipIds
+                    .map(
+                        clipId =>
+                            normalizeText(
+                                clipId
+                            )
+                    )
+                    .filter(Boolean)
+            )
+        ]
+            .slice(
+                0,
+                MAX_CLIPS_PER_REQUEST
+            );
+
+
+    if (
+        normalizedIds.length ===
+        0
+    ) {
+
         return [];
     }
 
+
     const clipsUrl =
-        new URL(TWITCH_CLIPS_URL);
+        new URL(
+            TWITCH_CLIPS_URL
+        );
+
 
     for (
-        const clipId of normalizedIds
+        const clipId of
+        normalizedIds
     ) {
+
         clipsUrl.searchParams.append(
             "id",
             clipId
         );
     }
 
+
     const twitchData =
         await requestClipsFromTwitch(
             clipsUrl
         );
+
 
     return Array.isArray(
         twitchData?.data
@@ -989,73 +1357,62 @@ export async function getClipsByIds(
    RACCOURCIS
 ========================================================= */
 
-/**
- * Récupère les clips des dernières 24 heures.
- *
- * @param {string} channelLogin
- * @param {number} limit
- * @returns {Promise<object>}
- */
 export async function getDailyClips(
-    channelLogin = DEFAULT_CHANNEL,
+    channelLogin = null,
     limit = 5
 ) {
+
     return getChannelClips(
-        channelLogin,
+        channelLogin ||
+        getDefaultChannel(),
         {
+
             first:
                 limit,
 
             period:
                 "day"
+
         }
     );
 }
 
 
-/**
- * Récupère les clips des 7 derniers jours.
- *
- * @param {string} channelLogin
- * @param {number} limit
- * @returns {Promise<object>}
- */
 export async function getWeeklyClips(
-    channelLogin = DEFAULT_CHANNEL,
+    channelLogin = null,
     limit = 5
 ) {
+
     return getChannelClips(
-        channelLogin,
+        channelLogin ||
+        getDefaultChannel(),
         {
+
             first:
                 limit,
 
             period:
                 "week"
+
         }
     );
 }
 
 
 /**
- * Récupère les meilleurs clips disponibles de la chaîne.
+ * Conservé pour compatibilité avec ton projet.
  *
- * Aucun filtre de date n'est appliqué pour éviter qu'une
- * période mensuelle trop restrictive renvoie une liste vide.
- *
- * Le nom de cette fonction est conservé pour rester
- * compatible avec le reste du projet.
- *
- * @param {string} channelLogin
- * @param {number} limit
- * @returns {Promise<object>}
+ * Cette fonction renvoie les meilleurs clips
+ * disponibles sans forcer une période mensuelle.
  */
 export async function getMonthlyClips(
-    channelLogin = DEFAULT_CHANNEL,
+    channelLogin = null,
     limit = 5
 ) {
+
     return getChannelClips(
-        channelLogin,
+        channelLogin ||
+        getDefaultChannel(),
         {
             first:
                 limit
@@ -1064,44 +1421,338 @@ export async function getMonthlyClips(
 }
 
 
-/**
- * Récupère le clip le plus populaire de la semaine.
- *
- * @param {string} channelLogin
- * @returns {Promise<object|null>}
- */
 export async function getTopWeeklyClip(
-    channelLogin = DEFAULT_CHANNEL
+    channelLogin = null
 ) {
+
     const result =
         await getWeeklyClips(
-            channelLogin,
+            channelLogin ||
+            getDefaultChannel(),
             1
         );
 
-    return result.clips[0] || null;
+
+    return (
+        result.clips[0] ||
+        null
+    );
 }
 
 
-/**
- * Récupère les clips mis en avant.
- *
- * @param {string} channelLogin
- * @param {number} limit
- * @returns {Promise<object>}
- */
 export async function getFeaturedClips(
-    channelLogin = DEFAULT_CHANNEL,
+    channelLogin = null,
     limit = 5
 ) {
+
     return getChannelClips(
-        channelLogin,
+        channelLogin ||
+        getDefaultChannel(),
         {
+
             first:
                 limit,
 
             featured:
                 true
+
         }
     );
+}
+
+
+/* =========================================================
+   API HTTP PUBLIQUE
+========================================================= */
+
+/**
+ * Exemples :
+ *
+ * GET /api/clips
+ *
+ * GET /api/clips?period=week&first=10
+ *
+ * GET /api/clips?channel=couaxia&first=20
+ *
+ * GET /api/clips?gameId=509658&first=10
+ *
+ * GET /api/clips?clipId=NomDuClip
+ */
+export default async function handler(
+    request,
+    response
+) {
+
+    /* =====================================================
+       CACHE
+    ====================================================== */
+
+    response.setHeader(
+        "Cache-Control",
+        "no-store, max-age=0"
+    );
+
+
+    /* =====================================================
+       MÉTHODE
+    ====================================================== */
+
+    if (
+        request.method !==
+        "GET"
+    ) {
+
+        response.setHeader(
+            "Allow",
+            "GET"
+        );
+
+
+        response
+            .status(405)
+            .json({
+                success:
+                    false,
+
+                error:
+                    "Méthode non autorisée."
+            });
+
+
+        return;
+    }
+
+
+    try {
+
+        /* =================================================
+           PARAMÈTRES
+        ================================================== */
+
+        const channel =
+            normalizeText(
+                request.query?.channel
+            ) ||
+            getDefaultChannel();
+
+
+        const gameId =
+            normalizeText(
+                request.query?.gameId ??
+                request.query?.game_id
+            );
+
+
+        const clipId =
+            normalizeText(
+                request.query?.clipId ??
+                request.query?.clip_id
+            );
+
+
+        const first =
+            normalizeLimit(
+                request.query?.first,
+                10
+            );
+
+
+        const period =
+            normalizeText(
+                request.query?.period
+            ) ||
+            null;
+
+
+        const startedAt =
+            normalizeText(
+                request.query?.startedAt ??
+                request.query?.started_at
+            ) ||
+            null;
+
+
+        const endedAt =
+            normalizeText(
+                request.query?.endedAt ??
+                request.query?.ended_at
+            ) ||
+            null;
+
+
+        const after =
+            normalizeText(
+                request.query?.after
+            ) ||
+            null;
+
+
+        const before =
+            normalizeText(
+                request.query?.before
+            ) ||
+            null;
+
+
+        const featured =
+            normalizeOptionalBoolean(
+                request.query?.featured ??
+                request.query?.is_featured
+            );
+
+
+        /* =================================================
+           CLIP PRÉCIS
+        ================================================== */
+
+        if (
+            clipId
+        ) {
+
+            const clip =
+                await getClipById(
+                    clipId
+                );
+
+
+            if (
+                !clip
+            ) {
+
+                response
+                    .status(404)
+                    .json({
+                        success:
+                            false,
+
+                        clip:
+                            null,
+
+                        error:
+                            "Clip Twitch introuvable."
+                    });
+
+
+                return;
+            }
+
+
+            response
+                .status(200)
+                .json({
+
+                    success:
+                        true,
+
+                    clip
+
+                });
+
+
+            return;
+        }
+
+
+        /* =================================================
+           CLIPS D'UN JEU
+        ================================================== */
+
+        if (
+            gameId
+        ) {
+
+            const result =
+                await getGameClips(
+                    gameId,
+                    {
+                        first,
+                        period,
+                        startedAt,
+                        endedAt,
+                        after,
+                        before,
+                        featured
+                    }
+                );
+
+
+            response
+                .status(200)
+                .json({
+
+                    success:
+                        true,
+
+                    ...result
+
+                });
+
+
+            return;
+        }
+
+
+        /* =================================================
+           CLIPS DE LA CHAÎNE
+        ================================================== */
+
+        const result =
+            await getChannelClips(
+                channel,
+                {
+                    first,
+                    period,
+                    startedAt,
+                    endedAt,
+                    after,
+                    before,
+                    featured
+                }
+            );
+
+
+        response
+            .status(200)
+            .json({
+
+                success:
+                    true,
+
+                ...result
+
+            });
+
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "[Clips API]",
+            error
+        );
+
+
+        if (
+            response.headersSent
+        ) {
+
+            return;
+        }
+
+
+        response
+            .status(500)
+            .json({
+                success:
+                    false,
+
+                clips:
+                    [],
+
+                error:
+                    error?.message ||
+                    "Impossible de récupérer les clips Twitch."
+            });
+    }
 }

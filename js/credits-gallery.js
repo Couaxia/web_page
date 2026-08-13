@@ -33,6 +33,10 @@ document.addEventListener(
             );
 
 
+        /* =====================================================
+           VÉRIFICATION
+        ====================================================== */
+
         if (
             !source ||
             !generatedContainer ||
@@ -40,7 +44,7 @@ document.addEventListener(
         ) {
 
             console.error(
-                "[Crédits] Impossible d'initialiser la galerie : élément manquant."
+                "[Credits Gallery] Impossible d'initialiser la galerie : élément manquant."
             );
 
             return;
@@ -52,21 +56,27 @@ document.addEventListener(
         ====================================================== */
 
         /*
-         * IMPORTANT :
-         *
-         * Avant Supabase, les cartes existaient déjà
+         * Les cartes ne sont plus écrites directement
          * dans credits.html.
          *
-         * Maintenant credits-data.js les ajoute
-         * après avoir appelé /api/gallery.
+         * credits-data.js :
          *
-         * Cette variable sera donc remplie
-         * APRÈS couaxia:credits-loaded.
+         * Supabase
+         *    ↓
+         * /api/gallery
+         *    ↓
+         * #credits-card-source
+         *
+         * Une fois terminé, credits-data.js déclenche :
+         *
+         * couaxia:credits-loaded
          */
 
-        let originalCards = [];
+        let originalCards =
+            [];
 
-        let creditsLoaded = false;
+        let creditsLoaded =
+            false;
 
 
         /* =====================================================
@@ -145,7 +155,7 @@ document.addEventListener(
                     "🐉 Compagnons",
 
                 description:
-                    "Natsu, Cita et Hylda qui sont les compagnons de Couaxia.",
+                    "Natsu, Cit et les compagnons de Couaxia.",
 
                 tag:
                     "compagnons"
@@ -231,9 +241,12 @@ document.addEventListener(
 
 
         /* =====================================================
-           RÉCUPÉRATION DES CARTES SUPABASE
+           CARTES SOURCES
         ====================================================== */
 
+        /**
+         * Relit les cartes créées par credits-data.js.
+         */
         function refreshOriginalCards() {
 
             originalCards =
@@ -245,7 +258,7 @@ document.addEventListener(
 
 
             console.info(
-                `[Crédits] ${originalCards.length} carte(s) récupérée(s) depuis la source.`
+                `[Credits Gallery] ${originalCards.length} carte(s) source récupérée(s).`
             );
         }
 
@@ -256,6 +269,16 @@ document.addEventListener(
 
         /**
          * Retourne les tags d'une carte.
+         *
+         * data-tags="couaxia forme-3 collab"
+         *
+         * devient :
+         *
+         * [
+         *     "couaxia",
+         *     "forme-3",
+         *     "collab"
+         * ]
          *
          * @param {HTMLElement} card
          * @returns {string[]}
@@ -268,9 +291,12 @@ document.addEventListener(
                 card.dataset.tags ||
                 ""
             )
+                .trim()
                 .toLowerCase()
                 .split(/\s+/)
-                .filter(Boolean);
+                .filter(
+                    Boolean
+                );
         }
 
 
@@ -286,24 +312,39 @@ document.addEventListener(
             tag
         ) {
 
+            const normalizedTag =
+                String(
+                    tag ??
+                    ""
+                )
+                    .trim()
+                    .toLowerCase();
+
+
+            if (
+                !normalizedTag
+            ) {
+
+                return false;
+            }
+
+
             return getTags(
                 card
             )
                 .includes(
-                    String(
-                        tag
-                    )
-                        .toLowerCase()
+                    normalizedTag
                 );
         }
 
 
         /* =====================================================
-           IDENTIFIANT ART
+           ID ART
         ====================================================== */
 
         /**
-         * Retourne l'identifiant unique d'une œuvre.
+         * Retourne l'identifiant public
+         * de l'œuvre.
          *
          * @param {HTMLElement} card
          * @returns {string}
@@ -315,7 +356,8 @@ document.addEventListener(
             return String(
                 card.dataset.artId ||
                 ""
-            ).trim();
+            )
+                .trim();
         }
 
 
@@ -324,7 +366,8 @@ document.addEventListener(
         ====================================================== */
 
         /**
-         * Vérifie si une carte est favorite.
+         * Vérifie si une œuvre fait partie
+         * des favoris du visiteur.
          *
          * @param {HTMLElement} card
          * @returns {boolean}
@@ -339,15 +382,17 @@ document.addEventListener(
                 );
 
 
-            if (!artId) {
+            if (
+                !artId
+            ) {
+
                 return false;
             }
 
 
-            /*
-             * Méthode principale :
-             * gallery-favorites.js
-             */
+            /* =============================================
+               API DE gallery-favorites.js
+            ============================================== */
 
             if (
                 window.CouaxiaGalleryFavorites &&
@@ -367,10 +412,9 @@ document.addEventListener(
             }
 
 
-            /*
-             * Solution de secours :
-             * localStorage.
-             */
+            /* =============================================
+               FALLBACK LOCALSTORAGE
+            ============================================== */
 
             try {
 
@@ -380,7 +424,10 @@ document.addEventListener(
                     );
 
 
-                if (!rawFavorites) {
+                if (
+                    !rawFavorites
+                ) {
+
                     return false;
                 }
 
@@ -401,12 +448,15 @@ document.addEventListener(
                 );
 
 
-            } catch (error) {
+            } catch (
+                error
+            ) {
 
                 console.error(
-                    "[Crédits] Impossible de lire les favoris :",
+                    "[Credits Gallery] Impossible de lire les favoris :",
                     error
                 );
+
 
                 return false;
             }
@@ -434,9 +484,14 @@ document.addEventListener(
                 );
 
 
+            /*
+             * Évite de dupliquer un éventuel id HTML.
+             */
+
             clone.removeAttribute(
                 "id"
             );
+
 
             clone.removeAttribute(
                 "hidden"
@@ -444,7 +499,7 @@ document.addEventListener(
 
 
             /*
-             * Les scripts annexes doivent pouvoir
+             * Les scripts externes pourront
              * réinitialiser le clone.
              */
 
@@ -460,12 +515,14 @@ document.addEventListener(
                 "data-sensitive-ready"
             );
 
+            clone.removeAttribute(
+                "data-artist-ready"
+            );
+
 
             /*
-             * Si un ancien bouton favori se trouve
-             * dans la source, on le retire.
-             *
-             * gallery-favorites.js le recréera.
+             * gallery-favorites.js recréera
+             * lui-même son bouton.
              */
 
             clone
@@ -485,7 +542,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           BANNIÈRES
+           BANNIÈRE
         ====================================================== */
 
         function createBanner(
@@ -507,6 +564,7 @@ document.addEventListener(
                     "h2"
                 );
 
+
             title.textContent =
                 gallery.title;
 
@@ -516,6 +574,7 @@ document.addEventListener(
                     "p"
                 );
 
+
             description.textContent =
                 gallery.description;
 
@@ -523,6 +582,7 @@ document.addEventListener(
             header.appendChild(
                 title
             );
+
 
             header.appendChild(
                 description
@@ -534,7 +594,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           GRILLES
+           GRILLE
         ====================================================== */
 
         function createGrid(
@@ -568,7 +628,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           SOUS-SECTIONS
+           SOUS-SECTION
         ====================================================== */
 
         function createSubsection(
@@ -595,6 +655,7 @@ document.addEventListener(
             subsection.className =
                 "credits-subsection";
 
+
             subsection.dataset.subsection =
                 subsectionId;
 
@@ -607,6 +668,7 @@ document.addEventListener(
 
             heading.className =
                 "credits-subtitle";
+
 
             heading.textContent =
                 title;
@@ -646,6 +708,7 @@ document.addEventListener(
             section.className =
                 "credits-gallery-section";
 
+
             section.dataset.gallery =
                 gallery.id;
 
@@ -661,7 +724,8 @@ document.addEventListener(
                 .forEach(
                     subsectionData => {
 
-                        let subsectionCards;
+                        let subsectionCards =
+                            [];
 
 
                         /* =====================================
@@ -681,7 +745,12 @@ document.addEventListener(
                                         )
                                 );
 
-                        } else {
+
+                        } else if (
+                            Array.isArray(
+                                subsectionData.excludeTags
+                            )
+                        ) {
 
                             /* =================================
                                AUTRES ILLUSTRATIONS
@@ -702,7 +771,10 @@ document.addEventListener(
                                             .some(
                                                 tag =>
                                                     tags.includes(
-                                                        tag
+                                                        String(
+                                                            tag
+                                                        )
+                                                            .toLowerCase()
                                                     )
                                             );
                                     }
@@ -752,6 +824,7 @@ document.addEventListener(
             section.className =
                 "credits-gallery-section";
 
+
             section.dataset.gallery =
                 gallery.id;
 
@@ -775,7 +848,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           FILTRAGE D'UNE CARTE
+           FILTRE CARTE
         ====================================================== */
 
         function filterCardForSelection(
@@ -784,7 +857,7 @@ document.addEventListener(
         ) {
 
             /* =============================================
-               TOUTES LES ŒUVRES
+               TOUT
             ============================================== */
 
             if (
@@ -812,7 +885,7 @@ document.addEventListener(
 
 
             /* =============================================
-               FILTRES NORMAUX
+               TAG CLASSIQUE
             ============================================== */
 
             return cardHasTag(
@@ -823,7 +896,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           GALERIES À AFFICHER
+           GALERIES COMPATIBLES AVEC UN FILTRE
         ====================================================== */
 
         function shouldDisplayGallery(
@@ -851,21 +924,31 @@ document.addEventListener(
                 "compagnons",
                 "natsu",
                 "cit",
-                "xaouc"
+                "cita",
+                "xaouc",
+                "hylda"
             ];
 
 
             const streamFilters = [
                 "stream",
                 "decor",
+                "décor",
                 "overlay",
                 "panel",
+                "panels",
                 "badge",
+                "badges",
                 "emote",
+                "emotes",
                 "animation",
                 "reactive-discord"
             ];
 
+
+            /* =============================================
+               COUAXIA
+            ============================================== */
 
             if (
                 gallery.id ===
@@ -879,6 +962,10 @@ document.addEventListener(
             }
 
 
+            /* =============================================
+               COMPAGNONS
+            ============================================== */
+
             if (
                 gallery.id ===
                     "compagnons" &&
@@ -890,6 +977,10 @@ document.addEventListener(
                 return true;
             }
 
+
+            /* =============================================
+               STREAM
+            ============================================== */
 
             if (
                 gallery.id ===
@@ -903,6 +994,10 @@ document.addEventListener(
             }
 
 
+            /* =============================================
+               GALERIE DIRECTE
+            ============================================== */
+
             return (
                 gallery.id ===
                 selectedFilter
@@ -911,7 +1006,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           TEXTE DES RÉSULTATS
+           RÉSULTATS
         ====================================================== */
 
         function updateResults(
@@ -929,7 +1024,7 @@ document.addEventListener(
 
 
             /* =============================================
-               CHARGEMENT PAS TERMINÉ
+               CHARGEMENT
             ============================================== */
 
             if (
@@ -944,7 +1039,7 @@ document.addEventListener(
 
 
             /* =============================================
-               AUCUNE ŒUVRE DANS LA BASE
+               GALERIE VIDE
             ============================================== */
 
             if (
@@ -993,6 +1088,7 @@ document.addEventListener(
                             : ""
                     } dans tes favoris 💜`;
 
+
                 return;
             }
 
@@ -1035,30 +1131,38 @@ document.addEventListener(
 
             } else {
 
+                const selectedOption =
+                    filter.options[
+                        filter.selectedIndex
+                    ];
+
+
+                const selectedLabel =
+                    selectedOption
+                        ?.textContent
+                        ?.trim();
+
+
                 results.textContent =
-                    `${cardCount} ${cardWord}.`;
+                    selectedLabel
+                        ? `${cardCount} ${cardWord} pour « ${selectedLabel} ».`
+                        : `${cardCount} ${cardWord}.`;
             }
         }
 
 
         /* =====================================================
-           INITIALISATION DES CARTES GÉNÉRÉES
+           ÉVÉNEMENT — CARTES RENDUES
         ====================================================== */
 
-        function initializeGeneratedCards() {
+        function dispatchCreditsRendered() {
 
-            /*
-             * Les autres scripts :
-             *
-             * - gallery-favorites.js
-             * - watermark.js
-             * - sensitive-gallery.js
-             *
-             * utilisent leurs MutationObserver.
-             *
-             * Ils détecteront donc automatiquement
-             * les cartes créées ici.
-             */
+            const cards =
+                generatedContainer
+                    .querySelectorAll(
+                        ".artist-card"
+                    );
+
 
             document.dispatchEvent(
                 new CustomEvent(
@@ -1067,30 +1171,28 @@ document.addEventListener(
                         detail: {
 
                             count:
-                                generatedContainer
-                                    .querySelectorAll(
-                                        ".artist-card"
-                                    )
-                                    .length
+                                cards.length
+
                         }
                     }
                 )
+            );
+
+
+            console.info(
+                `[Credits Gallery] ${cards.length} carte(s) affichée(s).`
             );
         }
 
 
         /* =====================================================
-           RENDU DES GALERIES
+           RENDU
         ====================================================== */
 
         function renderGalleries(
-            selectedFilter = "all"
+            selectedFilter =
+                "all"
         ) {
-
-            /*
-             * On ne génère rien tant que
-             * credits-data.js n'a pas terminé.
-             */
 
             if (
                 !creditsLoaded
@@ -1100,8 +1202,17 @@ document.addEventListener(
             }
 
 
-            generatedContainer.innerHTML =
-                "";
+            const normalizedFilter =
+                String(
+                    selectedFilter ||
+                    "all"
+                )
+                    .trim()
+                    .toLowerCase();
+
+
+            generatedContainer
+                .replaceChildren();
 
 
             let displayedCardCount =
@@ -1123,10 +1234,12 @@ document.addEventListener(
                 updateResults(
                     0,
                     0,
-                    selectedFilter
+                    normalizedFilter
                 );
 
-                initializeGeneratedCards();
+
+                dispatchCreditsRendered();
+
 
                 return;
             }
@@ -1137,7 +1250,7 @@ document.addEventListener(
             ================================================= */
 
             if (
-                selectedFilter ===
+                normalizedFilter ===
                 "favorites"
             ) {
 
@@ -1150,27 +1263,9 @@ document.addEventListener(
                     );
 
 
-                if (
-                    favoriteCards.length ===
-                    0
-                ) {
-
-                    updateResults(
-                        0,
-                        0,
-                        "favorites"
-                    );
-
-                    initializeGeneratedCards();
-
-                    return;
-                }
-
-
-                /*
-                 * Évite les doublons basés
-                 * sur data-art-id.
-                 */
+                /* =============================================
+                   DÉDOUBLONNAGE
+                ============================================== */
 
                 const uniqueFavoriteCards =
                     [];
@@ -1189,14 +1284,7 @@ document.addEventListener(
 
 
                         if (
-                            !artId
-                        ) {
-
-                            return;
-                        }
-
-
-                        if (
+                            !artId ||
                             usedArtIds.has(
                                 artId
                             )
@@ -1218,36 +1306,40 @@ document.addEventListener(
                 );
 
 
-                const favoritesGallery = {
+                if (
+                    uniqueFavoriteCards.length >
+                    0
+                ) {
 
-                    id:
-                        "favorites",
+                    const favoritesGallery = {
 
-                    title:
-                        "♥ Mes favoris",
+                        id:
+                            "favorites",
 
-                    description:
-                        "Toutes les œuvres que tu as ajoutées à tes favoris."
-                };
+                        title:
+                            "♥ Mes favoris",
+
+                        description:
+                            "Toutes les œuvres que tu as ajoutées à tes favoris."
+
+                    };
 
 
-                const favoritesSection =
-                    createStandardGallery(
-                        favoritesGallery,
-                        uniqueFavoriteCards
+                    generatedContainer.appendChild(
+                        createStandardGallery(
+                            favoritesGallery,
+                            uniqueFavoriteCards
+                        )
                     );
 
 
-                generatedContainer.appendChild(
-                    favoritesSection
-                );
+                    displayedCardCount =
+                        uniqueFavoriteCards.length;
 
 
-                displayedCardCount =
-                    uniqueFavoriteCards.length;
-
-                displayedGalleryCount =
-                    1;
+                    displayedGalleryCount =
+                        1;
+                }
 
 
                 updateResults(
@@ -1257,7 +1349,8 @@ document.addEventListener(
                 );
 
 
-                initializeGeneratedCards();
+                dispatchCreditsRendered();
+
 
                 return;
             }
@@ -1270,10 +1363,14 @@ document.addEventListener(
             galleries.forEach(
                 gallery => {
 
+                    /* =========================================
+                       GALERIE COMPATIBLE ?
+                    ========================================== */
+
                     if (
                         !shouldDisplayGallery(
                             gallery,
-                            selectedFilter
+                            normalizedFilter
                         )
                     ) {
 
@@ -1281,10 +1378,9 @@ document.addEventListener(
                     }
 
 
-                    /*
-                     * Cartes appartenant
-                     * à cette galerie.
-                     */
+                    /* =========================================
+                       CARTES DE LA GALERIE
+                    ========================================== */
 
                     let galleryCards =
                         originalCards.filter(
@@ -1296,12 +1392,12 @@ document.addEventListener(
                         );
 
 
-                    /*
-                     * Application du filtre.
-                     */
+                    /* =========================================
+                       FILTRE SUPPLÉMENTAIRE
+                    ========================================== */
 
                     if (
-                        selectedFilter !==
+                        normalizedFilter !==
                         "all"
                     ) {
 
@@ -1310,7 +1406,7 @@ document.addEventListener(
                                 card =>
                                     filterCardForSelection(
                                         card,
-                                        selectedFilter
+                                        normalizedFilter
                                     )
                             );
                     }
@@ -1324,6 +1420,10 @@ document.addEventListener(
                         return;
                     }
 
+
+                    /* =========================================
+                       CRÉATION
+                    ========================================== */
 
                     let galleryElement;
 
@@ -1357,20 +1457,29 @@ document.addEventListener(
                     displayedCardCount +=
                         galleryCards.length;
 
+
                     displayedGalleryCount +=
                         1;
                 }
             );
 
 
+            /* =================================================
+               RÉSULTAT
+            ================================================= */
+
             updateResults(
                 displayedCardCount,
                 displayedGalleryCount,
-                selectedFilter
+                normalizedFilter
             );
 
 
-            initializeGeneratedCards();
+            /* =================================================
+               INFORMER LES AUTRES SCRIPTS
+            ================================================= */
+
+            dispatchCreditsRendered();
         }
 
 
@@ -1399,7 +1508,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           MISE À JOUR DES FAVORIS
+           FAVORIS MODIFIÉS
         ====================================================== */
 
         document.addEventListener(
@@ -1415,23 +1524,19 @@ document.addEventListener(
 
 
                 /*
-                 * Si on regarde actuellement
-                 * la galerie Favoris,
-                 * on la met immédiatement à jour.
+                 * Si la galerie Favoris est ouverte,
+                 * on la reconstruit immédiatement.
                  */
 
                 if (
-                    filter.value !==
+                    filter.value ===
                     "favorites"
                 ) {
 
-                    return;
+                    renderGalleries(
+                        "favorites"
+                    );
                 }
-
-
-                renderGalleries(
-                    "favorites"
-                );
             }
         );
 
@@ -1445,14 +1550,14 @@ document.addEventListener(
             event => {
 
                 console.info(
-                    "[Crédits] Données Supabase reçues.",
+                    "[Credits Gallery] Données Supabase reçues.",
                     event.detail
                 );
 
 
                 /*
-                 * On relit maintenant les cartes
-                 * créées par credits-data.js.
+                 * Les cartes existent désormais
+                 * dans #credits-card-source.
                  */
 
                 refreshOriginalCards();
@@ -1463,7 +1568,7 @@ document.addEventListener(
 
 
                 /*
-                 * Premier véritable affichage.
+                 * Premier rendu.
                  */
 
                 renderGalleries(
@@ -1479,12 +1584,9 @@ document.addEventListener(
         ====================================================== */
 
         /*
-         * Normalement credits-data.js déclenche
-         * couaxia:credits-loaded.
-         *
-         * Mais si les cartes étaient déjà présentes
-         * avant l'exécution de ce script,
-         * on peut quand même initialiser la galerie.
+         * Si credits-data.js s'est exécuté avant
+         * credits-gallery.js ou si des cartes sont
+         * déjà présentes, on peut quand même démarrer.
          */
 
         const existingCards =
@@ -1500,6 +1602,7 @@ document.addEventListener(
 
             refreshOriginalCards();
 
+
             creditsLoaded =
                 true;
 
@@ -1512,13 +1615,14 @@ document.addEventListener(
 
 
         /* =====================================================
-           API PUBLIQUE
+           API PUBLIQUE JS
         ====================================================== */
 
         window.CouaxiaCreditsGallery = {
 
             /**
-             * Force un nouveau rendu.
+             * Force la reconstruction
+             * de la galerie.
              */
             render() {
 
@@ -1541,7 +1645,29 @@ document.addEventListener(
 
 
             /**
-             * Retourne le nombre de cartes sources.
+             * Recharge les données Supabase,
+             * si credits-data.js est disponible.
+             */
+            async reload() {
+
+                if (
+                    window.CouaxiaCreditsData &&
+                    typeof window
+                        .CouaxiaCreditsData
+                        .reload ===
+                        "function"
+                ) {
+
+                    await window
+                        .CouaxiaCreditsData
+                        .reload();
+                }
+            },
+
+
+            /**
+             * Retourne le nombre
+             * d'œuvres sources.
              */
             getCount() {
 
@@ -1550,14 +1676,84 @@ document.addEventListener(
 
 
             /**
-             * Indique si les données sont chargées.
+             * Indique si les données
+             * Supabase ont été chargées.
              */
             isLoaded() {
 
                 return creditsLoaded;
+            },
+
+
+            /**
+             * Retourne le filtre actuel.
+             */
+            getFilter() {
+
+                return (
+                    filter.value ||
+                    "all"
+                );
+            },
+
+
+            /**
+             * Change le filtre par JS.
+             *
+             * Exemple :
+             *
+             * CouaxiaCreditsGallery.setFilter("fanart");
+             */
+            setFilter(
+                value
+            ) {
+
+                const newValue =
+                    String(
+                        value ||
+                        "all"
+                    )
+                        .trim()
+                        .toLowerCase();
+
+
+                const optionExists =
+                    Array.from(
+                        filter.options
+                    )
+                        .some(
+                            option =>
+                                option.value ===
+                                newValue
+                        );
+
+
+                if (
+                    !optionExists
+                ) {
+
+                    console.warn(
+                        `[Credits Gallery] Filtre inconnu : ${newValue}`
+                    );
+
+                    return;
+                }
+
+
+                filter.value =
+                    newValue;
+
+
+                if (
+                    creditsLoaded
+                ) {
+
+                    renderGalleries(
+                        newValue
+                    );
+                }
             }
 
         };
-
     }
 );

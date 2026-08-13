@@ -1,12 +1,14 @@
 "use strict";
 
 /* =========================================================
-   IMPORTS
+   API TWITCH — STREAM
+   COUAXIA
 ========================================================= */
 
 import {
     clearTwitchAccessToken,
-    getTwitchApiHeaders
+    getTwitchApiHeaders,
+    getChannelLogin
 } from "./auth.js";
 
 
@@ -17,11 +19,126 @@ import {
 const TWITCH_STREAMS_URL =
     "https://api.twitch.tv/helix/streams";
 
-const DEFAULT_CHANNEL =
-    process.env.TWITCH_CHANNEL_LOGIN
-        ?.trim()
-        .toLowerCase() ||
-    "couaxia";
+
+/* =========================================================
+   OUTILS
+========================================================= */
+
+/**
+ * Transforme une valeur en texte propre.
+ *
+ * @param {unknown} value
+ * @returns {string}
+ */
+function normalizeText(
+    value
+) {
+
+    return String(
+        value ?? ""
+    ).trim();
+}
+
+
+/**
+ * Normalise le login Twitch.
+ *
+ * @param {unknown} channelLogin
+ * @returns {string}
+ */
+function normalizeChannelLogin(
+    channelLogin
+) {
+
+    const normalizedChannel =
+        normalizeText(
+            channelLogin
+        )
+            .toLowerCase();
+
+
+    if (
+        !normalizedChannel
+    ) {
+
+        throw new Error(
+            "Le nom de la chaîne Twitch est vide."
+        );
+    }
+
+
+    return normalizedChannel;
+}
+
+
+/**
+ * Retourne la chaîne Twitch configurée
+ * dans les variables d'environnement.
+ *
+ * @returns {string}
+ */
+function getDefaultChannel() {
+
+    return getChannelLogin();
+}
+
+
+/* =========================================================
+   RÉPONSE TWITCH
+========================================================= */
+
+/**
+ * Lit proprement une réponse Twitch.
+ *
+ * @param {Response} response
+ * @returns {Promise<object>}
+ */
+async function readTwitchResponse(
+    response
+) {
+
+    const contentType =
+        response.headers.get(
+            "content-type"
+        ) || "";
+
+
+    if (
+        contentType.includes(
+            "application/json"
+        )
+    ) {
+
+        return response.json();
+    }
+
+
+    const text =
+        await response.text();
+
+
+    if (
+        !text
+    ) {
+
+        return {};
+    }
+
+
+    try {
+
+        return JSON.parse(
+            text
+        );
+
+    } catch {
+
+        return {
+            message:
+                text
+        };
+    }
+}
 
 
 /* =========================================================
@@ -37,60 +154,90 @@ const DEFAULT_CHANNEL =
 async function requestStreamFromTwitch(
     channelLogin
 ) {
+
     const streamUrl =
-        new URL(TWITCH_STREAMS_URL);
+        new URL(
+            TWITCH_STREAMS_URL
+        );
+
 
     streamUrl.searchParams.set(
         "user_login",
         channelLogin
     );
 
-    let headers =
-        await getTwitchApiHeaders();
 
     let response =
         await fetch(
             streamUrl.toString(),
             {
-                method: "GET",
-                headers,
-                cache: "no-store"
+                method:
+                    "GET",
+
+                headers:
+                    await getTwitchApiHeaders(),
+
+                cache:
+                    "no-store"
             }
         );
 
+
     /*
      * Si Twitch refuse le token,
-     * on le renouvelle puis on recommence une seule fois.
+     * on le renouvelle puis on recommence
+     * une seule fois.
      */
-    if (response.status === 401) {
+
+    if (
+        response.status ===
+        401
+    ) {
+
         clearTwitchAccessToken();
 
-        headers =
-            await getTwitchApiHeaders({
-                forceRefresh: true
-            });
 
         response =
             await fetch(
                 streamUrl.toString(),
                 {
-                    method: "GET",
-                    headers,
-                    cache: "no-store"
+                    method:
+                        "GET",
+
+                    headers:
+                        await getTwitchApiHeaders({
+                            forceRefresh:
+                                true
+                        }),
+
+                    cache:
+                        "no-store"
                 }
             );
     }
 
-    if (!response.ok) {
-        const errorBody =
-            await response.text();
+
+    const twitchData =
+        await readTwitchResponse(
+            response
+        );
+
+
+    if (
+        !response.ok
+    ) {
 
         throw new Error(
-            `Erreur Twitch Helix (${response.status}) : ${errorBody}`
+            `Erreur Twitch Helix (${response.status}) : ${
+                twitchData?.message ||
+                twitchData?.error ||
+                "Erreur Twitch inconnue."
+            }`
         );
     }
 
-    return response.json();
+
+    return twitchData;
 }
 
 
@@ -99,28 +246,64 @@ async function requestStreamFromTwitch(
 ========================================================= */
 
 /**
- * Formate une miniature Twitch.
+ * Formate la miniature Twitch.
  *
- * @param {string | undefined} thumbnailUrl
- * @returns {string | null}
+ * @param {unknown} thumbnailUrl
+ * @param {number} width
+ * @param {number} height
+ * @returns {string|null}
  */
 function formatThumbnailUrl(
-    thumbnailUrl
+    thumbnailUrl,
+    width = 1280,
+    height = 720
 ) {
+
+    const url =
+        normalizeText(
+            thumbnailUrl
+        );
+
+
     if (
-        typeof thumbnailUrl !== "string"
+        !url
     ) {
+
         return null;
     }
 
-    return thumbnailUrl
-        .replace("{width}", "1280")
-        .replace("{height}", "720");
+
+    return url
+        .replaceAll(
+            "{width}",
+            String(
+                width
+            )
+        )
+        .replaceAll(
+            "{height}",
+            String(
+                height
+            )
+        )
+        .replaceAll(
+            "%{width}",
+            String(
+                width
+            )
+        )
+        .replaceAll(
+            "%{height}",
+            String(
+                height
+            )
+        );
 }
 
 
 /**
- * Retourne le résultat hors ligne.
+ * Retourne le résultat quand la chaîne
+ * n'est pas en live.
  *
  * @param {string} channelLogin
  * @returns {object}
@@ -128,35 +311,59 @@ function formatThumbnailUrl(
 function createOfflineStreamResult(
     channelLogin
 ) {
+
     return {
-        live: false,
+
+        live:
+            false,
+
+        id:
+            null,
 
         channel:
             channelLogin,
 
+        userId:
+            null,
+
         displayName:
-            channelLogin === "couaxia"
-                ? "Couaxia"
-                : channelLogin,
+            channelLogin,
 
-        title: null,
+        title:
+            null,
 
-        category: null,
+        category:
+            null,
 
-        gameId: null,
+        gameId:
+            null,
 
-        viewers: 0,
+        type:
+            null,
 
-        startedAt: null,
+        viewers:
+            0,
 
-        language: null,
+        startedAt:
+            null,
 
-        mature: false,
+        language:
+            null,
 
-        thumbnailUrl: null,
+        mature:
+            false,
+
+        tags:
+            [],
+
+        thumbnailUrl:
+            null,
 
         twitchUrl:
-            `https://www.twitch.tv/${channelLogin}`
+            `https://www.twitch.tv/${encodeURIComponent(
+                channelLogin
+            )}`
+
     };
 }
 
@@ -172,25 +379,44 @@ function formatStreamResult(
     twitchData,
     channelLogin
 ) {
-    const stream =
-        twitchData?.data?.[0];
 
-    if (!stream) {
+    const stream =
+        Array.isArray(
+            twitchData?.data
+        )
+            ? twitchData.data[0]
+            : null;
+
+
+    if (
+        !stream
+    ) {
+
         return createOfflineStreamResult(
             channelLogin
         );
     }
 
+
+    const streamLogin =
+        normalizeText(
+            stream.user_login
+        )
+            .toLowerCase() ||
+        channelLogin;
+
+
     return {
-        live: true,
+
+        live:
+            true,
 
         id:
             stream.id ||
             null,
 
         channel:
-            stream.user_login ||
-            channelLogin,
+            streamLogin,
 
         userId:
             stream.user_id ||
@@ -198,7 +424,7 @@ function formatStreamResult(
 
         displayName:
             stream.user_name ||
-            channelLogin,
+            streamLogin,
 
         title:
             stream.title ||
@@ -219,7 +445,8 @@ function formatStreamResult(
         viewers:
             Number(
                 stream.viewer_count
-            ) || 0,
+            ) ||
+            0,
 
         startedAt:
             stream.started_at ||
@@ -247,7 +474,10 @@ function formatStreamResult(
             ),
 
         twitchUrl:
-            `https://www.twitch.tv/${channelLogin}`
+            `https://www.twitch.tv/${encodeURIComponent(
+                streamLogin
+            )}`
+
     };
 }
 
@@ -259,27 +489,25 @@ function formatStreamResult(
 /**
  * Récupère le statut du live d'une chaîne Twitch.
  *
- * @param {string} channelLogin
+ * @param {string|null} channelLogin
  * @returns {Promise<object>}
  */
 export async function getStreamStatus(
-    channelLogin = DEFAULT_CHANNEL
+    channelLogin = null
 ) {
-    const normalizedChannel =
-        String(channelLogin)
-            .trim()
-            .toLowerCase();
 
-    if (!normalizedChannel) {
-        throw new Error(
-            "Le nom de la chaîne Twitch est vide."
+    const normalizedChannel =
+        normalizeChannelLogin(
+            channelLogin ||
+            getDefaultChannel()
         );
-    }
+
 
     const twitchData =
         await requestStreamFromTwitch(
             normalizedChannel
         );
+
 
     return formatStreamResult(
         twitchData,
@@ -291,16 +519,158 @@ export async function getStreamStatus(
 /**
  * Indique simplement si une chaîne est en live.
  *
- * @param {string} channelLogin
+ * @param {string|null} channelLogin
  * @returns {Promise<boolean>}
  */
 export async function isChannelLive(
-    channelLogin = DEFAULT_CHANNEL
+    channelLogin = null
 ) {
+
     const streamStatus =
         await getStreamStatus(
-            channelLogin
+            channelLogin ||
+            getDefaultChannel()
         );
 
-    return streamStatus.live;
+
+    return Boolean(
+        streamStatus.live
+    );
+}
+
+
+/* =========================================================
+   API HTTP
+========================================================= */
+
+/**
+ * Exemples :
+ *
+ * GET /api/stream
+ *
+ * GET /api/stream?channel=couaxia
+ */
+export default async function handler(
+    request,
+    response
+) {
+
+    /* =====================================================
+       CACHE
+    ====================================================== */
+
+    /*
+     * Le statut live peut changer rapidement,
+     * donc on évite de conserver une ancienne réponse.
+     */
+
+    response.setHeader(
+        "Cache-Control",
+        "no-store, max-age=0"
+    );
+
+
+    /* =====================================================
+       MÉTHODE
+    ====================================================== */
+
+    if (
+        request.method !==
+        "GET"
+    ) {
+
+        response.setHeader(
+            "Allow",
+            "GET"
+        );
+
+
+        response
+            .status(405)
+            .json({
+                success:
+                    false,
+
+                error:
+                    "Méthode non autorisée."
+            });
+
+
+        return;
+    }
+
+
+    try {
+
+        /* =================================================
+           CHAÎNE
+        ================================================== */
+
+        const channel =
+            normalizeText(
+                request.query?.channel
+            ) ||
+            getDefaultChannel();
+
+
+        /* =================================================
+           TWITCH
+        ================================================== */
+
+        const stream =
+            await getStreamStatus(
+                channel
+            );
+
+
+        /* =================================================
+           RÉPONSE
+        ================================================== */
+
+        response
+            .status(200)
+            .json({
+
+                success:
+                    true,
+
+                stream
+
+            });
+
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "[Stream API]",
+            error
+        );
+
+
+        if (
+            response.headersSent
+        ) {
+
+            return;
+        }
+
+
+        response
+            .status(500)
+            .json({
+
+                success:
+                    false,
+
+                stream:
+                    null,
+
+                error:
+                    error?.message ||
+                    "Impossible de récupérer le statut du live Twitch."
+
+            });
+    }
 }

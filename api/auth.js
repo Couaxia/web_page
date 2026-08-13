@@ -7,57 +7,106 @@
 const TWITCH_TOKEN_URL =
     "https://id.twitch.tv/oauth2/token";
 
+const TWITCH_HELIX_URL =
+    "https://api.twitch.tv/helix";
+
+
+/* =========================================================
+   CACHE TOKEN
+========================================================= */
+
 /*
- * Cache mémoire du token.
- * Sur Vercel il peut être conservé entre plusieurs requêtes
- * mais il ne faut jamais compter dessus.
+ * Cache mémoire du token Twitch.
+ *
+ * Sur Render, une instance peut conserver ce token
+ * entre plusieurs requêtes tant que le processus Node
+ * reste actif.
+ *
+ * Il ne faut toutefois jamais dépendre uniquement
+ * de ce cache.
  */
 
-let cachedAccessToken = null;
-let accessTokenExpiration = 0;
+let cachedAccessToken =
+    null;
+
+let accessTokenExpiration =
+    0;
 
 
 /* =========================================================
    VARIABLES D'ENVIRONNEMENT
 ========================================================= */
 
+/**
+ * Retourne une variable d'environnement obligatoire.
+ *
+ * @param {string} name
+ * @returns {string}
+ */
+function getRequiredEnvironmentVariable(
+    name
+) {
+
+    const value =
+        process.env[name]
+            ?.trim();
+
+
+    if (
+        !value
+    ) {
+
+        throw new Error(
+            `${name} est absent des variables d'environnement.`
+        );
+    }
+
+
+    return value;
+}
+
+
+/**
+ * Client ID Twitch.
+ *
+ * @returns {string}
+ */
 export function getTwitchClientId() {
-    const clientId =
-        process.env.TWITCH_CLIENT_ID?.trim();
 
-    if (!clientId) {
-        throw new Error(
-            "TWITCH_CLIENT_ID est absent dans les variables Vercel."
-        );
-    }
-
-    return clientId;
+    return getRequiredEnvironmentVariable(
+        "TWITCH_CLIENT_ID"
+    );
 }
 
+
+/**
+ * Client Secret Twitch.
+ *
+ * @returns {string}
+ */
 function getTwitchClientSecret() {
-    const clientSecret =
-        process.env.TWITCH_CLIENT_SECRET?.trim();
 
-    if (!clientSecret) {
-        throw new Error(
-            "TWITCH_CLIENT_SECRET est absent dans les variables Vercel."
-        );
-    }
-
-    return clientSecret;
+    return getRequiredEnvironmentVariable(
+        "TWITCH_CLIENT_SECRET"
+    );
 }
 
+
+/**
+ * Login de la chaîne Twitch.
+ *
+ * Exemple :
+ *
+ * couaxia
+ *
+ * @returns {string}
+ */
 export function getChannelLogin() {
-    const login =
-        process.env.TWITCH_CHANNEL_LOGIN?.trim();
 
-    if (!login) {
-        throw new Error(
-            "TWITCH_CHANNEL_LOGIN est absent dans les variables Vercel."
-        );
-    }
-
-    return login.toLowerCase();
+    return getRequiredEnvironmentVariable(
+        "TWITCH_CHANNEL_LOGIN"
+    )
+        .toLowerCase();
 }
 
 
@@ -65,27 +114,112 @@ export function getChannelLogin() {
    CACHE
 ========================================================= */
 
+/**
+ * Vérifie si le token actuellement stocké
+ * est encore valide.
+ *
+ * On garde une marge d'une minute.
+ *
+ * @returns {boolean}
+ */
 function hasValidToken() {
-    if (!cachedAccessToken) {
+
+    if (
+        !cachedAccessToken
+    ) {
+
         return false;
     }
 
+
     return (
         Date.now() <
-        accessTokenExpiration - 60000
+        accessTokenExpiration -
+        60_000
     );
 }
 
+
+/**
+ * Vide le cache du token Twitch.
+ */
 export function clearTwitchAccessToken() {
-    cachedAccessToken = null;
-    accessTokenExpiration = 0;
+
+    cachedAccessToken =
+        null;
+
+    accessTokenExpiration =
+        0;
 }
 
 
 /* =========================================================
-   DEMANDE D'UN NOUVEAU TOKEN
+   LECTURE DES RÉPONSES
 ========================================================= */
 
+/**
+ * Lit proprement une réponse HTTP.
+ *
+ * @param {Response} response
+ * @returns {Promise<object>}
+ */
+async function readJsonResponse(
+    response
+) {
+
+    const contentType =
+        response.headers.get(
+            "content-type"
+        ) || "";
+
+
+    if (
+        contentType.includes(
+            "application/json"
+        )
+    ) {
+
+        return response.json();
+    }
+
+
+    const text =
+        await response.text();
+
+
+    if (
+        !text
+    ) {
+
+        return {};
+    }
+
+
+    try {
+
+        return JSON.parse(
+            text
+        );
+
+    } catch {
+
+        return {
+            message:
+                text
+        };
+    }
+}
+
+
+/* =========================================================
+   DEMANDE D'UN TOKEN
+========================================================= */
+
+/**
+ * Demande un App Access Token à Twitch.
+ *
+ * @returns {Promise<string>}
+ */
 async function requestAccessToken() {
 
     const body =
@@ -102,43 +236,82 @@ async function requestAccessToken() {
 
         });
 
+
     const response =
         await fetch(
             TWITCH_TOKEN_URL,
             {
-                method: "POST",
+                method:
+                    "POST",
 
                 headers: {
                     "Content-Type":
-                        "application/x-www-form-urlencoded"
+                        "application/x-www-form-urlencoded",
+
+                    Accept:
+                        "application/json"
                 },
 
                 body,
 
-                cache: "no-store"
+                cache:
+                    "no-store"
             }
         );
 
-    const data =
-        await response.json();
 
-    if (!response.ok) {
+    const data =
+        await readJsonResponse(
+            response
+        );
+
+
+    if (
+        !response.ok
+    ) {
 
         throw new Error(
             `Erreur Twitch OAuth (${response.status}) : ${
-                data.message ??
-                JSON.stringify(data)
+                data?.message ||
+                data?.error ||
+                "Impossible d'obtenir un token Twitch."
             }`
         );
-
     }
 
+
+    if (
+        !data?.access_token
+    ) {
+
+        throw new Error(
+            "Twitch n'a retourné aucun access_token."
+        );
+    }
+
+
     cachedAccessToken =
-        data.access_token;
+        String(
+            data.access_token
+        );
+
+
+    const expiresIn =
+        Number(
+            data.expires_in
+        );
+
 
     accessTokenExpiration =
         Date.now() +
-        (data.expires_in * 1000);
+        (
+            Number.isFinite(
+                expiresIn
+            )
+                ? expiresIn * 1000
+                : 0
+        );
+
 
     return cachedAccessToken;
 }
@@ -148,19 +321,34 @@ async function requestAccessToken() {
    TOKEN PUBLIC
 ========================================================= */
 
+/**
+ * Retourne un App Access Token Twitch.
+ *
+ * @param {object} options
+ * @param {boolean} options.forceRefresh
+ * @returns {Promise<string>}
+ */
 export async function getTwitchAccessToken(
     {
         forceRefresh = false
     } = {}
 ) {
 
-    if (forceRefresh) {
+    if (
+        forceRefresh
+    ) {
+
         clearTwitchAccessToken();
     }
 
-    if (hasValidToken()) {
+
+    if (
+        hasValidToken()
+    ) {
+
         return cachedAccessToken;
     }
+
 
     return requestAccessToken();
 }
@@ -170,6 +358,14 @@ export async function getTwitchAccessToken(
    HEADERS HELIX
 ========================================================= */
 
+/**
+ * Retourne les headers nécessaires
+ * pour appeler Twitch Helix.
+ *
+ * @param {object} options
+ * @param {boolean} options.forceRefresh
+ * @returns {Promise<object>}
+ */
 export async function getTwitchApiHeaders(
     {
         forceRefresh = false
@@ -180,6 +376,7 @@ export async function getTwitchApiHeaders(
         await getTwitchAccessToken({
             forceRefresh
         });
+
 
     return {
 
@@ -193,14 +390,25 @@ export async function getTwitchApiHeaders(
             "application/json"
 
     };
-
 }
 
 
 /* =========================================================
-   REQUÊTES HELIX
+   TWITCH FETCH
 ========================================================= */
 
+/**
+ * Exécute une requête GET vers Twitch Helix.
+ *
+ * Exemple :
+ *
+ * twitchFetch("/games?id=509658")
+ *
+ * @param {string} endpoint
+ * @param {object} options
+ * @param {boolean} options.forceRefresh
+ * @returns {Promise<object>}
+ */
 export async function twitchFetch(
     endpoint,
     {
@@ -208,57 +416,107 @@ export async function twitchFetch(
     } = {}
 ) {
 
-    let response =
-        await fetch(
-            `https://api.twitch.tv/helix${endpoint}`,
+    const normalizedEndpoint =
+        String(
+            endpoint ?? ""
+        )
+            .trim();
+
+
+    if (
+        !normalizedEndpoint
+    ) {
+
+        throw new Error(
+            "L'endpoint Twitch est obligatoire."
+        );
+    }
+
+
+    const endpointWithSlash =
+        normalizedEndpoint.startsWith(
+            "/"
+        )
+            ? normalizedEndpoint
+            : `/${normalizedEndpoint}`;
+
+
+    async function executeRequest(
+        refreshToken
+    ) {
+
+        return fetch(
+            `${TWITCH_HELIX_URL}${endpointWithSlash}`,
             {
+                method:
+                    "GET",
+
                 headers:
                     await getTwitchApiHeaders({
-                        forceRefresh
+                        forceRefresh:
+                            refreshToken
                     }),
 
-                cache: "no-store"
+                cache:
+                    "no-store"
             }
         );
+    }
 
-    /*
-     * Si le token est expiré malgré le cache,
-     * on en génère automatiquement un nouveau.
-     */
 
-    if (response.status === 401 && !forceRefresh) {
+    /* =====================================================
+       PREMIÈRE REQUÊTE
+    ====================================================== */
+
+    let response =
+        await executeRequest(
+            forceRefresh
+        );
+
+
+    /* =====================================================
+       TOKEN EXPIRÉ
+    ====================================================== */
+
+    if (
+        response.status ===
+        401 &&
+        !forceRefresh
+    ) {
 
         clearTwitchAccessToken();
 
+
         response =
-            await fetch(
-                `https://api.twitch.tv/helix${endpoint}`,
-                {
-                    headers:
-                        await getTwitchApiHeaders({
-                            forceRefresh: true
-                        }),
-
-                    cache: "no-store"
-                }
+            await executeRequest(
+                true
             );
-
     }
 
-    const data =
-        await response.json();
 
-    if (!response.ok) {
+    /* =====================================================
+       DONNÉES
+    ====================================================== */
+
+    const data =
+        await readJsonResponse(
+            response
+        );
+
+
+    if (
+        !response.ok
+    ) {
 
         throw new Error(
             `Erreur Twitch (${response.status}) : ${
-                data.message ??
-                JSON.stringify(data)
+                data?.message ||
+                data?.error ||
+                "Erreur inconnue."
             }`
         );
-
     }
 
-    return data;
 
-}
+    return data;
+}s

@@ -6,7 +6,7 @@
 
 import {
     getGame
-} from "../js/games-twitch.js";
+} from "../js/games.js";
 
 
 document.addEventListener(

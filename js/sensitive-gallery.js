@@ -5,318 +5,655 @@
    Téléphone, tablette, souris et clavier
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-    /* =====================================================
-       MESSAGES SPÉCIAUX +18
-    ====================================================== */
+        /* =====================================================
+           MESSAGES SPÉCIAUX +18
+        ====================================================== */
 
-    /**
-     * Ajoute automatiquement des messages de mascotte
-     * aux cartes marquées data-sensitive="true".
-     *
-     * Si la carte possède déjà data-messages,
-     * les messages personnalisés sont conservés.
-     *
-     * @param {HTMLElement} card
-     */
-    function addSensitiveMessages(card) {
-        if (
-            card.dataset.sensitive !== "true"
-        ) {
-            return;
-        }
+        const SENSITIVE_MESSAGES = [
 
-
-        /*
-         * Ne remplace pas les messages
-         * personnalisés déjà présents.
-         */
-        if (
-            card.dataset.messages?.trim()
-        ) {
-            return;
-        }
-
-
-        card.dataset.messages = [
             "Oh, tu es un petit coquin toi ? 😏",
+
             "Tu ne peux pas t'empêcher de regarder ! 👀",
+
             "Je t'ai vu ouvrir cette image ! 🔞",
+
             "Curieux, hein ? 😏",
+
             "On dirait que cette illustration t'intéresse beaucoup... 👀"
-        ].join("|");
-    }
+
+        ];
 
 
-    /* =====================================================
-       INITIALISATION D'UNE CARTE +18
-    ====================================================== */
+        /* =====================================================
+           OUTILS
+        ====================================================== */
 
-    /**
-     * Initialise une carte sensible.
-     *
-     * @param {HTMLElement} card
-     */
-    function initializeSensitiveCard(card) {
-
-        /*
-         * Évite d'initialiser plusieurs fois
-         * la même carte.
+        /**
+         * Vérifie si une carte est sensible.
+         *
+         * @param {HTMLElement} card
+         * @returns {boolean}
          */
-        if (
-            card.dataset.sensitiveReady === "true"
+        function isSensitiveCard(
+            card
         ) {
-            return;
-        }
 
-
-        /*
-         * Ajoute les messages spéciaux
-         * pour la mascotte.
-         */
-        addSensitiveMessages(card);
-
-
-        const imageContainer =
-            card.querySelector(
-                ".image-container"
+            return (
+                String(
+                    card?.dataset?.sensitive ??
+                    ""
+                )
+                    .trim()
+                    .toLowerCase() ===
+                "true"
             );
-
-
-        if (!imageContainer) {
-            return;
         }
 
 
-        /*
-         * La carte est maintenant initialisée.
+        /**
+         * Ajoute automatiquement des messages
+         * aux cartes +18.
+         *
+         * Les messages personnalisés existants
+         * sont conservés.
+         *
+         * @param {HTMLElement} card
          */
-        card.dataset.sensitiveReady =
-            "true";
+        function addSensitiveMessages(
+            card
+        ) {
+
+            if (
+                !isSensitiveCard(
+                    card
+                )
+            ) {
+
+                return;
+            }
 
 
-        /* =================================================
-           ACCESSIBILITÉ
-        ================================================= */
+            if (
+                card.dataset
+                    .messages
+                    ?.trim()
+            ) {
 
-        imageContainer.setAttribute(
-            "tabindex",
-            "0"
-        );
-
-
-        imageContainer.setAttribute(
-            "role",
-            "button"
-        );
+                return;
+            }
 
 
-        imageContainer.setAttribute(
-            "aria-label",
-            "Afficher ou masquer l’illustration réservée aux adultes"
-        );
+            card.dataset.messages =
+                SENSITIVE_MESSAGES.join(
+                    "|"
+                );
+        }
 
 
-        imageContainer.setAttribute(
-            "aria-pressed",
-            "false"
-        );
+        /* =====================================================
+           ÉTAT
+        ====================================================== */
 
+        /**
+         * Met à jour l'accessibilité
+         * en fonction de l'état révélé.
+         *
+         * @param {HTMLElement} card
+         * @param {HTMLElement} imageContainer
+         */
+        function updateAccessibilityState(
+            card,
+            imageContainer
+        ) {
 
-        /* =================================================
-           AFFICHER / MASQUER LE CONTENU
-        ================================================= */
-
-        function toggleSensitiveContent() {
-
-            const isRevealed =
-                card.classList.toggle(
+            const revealed =
+                card.classList.contains(
                     "is-sensitive-revealed"
                 );
 
 
             imageContainer.setAttribute(
                 "aria-pressed",
-                String(isRevealed)
+                String(
+                    revealed
+                )
             );
 
 
-            /*
-             * Change aussi le texte accessible
-             * selon l'état de l'image.
-             */
             imageContainer.setAttribute(
                 "aria-label",
-                isRevealed
+                revealed
                     ? "Masquer l’illustration réservée aux adultes"
                     : "Afficher l’illustration réservée aux adultes"
             );
         }
 
 
-        /* =================================================
-           CLIC SOURIS / TACTILE
-        ================================================= */
-
-        imageContainer.addEventListener(
-            "click",
-            (event) => {
-
-                /*
-                 * Si un élément interactif est présent
-                 * dans l'image, on ne déclenche pas
-                 * l'ouverture +18.
-                 */
-                if (
-                    event.target.closest(
-                        "a, button"
-                    )
-                ) {
-                    return;
-                }
-
-
-                toggleSensitiveContent();
-            }
-        );
-
-
-        /* =================================================
-           CLAVIER
-        ================================================= */
-
-        imageContainer.addEventListener(
-            "keydown",
-            (event) => {
-
-                /*
-                 * Entrée ou espace.
-                 */
-                if (
-                    event.key !== "Enter" &&
-                    event.key !== " "
-                ) {
-                    return;
-                }
-
-
-                event.preventDefault();
-
-
-                toggleSensitiveContent();
-            }
-        );
-    }
-
-
-    /* =====================================================
-       INITIALISATION DANS UN CONTENEUR
-    ====================================================== */
-
-    /**
-     * Recherche toutes les cartes +18
-     * présentes dans un élément.
-     *
-     * @param {ParentNode} root
-     */
-    function initializeInside(root) {
-
-        /*
-         * Si root est lui-même une carte sensible,
-         * on l'initialise également.
+        /**
+         * Affiche ou masque une œuvre +18.
+         *
+         * @param {HTMLElement} card
+         * @param {HTMLElement} imageContainer
          */
-        if (
-            root instanceof HTMLElement &&
-            root.matches(
-                '.artist-card[data-sensitive="true"]'
-            )
+        function toggleSensitiveContent(
+            card,
+            imageContainer
         ) {
-            initializeSensitiveCard(
-                root
-            );
-        }
 
-
-        /*
-         * Recherche ensuite les cartes sensibles
-         * contenues dans root.
-         */
-        root
-            .querySelectorAll(
-                '.artist-card[data-sensitive="true"]'
-            )
-            .forEach(
-                initializeSensitiveCard
-            );
-    }
-
-
-    /* =====================================================
-       CARTES PRÉSENTES AU CHARGEMENT
-    ====================================================== */
-
-    initializeInside(
-        document
-    );
-
-
-    /* =====================================================
-       CARTES CRÉÉES PAR credits-gallery.js
-    ====================================================== */
-
-    /*
-     * credits-gallery.js peut déplacer ou cloner
-     * des cartes après le chargement de la page.
-     *
-     * MutationObserver permet donc d'initialiser
-     * automatiquement les nouvelles cartes.
-     */
-
-    const observer =
-        new MutationObserver(
-            (mutations) => {
-
-                mutations.forEach(
-                    (mutation) => {
-
-                        mutation.addedNodes
-                            .forEach(
-                                (node) => {
-
-                                    if (
-                                        !(
-                                            node instanceof
-                                            HTMLElement
-                                        )
-                                    ) {
-                                        return;
-                                    }
-
-
-                                    initializeInside(
-                                        node
-                                    );
-
-                                }
-                            );
-
-                    }
+            const revealed =
+                card.classList.toggle(
+                    "is-sensitive-revealed"
                 );
 
+
+            updateAccessibilityState(
+                card,
+                imageContainer
+            );
+
+
+            document.dispatchEvent(
+                new CustomEvent(
+                    "couaxia:sensitive-artwork-toggled",
+                    {
+                        detail: {
+
+                            artId:
+                                String(
+                                    card.dataset
+                                        .artId ??
+                                    ""
+                                )
+                                    .trim(),
+
+                            revealed
+
+                        }
+                    }
+                )
+            );
+        }
+
+
+        /* =====================================================
+           INITIALISATION D'UNE CARTE
+        ====================================================== */
+
+        /**
+         * Initialise une carte sensible.
+         *
+         * @param {HTMLElement} card
+         */
+        function initializeSensitiveCard(
+            card
+        ) {
+
+            if (
+                !(
+                    card instanceof
+                    HTMLElement
+                )
+            ) {
+
+                return;
+            }
+
+
+            if (
+                !isSensitiveCard(
+                    card
+                )
+            ) {
+
+                return;
+            }
+
+
+            if (
+                card.dataset
+                    .sensitiveReady ===
+                "true"
+            ) {
+
+                return;
+            }
+
+
+            addSensitiveMessages(
+                card
+            );
+
+
+            const imageContainer =
+                card.querySelector(
+                    ".image-container"
+                );
+
+
+            if (
+                !imageContainer
+            ) {
+
+                return;
+            }
+
+
+            card.dataset
+                .sensitiveReady =
+                "true";
+
+
+            /* =================================================
+               ÉTAT INITIAL
+            ================================================= */
+
+            card.classList.remove(
+                "is-sensitive-revealed"
+            );
+
+
+            /* =================================================
+               ACCESSIBILITÉ
+            ================================================= */
+
+            imageContainer.setAttribute(
+                "tabindex",
+                "0"
+            );
+
+
+            imageContainer.setAttribute(
+                "role",
+                "button"
+            );
+
+
+            updateAccessibilityState(
+                card,
+                imageContainer
+            );
+
+
+            /* =================================================
+               SOURIS / TACTILE
+            ================================================= */
+
+            imageContainer.addEventListener(
+                "click",
+                event => {
+
+                    /*
+                     * Évite d'intercepter :
+                     *
+                     * - lien artiste
+                     * - bouton favoris
+                     * - autres boutons
+                     */
+
+                    if (
+                        event.target instanceof
+                        Element &&
+                        event.target.closest(
+                            "a, button"
+                        )
+                    ) {
+
+                        return;
+                    }
+
+
+                    toggleSensitiveContent(
+                        card,
+                        imageContainer
+                    );
+                }
+            );
+
+
+            /* =================================================
+               CLAVIER
+            ================================================= */
+
+            imageContainer.addEventListener(
+                "keydown",
+                event => {
+
+                    if (
+                        event.key !==
+                            "Enter" &&
+                        event.key !==
+                            " "
+                    ) {
+
+                        return;
+                    }
+
+
+                    /*
+                     * Si le focus se trouve sur un
+                     * élément interactif contenu
+                     * dans image-container, on ne
+                     * bascule pas le +18.
+                     */
+
+                    if (
+                        event.target instanceof
+                            Element &&
+                        event.target.closest(
+                            "a, button"
+                        )
+                    ) {
+
+                        return;
+                    }
+
+
+                    event.preventDefault();
+
+
+                    toggleSensitiveContent(
+                        card,
+                        imageContainer
+                    );
+                }
+            );
+        }
+
+
+        /* =====================================================
+           INITIALISATION DANS UN CONTENEUR
+        ====================================================== */
+
+        /**
+         * Initialise toutes les cartes sensibles
+         * d'un élément.
+         *
+         * @param {ParentNode} root
+         */
+        function initializeInside(
+            root
+        ) {
+
+            if (
+                root instanceof
+                    HTMLElement &&
+                root.matches(
+                    '.artist-card[data-sensitive="true"]'
+                )
+            ) {
+
+                initializeSensitiveCard(
+                    root
+                );
+            }
+
+
+            if (
+                typeof root
+                    ?.querySelectorAll !==
+                "function"
+            ) {
+
+                return;
+            }
+
+
+            root
+                .querySelectorAll(
+                    '.artist-card[data-sensitive="true"]'
+                )
+                .forEach(
+                    initializeSensitiveCard
+                );
+        }
+
+
+        /* =====================================================
+           RÉINITIALISATION
+        ====================================================== */
+
+        /**
+         * Masque à nouveau toutes les œuvres sensibles.
+         *
+         * Utile après un changement de galerie.
+         */
+        function hideAllSensitiveArtworks() {
+
+            document
+                .querySelectorAll(
+                    '.artist-card[data-sensitive="true"]'
+                )
+                .forEach(
+                    card => {
+
+                        if (
+                            !(
+                                card instanceof
+                                HTMLElement
+                            )
+                        ) {
+
+                            return;
+                        }
+
+
+                        card.classList.remove(
+                            "is-sensitive-revealed"
+                        );
+
+
+                        const imageContainer =
+                            card.querySelector(
+                                ".image-container"
+                            );
+
+
+                        if (
+                            imageContainer instanceof
+                            HTMLElement
+                        ) {
+
+                            updateAccessibilityState(
+                                card,
+                                imageContainer
+                            );
+                        }
+                    }
+                );
+        }
+
+
+        /* =====================================================
+           CARTES PRÉSENTES AU CHARGEMENT
+        ====================================================== */
+
+        initializeInside(
+            document
+        );
+
+
+        /* =====================================================
+           CARTES SUPABASE CHARGÉES
+        ====================================================== */
+
+        document.addEventListener(
+            "couaxia:credits-loaded",
+            () => {
+
+                initializeInside(
+                    document.getElementById(
+                        "credits-card-source"
+                    ) ||
+                    document
+                );
             }
         );
 
 
-    observer.observe(
-        document.body,
-        {
-            childList:
-                true,
+        /* =====================================================
+           CARTES RENDUES DANS LES GALERIES
+        ====================================================== */
 
-            subtree:
-                true
-        }
-    );
+        document.addEventListener(
+            "couaxia:credits-rendered",
+            () => {
 
-});
+                const generatedContainer =
+                    document.getElementById(
+                        "credits-generated-galleries"
+                    );
+
+
+                if (
+                    generatedContainer
+                ) {
+
+                    initializeInside(
+                        generatedContainer
+                    );
+                }
+
+
+                /*
+                 * À chaque reconstruction de galerie,
+                 * les œuvres +18 repartent masquées.
+                 */
+
+                hideAllSensitiveArtworks();
+            }
+        );
+
+
+        /* =====================================================
+           MUTATION OBSERVER
+        ====================================================== */
+
+        /*
+         * Sécurité supplémentaire pour les cartes
+         * ajoutées dynamiquement par un autre script.
+         */
+
+        const observer =
+            new MutationObserver(
+                mutations => {
+
+                    mutations.forEach(
+                        mutation => {
+
+                            mutation
+                                .addedNodes
+                                .forEach(
+                                    node => {
+
+                                        if (
+                                            !(
+                                                node instanceof
+                                                HTMLElement
+                                            )
+                                        ) {
+
+                                            return;
+                                        }
+
+
+                                        initializeInside(
+                                            node
+                                        );
+                                    }
+                                );
+                        }
+                    );
+                }
+            );
+
+
+        observer.observe(
+            document.body,
+            {
+                childList:
+                    true,
+
+                subtree:
+                    true
+            }
+        );
+
+
+        /* =====================================================
+           API PUBLIQUE
+        ====================================================== */
+
+        window.CouaxiaSensitiveGallery = {
+
+            /**
+             * Initialise manuellement un conteneur.
+             */
+            initialize(
+                root = document
+            ) {
+
+                initializeInside(
+                    root
+                );
+            },
+
+
+            /**
+             * Masque toutes les œuvres +18.
+             */
+            hideAll() {
+
+                hideAllSensitiveArtworks();
+            },
+
+
+            /**
+             * Vérifie si une œuvre est révélée.
+             */
+            isRevealed(
+                artId
+            ) {
+
+                const normalizedArtId =
+                    String(
+                        artId ??
+                        ""
+                    )
+                        .trim();
+
+
+                if (
+                    !normalizedArtId
+                ) {
+
+                    return false;
+                }
+
+
+                const card =
+                    document.querySelector(
+                        `.artist-card[data-art-id="${CSS.escape(
+                            normalizedArtId
+                        )}"][data-sensitive="true"]`
+                    );
+
+
+                return Boolean(
+                    card?.classList.contains(
+                        "is-sensitive-revealed"
+                    )
+                );
+            }
+
+        };
+
+
+        console.info(
+            "[Galerie +18] Module initialisé."
+        );
+    }
+);

@@ -1,7 +1,7 @@
 "use strict";
 
 /* =========================================================
-   API PUBLIQUE — GALERIE / ARTWORKS
+   API PUBLIQUE — JEUX
    COUAXIA
 ========================================================= */
 
@@ -15,12 +15,103 @@ import {
 ========================================================= */
 
 const TABLE_NAME =
-    "artworks";
+    "games";
 
 
 /* =========================================================
-   ERREURS
+   OUTILS
 ========================================================= */
+
+/**
+ * Transforme une valeur en texte propre.
+ *
+ * @param {unknown} value
+ * @returns {string}
+ */
+function normalizeText(
+    value
+) {
+
+    return String(
+        value ?? ""
+    ).trim();
+}
+
+
+/**
+ * Transforme une valeur en booléen.
+ *
+ * @param {unknown} value
+ * @param {boolean} defaultValue
+ * @returns {boolean}
+ */
+function normalizeBoolean(
+    value,
+    defaultValue = true
+) {
+
+    if (
+        value === undefined ||
+        value === null ||
+        value === ""
+    ) {
+
+        return defaultValue;
+    }
+
+
+    if (
+        typeof value ===
+        "boolean"
+    ) {
+
+        return value;
+    }
+
+
+    const normalizedValue =
+        String(
+            value
+        )
+            .trim()
+            .toLowerCase();
+
+
+    if (
+        [
+            "true",
+            "1",
+            "yes",
+            "oui",
+            "on"
+        ].includes(
+            normalizedValue
+        )
+    ) {
+
+        return true;
+    }
+
+
+    if (
+        [
+            "false",
+            "0",
+            "no",
+            "non",
+            "off"
+        ].includes(
+            normalizedValue
+        )
+    ) {
+
+        return false;
+    }
+
+
+    return defaultValue;
+}
+
 
 /**
  * Retourne un message d'erreur Supabase lisible.
@@ -34,7 +125,7 @@ function getSupabaseErrorMessage(
 
     return (
         error?.message ||
-        "Impossible de récupérer les illustrations."
+        "Impossible de récupérer les jeux."
     );
 }
 
@@ -44,111 +135,90 @@ function getSupabaseErrorMessage(
 ========================================================= */
 
 /**
- * Formate une œuvre avant de l'envoyer
- * vers le site public.
+ * Transforme une ligne Supabase
+ * en objet propre pour le frontend.
  *
- * @param {object} artwork
+ * @param {object} game
  * @returns {object}
  */
-function formatArtwork(
-    artwork
+function formatGame(
+    game
 ) {
+
+    const sortOrder =
+        Number(
+            game?.sort_order ??
+            0
+        );
+
 
     return {
 
         id:
-            artwork?.id ?? null,
+            game?.id ??
+            null,
 
-        art_id:
-            artwork?.art_id ?? "",
+        twitch_game_id:
+            normalizeText(
+                game?.twitch_game_id
+            ) ||
+            null,
 
-        artist:
-            artwork?.artist ?? "",
-
-        artist_role:
-            artwork?.artist_role ?? null,
+        name:
+            normalizeText(
+                game?.name
+            ) ||
+            null,
 
         description:
-            artwork?.description ?? null,
-
-        image_url:
-            artwork?.image_url ?? "",
-
-        image_alt:
-            artwork?.image_alt ?? null,
-
-        media_type:
-            artwork?.media_type ?? "image",
-
-        tags:
-            Array.isArray(
-                artwork?.tags
-            )
-                ? artwork.tags
-                : [],
-
-        image_messages:
-            Array.isArray(
-                artwork?.image_messages
-            )
-                ? artwork.image_messages
-                : [],
-
-        artist_url:
-            artwork?.artist_url ?? null,
-
-        button_text:
-            artwork?.button_text ??
-            "Voir son profil",
-
-        button_messages:
-            Array.isArray(
-                artwork?.button_messages
-            )
-                ? artwork.button_messages
-                : [],
-
-        sensitive:
-            Boolean(
-                artwork?.sensitive
+            normalizeText(
+                game?.description
             ),
 
-        favorite_enabled:
-            artwork?.favorite_enabled !==
-            false,
+        status:
+            normalizeText(
+                game?.status
+            )
+                .toLowerCase() ||
+            "backlog",
 
         visible:
-            artwork?.visible !==
-            false,
-
-        sort_order:
-            Number(
-                artwork?.sort_order ??
-                0
+            normalizeBoolean(
+                game?.visible,
+                true
             ),
 
+        sort_order:
+            Number.isFinite(
+                sortOrder
+            )
+                ? sortOrder
+                : 0,
+
         created_at:
-            artwork?.created_at ?? null,
+            game?.created_at ??
+            null,
 
         updated_at:
-            artwork?.updated_at ?? null
+            game?.updated_at ??
+            null
 
     };
 }
 
 
 /* =========================================================
-   GET — GALERIE PUBLIQUE
+   GET — JEUX PUBLICS
 ========================================================= */
 
-/**
- * Récupère uniquement les œuvres visibles.
- *
- * @param {object} response
- */
 async function handleGet(
+    request,
     response
 ) {
+
+    /* =====================================================
+       REQUÊTE SUPABASE
+    ====================================================== */
 
     const {
         data,
@@ -160,20 +230,10 @@ async function handleGet(
             )
             .select(`
                 id,
-                art_id,
-                artist,
-                artist_role,
+                twitch_game_id,
+                name,
                 description,
-                image_url,
-                image_alt,
-                media_type,
-                tags,
-                image_messages,
-                artist_url,
-                button_text,
-                button_messages,
-                sensitive,
-                favorite_enabled,
+                status,
                 visible,
                 sort_order,
                 created_at,
@@ -208,7 +268,7 @@ async function handleGet(
     ) {
 
         console.error(
-            "[Public Gallery GET] Supabase :",
+            "[Public Games] Erreur Supabase :",
             error
         );
 
@@ -216,16 +276,18 @@ async function handleGet(
         response
             .status(500)
             .json({
+
                 success:
                     false,
 
-                artworks:
+                games:
                     [],
 
                 error:
                     getSupabaseErrorMessage(
                         error
                     )
+
             });
 
 
@@ -237,12 +299,12 @@ async function handleGet(
        FORMATAGE
     ====================================================== */
 
-    const artworks =
+    const games =
         Array.isArray(
             data
         )
             ? data.map(
-                formatArtwork
+                formatGame
             )
             : [];
 
@@ -258,10 +320,10 @@ async function handleGet(
             success:
                 true,
 
-            count:
-                artworks.length,
+            returned:
+                games.length,
 
-            artworks
+            games
 
         });
 }
@@ -271,6 +333,11 @@ async function handleGet(
    HANDLER PRINCIPAL
 ========================================================= */
 
+/**
+ * Route :
+ *
+ * GET /api/games
+ */
 export default async function handler(
     request,
     response
@@ -280,12 +347,6 @@ export default async function handler(
        CACHE
     ====================================================== */
 
-    /*
-     * On désactive le cache pour que les modifications
-     * faites depuis l'administration apparaissent
-     * immédiatement sur la page Crédits.
-     */
-
     response.setHeader(
         "Cache-Control",
         "no-store, max-age=0"
@@ -293,7 +354,7 @@ export default async function handler(
 
 
     /* =====================================================
-       MÉTHODE AUTORISÉE
+       MÉTHODE
     ====================================================== */
 
     if (
@@ -310,14 +371,16 @@ export default async function handler(
         response
             .status(405)
             .json({
+
                 success:
                     false,
 
-                artworks:
+                games:
                     [],
 
                 error:
                     "Méthode non autorisée."
+
             });
 
 
@@ -332,6 +395,7 @@ export default async function handler(
     try {
 
         await handleGet(
+            request,
             response
         );
 
@@ -341,15 +405,10 @@ export default async function handler(
     ) {
 
         console.error(
-            "[Public Gallery] Erreur inattendue :",
+            "[Public Games] Erreur inattendue :",
             error
         );
 
-
-        /*
-         * Évite d'envoyer une deuxième réponse
-         * si Express en a déjà envoyé une.
-         */
 
         if (
             response.headersSent
@@ -362,15 +421,17 @@ export default async function handler(
         response
             .status(500)
             .json({
+
                 success:
                     false,
 
-                artworks:
+                games:
                     [],
 
                 error:
                     error?.message ||
-                    "Erreur interne de l'API galerie."
+                    "Erreur interne de l'API jeux."
+
             });
     }
 }
