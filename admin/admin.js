@@ -4,11 +4,6 @@
    ADMINISTRATION — COUAXIA
 ========================================================= */
 
-import {
-    getGame
-} from "../js/games.js";
-
-
 document.addEventListener(
     "DOMContentLoaded",
     async () => {
@@ -25,6 +20,9 @@ document.addEventListener(
 
         const ADMIN_GALLERY_UPLOAD_API =
             "/api/admin/gallery-upload";
+
+        const TWITCH_GAME_API =
+            "/api/game";
 
         const MAX_ARTWORK_FILE_SIZE =
             10 * 1024 * 1024;
@@ -59,7 +57,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           ÉLÉMENTS — NAVIGATION
+           NAVIGATION
         ====================================================== */
 
         const navButtons =
@@ -85,7 +83,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           ÉLÉMENTS — DASHBOARD
+           DASHBOARD
         ====================================================== */
 
         const statGames =
@@ -110,7 +108,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           ÉLÉMENTS — JEUX
+           JEUX — FORMULAIRE
         ====================================================== */
 
         const gameForm =
@@ -190,7 +188,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           ÉLÉMENTS — APERÇU TWITCH
+           JEUX — APERÇU TWITCH
         ====================================================== */
 
         const twitchResult =
@@ -215,7 +213,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           ÉLÉMENTS — LISTE JEUX
+           JEUX — LISTE
         ====================================================== */
 
         const gamesList =
@@ -230,7 +228,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           ÉLÉMENTS — ARTWORKS
+           ARTWORKS — FORMULAIRE
         ====================================================== */
 
         const artworkForm =
@@ -350,7 +348,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           ÉLÉMENTS — UPLOAD ARTWORK
+           ARTWORKS — UPLOAD
         ====================================================== */
 
         const artworkDropzone =
@@ -390,7 +388,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           ÉLÉMENTS — LISTE ARTWORKS
+           ARTWORKS — LISTE
         ====================================================== */
 
         const artworksList =
@@ -410,7 +408,22 @@ document.addEventListener(
 
 
         /* =====================================================
-           ÉLÉMENTS — MODAL
+           SONDAGE
+        ====================================================== */
+
+        const pollGamesList =
+            document.getElementById(
+                "admin-poll-games-list"
+            );
+
+        const pollGameCount =
+            document.getElementById(
+                "admin-poll-game-count"
+            );
+
+
+        /* =====================================================
+           MODAL SUPPRESSION
         ====================================================== */
 
         const confirmModal =
@@ -440,7 +453,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           TOASTS
+           TOAST
         ====================================================== */
 
         const toastContainer =
@@ -450,27 +463,14 @@ document.addEventListener(
 
 
         /* =====================================================
-           SONDAGE
-        ====================================================== */
-
-        const pollGamesList =
-            document.getElementById(
-                "admin-poll-games-list"
-            );
-
-        const pollGameCount =
-            document.getElementById(
-                "admin-poll-game-count"
-            );
-
-
-        /* =====================================================
            ÉTAT
         ====================================================== */
 
-        let games = [];
+        let games =
+            [];
 
-        let artworks = [];
+        let artworks =
+            [];
 
         let currentEditingGameId =
             null;
@@ -488,13 +488,16 @@ document.addEventListener(
             null;
 
         let pendingDelete = {
-            type: null,
-            id: null
+            type:
+                null,
+
+            id:
+                null
         };
 
 
         /* =====================================================
-           OUTILS HTML
+           OUTILS
         ====================================================== */
 
         function escapeHtml(
@@ -533,13 +536,34 @@ document.addEventListener(
         }
 
 
-        /* =====================================================
-           NORMALISATION
-        ====================================================== */
-
         function normalizeTags(
             value
         ) {
+
+            if (
+                Array.isArray(
+                    value
+                )
+            ) {
+
+                return [
+                    ...new Set(
+                        value
+                            .map(
+                                tag =>
+                                    String(
+                                        tag
+                                    )
+                                        .trim()
+                                        .toLowerCase()
+                            )
+                            .filter(
+                                Boolean
+                            )
+                    )
+                ];
+            }
+
 
             return [
                 ...new Set(
@@ -553,7 +577,9 @@ document.addEventListener(
                                     .trim()
                                     .toLowerCase()
                         )
-                        .filter(Boolean)
+                        .filter(
+                            Boolean
+                        )
                 )
             ];
         }
@@ -563,19 +589,37 @@ document.addEventListener(
             value
         ) {
 
-            return [
-                ...new Set(
-                    String(
-                        value || ""
-                    )
-                        .split("|")
-                        .map(
-                            message =>
-                                message.trim()
-                        )
-                        .filter(Boolean)
+            if (
+                Array.isArray(
+                    value
                 )
-            ];
+            ) {
+
+                return value
+                    .map(
+                        message =>
+                            String(
+                                message
+                            )
+                                .trim()
+                    )
+                    .filter(
+                        Boolean
+                    );
+            }
+
+
+            return String(
+                value || ""
+            )
+                .split("|")
+                .map(
+                    message =>
+                        message.trim()
+                )
+                .filter(
+                    Boolean
+                );
         }
 
 
@@ -584,9 +628,13 @@ document.addEventListener(
         ) {
 
             if (
-                !Number.isFinite(bytes) ||
-                bytes <= 0
+                !Number.isFinite(
+                    bytes
+                ) ||
+                bytes <=
+                0
             ) {
+
                 return "0 octet";
             }
 
@@ -595,31 +643,37 @@ document.addEventListener(
                 bytes <
                 1024
             ) {
+
                 return `${bytes} octets`;
             }
 
 
             if (
                 bytes <
-                1024 * 1024
+                1024 *
+                1024
             ) {
 
-                return (
-                    `${(
+                return `${
+                    (
                         bytes /
                         1024
-                    ).toFixed(1)} Ko`
-                );
+                    ).toFixed(
+                        1
+                    )
+                } Ko`;
             }
 
 
-            return (
-                `${(
+            return `${
+                (
                     bytes /
                     1024 /
                     1024
-                ).toFixed(1)} Mo`
-            );
+                ).toFixed(
+                    1
+                )
+            } Mo`;
         }
 
 
@@ -629,10 +683,19 @@ document.addEventListener(
 
         function showToast(
             message,
-            type = "success"
+            type =
+                "success"
         ) {
 
-            if (!toastContainer) {
+            if (
+                !toastContainer
+            ) {
+
+                console.log(
+                    `[${type}]`,
+                    message
+                );
+
                 return;
             }
 
@@ -655,7 +718,9 @@ document.addEventListener(
 
             window.setTimeout(
                 () => {
+
                     toast.remove();
+
                 },
                 3500
             );
@@ -693,9 +758,9 @@ document.addEventListener(
 
                 if (
                     response.status ===
-                    401 ||
+                        401 ||
                     response.status ===
-                    403
+                        403
                 ) {
 
                     window.location.replace(
@@ -720,17 +785,17 @@ document.addEventListener(
                     !data?.user
                 ) {
 
-                    showAuthenticationError(
+                    throw new Error(
                         "Impossible de vérifier la session administrateur."
                     );
-
-                    return null;
                 }
 
 
                 return data.user;
 
-            } catch (error) {
+            } catch (
+                error
+            ) {
 
                 console.error(
                     "[Admin Auth]",
@@ -738,9 +803,38 @@ document.addEventListener(
                 );
 
 
-                showAuthenticationError(
-                    "Impossible de contacter le service d'authentification."
-                );
+                document.body.innerHTML = `
+                    <main
+                        style="
+                            min-height:100vh;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            padding:30px;
+                            text-align:center;
+                        "
+                    >
+                        <section>
+
+                            <h1>
+                                Administration indisponible
+                            </h1>
+
+                            <p>
+                                ${escapeHtml(
+                                    error.message
+                                )}
+                            </p>
+
+                            <a
+                                href="/api/admin/auth-login"
+                            >
+                                Se reconnecter avec Twitch
+                            </a>
+
+                        </section>
+                    </main>
+                `;
 
 
                 return null;
@@ -748,46 +842,13 @@ document.addEventListener(
         }
 
 
-        function showAuthenticationError(
-            message
-        ) {
-
-            document.body.innerHTML = `
-                <main
-                    style="
-                        min-height:100vh;
-                        display:flex;
-                        justify-content:center;
-                        align-items:center;
-                        text-align:center;
-                        padding:24px;
-                    "
-                >
-                    <section>
-
-                        <h1>
-                            Administration indisponible
-                        </h1>
-
-                        <p>
-                            ${escapeHtml(message)}
-                        </p>
-
-                        <a href="/api/admin/auth-login">
-                            Se reconnecter avec Twitch
-                        </a>
-
-                    </section>
-                </main>
-            `;
-        }
-
-
         function applyAdminUser(
             user
         ) {
 
-            if (adminUserName) {
+            if (
+                adminUserName
+            ) {
 
                 adminUserName.textContent =
                     user.displayName ||
@@ -796,7 +857,9 @@ document.addEventListener(
             }
 
 
-            if (adminUserRole) {
+            if (
+                adminUserRole
+            ) {
 
                 adminUserRole.textContent =
                     "Administratrice";
@@ -821,83 +884,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           DÉCONNEXION
-        ====================================================== */
-
-        function createLogoutButton() {
-
-            const container =
-                document.querySelector(
-                    ".admin-header-actions"
-                );
-
-
-            if (
-                !container ||
-                document.getElementById(
-                    "admin-logout-button"
-                )
-            ) {
-                return;
-            }
-
-
-            const button =
-                document.createElement(
-                    "button"
-                );
-
-            button.id =
-                "admin-logout-button";
-
-            button.type =
-                "button";
-
-            button.className =
-                "admin-secondary-button";
-
-            button.textContent =
-                "🚪 Déconnexion";
-
-            button.addEventListener(
-                "click",
-                logoutAdmin
-            );
-
-            container.appendChild(
-                button
-            );
-        }
-
-
-        async function logoutAdmin() {
-
-            try {
-
-                await adminApiRequest(
-                    "/api/admin/auth-logout",
-                    {
-                        method:
-                            "POST"
-                    }
-                );
-
-            } catch (error) {
-
-                console.error(
-                    error
-                );
-            }
-
-
-            window.location.replace(
-                "/api/admin/auth-login"
-            );
-        }
-
-
-        /* =====================================================
-           API
+           API ADMIN
         ====================================================== */
 
         async function adminApiRequest(
@@ -926,7 +913,7 @@ document.addEventListener(
             if (
                 requestOptions.body &&
                 typeof requestOptions.body !==
-                "string"
+                    "string"
             ) {
 
                 requestOptions.headers[
@@ -949,8 +936,10 @@ document.addEventListener(
 
 
             if (
-                response.status === 401 ||
-                response.status === 403
+                response.status ===
+                    401 ||
+                response.status ===
+                    403
             ) {
 
                 window.location.replace(
@@ -971,7 +960,9 @@ document.addEventListener(
                     );
 
 
-            if (!response.ok) {
+            if (
+                !response.ok
+            ) {
 
                 throw new Error(
                     data?.error ||
@@ -985,6 +976,84 @@ document.addEventListener(
 
 
         /* =====================================================
+           DÉCONNEXION
+        ====================================================== */
+
+        function createLogoutButton() {
+
+            const container =
+                document.querySelector(
+                    ".admin-header-actions"
+                );
+
+
+            if (
+                !container ||
+                document.getElementById(
+                    "admin-logout-button"
+                )
+            ) {
+
+                return;
+            }
+
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.id =
+                "admin-logout-button";
+
+            button.type =
+                "button";
+
+            button.className =
+                "admin-secondary-button";
+
+            button.textContent =
+                "🚪 Déconnexion";
+
+
+            button.addEventListener(
+                "click",
+                async () => {
+
+                    try {
+
+                        await adminApiRequest(
+                            "/api/admin/auth-logout",
+                            {
+                                method:
+                                    "POST"
+                            }
+                        );
+
+                    } catch (
+                        error
+                    ) {
+
+                        console.error(
+                            error
+                        );
+                    }
+
+
+                    window.location.replace(
+                        "/api/admin/auth-login"
+                    );
+                }
+            );
+
+
+            container.appendChild(
+                button
+            );
+        }
+
+
+        /* =====================================================
            NAVIGATION
         ====================================================== */
 
@@ -992,13 +1061,30 @@ document.addEventListener(
             sectionName
         ) {
 
+            const normalizedSection =
+                String(
+                    sectionName ||
+                    ""
+                )
+                    .trim();
+
+
+            if (
+                !normalizedSection
+            ) {
+
+                return;
+            }
+
+
             navButtons.forEach(
                 button => {
 
                     const active =
                         button.dataset
                             .adminSection ===
-                        sectionName;
+                        normalizedSection;
+
 
                     button.classList.toggle(
                         "is-active",
@@ -1014,10 +1100,12 @@ document.addEventListener(
                     const active =
                         section.dataset
                             .adminPanel ===
-                        sectionName;
+                        normalizedSection;
+
 
                     section.hidden =
                         !active;
+
 
                     section.classList.toggle(
                         "is-active",
@@ -1028,27 +1116,134 @@ document.addEventListener(
 
 
             if (
-                sectionName ===
+                normalizedSection ===
                 "games"
             ) {
+
                 renderGames();
             }
 
 
             if (
-                sectionName ===
+                normalizedSection ===
                 "gallery"
             ) {
+
                 renderArtworks();
             }
 
 
             if (
-                sectionName ===
+                normalizedSection ===
                 "poll"
             ) {
+
                 renderPollGames();
             }
+        }
+
+
+        /* =====================================================
+           TWITCH — GET GAME
+        ====================================================== */
+
+        async function getGame(
+            gameId
+        ) {
+
+            const normalizedGameId =
+                String(
+                    gameId ?? ""
+                )
+                    .trim();
+
+
+            if (
+                !normalizedGameId
+            ) {
+
+                return null;
+            }
+
+
+            const url =
+                new URL(
+                    TWITCH_GAME_API,
+                    window.location.origin
+                );
+
+
+            url.searchParams.set(
+                "id",
+                normalizedGameId
+            );
+
+
+            const response =
+                await fetch(
+                    url.toString(),
+                    {
+                        method:
+                            "GET",
+
+                        credentials:
+                            "same-origin",
+
+                        cache:
+                            "no-store",
+
+                        headers: {
+                            Accept:
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if (
+                response.status ===
+                404
+            ) {
+
+                return {
+                    found:
+                        false,
+
+                    id:
+                        normalizedGameId,
+
+                    name:
+                        null,
+
+                    boxArtUrl:
+                        null
+                };
+            }
+
+
+            if (
+                !response.ok
+            ) {
+
+                throw new Error(
+                    data?.error ||
+                    `Erreur HTTP ${response.status}`
+                );
+            }
+
+
+            return (
+                data?.game ??
+                null
+            );
         }
 
 
@@ -1084,7 +1279,9 @@ document.addEventListener(
 
                 updateDashboardStats();
 
-            } catch (error) {
+            } catch (
+                error
+            ) {
 
                 console.error(
                     "[Games]",
@@ -1101,7 +1298,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           TWITCH
+           TWITCH — APERÇU
         ====================================================== */
 
         function resetTwitchPreview() {
@@ -1110,25 +1307,38 @@ document.addEventListener(
                 null;
 
 
-            if (twitchResult) {
+            if (
+                twitchResult
+            ) {
+
                 twitchResult.hidden =
                     true;
             }
 
 
-            if (twitchPreviewCover) {
-                twitchPreviewCover.src =
-                    "";
+            if (
+                twitchPreviewCover
+            ) {
+
+                twitchPreviewCover.removeAttribute(
+                    "src"
+                );
             }
 
 
-            if (twitchPreviewName) {
+            if (
+                twitchPreviewName
+            ) {
+
                 twitchPreviewName.textContent =
                     "—";
             }
 
 
-            if (twitchPreviewId) {
+            if (
+                twitchPreviewId
+            ) {
+
                 twitchPreviewId.textContent =
                     "";
             }
@@ -1139,11 +1349,21 @@ document.addEventListener(
             game
         ) {
 
+            if (
+                !game
+            ) {
+
+                return;
+            }
+
+
             currentTwitchPreview =
                 game;
 
 
-            if (twitchPreviewName) {
+            if (
+                twitchPreviewName
+            ) {
 
                 twitchPreviewName.textContent =
                     game.name ||
@@ -1151,7 +1371,9 @@ document.addEventListener(
             }
 
 
-            if (twitchPreviewId) {
+            if (
+                twitchPreviewId
+            ) {
 
                 twitchPreviewId.textContent =
                     `ID Twitch : ${game.id}`;
@@ -1165,10 +1387,17 @@ document.addEventListener(
 
                 twitchPreviewCover.src =
                     game.boxArtUrl;
+
+                twitchPreviewCover.alt =
+                    game.name ||
+                    "Jaquette Twitch";
             }
 
 
-            if (twitchResult) {
+            if (
+                twitchResult
+            ) {
+
                 twitchResult.hidden =
                     false;
             }
@@ -1182,15 +1411,26 @@ document.addEventListener(
                     twitchGameIdInput
                         ?.value ||
                     ""
-                ).trim();
+                )
+                    .trim();
 
 
-            if (!id) {
+            if (
+                !id
+            ) {
 
                 showToast(
                     "Entre un ID Twitch.",
                     "warning"
                 );
+
+                return;
+            }
+
+
+            if (
+                !twitchPreviewButton
+            ) {
 
                 return;
             }
@@ -1213,7 +1453,8 @@ document.addEventListener(
 
                 if (
                     !game ||
-                    game.found === false
+                    game.found ===
+                        false
                 ) {
 
                     throw new Error(
@@ -1232,7 +1473,9 @@ document.addEventListener(
                     "success"
                 );
 
-            } catch (error) {
+            } catch (
+                error
+            ) {
 
                 showToast(
                     error.message,
@@ -1251,7 +1494,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           FORMULAIRE JEU
+           JEUX — FORMULAIRE
         ====================================================== */
 
         function resetGameForm() {
@@ -1259,30 +1502,56 @@ document.addEventListener(
             currentEditingGameId =
                 null;
 
+
             gameForm?.reset();
+
 
             resetTwitchPreview();
 
 
-            if (gameIdInput) {
+            if (
+                gameIdInput
+            ) {
+
                 gameIdInput.value =
                     "";
             }
 
 
-            if (twitchGameIdInput) {
+            if (
+                twitchGameIdInput
+            ) {
+
                 twitchGameIdInput.disabled =
                     false;
+
+                twitchGameIdInput.value =
+                    "";
             }
 
 
-            if (gameFormTitle) {
+            if (
+                statusInput
+            ) {
+
+                statusInput.value =
+                    "backlog";
+            }
+
+
+            if (
+                gameFormTitle
+            ) {
+
                 gameFormTitle.textContent =
                     "Ajouter un jeu";
             }
 
 
-            if (submitGameButton) {
+            if (
+                submitGameButton
+            ) {
+
                 submitGameButton.textContent =
                     "💾 Enregistrer";
             }
@@ -1295,13 +1564,29 @@ document.addEventListener(
                 "games"
             );
 
+
             resetGameForm();
+
 
             gameFormPanel
                 ?.scrollIntoView({
                     behavior:
-                        "smooth"
+                        "smooth",
+
+                    block:
+                        "start"
                 });
+
+
+            window.setTimeout(
+                () => {
+
+                    twitchGameIdInput
+                        ?.focus();
+
+                },
+                300
+            );
         }
 
 
@@ -1309,51 +1594,128 @@ document.addEventListener(
             game
         ) {
 
+            if (
+                !game
+            ) {
+
+                return;
+            }
+
+
+            openSection(
+                "games"
+            );
+
+
             currentEditingGameId =
                 game.id;
 
 
-            gameIdInput.value =
-                game.id;
+            if (
+                gameIdInput
+            ) {
 
-            twitchGameIdInput.value =
-                game.twitchGameId ||
-                "";
-
-            twitchGameIdInput.disabled =
-                true;
-
-            statusInput.value =
-                game.status ||
-                "backlog";
-
-            tagsInput.value =
-                (game.tags || [])
-                    .join(", ");
-
-            descriptionInput.value =
-                game.description ||
-                "";
-
-            ratingInput.value =
-                game.rating ??
-                "";
-
-            youtubeInput.value =
-                game.youtubePlaylist ||
-                "";
-
-            pollInput.checked =
-                Boolean(
-                    game.pollEnabled
-                );
+                gameIdInput.value =
+                    game.id ||
+                    "";
+            }
 
 
-            gameFormTitle.textContent =
-                "Modifier le jeu";
+            if (
+                twitchGameIdInput
+            ) {
 
-            submitGameButton.textContent =
-                "💾 Enregistrer les modifications";
+                twitchGameIdInput.value =
+                    game.twitchGameId ||
+                    "";
+
+                twitchGameIdInput.disabled =
+                    true;
+            }
+
+
+            if (
+                statusInput
+            ) {
+
+                statusInput.value =
+                    game.status ||
+                    "backlog";
+            }
+
+
+            if (
+                tagsInput
+            ) {
+
+                tagsInput.value =
+                    (
+                        game.tags ||
+                        []
+                    )
+                        .join(
+                            ", "
+                        );
+            }
+
+
+            if (
+                descriptionInput
+            ) {
+
+                descriptionInput.value =
+                    game.description ||
+                    "";
+            }
+
+
+            if (
+                ratingInput
+            ) {
+
+                ratingInput.value =
+                    game.rating ??
+                    "";
+            }
+
+
+            if (
+                youtubeInput
+            ) {
+
+                youtubeInput.value =
+                    game.youtubePlaylist ||
+                    "";
+            }
+
+
+            if (
+                pollInput
+            ) {
+
+                pollInput.checked =
+                    Boolean(
+                        game.pollEnabled
+                    );
+            }
+
+
+            if (
+                gameFormTitle
+            ) {
+
+                gameFormTitle.textContent =
+                    "Modifier le jeu";
+            }
+
+
+            if (
+                submitGameButton
+            ) {
+
+                submitGameButton.textContent =
+                    "💾 Enregistrer les modifications";
+            }
 
 
             showTwitchPreview({
@@ -1371,7 +1733,10 @@ document.addEventListener(
             gameFormPanel
                 ?.scrollIntoView({
                     behavior:
-                        "smooth"
+                        "smooth",
+
+                    block:
+                        "start"
                 });
         }
 
@@ -1379,7 +1744,6 @@ document.addEventListener(
         function buildGameFromForm() {
 
             return {
-
                 id:
                     currentEditingGameId,
 
@@ -1388,15 +1752,18 @@ document.addEventListener(
                         twitchGameIdInput
                             ?.value ||
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 status:
-                    statusInput?.value ||
+                    statusInput
+                        ?.value ||
                     "backlog",
 
                 tags:
                     normalizeTags(
-                        tagsInput?.value
+                        tagsInput
+                            ?.value
                     ),
 
                 description:
@@ -1404,10 +1771,12 @@ document.addEventListener(
                         descriptionInput
                             ?.value ||
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 rating:
-                    ratingInput?.value
+                    ratingInput
+                        ?.value
                         ? Number(
                             ratingInput.value
                         )
@@ -1418,11 +1787,13 @@ document.addEventListener(
                         youtubeInput
                             ?.value ||
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 pollEnabled:
                     Boolean(
-                        pollInput?.checked
+                        pollInput
+                            ?.checked
                     )
             };
         }
@@ -1439,7 +1810,9 @@ document.addEventListener(
                 buildGameFromForm();
 
 
-            if (!game.twitchGameId) {
+            if (
+                !game.twitchGameId
+            ) {
 
                 showToast(
                     "L'ID Twitch est obligatoire.",
@@ -1458,8 +1831,16 @@ document.addEventListener(
 
             try {
 
-                submitGameButton.disabled =
-                    true;
+                if (
+                    submitGameButton
+                ) {
+
+                    submitGameButton.disabled =
+                        true;
+
+                    submitGameButton.textContent =
+                        "⏳ Enregistrement...";
+                }
 
 
                 const data =
@@ -1477,7 +1858,19 @@ document.addEventListener(
                     );
 
 
-                if (editing) {
+                if (
+                    !data?.game
+                ) {
+
+                    throw new Error(
+                        "Le jeu enregistré n'a pas été retourné."
+                    );
+                }
+
+
+                if (
+                    editing
+                ) {
 
                     const index =
                         games.findIndex(
@@ -1487,9 +1880,19 @@ document.addEventListener(
                         );
 
 
-                    if (index >= 0) {
+                    if (
+                        index >=
+                        0
+                    ) {
+
                         games[index] =
                             data.game;
+
+                    } else {
+
+                        games.push(
+                            data.game
+                        );
                     }
 
                 } else {
@@ -1500,13 +1903,13 @@ document.addEventListener(
                 }
 
 
-                resetGameForm();
-
                 renderGames();
 
                 renderPollGames();
 
                 updateDashboardStats();
+
+                resetGameForm();
 
 
                 showToast(
@@ -1516,7 +1919,15 @@ document.addEventListener(
                     "success"
                 );
 
-            } catch (error) {
+            } catch (
+                error
+            ) {
+
+                console.error(
+                    "[Game Save]",
+                    error
+                );
+
 
                 showToast(
                     error.message,
@@ -1525,14 +1936,24 @@ document.addEventListener(
 
             } finally {
 
-                submitGameButton.disabled =
-                    false;
+                if (
+                    submitGameButton
+                ) {
+
+                    submitGameButton.disabled =
+                        false;
+
+                    submitGameButton.textContent =
+                        currentEditingGameId
+                            ? "💾 Enregistrer les modifications"
+                            : "💾 Enregistrer";
+                }
             }
         }
 
 
         /* =====================================================
-           AFFICHAGE JEUX
+           JEUX — AFFICHAGE
         ====================================================== */
 
         function getStatusLabel(
@@ -1558,8 +1979,11 @@ document.addEventListener(
 
 
             return (
-                labels[status] ||
-                status
+                labels[
+                    status
+                ] ||
+                status ||
+                "Jeu"
             );
         }
 
@@ -1573,13 +1997,15 @@ document.addEventListener(
                     "article"
                 );
 
+
             article.className =
                 "admin-game-item";
 
 
             article.innerHTML = `
-
-                <div class="admin-game-item-cover">
+                <div
+                    class="admin-game-item-cover"
+                >
 
                     ${
                         game.boxArtUrl
@@ -1588,7 +2014,11 @@ document.addEventListener(
                                     src="${escapeHtmlAttribute(
                                         game.boxArtUrl
                                     )}"
-                                    alt=""
+                                    alt="${escapeHtmlAttribute(
+                                        game.twitchName ||
+                                        "Jeu"
+                                    )}"
+                                    loading="lazy"
                                 >
                             `
                             : "🎮"
@@ -1596,15 +2026,23 @@ document.addEventListener(
 
                 </div>
 
-                <div class="admin-game-item-content">
+
+                <div
+                    class="admin-game-item-content"
+                >
 
                     <h3>
                         ${escapeHtml(
-                            game.twitchName
+                            game.twitchName ||
+                            game.name ||
+                            "Jeu Twitch"
                         )}
                     </h3>
 
-                    <div class="admin-game-item-meta">
+
+                    <div
+                        class="admin-game-item-meta"
+                    >
 
                         <span>
                             ${escapeHtml(
@@ -1622,7 +2060,23 @@ document.addEventListener(
 
                     </div>
 
-                    <div class="admin-game-item-actions">
+
+                    ${
+                        game.description
+                            ? `
+                                <p>
+                                    ${escapeHtml(
+                                        game.description
+                                    )}
+                                </p>
+                            `
+                            : ""
+                    }
+
+
+                    <div
+                        class="admin-game-item-actions"
+                    >
 
                         <button
                             type="button"
@@ -1633,6 +2087,7 @@ document.addEventListener(
                         >
                             ✏️ Modifier
                         </button>
+
 
                         <button
                             type="button"
@@ -1656,14 +2111,18 @@ document.addEventListener(
 
         function renderGames() {
 
-            if (!gamesList) {
+            if (
+                !gamesList
+            ) {
+
                 return;
             }
 
 
             const search =
                 String(
-                    gamesSearch?.value ||
+                    gamesSearch
+                        ?.value ||
                     ""
                 )
                     .trim()
@@ -1672,16 +2131,34 @@ document.addEventListener(
 
             const filtered =
                 games.filter(
-                    game =>
-                        !search ||
-                        [
+                    game => {
+
+                        if (
+                            !search
+                        ) {
+
+                            return true;
+                        }
+
+
+                        return [
                             game.twitchName,
+                            game.name,
                             game.status,
-                            ...(game.tags || [])
+                            game.description,
+                            ...(
+                                game.tags ||
+                                []
+                            )
                         ]
-                            .join(" ")
+                            .join(
+                                " "
+                            )
                             .toLowerCase()
-                            .includes(search)
+                            .includes(
+                                search
+                            );
+                    }
                 );
 
 
@@ -1695,7 +2172,9 @@ document.addEventListener(
             ) {
 
                 gamesList.innerHTML = `
-                    <p class="admin-empty-state">
+                    <p
+                        class="admin-empty-state"
+                    >
                         Aucun jeu trouvé.
                     </p>
                 `;
@@ -1705,18 +2184,20 @@ document.addEventListener(
 
 
             filtered.forEach(
-                game =>
+                game => {
+
                     gamesList.appendChild(
                         createGameItem(
                             game
                         )
-                    )
+                    );
+                }
             );
         }
 
 
         /* =====================================================
-           ARTWORKS — FORMAT API
+           ARTWORKS — FORMAT
         ====================================================== */
 
         function formatArtwork(
@@ -1724,45 +2205,61 @@ document.addEventListener(
         ) {
 
             return {
-
                 id:
                     artwork.id,
 
                 artId:
-                    artwork.art_id,
+                    artwork.art_id ??
+                    artwork.artId,
 
                 artist:
                     artwork.artist,
 
                 artistRole:
-                    artwork.artist_role,
+                    artwork.artist_role ??
+                    artwork.artistRole,
 
                 description:
                     artwork.description,
 
                 imageUrl:
-                    artwork.image_url,
+                    artwork.image_url ??
+                    artwork.imageUrl,
 
                 imageAlt:
-                    artwork.image_alt,
+                    artwork.image_alt ??
+                    artwork.imageAlt,
 
                 mediaType:
-                    artwork.media_type,
+                    artwork.media_type ??
+                    artwork.mediaType ??
+                    "image",
 
                 tags:
-                    artwork.tags || [],
+                    normalizeTags(
+                        artwork.tags
+                    ),
 
                 imageMessages:
-                    artwork.image_messages || [],
+                    normalizeMessages(
+                        artwork.image_messages ??
+                        artwork.imageMessages
+                    ),
 
                 artistUrl:
-                    artwork.artist_url,
+                    artwork.artist_url ??
+                    artwork.artistUrl,
 
                 buttonText:
-                    artwork.button_text,
+                    artwork.button_text ??
+                    artwork.buttonText ??
+                    "Voir son profil",
 
                 buttonMessages:
-                    artwork.button_messages || [],
+                    normalizeMessages(
+                        artwork.button_messages ??
+                        artwork.buttonMessages
+                    ),
 
                 sensitive:
                     Boolean(
@@ -1770,18 +2267,27 @@ document.addEventListener(
                     ),
 
                 favoriteEnabled:
-                    Boolean(
-                        artwork.favorite_enabled
-                    ),
+                    artwork.favorite_enabled !==
+                    undefined
+                        ? Boolean(
+                            artwork.favorite_enabled
+                        )
+                        : Boolean(
+                            artwork.favoriteEnabled
+                        ),
 
                 visible:
-                    Boolean(
-                        artwork.visible
-                    ),
+                    artwork.visible !==
+                    undefined
+                        ? Boolean(
+                            artwork.visible
+                        )
+                        : true,
 
                 sortOrder:
                     Number(
-                        artwork.sort_order ||
+                        artwork.sort_order ??
+                        artwork.sortOrder ??
                         0
                     )
             };
@@ -1820,7 +2326,9 @@ document.addEventListener(
 
                 updateDashboardStats();
 
-            } catch (error) {
+            } catch (
+                error
+            ) {
 
                 console.error(
                     "[Artworks]",
@@ -1837,7 +2345,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           ARTWORK — APERÇU IMAGE
+           ARTWORK — APERÇU
         ====================================================== */
 
         function revokeArtworkPreviewUrl() {
@@ -1856,13 +2364,13 @@ document.addEventListener(
         }
 
 
-        function showArtworkPreview(
-            {
-                src,
-                filename = "",
-                size = null
-            }
-        ) {
+        function showArtworkPreview({
+            src,
+            filename =
+                "",
+            size =
+                null
+        }) {
 
             if (
                 artworkPreviewImage
@@ -1891,7 +2399,8 @@ document.addEventListener(
             ) {
 
                 artworkFileSize.textContent =
-                    size !== null
+                    size !==
+                    null
                         ? formatFileSize(
                             size
                         )
@@ -1918,8 +2427,9 @@ document.addEventListener(
                 artworkPreviewImage
             ) {
 
-                artworkPreviewImage.src =
-                    "";
+                artworkPreviewImage.removeAttribute(
+                    "src"
+                );
             }
 
 
@@ -1941,16 +2451,18 @@ document.addEventListener(
             file
         ) {
 
-            if (!file) {
+            if (
+                !file
+            ) {
+
                 return;
             }
 
 
             if (
-                !ALLOWED_ARTWORK_TYPES
-                    .has(
-                        file.type
-                    )
+                !ALLOWED_ARTWORK_TYPES.has(
+                    file.type
+                )
             ) {
 
                 showToast(
@@ -2007,7 +2519,7 @@ document.addEventListener(
 
                 artworkMediaTypeInput.value =
                     file.type ===
-                    "image/gif"
+                        "image/gif"
                         ? "gif"
                         : "image";
             }
@@ -2042,10 +2554,6 @@ document.addEventListener(
         }
 
 
-        /* =====================================================
-           FICHIER -> BASE64
-        ====================================================== */
-
         function fileToBase64(
             file
         ) {
@@ -2077,9 +2585,11 @@ document.addEventListener(
 
 
                             resolve(
-                                commaIndex >= 0
+                                commaIndex >=
+                                    0
                                     ? result.slice(
-                                        commaIndex + 1
+                                        commaIndex +
+                                        1
                                     )
                                     : result
                             );
@@ -2104,10 +2614,6 @@ document.addEventListener(
             );
         }
 
-
-        /* =====================================================
-           UPLOAD ARTWORK
-        ====================================================== */
 
         async function uploadArtworkFile(
             file,
@@ -2157,7 +2663,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           FORMULAIRE ARTWORK
+           ARTWORK — FORMULAIRE
         ====================================================== */
 
         function resetArtworkForm() {
@@ -2168,12 +2674,14 @@ document.addEventListener(
             selectedArtworkFile =
                 null;
 
+
             artworkForm?.reset();
 
 
             if (
                 artworkIdInput
             ) {
+
                 artworkIdInput.value =
                     "";
             }
@@ -2182,7 +2690,17 @@ document.addEventListener(
             if (
                 artworkImageUrlInput
             ) {
+
                 artworkImageUrlInput.value =
+                    "";
+            }
+
+
+            if (
+                artworkFileInput
+            ) {
+
+                artworkFileInput.value =
                     "";
             }
 
@@ -2190,6 +2708,7 @@ document.addEventListener(
             if (
                 artworkSortOrderInput
             ) {
+
                 artworkSortOrderInput.value =
                     "0";
             }
@@ -2198,6 +2717,7 @@ document.addEventListener(
             if (
                 artworkButtonTextInput
             ) {
+
                 artworkButtonTextInput.value =
                     "Voir son profil";
             }
@@ -2206,6 +2726,7 @@ document.addEventListener(
             if (
                 artworkFavoriteInput
             ) {
+
                 artworkFavoriteInput.checked =
                     true;
             }
@@ -2214,14 +2735,25 @@ document.addEventListener(
             if (
                 artworkVisibleInput
             ) {
+
                 artworkVisibleInput.checked =
                     true;
             }
 
 
             if (
+                artworkSensitiveInput
+            ) {
+
+                artworkSensitiveInput.checked =
+                    false;
+            }
+
+
+            if (
                 artworkMediaTypeInput
             ) {
+
                 artworkMediaTypeInput.value =
                     "image";
             }
@@ -2255,24 +2787,48 @@ document.addEventListener(
                 "gallery"
             );
 
+
             resetArtworkForm();
 
 
             artworkFormPanel
                 ?.scrollIntoView({
                     behavior:
-                        "smooth"
+                        "smooth",
+
+                    block:
+                        "start"
                 });
 
 
-            artworkArtIdInput
-                ?.focus();
+            window.setTimeout(
+                () => {
+
+                    artworkArtIdInput
+                        ?.focus();
+
+                },
+                300
+            );
         }
 
 
         function fillArtworkForm(
             artwork
         ) {
+
+            if (
+                !artwork
+            ) {
+
+                return;
+            }
+
+
+            openSection(
+                "gallery"
+            );
+
 
             currentEditingArtworkId =
                 artwork.id;
@@ -2281,73 +2837,192 @@ document.addEventListener(
                 null;
 
 
-            artworkIdInput.value =
-                artwork.id;
+            if (
+                artworkIdInput
+            ) {
 
-            artworkArtIdInput.value =
-                artwork.artId ||
-                "";
+                artworkIdInput.value =
+                    artwork.id ||
+                    "";
+            }
 
-            artworkSortOrderInput.value =
-                artwork.sortOrder ??
-                0;
 
-            artworkArtistInput.value =
-                artwork.artist ||
-                "";
+            if (
+                artworkArtIdInput
+            ) {
 
-            artworkRoleInput.value =
-                artwork.artistRole ||
-                "";
+                artworkArtIdInput.value =
+                    artwork.artId ||
+                    "";
+            }
 
-            artworkImageUrlInput.value =
-                artwork.imageUrl ||
-                "";
 
-            artworkImageAltInput.value =
-                artwork.imageAlt ||
-                "";
+            if (
+                artworkSortOrderInput
+            ) {
 
-            artworkMediaTypeInput.value =
-                artwork.mediaType ||
-                "image";
+                artworkSortOrderInput.value =
+                    artwork.sortOrder ??
+                    0;
+            }
 
-            artworkTagsInput.value =
-                (artwork.tags || [])
-                    .join(", ");
 
-            artworkDescriptionInput.value =
-                artwork.description ||
-                "";
+            if (
+                artworkArtistInput
+            ) {
 
-            artworkImageMessagesInput.value =
-                (
-                    artwork.imageMessages ||
-                    []
-                ).join("|");
+                artworkArtistInput.value =
+                    artwork.artist ||
+                    "";
+            }
 
-            artworkArtistUrlInput.value =
-                artwork.artistUrl ||
-                "";
 
-            artworkButtonTextInput.value =
-                artwork.buttonText ||
-                "Voir son profil";
+            if (
+                artworkRoleInput
+            ) {
 
-            artworkButtonMessagesInput.value =
-                (
-                    artwork.buttonMessages ||
-                    []
-                ).join("|");
+                artworkRoleInput.value =
+                    artwork.artistRole ||
+                    "";
+            }
 
-            artworkSensitiveInput.checked =
-                artwork.sensitive;
 
-            artworkFavoriteInput.checked =
-                artwork.favoriteEnabled;
+            if (
+                artworkImageUrlInput
+            ) {
 
-            artworkVisibleInput.checked =
-                artwork.visible;
+                artworkImageUrlInput.value =
+                    artwork.imageUrl ||
+                    "";
+            }
+
+
+            if (
+                artworkImageAltInput
+            ) {
+
+                artworkImageAltInput.value =
+                    artwork.imageAlt ||
+                    "";
+            }
+
+
+            if (
+                artworkMediaTypeInput
+            ) {
+
+                artworkMediaTypeInput.value =
+                    artwork.mediaType ||
+                    "image";
+            }
+
+
+            if (
+                artworkTagsInput
+            ) {
+
+                artworkTagsInput.value =
+                    (
+                        artwork.tags ||
+                        []
+                    )
+                        .join(
+                            ", "
+                        );
+            }
+
+
+            if (
+                artworkDescriptionInput
+            ) {
+
+                artworkDescriptionInput.value =
+                    artwork.description ||
+                    "";
+            }
+
+
+            if (
+                artworkImageMessagesInput
+            ) {
+
+                artworkImageMessagesInput.value =
+                    (
+                        artwork.imageMessages ||
+                        []
+                    )
+                        .join(
+                            "|"
+                        );
+            }
+
+
+            if (
+                artworkArtistUrlInput
+            ) {
+
+                artworkArtistUrlInput.value =
+                    artwork.artistUrl ||
+                    "";
+            }
+
+
+            if (
+                artworkButtonTextInput
+            ) {
+
+                artworkButtonTextInput.value =
+                    artwork.buttonText ||
+                    "Voir son profil";
+            }
+
+
+            if (
+                artworkButtonMessagesInput
+            ) {
+
+                artworkButtonMessagesInput.value =
+                    (
+                        artwork.buttonMessages ||
+                        []
+                    )
+                        .join(
+                            "|"
+                        );
+            }
+
+
+            if (
+                artworkSensitiveInput
+            ) {
+
+                artworkSensitiveInput.checked =
+                    Boolean(
+                        artwork.sensitive
+                    );
+            }
+
+
+            if (
+                artworkFavoriteInput
+            ) {
+
+                artworkFavoriteInput.checked =
+                    Boolean(
+                        artwork.favoriteEnabled
+                    );
+            }
+
+
+            if (
+                artworkVisibleInput
+            ) {
+
+                artworkVisibleInput.checked =
+                    Boolean(
+                        artwork.visible
+                    );
+            }
 
 
             if (
@@ -2364,17 +3039,31 @@ document.addEventListener(
             }
 
 
-            artworkFormTitle.textContent =
-                "Modifier l'illustration";
+            if (
+                artworkFormTitle
+            ) {
 
-            artworkSubmitButton.textContent =
-                "💾 Enregistrer les modifications";
+                artworkFormTitle.textContent =
+                    "Modifier l'illustration";
+            }
+
+
+            if (
+                artworkSubmitButton
+            ) {
+
+                artworkSubmitButton.textContent =
+                    "💾 Enregistrer les modifications";
+            }
 
 
             artworkFormPanel
                 ?.scrollIntoView({
                     behavior:
-                        "smooth"
+                        "smooth",
+
+                    block:
+                        "start"
                 });
         }
 
@@ -2384,7 +3073,6 @@ document.addEventListener(
         ) {
 
             return {
-
                 id:
                     currentEditingArtworkId,
 
@@ -2393,28 +3081,32 @@ document.addEventListener(
                         artworkArtIdInput
                             ?.value ||
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 artist:
                     String(
                         artworkArtistInput
                             ?.value ||
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 artistRole:
                     String(
                         artworkRoleInput
                             ?.value ||
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 description:
                     String(
                         artworkDescriptionInput
                             ?.value ||
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 imageUrl,
 
@@ -2423,7 +3115,8 @@ document.addEventListener(
                         artworkImageAltInput
                             ?.value ||
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 mediaType:
                     artworkMediaTypeInput
@@ -2447,14 +3140,16 @@ document.addEventListener(
                         artworkArtistUrlInput
                             ?.value ||
                         ""
-                    ).trim(),
+                    )
+                        .trim(),
 
                 buttonText:
                     String(
                         artworkButtonTextInput
                             ?.value ||
                         "Voir son profil"
-                    ).trim(),
+                    )
+                        .trim(),
 
                 buttonMessages:
                     normalizeMessages(
@@ -2490,10 +3185,6 @@ document.addEventListener(
         }
 
 
-        /* =====================================================
-           ENREGISTRER ARTWORK
-        ====================================================== */
-
         async function saveArtworkFromForm(
             event
         ) {
@@ -2506,7 +3197,8 @@ document.addEventListener(
                     artworkArtIdInput
                         ?.value ||
                     ""
-                ).trim();
+                )
+                    .trim();
 
 
             const artist =
@@ -2514,10 +3206,13 @@ document.addEventListener(
                     artworkArtistInput
                         ?.value ||
                     ""
-                ).trim();
+                )
+                    .trim();
 
 
-            if (!artId) {
+            if (
+                !artId
+            ) {
 
                 showToast(
                     "L'ID de l'œuvre est obligatoire.",
@@ -2528,7 +3223,9 @@ document.addEventListener(
             }
 
 
-            if (!artist) {
+            if (
+                !artist
+            ) {
 
                 showToast(
                     "Le nom de l'artiste est obligatoire.",
@@ -2550,7 +3247,8 @@ document.addEventListener(
                     artworkImageUrlInput
                         ?.value ||
                     ""
-                ).trim();
+                )
+                    .trim();
 
 
             if (
@@ -2569,18 +3267,19 @@ document.addEventListener(
 
             try {
 
-                artworkSubmitButton.disabled =
-                    true;
+                if (
+                    artworkSubmitButton
+                ) {
 
-                artworkSubmitButton.textContent =
-                    selectedArtworkFile
-                        ? "⏳ Upload de l'image..."
-                        : "⏳ Enregistrement...";
+                    artworkSubmitButton.disabled =
+                        true;
 
+                    artworkSubmitButton.textContent =
+                        selectedArtworkFile
+                            ? "⏳ Upload de l'image..."
+                            : "⏳ Enregistrement...";
+                }
 
-                /* =============================================
-                   UPLOAD IMAGE
-                ============================================== */
 
                 if (
                     selectedArtworkFile
@@ -2597,18 +3296,24 @@ document.addEventListener(
                         uploaded.url;
 
 
-                    artworkImageUrlInput.value =
-                        imageUrl;
+                    if (
+                        artworkImageUrlInput
+                    ) {
+
+                        artworkImageUrlInput.value =
+                            imageUrl;
+                    }
 
 
-                    artworkSubmitButton.textContent =
-                        "⏳ Enregistrement...";
+                    if (
+                        artworkSubmitButton
+                    ) {
+
+                        artworkSubmitButton.textContent =
+                            "⏳ Enregistrement...";
+                    }
                 }
 
-
-                /* =============================================
-                   DONNÉES
-                ============================================== */
 
                 const artwork =
                     buildArtworkFromForm(
@@ -2647,7 +3352,9 @@ document.addEventListener(
                     );
 
 
-                if (editing) {
+                if (
+                    editing
+                ) {
 
                     const index =
                         artworks.findIndex(
@@ -2658,7 +3365,8 @@ document.addEventListener(
 
 
                     if (
-                        index >= 0
+                        index >=
+                        0
                     ) {
 
                         artworks[index] =
@@ -2681,11 +3389,11 @@ document.addEventListener(
 
                 artworks.sort(
                     (
-                        a,
-                        b
+                        first,
+                        second
                     ) =>
-                        a.sortOrder -
-                        b.sortOrder
+                        first.sortOrder -
+                        second.sortOrder
                 );
 
 
@@ -2703,7 +3411,9 @@ document.addEventListener(
                     "success"
                 );
 
-            } catch (error) {
+            } catch (
+                error
+            ) {
 
                 console.error(
                     "[Artwork Save]",
@@ -2719,20 +3429,24 @@ document.addEventListener(
 
             } finally {
 
-                artworkSubmitButton.disabled =
-                    false;
+                if (
+                    artworkSubmitButton
+                ) {
 
+                    artworkSubmitButton.disabled =
+                        false;
 
-                artworkSubmitButton.textContent =
-                    currentEditingArtworkId
-                        ? "💾 Enregistrer les modifications"
-                        : "💾 Enregistrer l'œuvre";
+                    artworkSubmitButton.textContent =
+                        currentEditingArtworkId
+                            ? "💾 Enregistrer les modifications"
+                            : "💾 Enregistrer l'œuvre";
+                }
             }
         }
 
 
         /* =====================================================
-           CARTE ARTWORK ADMIN
+           ARTWORK — AFFICHAGE
         ====================================================== */
 
         function createArtworkItem(
@@ -2743,6 +3457,7 @@ document.addEventListener(
                 document.createElement(
                     "article"
                 );
+
 
             article.className =
                 "admin-artwork-item";
@@ -2757,8 +3472,9 @@ document.addEventListener(
 
 
             article.innerHTML = `
-
-                <div class="admin-artwork-item-image">
+                <div
+                    class="admin-artwork-item-image"
+                >
 
                     <img
                         src="${escapeHtmlAttribute(
@@ -2799,33 +3515,32 @@ document.addEventListener(
                 </div>
 
 
-                <div class="admin-artwork-item-content">
+                <div
+                    class="admin-artwork-item-content"
+                >
 
-                    <div class="admin-artwork-item-heading">
+                    <span
+                        class="admin-artwork-id"
+                    >
+                        #${escapeHtml(
+                            artwork.artId
+                        )}
+                    </span>
 
-                        <div>
 
-                            <span class="admin-artwork-id">
-                                #${escapeHtml(
-                                    artwork.artId
-                                )}
-                            </span>
-
-                            <h3>
-                                ${escapeHtml(
-                                    artwork.artist
-                                )}
-                            </h3>
-
-                        </div>
-
-                    </div>
+                    <h3>
+                        ${escapeHtml(
+                            artwork.artist
+                        )}
+                    </h3>
 
 
                     ${
                         artwork.artistRole
                             ? `
-                                <p class="artist-role">
+                                <p
+                                    class="artist-role"
+                                >
                                     ${escapeHtml(
                                         artwork.artistRole
                                     )}
@@ -2838,7 +3553,9 @@ document.addEventListener(
                     ${
                         artwork.description
                             ? `
-                                <p class="admin-artwork-description">
+                                <p
+                                    class="admin-artwork-description"
+                                >
                                     ${escapeHtml(
                                         artwork.description
                                     )}
@@ -2851,32 +3568,38 @@ document.addEventListener(
                     ${
                         tags.length
                             ? `
-                                <div class="admin-game-item-meta">
-
-                                    ${tags
-                                        .map(
-                                            tag => `
-                                                <span>
-                                                    ${escapeHtml(
-                                                        tag
-                                                    )}
-                                                </span>
-                                            `
-                                        )
-                                        .join("")}
-
+                                <div
+                                    class="admin-game-item-meta"
+                                >
+                                    ${
+                                        tags
+                                            .map(
+                                                tag => `
+                                                    <span>
+                                                        ${escapeHtml(
+                                                            tag
+                                                        )}
+                                                    </span>
+                                                `
+                                            )
+                                            .join(
+                                                ""
+                                            )
+                                    }
                                 </div>
                             `
                             : ""
                     }
 
 
-                    <div class="admin-game-item-meta">
+                    <div
+                        class="admin-game-item-meta"
+                    >
 
                         ${
                             artwork.favoriteEnabled
                                 ? "<span>❤️ Favoris</span>"
-                                : ""
+                                : "<span>🤍 Favoris désactivés</span>"
                         }
 
                         ${
@@ -2894,7 +3617,9 @@ document.addEventListener(
                     </div>
 
 
-                    <div class="admin-game-item-actions">
+                    <div
+                        class="admin-game-item-actions"
+                    >
 
                         <button
                             type="button"
@@ -2905,6 +3630,7 @@ document.addEventListener(
                         >
                             ✏️ Modifier
                         </button>
+
 
                         <button
                             type="button"
@@ -2926,13 +3652,12 @@ document.addEventListener(
         }
 
 
-        /* =====================================================
-           AFFICHAGE ARTWORKS
-        ====================================================== */
-
         function renderArtworks() {
 
-            if (!artworksList) {
+            if (
+                !artworksList
+            ) {
+
                 return;
             }
 
@@ -2954,28 +3679,33 @@ document.addEventListener(
 
 
             let filtered =
-                [...artworks];
+                [
+                    ...artworks
+                ];
 
 
-            if (search) {
+            if (
+                search
+            ) {
 
                 filtered =
                     filtered.filter(
                         artwork => {
 
-                            const searchable =
-                                [
-                                    artwork.artId,
-                                    artwork.artist,
-                                    artwork.artistRole,
-                                    artwork.description,
-                                    ...(artwork.tags || [])
-                                ]
-                                    .join(" ")
-                                    .toLowerCase();
-
-
-                            return searchable
+                            return [
+                                artwork.artId,
+                                artwork.artist,
+                                artwork.artistRole,
+                                artwork.description,
+                                ...(
+                                    artwork.tags ||
+                                    []
+                                )
+                            ]
+                                .join(
+                                    " "
+                                )
+                                .toLowerCase()
                                 .includes(
                                     search
                                 );
@@ -2984,7 +3714,9 @@ document.addEventListener(
             }
 
 
-            switch (filter) {
+            switch (
+                filter
+            ) {
 
                 case "visible":
 
@@ -3033,11 +3765,11 @@ document.addEventListener(
 
             filtered.sort(
                 (
-                    a,
-                    b
+                    first,
+                    second
                 ) =>
-                    a.sortOrder -
-                    b.sortOrder
+                    first.sortOrder -
+                    second.sortOrder
             );
 
 
@@ -3051,7 +3783,9 @@ document.addEventListener(
             ) {
 
                 artworksList.innerHTML = `
-                    <p class="admin-empty-state">
+                    <p
+                        class="admin-empty-state"
+                    >
                         Aucune illustration trouvée.
                     </p>
                 `;
@@ -3074,6 +3808,189 @@ document.addEventListener(
 
 
         /* =====================================================
+           SONDAGE
+        ====================================================== */
+
+        function renderPollGames() {
+
+            if (
+                !pollGamesList
+            ) {
+
+                return;
+            }
+
+
+            const eligibleGames =
+                games.filter(
+                    game =>
+                        Boolean(
+                            game.pollEnabled
+                        )
+                );
+
+
+            if (
+                pollGameCount
+            ) {
+
+                pollGameCount.textContent =
+                    String(
+                        eligibleGames.length
+                    );
+            }
+
+
+            pollGamesList.innerHTML =
+                "";
+
+
+            if (
+                eligibleGames.length ===
+                0
+            ) {
+
+                pollGamesList.innerHTML = `
+                    <p
+                        class="admin-empty-state"
+                    >
+                        Aucun jeu n'est activé pour le sondage.
+                    </p>
+                `;
+
+                return;
+            }
+
+
+            eligibleGames.forEach(
+                game => {
+
+                    const article =
+                        document.createElement(
+                            "article"
+                        );
+
+
+                    article.className =
+                        "admin-game-item";
+
+
+                    article.innerHTML = `
+                        <div
+                            class="admin-game-item-cover"
+                        >
+
+                            ${
+                                game.boxArtUrl
+                                    ? `
+                                        <img
+                                            src="${escapeHtmlAttribute(
+                                                game.boxArtUrl
+                                            )}"
+                                            alt=""
+                                            loading="lazy"
+                                        >
+                                    `
+                                    : "🎮"
+                            }
+
+                        </div>
+
+                        <div
+                            class="admin-game-item-content"
+                        >
+
+                            <h3>
+                                ${escapeHtml(
+                                    game.twitchName ||
+                                    game.name ||
+                                    "Jeu"
+                                )}
+                            </h3>
+
+                            <div
+                                class="admin-game-item-meta"
+                            >
+                                <span>
+                                    🗳️ Sondage activé
+                                </span>
+                            </div>
+
+                        </div>
+                    `;
+
+
+                    pollGamesList.appendChild(
+                        article
+                    );
+                }
+            );
+        }
+
+
+        /* =====================================================
+           DASHBOARD — STATS
+        ====================================================== */
+
+        function updateDashboardStats() {
+
+            if (
+                statGames
+            ) {
+
+                statGames.textContent =
+                    String(
+                        games.length
+                    );
+            }
+
+
+            if (
+                statArtworks
+            ) {
+
+                statArtworks.textContent =
+                    String(
+                        artworks.length
+                    );
+            }
+
+
+            const pollGames =
+                games.filter(
+                    game =>
+                        Boolean(
+                            game.pollEnabled
+                        )
+                );
+
+
+            if (
+                statPoll
+            ) {
+
+                statPoll.textContent =
+                    String(
+                        pollGames.length
+                    );
+            }
+
+
+            /*
+             * Le vrai système de vote Supabase
+             * n'est pas encore créé.
+             */
+            if (
+                statVotes
+            ) {
+
+                statVotes.textContent =
+                    "0";
+            }
+        }
+
+
+        /* =====================================================
            MODAL SUPPRESSION
         ====================================================== */
 
@@ -3089,7 +4006,10 @@ document.addEventListener(
                 );
 
 
-            if (!game) {
+            if (
+                !game
+            ) {
+
                 return;
             }
 
@@ -3102,14 +4022,26 @@ document.addEventListener(
             };
 
 
-            confirmMessage.textContent =
-                `Veux-tu vraiment supprimer ${
-                    game.twitchName
-                } ?`;
+            if (
+                confirmMessage
+            ) {
+
+                confirmMessage.textContent =
+                    `Veux-tu vraiment supprimer ${
+                        game.twitchName ||
+                        game.name ||
+                        "ce jeu"
+                    } ?`;
+            }
 
 
-            confirmModal.hidden =
-                false;
+            if (
+                confirmModal
+            ) {
+
+                confirmModal.hidden =
+                    false;
+            }
         }
 
 
@@ -3125,7 +4057,10 @@ document.addEventListener(
                 );
 
 
-            if (!artwork) {
+            if (
+                !artwork
+            ) {
+
                 return;
             }
 
@@ -3138,16 +4073,26 @@ document.addEventListener(
             };
 
 
-            confirmMessage.textContent =
-                `Veux-tu vraiment supprimer l'œuvre #${
-                    artwork.artId
-                } de ${
-                    artwork.artist
-                } ? L'image sera également supprimée du Storage.`;
+            if (
+                confirmMessage
+            ) {
+
+                confirmMessage.textContent =
+                    `Veux-tu vraiment supprimer l'œuvre #${
+                        artwork.artId
+                    } de ${
+                        artwork.artist
+                    } ? L'image sera également supprimée du Storage.`;
+            }
 
 
-            confirmModal.hidden =
-                false;
+            if (
+                confirmModal
+            ) {
+
+                confirmModal.hidden =
+                    false;
+            }
         }
 
 
@@ -3162,8 +4107,13 @@ document.addEventListener(
             };
 
 
-            confirmModal.hidden =
-                true;
+            if (
+                confirmModal
+            ) {
+
+                confirmModal.hidden =
+                    true;
+            }
         }
 
 
@@ -3173,6 +4123,7 @@ document.addEventListener(
                 !pendingDelete.type ||
                 !pendingDelete.id
             ) {
+
                 return;
             }
 
@@ -3186,11 +4137,16 @@ document.addEventListener(
 
             try {
 
-                confirmDelete.disabled =
-                    true;
+                if (
+                    confirmDelete
+                ) {
 
-                confirmDelete.textContent =
-                    "⏳ Suppression...";
+                    confirmDelete.disabled =
+                        true;
+
+                    confirmDelete.textContent =
+                        "⏳ Suppression...";
+                }
 
 
                 if (
@@ -3231,6 +4187,7 @@ document.addEventListener(
                     renderGames();
 
                     renderPollGames();
+
 
                 } else if (
                     type ===
@@ -3277,13 +4234,16 @@ document.addEventListener(
 
 
                 showToast(
-                    type === "game"
+                    type ===
+                        "game"
                         ? "Jeu supprimé."
                         : "Illustration supprimée.",
                     "success"
                 );
 
-            } catch (error) {
+            } catch (
+                error
+            ) {
 
                 showToast(
                     error.message,
@@ -3292,148 +4252,40 @@ document.addEventListener(
 
             } finally {
 
-                confirmDelete.disabled =
-                    false;
+                if (
+                    confirmDelete
+                ) {
 
-                confirmDelete.textContent =
-                    "🗑️ Supprimer";
+                    confirmDelete.disabled =
+                        false;
+
+                    confirmDelete.textContent =
+                        "🗑️ Supprimer";
+                }
             }
         }
 
 
         /* =====================================================
-           SONDAGE
-        ====================================================== */
-
-        function renderPollGames() {
-
-            if (!pollGamesList) {
-                return;
-            }
-
-
-            const eligibleGames =
-                games.filter(
-                    game =>
-                        game.pollEnabled
-                );
-
-
-            pollGamesList.innerHTML =
-                "";
-
-
-            if (
-                eligibleGames.length ===
-                0
-            ) {
-
-                pollGamesList.innerHTML = `
-                    <p class="admin-empty-state">
-                        Aucun jeu éligible au sondage.
-                    </p>
-                `;
-
-            } else {
-
-                eligibleGames.forEach(
-                    game => {
-
-                        const label =
-                            document.createElement(
-                                "label"
-                            );
-
-                        label.className =
-                            "admin-poll-game-option";
-
-
-                        label.innerHTML = `
-
-                            <input
-                                type="checkbox"
-                                value="${escapeHtmlAttribute(
-                                    game.id
-                                )}"
-                                checked
-                            >
-
-                            <span>
-                                ${escapeHtml(
-                                    game.twitchName
-                                )}
-                            </span>
-                        `;
-
-
-                        pollGamesList
-                            .appendChild(
-                                label
-                            );
-                    }
-                );
-            }
-
-
-            if (
-                pollGameCount
-            ) {
-
-                pollGameCount.textContent =
-                    String(
-                        eligibleGames.length
-                    );
-            }
-        }
-
-
-        /* =====================================================
-           DASHBOARD
-        ====================================================== */
-
-        function updateDashboardStats() {
-
-            if (statGames) {
-
-                statGames.textContent =
-                    String(
-                        games.length
-                    );
-            }
-
-
-            if (statArtworks) {
-
-                statArtworks.textContent =
-                    String(
-                        artworks.length
-                    );
-            }
-
-
-            if (statPoll) {
-
-                statPoll.textContent =
-                    "—";
-            }
-
-
-            if (statVotes) {
-
-                statVotes.textContent =
-                    "0";
-            }
-        }
-
-
-        /* =====================================================
-           DRAG & DROP
+           UPLOAD — ÉVÉNEMENTS
         ====================================================== */
 
         artworkDropzone
             ?.addEventListener(
                 "click",
-                () => {
+                event => {
+
+                    if (
+                        event.target instanceof
+                            Element &&
+                        event.target.closest(
+                            "button"
+                        )
+                    ) {
+
+                        return;
+                    }
+
 
                     artworkFileInput
                         ?.click();
@@ -3447,17 +4299,21 @@ document.addEventListener(
                 event => {
 
                     if (
-                        event.key ===
-                        "Enter" ||
-                        event.key ===
-                        " "
+                        event.key !==
+                            "Enter" &&
+                        event.key !==
+                            " "
                     ) {
 
-                        event.preventDefault();
-
-                        artworkFileInput
-                            ?.click();
+                        return;
                     }
+
+
+                    event.preventDefault();
+
+
+                    artworkFileInput
+                        ?.click();
                 }
             );
 
@@ -3472,7 +4328,9 @@ document.addEventListener(
                             .files?.[0];
 
 
-                    if (file) {
+                    if (
+                        file
+                    ) {
 
                         selectArtworkFile(
                             file
@@ -3494,6 +4352,7 @@ document.addEventListener(
                         event => {
 
                             event.preventDefault();
+
 
                             artworkDropzone
                                 .classList
@@ -3519,6 +4378,7 @@ document.addEventListener(
 
                             event.preventDefault();
 
+
                             artworkDropzone
                                 .classList
                                 .remove(
@@ -3536,11 +4396,14 @@ document.addEventListener(
                 event => {
 
                     const file =
-                        event.dataTransfer
+                        event
+                            .dataTransfer
                             ?.files?.[0];
 
 
-                    if (file) {
+                    if (
+                        file
+                    ) {
 
                         selectArtworkFile(
                             file
@@ -3553,12 +4416,17 @@ document.addEventListener(
         artworkRemoveImage
             ?.addEventListener(
                 "click",
-                removeSelectedArtworkImage
+                event => {
+
+                    event.preventDefault();
+
+                    removeSelectedArtworkImage();
+                }
             );
 
 
         /* =====================================================
-           NAVIGATION — ÉVÉNEMENTS
+           NAVIGATION — MENU
         ====================================================== */
 
         navButtons.forEach(
@@ -3566,7 +4434,10 @@ document.addEventListener(
 
                 button.addEventListener(
                     "click",
-                    () => {
+                    event => {
+
+                        event.preventDefault();
+
 
                         openSection(
                             button.dataset
@@ -3578,21 +4449,56 @@ document.addEventListener(
         );
 
 
+        /* =====================================================
+           ACTIONS RAPIDES DU DASHBOARD
+        ====================================================== */
+
         quickActions.forEach(
             button => {
 
                 button.addEventListener(
                     "click",
-                    () => {
+                    event => {
+
+                        /*
+                         * IMPORTANT :
+                         *
+                         * Empêche un bouton du dashboard
+                         * de soumettre un formulaire ou
+                         * d'exécuter une navigation parasite.
+                         */
+                        event.preventDefault();
+
 
                         const section =
-                            button.dataset
-                                .openSection;
+                            String(
+                                button.dataset
+                                    .openSection ||
+                                ""
+                            )
+                                .trim();
+
+
+                        const action =
+                            String(
+                                button.dataset
+                                    .adminAction ||
+                                ""
+                            )
+                                .trim();
+
+
+                        console.info(
+                            "[Admin Action]",
+                            {
+                                section,
+                                action
+                            }
+                        );
 
 
                         if (
-                            button.dataset
-                                .adminAction ===
+                            action ===
                             "new-game"
                         ) {
 
@@ -3603,8 +4509,7 @@ document.addEventListener(
 
 
                         if (
-                            button.dataset
-                                .adminAction ===
+                            action ===
                             "new-artwork"
                         ) {
 
@@ -3614,9 +4519,14 @@ document.addEventListener(
                         }
 
 
-                        openSection(
+                        if (
                             section
-                        );
+                        ) {
+
+                            openSection(
+                                section
+                            );
+                        }
                     }
                 );
             }
@@ -3630,21 +4540,36 @@ document.addEventListener(
         newGameButton
             ?.addEventListener(
                 "click",
-                openNewGameForm
+                event => {
+
+                    event.preventDefault();
+
+                    openNewGameForm();
+                }
             );
 
 
         cancelGameButton
             ?.addEventListener(
                 "click",
-                resetGameForm
+                event => {
+
+                    event.preventDefault();
+
+                    resetGameForm();
+                }
             );
 
 
         twitchPreviewButton
             ?.addEventListener(
                 "click",
-                previewTwitchGame
+                event => {
+
+                    event.preventDefault();
+
+                    previewTwitchGame();
+                }
             );
 
 
@@ -3673,6 +4598,7 @@ document.addEventListener(
                             Element
                         )
                     ) {
+
                         return;
                     }
 
@@ -3683,7 +4609,9 @@ document.addEventListener(
                         );
 
 
-                    if (editButton) {
+                    if (
+                        editButton
+                    ) {
 
                         const game =
                             games.find(
@@ -3694,7 +4622,9 @@ document.addEventListener(
                             );
 
 
-                        if (game) {
+                        if (
+                            game
+                        ) {
 
                             fillGameForm(
                                 game
@@ -3712,7 +4642,9 @@ document.addEventListener(
                         );
 
 
-                    if (deleteButton) {
+                    if (
+                        deleteButton
+                    ) {
 
                         openGameDeleteModal(
                             deleteButton.dataset
@@ -3730,14 +4662,24 @@ document.addEventListener(
         newArtworkButton
             ?.addEventListener(
                 "click",
-                openNewArtworkForm
+                event => {
+
+                    event.preventDefault();
+
+                    openNewArtworkForm();
+                }
             );
 
 
         artworkCancelButton
             ?.addEventListener(
                 "click",
-                resetArtworkForm
+                event => {
+
+                    event.preventDefault();
+
+                    resetArtworkForm();
+                }
             );
 
 
@@ -3773,6 +4715,7 @@ document.addEventListener(
                             Element
                         )
                     ) {
+
                         return;
                     }
 
@@ -3783,7 +4726,9 @@ document.addEventListener(
                         );
 
 
-                    if (editButton) {
+                    if (
+                        editButton
+                    ) {
 
                         const artwork =
                             artworks.find(
@@ -3794,7 +4739,9 @@ document.addEventListener(
                             );
 
 
-                        if (artwork) {
+                        if (
+                            artwork
+                        ) {
 
                             fillArtworkForm(
                                 artwork
@@ -3812,7 +4759,9 @@ document.addEventListener(
                         );
 
 
-                    if (deleteButton) {
+                    if (
+                        deleteButton
+                    ) {
 
                         openArtworkDeleteModal(
                             deleteButton.dataset
@@ -3824,27 +4773,42 @@ document.addEventListener(
 
 
         /* =====================================================
-           MODAL
+           MODAL — ÉVÉNEMENTS
         ====================================================== */
 
         confirmClose
             ?.addEventListener(
                 "click",
-                closeDeleteModal
+                event => {
+
+                    event.preventDefault();
+
+                    closeDeleteModal();
+                }
             );
 
 
         confirmCancel
             ?.addEventListener(
                 "click",
-                closeDeleteModal
+                event => {
+
+                    event.preventDefault();
+
+                    closeDeleteModal();
+                }
             );
 
 
         confirmDelete
             ?.addEventListener(
                 "click",
-                confirmPendingDelete
+                event => {
+
+                    event.preventDefault();
+
+                    confirmPendingDelete();
+                }
             );
 
 
@@ -3864,17 +4828,13 @@ document.addEventListener(
             );
 
 
-        /* =====================================================
-           ESCAPE
-        ====================================================== */
-
         document.addEventListener(
             "keydown",
             event => {
 
                 if (
                     event.key ===
-                    "Escape" &&
+                        "Escape" &&
                     confirmModal &&
                     !confirmModal.hidden
                 ) {
@@ -3893,7 +4853,10 @@ document.addEventListener(
             await checkAdminAuthentication();
 
 
-        if (!authenticatedAdmin) {
+        if (
+            !authenticatedAdmin
+        ) {
+
             return;
         }
 
@@ -3906,11 +4869,6 @@ document.addEventListener(
         createLogoutButton();
 
 
-        /*
-         * Les deux bases sont chargées
-         * en parallèle.
-         */
-
         await Promise.all([
             loadGames(),
             loadArtworks()
@@ -3920,9 +4878,36 @@ document.addEventListener(
         updateDashboardStats();
 
 
+        /*
+         * Si aucune section n'est active,
+         * ouvre le dashboard.
+         */
+        const activeSection =
+            sections.find(
+                section =>
+                    !section.hidden
+            );
+
+
+        if (
+            !activeSection
+        ) {
+
+            openSection(
+                "dashboard"
+            );
+        }
+
+
         console.info(
             "[Admin] Interface initialisée pour :",
             authenticatedAdmin.login
+        );
+
+
+        console.info(
+            "[Admin] Actions rapides trouvées :",
+            quickActions.length
         );
     }
 );
