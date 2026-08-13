@@ -1,1726 +1,394 @@
 <!DOCTYPE html>
-<HTML lang="fr">
+
+<html lang="fr">
+
 <head>
-    <meta charset="utf-8" />
-    <title>Couaxia</title>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Crédits | Couaxia
+    </title>
+
+
+    <!-- =====================================================
+         CSS
+    ====================================================== -->
+
     <link href="./css/credits.css" rel="stylesheet">
     <link href="./css/style.css" rel="stylesheet">
-    <link href="./css/scroll-page.css" rel="stylesheet">
+    <link href="./css/scroll-page.css"rel="stylesheet">
+
+    <!-- =====================================================
+         FAVICON
+    ====================================================== -->
+
     <link rel="icon" type="image/png" href="./images/logo/Logo Transparents 2.png">
+
 </head>
-         <body>
-            <header class="site-header">
+
+
+<body>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="site-header">
+
         <nav class="navbar">
-            <a class="navbar-logo">
-                <video autoplay muted loop playsinline  aria-label="Logo animé de Couaxia">
-                        <source src="./images/logo/Transparents.webm" alt="Accueil Couaxia" type="video/webm"> 
-                </video> 
+            <!-- =============================================
+                 LOGO
+            ============================================== -->  
+            <a>
+                <video autoplay muted loop playsinline aria-label="Logo animé de Couaxia">
+                    <source src="./images/logo/Transparents.webm" type="video/webm">
+                </video>
             </a>
+
+            <!-- =============================================
+                 NAVIGATION
+            ============================================== -->
+
             <div class="navbar-links">
-                <a href="./accueil.html">🏠 Accueil</a>
-                <a href="./a-propos.html" >👤 Mes informations</a>
-                <a href="./Histoire/debut_histoire.html" >📖 Mon histoire</a>
-                <a href="./credits.html" aria-current="page" >🎨 Crédits</a>
+
+                <a href="./accueil.html">🏠 Accueil </a>
+                <a href="./a-propos.html">👤 Mes informations</a>
+                <a href="./games.html">🕹️ Jeux</a>
+                <a href="./Histoire/debut_histoire.html">📖 Mon histoire</a>
+                <a href="./credits.html" aria-current="page"> 🎨 Crédits</a>
+
             </div>
-                <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Activer le mode nuit" title="Changer le thème">
-                    <span class="theme-icon" aria-hidden="true">🌙</span>
-                    <span class="theme-text">Mode nuit</span>
-                </button>
+
+                <a href="./admin/admin.html" class="admin-access-link">⚙️ Admin</a>
+
+            <!-- =============================================
+                 THÈME
+            ============================================== -->
+
+            <button id="theme-toggle" class="theme-toggle"
+                type="button" aria-label="Activer le mode nuit" title="Changer le thème">
+
+                <span class="theme-icon" aria-hidden="true">
+                    🌙
+                </span>
+                <span class="theme-text">
+                    Mode nuit
+                </span>
+
+            </button>
+
         </nav>
-    </header>                 
-
-            <section id="credits">
-                <header class="credits-page-header">
-                    <h2>🎨 Les Crédits</h2>
-                    <p>
-                        Découvrez les artistes qui ont donné vie à Couaxia,
-                        à ses compagnons et à son stream.
-                    </p>
-                </header>
-                    <div class="credits-global-filter">
-                        <label for="credits-category-filter">
-                                🔎 Explorer la galerie
-                        </label>
-                            <div class="credits-select-wrapper">
-                                <select id="credits-category-filter">
-                                    <option value="all">
-                                        Toutes les œuvres
-                                    </option>
-                                    <optgroup label="🌌 Couaxia">
-                                        <option value="couaxia">
-                                            Toutes les illustrations
-                                        </option>
-                                        <option value="forme-2">
-                                            Forme 2
-                                        </option>
-                                        <option value="forme-3">
-                                            Forme 3
-                                        </option>
-                                    </optgroup>
-
-                                    <optgroup label="🐉 Compagnons">
-                                        <option value="compagnons">
-                                            Tous les compagnons
-                                        </option>
-                                    </optgroup>
-
-                                    <optgroup label="🎬 Stream">
-                                        <option value="stream">
-                                            les créations pour le stream
-                                        </option>
-                                    </optgroup>
-
-                                    <optgroup label="🤝 Collabs">
-                                        <option value="collab">
-                                            Toutes les collabs
-                                        </option>
-                                    </optgroup>
-
-                                    <optgroup label="💕 Couples">
-                                        <option value="couple">
-                                            les illustrations de couple
-                                        </option>
-                                    </optgroup>
-
-                                    <optgroup label="🎨 Fan Arts">
-                                        <option value="fanart">
-                                            Tous les Fan Arts
-                                        </option>
-                                    </optgroup>
-                                    <optgroup label="♥ Favoris">
-                                        <option value="favorites">
-                                            Mes œuvres favorites
-                                        </option>
-                                    </optgroup>
-                                </select>
-                            </div>
-                                <p
-                                    id="credits-global-results"
-                                    class="credits-global-results"
-                                    aria-live="polite">
-                                </p>
-                    </div>
-                    <div class="credits-random-wrapper">
-                        <button id="credits-random-art" class="credits-random-button" type="button"
-                            data-messages="Voyons ce que le hasard va choisir ! 🎲|Une petite œuvre au hasard ? 💜|Attention... roulement de tentacules ! 🐙🎲">
-                            <span class="credits-random-icon" aria-hidden="true">
-                                🎲
-                            </span>
-                            <span>
-                                Une œuvre au hasard
-                            </span>
-                        </button>
-                    </div>
-
-                    <div id="credits-generated-galleries"></div>
-
-                    <div id="credits-card-source" hidden>
-                                        <article class="artist-card" data-art-id="01" data-tags="couaxia forme-3">
-                                            <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                                <img src="./images/Arts/YYuuikura.png" alt="Yuuhan">
-                                            </div>
-                                            <div class="artist-content">
-                                                <h3>Yuuhan</h3>
-                                                <p class="artist-role">
-                                                    Illustrateur
-                                                </p>
-                                                <p class="artist-description">
-                                                    Merci à Yuuhan pour son travail sur ce magnifique dessin !
-                                                </p>
-                                                <a href="https://vgen.co/YYuuikura"
-                                                data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                    Voir son profil VGen
-                                                </a>
-                                            </div>
-                                        </article>
-                      
-                                        <article class="artist-card" data-art-id="02" data-tags="Couaxia forme-3">    
-                                            <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                                <img src="./images/Arts/Xiria.jpg" alt="Xiaria">
-                                            </div>
-                                            <div class="artist-content">
-                                                <h3>Xiria</h3>
-                                                <p class="artist-role">
-                                                    Illustratreur
-                                                </p>
-                                                <p class="artist-description">                             
-                                                Merci à Xiria je lève mon verre ! 
-                                                </p>                                                       
-                                                <a href="https://vgen.co/Xiria"
-                                                data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                    Voir son profil VGen
-                                                </a>
-                                            </div>
-                                        </article>
-                                        <article class="artist-card" data-art-id="03"   data-tags="couaxia forme-3"> 
-                                            <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                                <img src="./images/Arts/AmY.png" alt="Amy">
-                                            </div>
-                                            <div class="artist-content">
-                                                <h3>AmY</h3>
-                                                <p class="artist-role">
-                                                    Illustratreur
-                                                </p>
-                                                <p class="artist-description">                                 
-                                                Merci à AmY ! Avec un style doux et mignons 💜 
-                                                </p>                                                     
-                                                <a href="https://vgen.co/AmY_te4"
-                                                data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                    Voir son profil VGen
-                                                </a>
-                                            </div>
-                                        </article>
-                                        <article class="artist-card" data-art-id="04" data-tags="couaxia collab forme-3"> 
-                                            <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                                <img src="./images/Arts/Anghyuwu_Chibi_trio.png" alt="Anghyuwu">
-                                            </div>   
-                                            <div class="artist-content">
-                                                <h3>Anghyuwu</h3>
-                                                <p class="artist-role">
-                                                    Illustratreur
-                                                </p>
-                                                <p class="artist-description">                               
-                                                    Merci à Anghyuwu ! Pour notre petit Trio d'héroines ! 💜 
-                                                </p>
-                                                <a href="https://vgen.co/Anghyuwu"
-                                                data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                    Voir son profil VGen
-                                                </a>
-                                            </div>
-                                        </article>
-
-                                        <article class="artist-card" data-art-id="05" data-tags="Stream couaxia forme-3"> 
-                                            <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                                <img src="./images/Arts/EilionFate_panels.png" alt="EilionFate">
-                                            </div>
-                                        
-                                            <div class="artist-content">
-                                                <h3>EilionFate</h3>
-                                                <p class="artist-role">
-                                                    Illustratreur Panel
-                                                </p>
-                                                <p class="artist-description">
-                                                Merci à EilionFate ! Je suis trop mimi 💜 </p>                     
-                                                <a href="https://vgen.co/EilionFate"
-                                                data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                    Voir son profil VGen
-                                                </a>
-                                            </div>
-                                        </article>
-
-                                        <article class="artist-card" data-art-id="06" data-tags="Stream couaxia forme-3"> 
-                                            <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                                <img src="./images/Arts/merch.png" alt="EilionFate">
-                                            </div>
-                                            <div class="artist-content">
-                                                <h3>EilionFate</h3>
-                                                <p class="artist-role">
-                                                    Illustratreur Panel
-                                                </p>
-                                                <p class="artist-description">
-                                                Merci à EilionFate 💜 
-                                                </p>            
-                                                <a href="https://vgen.co/EilionFate"
-                                                data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                    Voir son profil VGen
-                                                </a>
-                                            </div>
-                                        </article>
-
-                                        <article class="artist-card" data-art-id="07" data-tags="Stream couaxia forme-3"> 
-                                            <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                                <img src="./images/Arts/Anghyuwu_Eyes.png" alt="Anghyuwu">
-                                            </div>   
-                                            <div class="artist-content">
-                                                <h3>Anghyuwu</h3>
-                                                <p class="artist-role">
-                                                    Illustratreur
-                                                </p>
-                                                <p class="artist-description">                               
-                                                    Et pour ma bannière 👀  
-                                                </p>
-                                                <a href="https://vgen.co/Anghyuwu"
-                                                data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                    Voir son profil VGen
-                                                </a>
-                                            </div>
-                                        </article>
-                    
-                                        <article class="artist-card" data-art-id="08" data-tags="Stream couaxia forme-3" >
-                                            <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                                <img src="./images/Arts/Discord-Reactive-preview.gif" alt="Gwenevyr">
-                                            </div>      
-                                            <div class="artist-content">                            
-                                                <h3>Gwenevyr</h3>
-                                                <p class="artist-role">
-                                                    Illustratreur
-                                                </p>
-                                                <p class="artist-description">
-                                                Magnifique réactif discord avec mon petit Natsu dans les bras !</p>                             
-                                                <a href="https://vgen.co/Gwenevyr"
-                                                data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                    Voir son profil VGen
-                                                </a>
-                                            </div>
-                                        </article>
-
-                                        <article class="artist-card" data-art-id="09" data-tags="Couaxia Stream forme-3">
-                                            <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                                <img src="./images/Arts/emote-Loop-wave-preview.gif" alt="Gwenevyr">
-                                            </div>      
-                                            <div class="artist-content">                            
-                                                <h3>Gwenevyr</h3>
-                                                <p class="artist-role">
-                                                    Emote
-                                                </p>
-                                                <p class="artist-description">
-                                                Emote Loop Yipiii !</p>                             
-                                                <a href="https://vgen.co/Gwenevyr"
-                                                data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                    Voir son profil VGen
-                                                </a>
-                                            </div>
-                                        </article>
-
-                                        <article class="artist-card" data-art-id="10" data-tags="Couaxia Stream forme-3"> 
-                                            <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                                <img src="./images/Arts/Cheek-puff-preview.gif" alt="Gwenevyr">
-                                            </div>      
-                                            <div class="artist-content">                            
-                                                <h3>Gwenevyr</h3>
-                                                <p class="artist-role">
-                                                    Emote
-                                                </p>
-                                                <p class="artist-description">
-                                                Emote Puff UwU !</p>                             
-                                                <a href="https://vgen.co/Gwenevyr"
-                                                data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                    Voir son profil VGen
-                                                </a>
-                                            </div>
-                                        </article>
-                   
-                                        <article class="artist-card" data-art-id="11" data-tags="Couaxia Stream forme-3">
-                                            <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                                <img src="./images/Arts/Dance-V2-preview.gif" alt="Gwenevyr">
-                                            </div>      
-                                            <div class="artist-content">                            
-                                                <h3>Gwenevyr</h3>
-                                                <p class="artist-role">
-                                                    Emote
-                                                </p>
-                                                <p class="artist-description">
-                                                Vient dancer avec moi !</p>                             
-                                                <a href="https://vgen.co/Gwenevyr"
-                                                data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                    Voir son profil VGen
-                                                </a>
-                                            </div>
-                                        </article>                                                                                                                        
-
-                                        <article class="artist-card" data-art-id="12" data-tags="Couaxia forme-3"> 
-                                            <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Koleander_Ref_sheet1.png" alt="Koleander">
-                                            </div>     
-                                        <div class="artist-content">
-                                            <h3>Koleander</h3>
-                                            <p class="artist-role">
-                                                Illustratreur
-                                            </p>
-                                            <p class="artist-description">                              
-                                                Merci à Koleander ! Pour la ref-Sheet créer à partir de mes idées 💜 
-                                            </p>                                                                                   
-                                            <a href="https://vgen.co/Koleander"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="13" data-tags="Couaxia forme-3"> 
-                                            <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Koleander_Ref_sheet2.png" alt="Koleander">
-                                            </div>     
-                                        <div class="artist-content">
-                                            <h3>Koleander</h3>
-                                            <p class="artist-role">
-                                                Illustratreur
-                                            </p>
-                                            <p class="artist-description">                              
-                                                Ref-Sheet de ma deuxième tenue 💜
-                                            </p>                                                                                   
-                                            <a href="https://vgen.co/Koleander"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="14" data-tags="Couaxia forme-3"  data-sensitive="true"> 
-                                        <div class="image-container">
-                                            <img src="./images/Arts/Koleander_Ref_sheet3.png" alt="Koleander">
-                                        </div>     
-                                        <div class="artist-content">
-                                            <h3>Koleander</h3>
-                                            <p class="artist-role">
-                                                Illustratreur
-                                            </p>
-                                            <p class="artist-description">                              
-                                                Ref-Sheet moi nue avec mes tatouages 💜
-                                            </p>                                                                                   
-                                            <a href="https://vgen.co/Koleander"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-
-                                    <article class="artist-card" data-art-id="15" data-tags="Couaxia forme-3 Stream">   
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/ibuki_Live2d_model.png" alt="ibuki_Live2d">
-                                        </div>  
-                                        <div class="artist-content">
-                                            <h3>ibuki_Live2d</h3>
-                                            <p class="artist-role">
-                                                Live 2D
-                                            </p>
-                                            <p class="artist-description">                              
-                                                Merci à Ibuki pour avoir retranscrit le modèl comme je l'imaginais et avec l'aide de ma ref-Sheet 💜 
-                                            </p>                                                    
-                                            <a href="https://vgen.co/wv1996112"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="16" data-tags="Couaxia forme-3">    
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Dusklys1.jpeg" alt="Dusklys">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Dusklys</h3>
-                                            <p class="artist-role">
-                                                Illustratreur
-                                            </p>
-                                            <p class="artist-description">                                 
-                                                Merci à Dusklys pour ces deux photos de profils 💜
-                                            </p>                                                          
-                                            <a href="https://vgen.co/Dusklys"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="17" data-tags="Couaxia forme-3">    
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Dusklys2.jpeg" alt="Dusklys">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Dusklys</h3>
-                                            <p class="artist-role">
-                                                Illustratreur
-                                            </p>
-                                            <p class="artist-description">                                 
-                                                Magnifique les deux versions💜
-                                            </p>                                                          
-                                            <a href="https://vgen.co/Dusklys"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="18" data-tags="Couaxia stream forme-3">    
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/walkaway_512.gif" alt="Hmh_production">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Hmh_production</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">
-                                                Muhff *s'en vas* 💜 
-                                            </p>                           
-                                            <a href="https://vgen.co/Hmh_production"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="19" data-tags="Couaxia stream forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/swing_1000.gif" alt="Butter">
-                                        </div>     
-                                        <div class="artist-content">
-                                            <h3>Butter</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">
-                                                Je tourneeeeeeeeee ! 
-                                            </p>                                                  
-                                            <a href="https://vgen.co/butter_trii"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="20" data-tags="Couaxia stream forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/dbd.gif" alt="sorine_e">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>sorine_e</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">
-                                            Je me suis fait accrocher ! 
-                                            </p>                
-                                            <a href="https://vgen.co/sorine_e"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="21" data-tags="Couaxia forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Minecraft_Skin.png" alt="sorine_e">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>sorine_e</h3>
-                                            <p class="artist-role">
-                                                Minecraft Skin
-                                            </p>
-                                            <p class="artist-description">
-                                            Pour mes partie sur Minecraft :3 Merci Soso 💜
-                                            </p>                
-                                            <a href="https://vgen.co/sorine_e"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="22" data-tags="Couaxia stream forme-3">    
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/IW_750.gif"  alt="tohfee">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>tohfee</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">
-                                            J'ai toujours rêvé d'être un ver de terre 🤣                                    
-                                            </p>                                                 
-                                            <a href="https://vgen.co/tohfee"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="23" data-tags="Couaxia stream forme-3">  
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/HISSS_F.gif" alt="Tsp">
-                                        </div>
-                                        <div class="artist-content">
-                                            <h3>Tsp</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">
-                                                M'approche pas ! HIIIISSS 
-                                            </p>                               
-                                            <a href="https://vgen.co/Tspchan1"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="24" data-tags="Couaxia stream forme-3">  
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Swing_F.gif" alt="Tsp">
-                                        </div>
-                                        <div class="artist-content">
-                                            <h3>Tsp</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">
-                                                oui je me balance, moi je me balance !
-                                            </p>                               
-                                            <a href="https://vgen.co/Tspchan1"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="25" data-tags="Couaxia stream forme-3"> 
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/lick.gif" alt="Lomi">
-                                        </div>
-                                        <div class="artist-content">
-                                            <h3>Lomi</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">
-                                            *Slurp* ! L'écran est un peu sale 
-                                            </p>                         
-                                            <a href="https://vgen.co/Lomi_myu"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="26" data-tags="Couaxia stream forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <video autoplay muted loop playsinline  aria-label="Logo animé de Couaxia">
-                                                <source src="./images/logo/Transparents.webm" alt="Beelboy" type="video/mp4"> 
-                                            </video> 
-                                        </div>    
-                                        <div class="artist-content">
-                                            <h3>Beelboy</h3>
-                                            <p class="artist-role">
-                                                Logo
-                                            </p>
-                                            <p class="artist-description">     
-                                                Mais regardez moi ce LOGO !
-                                            </p>                         
-                                            <a href="https://vgen.co/Beelboy"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="27" data-tags="Couaxia forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/comic_001.png" alt="Timishayd">
-                                        </div>
-                                        <div class="artist-content">
-                                            <h3>Timishayd</h3>
-                                            <p class="artist-role">
-                                                Manga
-                                            </p>
-                                            <p class="artist-description">
-                                                Arhg.. J'ai si mal.. (page 1) 
-                                            </p>                         
-                                            <a href="https://vgen.co/Timishayd"
-                                                target="_blank"
-                                                class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="28" data-tags="Couaxia forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/comic_002.png" alt="Timishayd">
-                                        </div>
-                                        <div class="artist-content">
-                                            <h3>Timishayd</h3>
-                                            <p class="artist-role">
-                                                Manga
-                                            </p>
-                                            <p class="artist-description">
-                                                Une cuve ? (page 2) 
-                                            </p>                         
-                                            <a href="https://vgen.co/Timishayd"
-                                                target="_blank"
-                                                class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="29" data-tags="Couaxia forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/comic_003.png" alt="Timishayd">
-                                        </div>
-                                        <div class="artist-content">
-                                            <h3>Timishayd</h3>
-                                            <p class="artist-role">
-                                                Manga
-                                            </p>
-                                            <p class="artist-description">
-                                                Transformation nouvelle forme en couleur en + (page 3)
-                                            </p>                         
-                                            <a href="https://vgen.co/Timishayd"
-                                                target="_blank"
-                                                class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="30" data-tags="Couaxia stream forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Showcase_badge.png" alt="MimzyVT">
-                                        </div>   
-                                        <div class="artist-content">
-                                            <h3>MimzyVT</h3>
-                                            <p class="artist-role">
-                                                Illustrateur Badge
-                                            </p>
-                                            <p class="artist-description">
-                                            De super badge ! merci MimzyVT 💜 
-                                            </p>
-                                            <a href="https://vgen.co/MimzyVT"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-                    
-                                    <article class="artist-card" data-art-id="31" data-tags="Couaxia stream forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Showcase_bluber.png" alt="MimzyVT">
-                                        </div>   
-                                        <div class="artist-content">
-                                            <h3>MimzyVT</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">
-                                            Si kiki les emotes 💜💜 
-                                            </p>
-                                            <a href="https://vgen.co/MimzyVT"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>                 
-
-                                    <article class="artist-card" data-art-id="32" data-tags="Couaxia stream forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Anwedia.png" alt="Anwedia">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Anwedia</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Bannière super mignonne 💜 
-                                            </p>                         
-                                            <a href="https://vgen.co/Anwedia"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="33" data-tags="Couaxia stream forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/WIP_BADGE.png" alt="Nysselya">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Nysselya</h3>
-                                            <p class="artist-role">
-                                                Illustrateur/Badge
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Merci pour ces magnifiques bages evolutif 💜
-                                            </p>                         
-                                            <a href="https://vgen.co/Nysselya"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="34" data-tags="Couaxia forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Couaxia_SKEB_Splash_Art_Transparan.png" alt="megumiayaka">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Megumiayaka</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Regardez moi ce Splash ART ! 💜
-                                            </p>                         
-                                            <a href="https://vgen.co/megumiayaka"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="35" data-tags="Couaxia stream compagnons">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Rawr.gif" alt="minhs_art">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Minhs_art</h3>
-                                            <p class="artist-role">
-                                                Illustrateur emote
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Merci pour la belle emote de Natsu 💜
-                                            </p>                         
-                                            <a href="https://vgen.co/minhs_art"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="36" data-tags="Couaxia stream compagnons">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/NatsuDumpy.gif" alt="katt_2k">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Katt_2kt</h3>
-                                            <p class="artist-role">
-                                                Illustrateur emote
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Regardez moi ce beau petit boule de Natsu ! 💜
-                                            </p>                         
-                                            <a href="https://vgen.co/katt_2k"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-                    
-                                    <article class="artist-card" data-art-id="37" data-tags="Couaxia stream compagnons">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <video autoplay muted loop playsinline  aria-label="Logo animé de Couaxia">
-                                                <source src="./images/Arts/Hylda.mp4" alt="OrdikaiVT" type="video/mp4"> 
-                                            </video> 
-                                        </div>    
-                                        <div class="artist-content">
-                                            <h3>OrdikaiVT</h3>
-                                            <p class="artist-role">
-                                                Mascotte art + rig
-                                            </p>
-                                            <p class="artist-description">     
-                                                Mais ma soeur est si belle !!!  
-                                            </p>                         
-                                            <a href="https://vgen.co/OrdikaiVT"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="38" data-tags="Couaxia forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/DelvaRelva.png" alt="DelvaRelva">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>DelvaRelva</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Un si jolie Sketch Page avec mes compagnons de voyage 💜
-                                            </p>                         
-                                            <a href="https://vgen.co/DelvaRelva"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-                                    <article class="artist-card" data-art-id="39" data-tags="Couaxia fanart collab forme-2">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/ouiiiii_bus_kao.jpg" alt="kao">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>kaka_o_lulu</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Un magnifique Fan art des gens du bus (NinsuFr, Subbarath, Myo, Kao, Pizza, Sham, Mitsuba, Babyhawk et tortue) 💜
-                                            </p>                         
-                                            <a href="https://www.instagram.com/kaka_o_lulu/"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Instagram
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="40" data-tags="Couaxia fanart compagnons">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/fanart_natsu-kao.jpeg" alt="kao">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>kaka_o_lulu</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Le trio de l'enfer ! (Sham,Kao et Natsu) 💜
-                                            </p>                         
-                                            <a href="https://www.instagram.com/kaka_o_lulu/"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Instagram
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="41" data-tags="Couaxia fanart forme-2">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/couaxiaFunny_kao.jpg" alt="kao">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>kaka_o_lulu</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Il ma fait sur mon meilleur jour !💜
-                                            </p>                         
-                                            <a href="https://www.instagram.com/kaka_o_lulu/"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Instagram
-                                            </a>
-                                        </div>
-                                    </article>
-                                    <article class="artist-card" data-art-id="42" data-tags="Couaxia fanart forme-2">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/couaxiaboobiii_kao.png" alt="kao">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>kaka_o_lulu</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                pas mal non ! j'adore personnelement ! 💜
-                                            </p>                         
-                                            <a href="https://www.instagram.com/kaka_o_lulu/"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Instagram
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="43" data-tags="Couaxia fanart forme-2">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/COUAXIA_pp_sorine.png" alt="sorine_e">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>sorine_e</h3>
-                                            <p class="artist-role">
-                                                illustrateur
-                                            </p>
-                                            <p class="artist-description">
-                                            Merci pour le cadeau Sorine ! 💜
-                                            </p>                
-                                            <a href="https://vgen.co/sorine_e"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="44" data-tags="Couaxia couple forme-2 collab">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/sorineXcoauxia_Subane.png" alt="Subane">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>Subane</h3>
-                                            <p class="artist-role">
-                                                illustrateur
-                                            </p>
-                                            <p class="artist-description">
-                                            Merci pour la commission Sorine 🥰
-                                            </p>                
-                                            <a href="https://vgen.co/Subane"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="45" data-tags="Couaxia forme-2">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images//Arts/Couaxia_pp_Melumii.png" alt="Melumii">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>Melumii</h3>
-                                            <p class="artist-role">
-                                                illustrateur
-                                            </p>
-                                            <p class="artist-description">
-                                                Une magnifique PP pour le serveur Discord ! 
-                                            </p>                
-                                            <a href="https://vgen.co/Melumii"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="46" data-tags="Couaxia forme-2 couple collab">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images//Arts/YCH_Christmas.png" alt="iinetalia">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>iinetalia</h3>
-                                            <p class="artist-role">
-                                                illustrateur
-                                            </p>
-                                            <p class="artist-description">
-                                                Création d'un bonhomme de neige avec Celanya 🐙☃️🐉
-                                            </p>                
-                                            <a href="https://vgen.co/iinetalia"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    
-
-                                    <article class="artist-card" data-art-id="47" data-tags="Couaxia forme-2">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/dreamy_effect_Patchirisu.png" alt="Patchirisu">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>Patchirisu</h3>
-                                            <p class="artist-role">
-                                                illustrateur
-                                            </p>
-                                            <p class="artist-description">
-                                                Petit Art pour mon anniversaire ! 
-                                            </p>                
-                                            <a href="https://vgen.co/Patchirisu"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="48" data-tags="Couaxia forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/a11.png" alt="DasterCreations">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>DasterCreations</h3>
-                                            <p class="artist-role">
-                                                illustrateur
-                                            </p>
-                                            <p class="artist-description">
-                                                Un petit art chibi me 💜
-                                            </p>                
-                                            <a href="https://vgen.co/DasterCreations"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="49" data-tags="Couaxia forme-2">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Couaxia_Skeb_YYuuikura.png" alt="YYuuikura">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>YYuuikura</h3>
-                                            <p class="artist-role">
-                                                illustrateur
-                                            </p>
-                                            <p class="artist-description">
-                                                Un Skeb magnifique 😍
-                                            </p>                
-                                            <a href="https://vgen.co/YYuuikura"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="50" data-tags="Couaxia forme-3">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Couaxia_flat.jpg" alt="Gensox">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>Gensox</h3>
-                                            <p class="artist-role">
-                                                illustrateur
-                                            </p>
-                                            <p class="artist-description">
-                                                Juste magnifique ! Un troisième outfit maybe ? ¯\_(ツ)_/¯
-                                            </p>                
-                                            <a href="https://vgen.co/Gensox"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="51" data-tags="Couaxia forme-2 stream">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/YCH-Bla-Couaxia.gif" alt="xbenicarx">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>xBenicarx</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">                               
-                                               blabalabla   
-                                            </p>                         
-                                            <a href="https://vgen.co/xbenicarx"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Vgen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="52" data-tags="Couaxia forme-2 stream">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/emote_lick.gif" alt="minhs_art">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Minhs_art</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">                               
-                                                *Lick* 👅
-                                            </p>                         
-                                            <a href="https://vgen.co/minhs_art"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Vgen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="53" data-tags="Couaxia forme-2 stream">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Peeker_Couaxia.png" alt="Vhii">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Vhii</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Lurk intensif 
-                                            </p>                         
-                                            <a href="https://vgen.co/Vhii"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Vgen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="54" data-tags="Couaxia forme-2 stream">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Couaxia_Lizard.gif" alt="Noyoka">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Noyoka</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Lizard Lizard Lizard !!!🦎  
-                                            </p>                         
-                                            <a href="https://vgen.co/noyoka"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Vgen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="55" data-tags="Couaxia forme-2 stream" data-sensitive="true">
-                                        <div class="image-container">
-                                            <img src="./images/Arts/boobs.gif" alt="88_Studio">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>88 Studio</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Deux belle montagne ⛰️⛰️  
-                                            </p>                         
-                                            <a href="https://vgen.co/EightyEightDesign"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Vgen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="56" data-tags="Couaxia forme-2 stream">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Couaxia_R_Twitch.gif" alt="albert">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Albert</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">                               
-                                               Mes belles tentacules 〰  
-                                            </p>                         
-                                            <a href="https://vgen.co/albert_ow0"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Vgen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="57" data-tags="Couaxia forme-2 stream">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/couaxia.gif" alt="akitagure">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Akitagure</h3>
-                                            <p class="artist-role">
-                                                Emotes
-                                            </p>
-                                            <p class="artist-description">                               
-                                               Un cadeau à mettre sous le sapin !🎁  
-                                            </p>                         
-                                            <a href="https://vgen.co/akitagure"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Vgen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                     <article class="artist-card" data-art-id="58" data-tags="Couaxia forme-2 stream">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Talking_reactif.gif" alt="Gishimon">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Gishimon</h3>
-                                            <p class="artist-role">
-                                                Reactif Discord
-                                            </p>
-                                            <p class="artist-description">                               
-                                               Un super reatif pour mon anniversaire 🎂  
-                                            </p>                         
-                                            <a href="https://vgen.co/Gishimon"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Vgen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="59" data-tags="Couaxia forme-2 collab">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">                                          
-                                            <img src="./images/Arts/couaxia_anniv.png" alt="Sensor_sama" loading="lazy" decoding="async">                                             
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Sensor_sama</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                               Un super anniversaire passez entourer de mes amis : Myo, Celanya, Sorine, Maman_mikii, Nymya, Babyhawk, Yuto, Sham et Natsu ! 🎂  
-                                            </p>                         
-                                            <a href="https://vgen.co/Sensor_sama"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Vgen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="60" data-tags="Couaxia forme-3 stream">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/couaxia_meow_emotes.png" alt="wolf_princ3ss">
-                                            
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>wolf_princ3ss</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">                               
-                                               Nya ~ 
-                                            </p>                         
-                                            <a href="https://vgen.co/wolf_princ3ss"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Vgen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="61" data-tags="Couaxia forme-2 stream" data-sensitive="true">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/SHOWCASE_Couaxia.gif" alt="spectissa">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Spectissa</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">                               
-                                               Par carte s'il vous plait 💳
-                                            </p>                         
-                                            <a href="https://vgen.co/spectissa"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Vgen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="62" data-tags="Couaxia forme-2 stream" data-sensitive="true">
-                                        <div class="image-container">
-                                            <img src="./images/Arts/SHOWCASE_2.gif" alt="spectissa">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Spectissa</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">                               
-                                               La curiosité peut être un vilain défault ! 💰
-                                            </p>                         
-                                            <a href="https://vgen.co/spectissa"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Vgen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="63" data-tags="Couaxia forme-3 stream">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/CouaxiaDumpy.gif" alt="katt_2k">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Katt_2k</h3>
-                                            <p class="artist-role">
-                                                Emote
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Je bouge mon boule too !
-                                            </p>                         
-                                            <a href="https://vgen.co/katt_2k"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Vgen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="64" data-tags="Couaxia stream">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/PartyHat.png" alt="Azenia">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Azenia</h3>
-                                            <p class="artist-role">
-                                               Asset Stream
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Deux jolies Chapeau pour mon anniversaire ! 🥳
-                                            <a href="https://vgen.co/Azenia"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Vgen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="65" data-tags="Couaxia forme-2"  data-sensitive="true">
-                                        <div class="image-container">
-                                            <img src="./images/Arts/Couaxia_YCH_Christmas_Spicy_Gift_megumiayaka.png" alt="megumiayaka">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>Megumiayaka</h3>
-                                            <p class="artist-role">
-                                                illustrateur
-                                            </p>
-                                            <p class="artist-description">
-                                                Un petit YCH pour Noël ! 👉👈
-                                            </p>                
-                                            <a href="https://vgen.co/megumiayaka"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="66" data-tags="Couaxia forme-2">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/noel_couax_ Ayane_Tenshi.png" alt="Ayane_Tenshi">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Ayane_Tenshi</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                               Merci pour ce beau cadeau de noël Myo que je vais accrocher au sapin ! 🎄
-                                            </p>                         
-                                            <a href="https://vgen.co/Ayane_Tenshi"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Instagram
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="67" data-tags="Couaxia forme-2">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/CouaxiaYCHhalloween_ boopdoesart.jpg" alt="boopdoesart">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>Boopdoesart</h3>
-                                            <p class="artist-role">
-                                                illustrateur
-                                            </p>
-                                            <p class="artist-description">
-                                                Un petit YCH pour Halloween ! Rawr 
-                                            </p>                
-                                            <a href="https://vgen.co/boopdoesart"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="68" data-tags="Couaxia forme-2">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/SPOILER_COUAXIA_-_DEMON_PauStark.png" alt="PauStark">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>PauStark</h3>
-                                            <p class="artist-role">
-                                                illustrateur
-                                            </p>
-                                            <p class="artist-description">
-                                                Une pp pour halloween ! Magnifique 😈
-                                            </p>                
-                                            <a href="https://vgen.co/PauStark"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="69" data-tags="Couaxia forme-2">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/SPOILER_Jack_O_Lantern_Violet_-_background.png" alt="reklawkc">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>ReklawKC</h3>
-                                            <p class="artist-role">
-                                                illustrateur
-                                            </p>
-                                            <p class="artist-description">
-                                                Un set d'illustration chibi halloween ! 🎃
-                                            </p>                
-                                            <a href="https://vgen.co/reklawkc"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="70" data-tags="Couaxia fanart forme-2">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/fan_art_shadow.png" alt="shadow">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Shadow</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Merci pour le beau dessin pour mon anniversaire 💜
-                                            </p>                                                        
-                                        </div>
-                                    </article>
-                                    <article class="artist-card" data-art-id="71" data-tags="Couaxia forme-2">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Artoile.png" alt="artoile">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Artoile</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Merci à Myo pour cette illsutration cadeaux 💜
-                                            </p>                         
-                                            <a href="https://vgen.co/artoile"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="72" data-tags="Couaxia forme-2 Stream">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Commission_Cou_final_ashita.jpg" alt="ashita">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Ashita</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                image utiliser pour mon stream (Starting Soon) 💜
-                                            </p>                         
-                                            <a href="https://vgen.co/ashita"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="73" data-tags="Couaxia forme-2 Stream" data-sensitive="true">
-                                        <div class="image-container">
-                                            <img src="./images/Arts/Couaxia_Sensor_sama.png" alt="sensor_sama">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Sensor_sama</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                               Image utiliser pour mon stream (BRB) 💜
-                                            </p>                         
-                                            <a href="https://vgen.co/Sensor_sama"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="74" data-tags="Couaxia forme-2 Stream">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/PFP_Couaxia_akamerenata.png" alt="akamerenata">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>akamerenata</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                               Image utiliser pour mon stream (Ending Soon) 💜
-                                            </p>                         
-                                            <a href="https://www.etsy.com/fr/shop/akamerenata"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Etsy
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="75" data-tags="Couaxia forme-2 Couple collab" data-sensitive="true">
-                                        <div class="image-container">
-                                            <img src="./images/Arts/MyoxCouaxia_bain_Sensor_sama.png" alt="sensor_sama">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Sensor_sama</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Merci myo pour l'image pour notre premier date (jamais oublier) 💜
-                                            </p>                         
-                                            <a href="https://vgen.co/Sensor_sama"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="76" data-tags="Couaxia forme-2 Couple collab">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/couaxiaXMyo_lac_aurora.png" alt="auraura">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Auraura_powa</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                               Je suis venu la chercher pour notre deuxième rendez-vous 💜
-                                            </p>                         
-                                            <a href="https://www.twitch.tv/auraura_powa"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil Twitch
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="77" data-tags="Couaxia forme-2 Couple collab">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Couaxia_Myo_Bar_YYuuikura.png" alt="YYuuikura">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>YYuuikura</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                A notre deuxième rendez-vous 💜
-                                            </p>                         
-                                            <a href="https://vgen.co/YYuuikura"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="78" data-tags="Couaxia forme-2 couple collab">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Flowers_myoXcouaxia.png" alt="digitalpuff">
-                                        </div>      
-                                        <div class="artist-content">
-                                            <h3>Digi</h3>
-                                            <p class="artist-role">
-                                                illustrateur
-                                            </p>
-                                            <p class="artist-description">
-                                                Merci Myo pour ce moment magique lors du troisième rendez-vous.
-                                            </p>                
-                                            <a href="https://vgen.co/digitalpuff"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="79" data-tags="Couaxia forme-3 Couple collab">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Couaxia_Myo.png" alt="nanot">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Nanot</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Une illustration pour l'anniversaire de Myo💜
-                                            </p>                         
-                                            <a href="https://vgen.co/Nanot"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="80" data-tags="Couaxia forme-3 Stream" data-sensitive="true">
-                                        <div class="image-container">
-                                            <video autoplay muted loop playsinline  aria-label="Logo animé de Couaxia">
-                                                <source src="./images/Arts/Animated_Couaxia.mp4" alt="MugenSora" type="video/mp4"> 
-                                            </video> 
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>MugenSora</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                               Couaxia à la plage ! 💜
-                                            </p>                         
-                                            <a href="https://vgen.co/MugenSora"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="81" data-tags="Couaxia forme-3 stream">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Couaxia_chibi_POP.gif" alt="Uruka">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Uruka</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Imaginez une POP à mon effigie ? 💜
-                                            </p>                         
-                                            <a href="https://vgen.co/Urukaido"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="82" data-tags="Couaxia forme-3 stream">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/Koleander_chibi.png" alt="Koleander">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Koleander</h3>
-                                            <p class="artist-role">
-                                                Illustrateur
-                                            </p>
-                                            <p class="artist-description">                               
-                                                Un beau réactif d'été !💜
-                                            </p>                         
-                                            <a href="https://vgen.co/Koleander"
-                                            data-messages="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"target="_blank"class="artist-btn">
-                                                Voir son profil VGen
-                                            </a>
-                                        </div>
-                                    </article>
-
-                                    <article class="artist-card" data-art-id="83" data-tags="Couaxia forme-2 fanart">
-                                        <div class="image-container" data-messages="Regarde comme c'est beau !💜| Chapeau l'artiste !| Juste WAOUH !!!">
-                                            <img src="./images/Arts/kazu_fanart.png" alt="Kazu">
-                                        </div> 
-                                        <div class="artist-content">
-                                            <h3>Kazu</h3>
-                                            <p class="artist-role">
-                                                Fan art
-                                            </p>
-                                            <p class="artist-description">                               
-                                                I'm a dinosaur ! RAWRRRR 🦖 Alliez peur !
-                                            </p>                         
-                                        </div>
-                                    </article>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         PAGE CRÉDITS
+    ====================================================== -->
+
+    <main>
+        <section id="credits">
+
+            <!-- =================================================
+                 TITRE
+            ================================================== -->
+
+            <header class="credits-page-header">
+
+                <h1>
+                    🎨 Les Crédits
+                </h1>
+                <p>
+                    Découvrez les artistes qui ont donné vie
+                    à Couaxia, à ses compagnons et à son stream.
+                </p>
+
+            </header>
+
+
+
+            <!-- =================================================
+                 FILTRE GLOBAL
+            ================================================== -->
+
+            <div class="credits-global-filter">
+
+                <label for="credits-category-filter">
+                    🔎 Explorer la galerie
+                </label>
+
+
+                <div class="credits-select-wrapper">
+
+                    <select id="credits-category-filter">
+
+                        <!-- =====================================
+                             TOUT
+                        ====================================== -->
+
+                        <option value="all">
+                            Toutes les œuvres
+                        </option>
+
+                        <!-- =====================================
+                             COUAXIA
+                        ====================================== -->
+
+                        <optgroup label="🌌 Couaxia">
+                            <option value="couaxia">
+                                Toutes les illustrations
+                            </option>
+                            <option value="forme-2">
+                                Forme 2
+                            </option>
+                            <option value="forme-3">
+                                Forme 3
+                            </option>
+                        </optgroup>
+
+                        <!-- =====================================
+                             COMPAGNONS
+                        ====================================== -->
+
+                        <optgroup label="🐉 Compagnons">
+                            <option value="compagnons">
+                                Tous les compagnons
+                            </option>
+                        </optgroup>
+
+                        <!-- =====================================
+                             STREAM
+                        ====================================== -->
+
+                        <optgroup label="🎬 Stream">
+                            <option value="stream">
+                                Les créations pour le stream
+                            </option>
+                        </optgroup>
+
+                        <!-- =====================================
+                             COLLABS
+                        ====================================== -->
+
+                        <optgroup label="🤝 Collabs">
+                            <option value="collab">
+                                Toutes les collabs
+                            </option>
+                        </optgroup>
+
+                        <!-- =====================================
+                             COUPLES
+                        ====================================== -->
+
+                        <optgroup label="💕 Couples">
+                            <option value="couple">
+                                Les illustrations de couple
+                            </option>
+                        </optgroup>
+
+
+
+                        <!-- =====================================
+                             FAN ARTS
+                        ====================================== -->
+
+                        <optgroup label="🎨 Fan Arts">
+                            <option value="fanart">
+                                Tous les Fan Arts
+                            </option>
+                        </optgroup>
+
+                        <!-- =====================================
+                             FAVORIS
+                        ====================================== -->
+
+                        <optgroup label="♥ Favoris">
+                            <option value="favorites">
+                                Mes œuvres favorites
+                            </option>
+                        </optgroup>
+
+                    </select>
 
                 </div>
-            </section>
 
-            <div class="scroll-page-controls" aria-label="Navigation verticale de la page">
-                    <button id="scrollTopButton" class="scroll-page-button" type="button" aria-label="Retourner en haut de la page" title="Retour en haut">
-                             ↑
-                    </button>
-                    <button id="scrollBottomButton" class="scroll-page-button" type="button" aria-label="Aller en bas de la page" title="Aller en bas">
-                        ↓
-                    </button>
+
+                <!-- =============================================
+                     NOMBRE DE RÉSULTATS
+                ============================================== -->
+
+                <p
+                    id="credits-global-results"
+                    class="credits-global-results"
+                    aria-live="polite"></p>
             </div>
 
-            <div class="mascotte-widget">
-                        <div class="mascotte-bulle" id="mascotte-bulle" role="status" aria-live="polite">
-                            Bienvenue dans mon univers !
-                        </div>
-                        <button class="mascotte-button" id="mascotte-button" type="button" aria-label="Parler avec Couaxia">
-                            <img src="./images/mascotte/YCH_Dance_V2.gif" data-idle-src="./images/mascotte/YCH_Dance_V2.gif" 
-                            data-talking-src="./images/mascotte/YCH_Dance_V1.gif" alt="Mascotte Couaxia" class="mascotte" id="mascotte-image" draggable="false">
-                        </button>
-            </div>
-                    
-</section>
-                <script src="./js/scroll-page.js"></script>
-                <script src="./js/mascotte.js"></script>
-                <script src="./js/mascotte-navigation.js"></script>
-                <script src="./js/protection.js"></script>
-                <script src="./js/credits-gallery.js"></script>
-                <script src="./js/gallery-random.js"></script>
-                <script src="./js/gallery-favorites.js"></script>
-                <script src="./js/sensitive-gallery.js"></script>
-                <script src="./js/watermark.js"></script>
-                <script src="./js/artist.js"></script>
-                <script src="./js/theme.js"></script>
-         </body>
-</HTML>
 
+
+            <!-- =================================================
+                 ŒUVRE ALÉATOIRE
+            ================================================== -->
+
+            <div class="credits-random-wrapper">
+
+                <button id="credits-random-art" class="credits-random-button" type="button"
+                    data-messages="Voyons ce que le hasard va choisir ! 🎲|Une petite œuvre au hasard ? 💜|Attention... roulement de tentacules ! 🐙🎲" >
+
+                    <span class="credits-random-icon" aria-hidden="true">
+                        🎲
+                    </span>
+                    <span>
+                        Une œuvre au hasard
+                    </span>
+                </button>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 CHARGEMENT
+            ================================================== -->
+
+            <div id="credits-loading" class="credits-loading" role="status" aria-live="polite">
+
+                <span class="credits-loading-icon" aria-hidden="true">
+                    🐙
+                </span>
+                <p>
+                    Chargement des illustrations...
+                </p>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 ERREUR
+            ================================================== -->
+
+            <div id="credits-error" class="credits-error" role="alert" hidden>
+
+                <span
+                    aria-hidden="true">
+                    ⚠️
+                </span>
+
+                <p id="credits-error-message">
+                    Impossible de charger les illustrations.
+                </p>
+
+
+                <button
+                    id="credits-retry"
+                    type="button"
+                    class="credits-retry-button"
+                >
+                    🔄 Réessayer
+                </button>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 GALERIES GÉNÉRÉES
+            ================================================== -->
+
+            <!--
+                credits-gallery.js utilisera cette zone
+                pour afficher les différentes catégories.
+            -->
+
+            <div id="credits-generated-galleries"></div>
+
+
+
+            <!-- =================================================
+                 SOURCE DES CARTES
+            ================================================== -->
+
+            <!--
+                AVANT :
+                toutes les <article class="artist-card">
+                étaient écrites ici à la main.
+
+                MAINTENANT :
+                credits-data.js remplira automatiquement
+                ce conteneur depuis Supabase.
+
+                On le garde caché car credits-gallery.js
+                utilise ensuite ces cartes comme source.
+            -->
+
+            <div id="credits-card-source" hidden></div>
+
+        </section>
+    </main>
+
+
+
+    <!-- =====================================================
+         NAVIGATION VERTICALE
+    ====================================================== -->
+
+    <div class="scroll-page-controls" aria-label="Navigation verticale de la page">
+
+        <button id="scrollTopButton" class="scroll-page-button"
+            type="button" aria-label="Retourner en haut de la page" title="Retour en haut">
+            ↑
+        </button>
+        <button id="scrollBottomButton" class="scroll-page-button"
+            type="button" aria-label="Aller en bas de la page" title="Aller en bas">
+            ↓
+        </button>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MASCOTTE
+    ====================================================== -->
+
+    <div class="mascotte-widget">
+
+        <div class="mascotte-bulle" id="mascotte-bulle" role="status" aria-live="polite">
+            Bienvenue dans mon univers !
+        </div>
+        <button class="mascotte-button" id="mascotte-button" type="button" aria-label="Parler avec Couaxia">
+            <img src="./images/mascotte/YCH_Dance_V2.gif" data-idle-src="./images/mascotte/YCH_Dance_V2.gif" data-talking-src="./images/mascotte/YCH_Dance_V1.gif"
+                alt="Mascotte Couaxia" class="mascotte" id="mascotte-image" draggable="false">
+        </button>
+
+    </div>
+
+
+
+                    <!-- =====================================================
+                        JAVASCRIPT
+                    ====================================================== -->
+                    <script src="./js/scroll-page.js"></script>
+                    <script src="./js/mascotte.js"></script>
+                    <script src="./js/mascotte-navigation.js"></script>
+                    <script src="./js/protection.js"></script>
+                    <script src="./js/credits-data.js"></script>
+                    <script src="./js/credits-gallery.js"></script>
+                    <script src="./js/gallery-random.js"></script>
+                    <script src="./js/gallery-favorites.js"></script>
+                    <script src="./js/sensitive-gallery.js"></script>
+                    <script src="./js/watermark.js"></script>
+                    <script src="./js/artist.js"></script>
+                    <script src="./js/theme.js"></script>
+
+
+</body>
+
+</html>

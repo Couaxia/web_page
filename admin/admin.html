@@ -1,39 +1,27 @@
 <!DOCTYPE html>
-<html lang="fr">
-
+<HTML lang="fr">
 <head>
-    <meta charset="utf-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Administration | Couaxia
-    </title>
-
-    <link
-        rel="icon"
-        type="image/png"
-        href="../images/logo/Logo Transparents 2.png"
-    >
-
-    <!-- =====================================================
-         CSS
-    ====================================================== -->
-
-    <link
-        rel="stylesheet"
-        href="../css/style.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="./admin.css"
-    >
+    <meta charset="utf-8" />
+    <title>Couaxia</title>
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/scroll-page.css" rel="stylesheet">
+    <link href="./admin.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../images/logo/Logo Transparents 2.png">
 </head>
-
+</head>
+            <header class="site-header">
+                    <nav class="navbar">
+                        <a class="navbar-logo">
+                            <video autoplay muted loop playsinline aria-hidden="true" aria-label="Logo animé de Couaxia">
+                                    <source src="./images/logo/Transparents.webm" type="video/webm"> 
+                            </video> 
+                        </a>
+                            <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Activer le mode nuit" title="Changer le thème">
+                                <span class="theme-icon" aria-hidden="true">🌙</span>
+                                <span class="theme-text">Mode nuit</span>
+                            </button>
+                    </nav>
+                </header>
 
 <body class="admin-page">
 
@@ -47,8 +35,7 @@
         <a
             href="../accueil.html"
             class="admin-brand"
-            aria-label="Retour au site Couaxia"
-        >
+            aria-label="Retour au site Couaxia">
 
             <video
                 autoplay
@@ -193,7 +180,7 @@
                     </span>
 
                     <span>
-                        Galerie
+                        Crédits
                     </span>
 
                 </button>
@@ -275,11 +262,6 @@
                 data-admin-panel="dashboard"
             >
 
-
-                <!-- =============================================
-                     EN-TÊTE
-                ============================================== -->
-
                 <header class="admin-section-header">
 
                     <div>
@@ -293,7 +275,7 @@
                         </h1>
 
                         <p>
-                            Gère les jeux, les illustrations
+                            Gère les jeux, les crédits
                             et les sondages du site Couaxia.
                         </p>
 
@@ -450,7 +432,7 @@
                             </strong>
 
                             <small>
-                                Créer une nouvelle fiche
+                                Ajouter un jeu depuis Twitch
                             </small>
 
                         </button>
@@ -475,7 +457,7 @@
                             </strong>
 
                             <small>
-                                Ajouter une œuvre à la galerie
+                                Ajouter une œuvre aux crédits
                             </small>
 
                         </button>
@@ -499,7 +481,7 @@
                             </strong>
 
                             <small>
-                                Préparer les choix proposés
+                                Préparer les prochains choix
                             </small>
 
                         </button>
@@ -521,11 +503,6 @@
                 data-admin-panel="games"
                 hidden
             >
-
-
-                <!-- =============================================
-                     EN-TÊTE
-                ============================================== -->
 
                 <header class="admin-section-header">
 
@@ -589,11 +566,6 @@
                         id="admin-game-form"
                         class="admin-form"
                     >
-
-
-                        <!-- =====================================
-                             ID INTERNE
-                        ====================================== -->
 
                         <input
                             type="hidden"
@@ -684,8 +656,7 @@
                                 <span
                                     id="admin-game-preview-id"
                                     class="admin-twitch-id"
-                                >
-                                </span>
+                                ></span>
 
                             </div>
 
@@ -717,7 +688,10 @@
                                     🔁 Régulier
                                 </option>
 
-                                <option value="backlog">
+                                <option
+                                    value="backlog"
+                                    selected
+                                >
                                     📚 À faire
                                 </option>
 
@@ -736,36 +710,36 @@
 
 
                         <!-- =====================================
-                             PROGRESSION
+                             NOTE
                         ====================================== -->
 
                         <div class="admin-field">
 
-                            <label for="admin-game-progress">
-                                Progression
+                            <label for="admin-game-rating">
+                                Ma note
                             </label>
 
+                            <select
+                                id="admin-game-rating"
+                                name="rating"
+                            >
 
-                            <div class="admin-range-wrapper">
+                                <option value="">
+                                    Pas encore noté
+                                </option>
 
-                                <input
-                                    type="range"
-                                    id="admin-game-progress"
-                                    name="progress"
-                                    min="0"
-                                    max="100"
-                                    step="1"
-                                    value="0"
-                                >
+                                <option value="1">💜 1/10</option>
+                                <option value="2">💜 2/10</option>
+                                <option value="3">💜 3/10</option>
+                                <option value="4">💜 4/10</option>
+                                <option value="5">💜 5/10</option>
+                                <option value="6">💜 6/10</option>
+                                <option value="7">💜 7/10</option>
+                                <option value="8">💜 8/10</option>
+                                <option value="9">💜 9/10</option>
+                                <option value="10">💜 10/10</option>
 
-                                <output
-                                    id="admin-game-progress-value"
-                                    for="admin-game-progress"
-                                >
-                                    0 %
-                                </output>
-
-                            </div>
+                            </select>
 
                         </div>
 
@@ -824,75 +798,10 @@
 
 
                         <!-- =====================================
-                             NOTE
-                        ====================================== -->
-
-                        <div class="admin-field">
-
-                            <label for="admin-game-rating">
-                                Ma note
-                            </label>
-
-                            <select
-                                id="admin-game-rating"
-                                name="rating"
-                            >
-
-                                <option value="">
-                                    Pas encore noté
-                                </option>
-
-                                <option value="1">
-                                    💜 1/10
-                                </option>
-
-                                <option value="2">
-                                    💜 2/10
-                                </option>
-
-                                <option value="3">
-                                    💜 3/10
-                                </option>
-
-                                <option value="4">
-                                    💜 4/10
-                                </option>
-
-                                <option value="5">
-                                    💜 5/10
-                                </option>
-
-                                <option value="6">
-                                    💜 6/10
-                                </option>
-
-                                <option value="7">
-                                    💜 7/10
-                                </option>
-
-                                <option value="8">
-                                    💜 8/10
-                                </option>
-
-                                <option value="9">
-                                    💜 9/10
-                                </option>
-
-                                <option value="10">
-                                    💜 10/10
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-
-                        <!-- =====================================
                              PLAYLIST YOUTUBE
                         ====================================== -->
 
-                        <div class="admin-field">
+                        <div class="admin-field admin-field-wide">
 
                             <label for="admin-game-youtube">
                                 Playlist YouTube
@@ -915,7 +824,7 @@
 
 
                         <!-- =====================================
-                             ÉLIGIBLE AU SONDAGE
+                             SONDAGE
                         ====================================== -->
 
                         <div class="admin-field admin-field-wide">
@@ -945,8 +854,8 @@
                                     </strong>
 
                                     <small>
-                                        Le jeu pourra être proposé
-                                        automatiquement dans les sondages.
+                                        Ce jeu pourra être proposé
+                                        dans les sondages.
                                     </small>
 
                                 </span>
@@ -1048,7 +957,7 @@
 
 
             <!-- =================================================
-                 GALERIE
+                 CRÉDITS / GALERIE
             ================================================== -->
 
             <section
@@ -1062,16 +971,16 @@
                     <div>
 
                         <span class="admin-eyebrow">
-                            🎨 Illustrations
+                            🎨 Crédits
                         </span>
 
                         <h1>
-                            Gestion de la galerie
+                            Gestion des illustrations
                         </h1>
 
                         <p>
-                            Ajoute, modifie ou supprime
-                            les œuvres de la galerie.
+                            Ajoute, modifie ou supprime les œuvres
+                            affichées dans la galerie des crédits.
                         </p>
 
                     </div>
@@ -1090,29 +999,720 @@
 
 
                 <!-- =============================================
-                     FUTUR FORMULAIRE GALERIE
+                     FORMULAIRE ARTWORK
                 ============================================== -->
 
-                <div class="admin-coming-soon">
+                <section
+                    id="admin-artwork-form-panel"
+                    class="admin-form-panel"
+                >
 
-                    <span
-                        class="admin-coming-soon-icon"
-                        aria-hidden="true"
+                    <div class="admin-form-heading">
+
+                        <div>
+
+                            <span class="admin-block-eyebrow">
+                                ✏️ Édition
+                            </span>
+
+                            <h2 id="admin-artwork-form-title">
+                                Ajouter une illustration
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <form
+                        id="admin-artwork-form"
+                        class="admin-form"
                     >
-                        🎨
-                    </span>
 
-                    <h2>
-                        Galerie admin
-                    </h2>
+                        <!-- ID SUPABASE -->
 
-                    <p>
-                        Cette partie permettra bientôt
-                        de gérer toutes les illustrations
-                        sans modifier credits.html.
-                    </p>
+                        <input
+                            type="hidden"
+                            id="admin-artwork-id"
+                            name="id"
+                        >
 
-                </div>
+
+                        <!-- URL DE L'IMAGE APRÈS UPLOAD -->
+
+                        <input
+                            type="hidden"
+                            id="admin-artwork-image-url"
+                            name="imageUrl"
+                        >
+
+
+
+                        <!-- =====================================
+                             ART ID
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-artwork-art-id">
+                                ID de l'œuvre
+                            </label>
+
+                            <input
+                                type="text"
+                                id="admin-artwork-art-id"
+                                name="artId"
+                                autocomplete="off"
+                                placeholder="Ex : 05"
+                                required
+                            >
+
+                            <small>
+                                Correspond à data-art-id.
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             ORDRE
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-artwork-sort-order">
+                                Ordre d'affichage
+                            </label>
+
+                            <input
+                                type="number"
+                                id="admin-artwork-sort-order"
+                                name="sortOrder"
+                                value="0"
+                                min="0"
+                                step="1"
+                            >
+
+                            <small>
+                                Plus le nombre est petit,
+                                plus l'œuvre apparaît tôt.
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             ARTISTE
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-artwork-artist">
+                                Nom de l'artiste
+                            </label>
+
+                            <input
+                                type="text"
+                                id="admin-artwork-artist"
+                                name="artist"
+                                autocomplete="off"
+                                placeholder="Ex : EilionFate"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             RÔLE
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-artwork-role">
+                                Rôle de l'artiste
+                            </label>
+
+                            <input
+                                type="text"
+                                id="admin-artwork-role"
+                                name="artistRole"
+                                autocomplete="off"
+                                placeholder="Ex : Illustrateur Panel"
+                            >
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             IMAGE — DROPZONE
+                        ====================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label>
+                                Illustration
+                            </label>
+
+
+                            <div
+                                id="admin-artwork-dropzone"
+                                class="admin-upload-dropzone"
+                                tabindex="0"
+                                role="button"
+                                aria-label="Déposer ou sélectionner une illustration"
+                            >
+
+                                <input
+                                    type="file"
+                                    id="admin-artwork-file"
+                                    name="artworkFile"
+                                    accept="image/png,image/jpeg,image/webp,image/gif"
+                                    hidden
+                                >
+
+
+                                <span
+                                    class="admin-upload-icon"
+                                    aria-hidden="true"
+                                >
+                                    🖼️
+                                </span>
+
+
+                                <strong>
+                                    Dépose ton image ici
+                                </strong>
+
+
+                                <span>
+                                    ou clique pour choisir un fichier
+                                </span>
+
+
+                                <small>
+                                    PNG, JPG, WEBP ou GIF — maximum 10 Mo
+                                </small>
+
+                            </div>
+
+
+
+                            <!-- APERÇU IMAGE -->
+
+                            <div
+                                id="admin-artwork-upload-preview"
+                                class="admin-upload-preview"
+                                hidden
+                            >
+
+                                <div class="admin-upload-preview-image">
+
+                                    <img
+                                        id="admin-artwork-preview-image"
+                                        src=""
+                                        alt=""
+                                        draggable="false"
+                                    >
+
+                                </div>
+
+
+                                <div class="admin-upload-preview-info">
+
+                                    <strong
+                                        id="admin-artwork-file-name"
+                                    >
+                                        —
+                                    </strong>
+
+                                    <span
+                                        id="admin-artwork-file-size"
+                                    >
+                                        —
+                                    </span>
+
+
+                                    <button
+                                        id="admin-artwork-remove-image"
+                                        class="admin-danger-button"
+                                        type="button"
+                                    >
+                                        🗑️ Retirer l'image
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             ALT IMAGE
+                        ====================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label for="admin-artwork-image-alt">
+                                Description alternative de l'image
+                            </label>
+
+                            <input
+                                type="text"
+                                id="admin-artwork-image-alt"
+                                name="imageAlt"
+                                autocomplete="off"
+                                placeholder="Ex : Illustration de Couaxia par EilionFate"
+                            >
+
+                            <small>
+                                Utilisée pour l'accessibilité.
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             TYPE DE MÉDIA
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-artwork-media-type">
+                                Type de média
+                            </label>
+
+                            <select
+                                id="admin-artwork-media-type"
+                                name="mediaType"
+                            >
+
+                                <option
+                                    value="image"
+                                    selected
+                                >
+                                    🖼️ Image
+                                </option>
+
+                                <option value="gif">
+                                    🎞️ GIF
+                                </option>
+
+                                <option value="video">
+                                    🎬 Vidéo
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             TAGS
+                        ====================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label for="admin-artwork-tags">
+                                Catégories / Tags
+                            </label>
+
+                            <input
+                                type="text"
+                                id="admin-artwork-tags"
+                                name="tags"
+                                autocomplete="off"
+                                placeholder="stream, couaxia, forme-3"
+                            >
+
+                            <small>
+                                Sépare les tags avec des virgules.
+                                Exemple : stream, couaxia, forme-3
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             DESCRIPTION
+                        ====================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label for="admin-artwork-description">
+                                Description
+                            </label>
+
+                            <textarea
+                                id="admin-artwork-description"
+                                name="description"
+                                rows="4"
+                                maxlength="600"
+                                placeholder="Ex : Merci à EilionFate ! Je suis trop mimi 💜"
+                            ></textarea>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             MESSAGES IMAGE
+                        ====================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label for="admin-artwork-image-messages">
+                                Messages mascotte sur l'image
+                            </label>
+
+                            <textarea
+                                id="admin-artwork-image-messages"
+                                name="imageMessages"
+                                rows="4"
+                                placeholder="Regarde comme c'est beau !💜|Chapeau l'artiste !|Juste WAOUH !!!"
+                            ></textarea>
+
+                            <small>
+                                Sépare chaque message avec |
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             LIEN ARTISTE
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-artwork-artist-url">
+                                Lien de l'artiste
+                            </label>
+
+                            <input
+                                type="url"
+                                id="admin-artwork-artist-url"
+                                name="artistUrl"
+                                autocomplete="off"
+                                placeholder="https://vgen.co/EilionFate"
+                            >
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             TEXTE BOUTON
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-artwork-button-text">
+                                Texte du bouton
+                            </label>
+
+                            <input
+                                type="text"
+                                id="admin-artwork-button-text"
+                                name="buttonText"
+                                autocomplete="off"
+                                value="Voir son profil"
+                            >
+
+                            <small>
+                                Ex : Voir son profil VGen
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             MESSAGES BOUTON
+                        ====================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label for="admin-artwork-button-messages">
+                                Messages mascotte sur le bouton
+                            </label>
+
+                            <textarea
+                                id="admin-artwork-button-messages"
+                                name="buttonMessages"
+                                rows="3"
+                                placeholder="Clique sur le bouton !|Tu veux en savoir plus ? Clique ici !"
+                            ></textarea>
+
+                            <small>
+                                Sépare chaque message avec |
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             +18
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label
+                                class="admin-toggle-field"
+                                for="admin-artwork-sensitive"
+                            >
+
+                                <input
+                                    type="checkbox"
+                                    id="admin-artwork-sensitive"
+                                    name="sensitive"
+                                >
+
+
+                                <span
+                                    class="admin-toggle"
+                                    aria-hidden="true"
+                                ></span>
+
+
+                                <span class="admin-toggle-text">
+
+                                    <strong>
+                                        🔞 Contenu sensible
+                                    </strong>
+
+                                    <small>
+                                        Active le système +18.
+                                    </small>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             FAVORIS
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label
+                                class="admin-toggle-field"
+                                for="admin-artwork-favorite-enabled"
+                            >
+
+                                <input
+                                    type="checkbox"
+                                    id="admin-artwork-favorite-enabled"
+                                    name="favoriteEnabled"
+                                    checked
+                                >
+
+
+                                <span
+                                    class="admin-toggle"
+                                    aria-hidden="true"
+                                ></span>
+
+
+                                <span class="admin-toggle-text">
+
+                                    <strong>
+                                        ❤️ Favoris autorisés
+                                    </strong>
+
+                                    <small>
+                                        Permet d'ajouter cette œuvre
+                                        aux favoris.
+                                    </small>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             VISIBILITÉ
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label
+                                class="admin-toggle-field"
+                                for="admin-artwork-visible"
+                            >
+
+                                <input
+                                    type="checkbox"
+                                    id="admin-artwork-visible"
+                                    name="visible"
+                                    checked
+                                >
+
+
+                                <span
+                                    class="admin-toggle"
+                                    aria-hidden="true"
+                                ></span>
+
+
+                                <span class="admin-toggle-text">
+
+                                    <strong>
+                                        👁️ Visible sur le site
+                                    </strong>
+
+                                    <small>
+                                        Désactive pour masquer l'œuvre
+                                        sans la supprimer.
+                                    </small>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             ACTIONS
+                        ====================================== -->
+
+                        <div class="admin-form-actions">
+
+                            <button
+                                id="admin-artwork-cancel"
+                                class="admin-secondary-button"
+                                type="button"
+                            >
+                                Annuler
+                            </button>
+
+
+                            <button
+                                id="admin-artwork-submit"
+                                class="admin-primary-button"
+                                type="submit"
+                            >
+                                💾 Enregistrer l'œuvre
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     LISTE DES ŒUVRES
+                ============================================== -->
+
+                <section class="admin-block">
+
+                    <div class="admin-block-header">
+
+                        <div>
+
+                            <span class="admin-block-eyebrow">
+                                🖼️ Galerie
+                            </span>
+
+                            <h2>
+                                Illustrations enregistrées
+                            </h2>
+
+                        </div>
+
+
+                        <div class="admin-list-tools">
+
+                            <label
+                                class="sr-only"
+                                for="admin-artworks-search"
+                            >
+                                Rechercher une illustration
+                            </label>
+
+                            <input
+                                type="search"
+                                id="admin-artworks-search"
+                                placeholder="Rechercher une œuvre..."
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- FILTRES -->
+
+                    <div class="admin-gallery-filters">
+
+                        <select
+                            id="admin-artworks-filter"
+                            aria-label="Filtrer les illustrations"
+                        >
+
+                            <option value="all">
+                                Toutes les œuvres
+                            </option>
+
+                            <option value="visible">
+                                👁️ Visibles
+                            </option>
+
+                            <option value="hidden">
+                                🚫 Masquées
+                            </option>
+
+                            <option value="sensitive">
+                                🔞 Sensibles
+                            </option>
+
+                            <option value="favorites">
+                                ❤️ Favoris activés
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div
+                        id="admin-artworks-list"
+                        class="admin-artworks-list"
+                    >
+
+                        <p class="admin-empty-state">
+                            Chargement des illustrations...
+                        </p>
+
+                    </div>
+
+                </section>
 
             </section>
 
@@ -1153,7 +1753,7 @@
 
 
                 <!-- =============================================
-                     ÉTAT DU SONDAGE
+                     ÉTAT
                 ============================================== -->
 
                 <section class="admin-block">
@@ -1230,7 +1830,7 @@
 
 
                 <!-- =============================================
-                     CONFIGURATION SONDAGE
+                     CONFIGURATION
                 ============================================== -->
 
                 <section class="admin-block">
@@ -1256,7 +1856,6 @@
                         id="admin-poll-form"
                         class="admin-form"
                     >
-
 
                         <div class="admin-field">
 
@@ -1296,9 +1895,8 @@
                             </label>
 
                             <p class="admin-field-help">
-                                Les jeux marqués comme
-                                éligibles au sondage apparaîtront
-                                automatiquement ici.
+                                Les jeux marqués comme éligibles
+                                au sondage apparaîtront automatiquement ici.
                             </p>
 
 
@@ -1398,7 +1996,7 @@
 
 
     <!-- =====================================================
-         CONFIRMATION DE SUPPRESSION
+         CONFIRMATION SUPPRESSION
     ====================================================== -->
 
     <div
@@ -1473,34 +2071,27 @@
          NOTIFICATIONS
     ====================================================== -->
 
-    <div
-        id="admin-toast-container"
+    <div id="admin-toast-container"
         class="admin-toast-container"
         aria-live="polite"
-        aria-atomic="true"
-    ></div>
+        aria-atomic="true"></div>
 
+        
+            <div class="scroll-page-controls" aria-label="Navigation verticale de la page">
+                    <button id="scrollTopButton" class="scroll-page-button" type="button" aria-label="Retourner en haut de la page" title="Retour en haut">
+                             ↑
+                    </button>
+                    <button id="scrollBottomButton" class="scroll-page-button" type="button" aria-label="Aller en bas de la page" title="Aller en bas">
+                        ↓
+                    </button>
+            </div>
 
+                    <!-- =====================================================
+                        JAVASCRIPT
+                    ====================================================== -->
+                    <script src="../js/scroll-page.js"></script>
+                    <script src="../js/theme.js"></script>
+                    <script type="module" src="./admin.js"></script>
 
-    <!-- =====================================================
-         JAVASCRIPT
-    ====================================================== -->
-
-    <script src="../js/theme.js"></script>
-
-
-    <!--
-        admin.js sera un module car il pourra importer :
-
-        ../js/game.js
-        ../js/auth.js
-
-        puis appeler nos futures API admin.
-    -->
-
-    <script type="module" src="./admin.js"></script>
-
-
-</body>
-
+    </body>
 </html>

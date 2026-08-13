@@ -1075,3 +1075,84 @@ video {
 .artist-card video {
     -webkit-touch-callout: none;
 }
+
+/* =========================================================
+   ACCÈS ADMIN
+========================================================= */
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.admin-access-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    min-height: 42px;
+    padding: 9px 14px;
+
+    color: #6D00A3;
+
+    font-weight: 800;
+    text-decoration: none;
+
+    border: 1px solid rgba(109, 0, 163, 0.35);
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.70);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.admin-access-link:hover {
+    transform: translateY(-2px);
+
+    background: rgba(109, 0, 163, 0.12);
+
+    border-color: #6D00A3;
+}
+
+
+/* =========================================================
+   MODE NUIT
+========================================================= */
+
+body.dark-mode .admin-access-link {
+    color: #E3B8FF;
+
+    background: rgba(35, 15, 50, 0.85);
+
+    border-color: rgba(227, 184, 255, 0.40);
+}
+
+
+body.dark-mode .admin-access-link:hover {
+    background: rgba(201, 122, 255, 0.16);
+
+    border-color: #C97AFF;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .navbar-actions {
+        width: 100%;
+
+        justify-content: center;
+
+        flex-wrap: wrap;
+    }
+}
