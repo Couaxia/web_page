@@ -3215,3 +3215,652 @@ body.dark-mode .admin-artwork-badge.is-hidden {
             1 !important;
     }
 }
+/* =========================================================
+   ARTWORKS — TAGS
+========================================================= */
+
+.admin-artwork-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    gap: 8px;
+
+    width: 100%;
+
+    margin-top: 14px;
+}
+
+
+.admin-artwork-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 7px 13px;
+
+    border: 1px solid rgba(142, 0, 210, 0.35);
+    border-radius: 999px;
+
+    background:
+        rgba(
+            142,
+            0,
+            210,
+            0.08
+        );
+
+    color:
+        #67009c;
+
+    font-size:
+        0.85rem;
+
+    font-weight:
+        700;
+
+    line-height:
+        1;
+
+    white-space:
+        nowrap;
+}
+
+
+.admin-artwork-tag.is-empty {
+    opacity: 0.65;
+}
+
+
+/* =========================================================
+   ARTWORKS — STATUTS
+========================================================= */
+
+.admin-artwork-statuses {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 10px;
+}
+
+
+.admin-artwork-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+
+    font-size:
+        0.9rem;
+
+    font-weight:
+        600;
+}
+
+
+.admin-artwork-status.is-sensitive {
+    color:
+        #c62828;
+}
+/* =========================================================
+   ADMIN — MODE NUIT
+========================================================= */
+
+body.dark-mode {
+    background:
+        #0d0018;
+
+    color:
+        #f8efff;
+}
+
+
+/* =========================================================
+   PANNEAUX PRINCIPAUX
+========================================================= */
+
+body.dark-mode .admin-sidebar,
+body.dark-mode .admin-section-header,
+body.dark-mode .admin-panel,
+body.dark-mode .admin-card,
+body.dark-mode .admin-form-panel,
+body.dark-mode .admin-list-panel {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(36, 8, 55, 0.98),
+            rgba(20, 4, 35, 0.98)
+        );
+
+    border:
+        1px solid rgba(193, 102, 255, 0.35);
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.35);
+
+    color:
+        #f8efff;
+}
+
+
+/* =========================================================
+   TITRES
+========================================================= */
+
+body.dark-mode .admin-section-header h1,
+body.dark-mode .admin-section-header h2,
+body.dark-mode .admin-panel h2,
+body.dark-mode .admin-panel h3,
+body.dark-mode .admin-form-panel h2,
+body.dark-mode .admin-form-panel h3,
+body.dark-mode .admin-list-content h3,
+body.dark-mode .admin-artwork-main-info h3 {
+    color:
+        #f6e8ff;
+}
+
+
+body.dark-mode .admin-kicker,
+body.dark-mode .admin-section-kicker {
+    color:
+        #d78cff;
+}
+
+
+/* =========================================================
+   TEXTES SECONDAIRES
+========================================================= */
+
+body.dark-mode .admin-section-header p,
+body.dark-mode .admin-panel p,
+body.dark-mode .admin-form-panel p,
+body.dark-mode .admin-list-content p,
+body.dark-mode .admin-helper,
+body.dark-mode small {
+    color:
+        #cbb9d9;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+body.dark-mode .admin-sidebar {
+    background:
+        linear-gradient(
+            180deg,
+            #21072f,
+            #12031e
+        );
+}
+
+
+body.dark-mode .admin-nav-button {
+    color:
+        #eee1f7;
+
+    background:
+        transparent;
+
+    border:
+        1px solid transparent;
+}
+
+
+body.dark-mode .admin-nav-button:hover {
+    background:
+        rgba(175, 73, 235, 0.12);
+
+    border-color:
+        rgba(197, 105, 255, 0.25);
+}
+
+
+body.dark-mode .admin-nav-button.is-active {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(134, 0, 195, 0.32),
+            rgba(236, 67, 182, 0.18)
+        );
+
+    border:
+        1px solid rgba(214, 119, 255, 0.65);
+
+    color:
+        #f5dfff;
+
+    box-shadow:
+        0 8px 25px rgba(149, 0, 213, 0.18);
+}
+
+
+/* =========================================================
+   PROFIL ADMIN
+========================================================= */
+
+body.dark-mode .admin-user-card {
+    background:
+        rgba(255, 255, 255, 0.05);
+
+    border:
+        1px solid rgba(218, 140, 255, 0.28);
+
+    color:
+        #ffffff;
+}
+
+
+body.dark-mode .admin-user-card p {
+    color:
+        #c9afd9;
+}
+
+
+/* =========================================================
+   LABELS
+========================================================= */
+
+body.dark-mode label,
+body.dark-mode .admin-label {
+    color:
+        #f3e6fb;
+}
+
+
+/* =========================================================
+   INPUTS / SELECT / TEXTAREA
+========================================================= */
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea,
+body.dark-mode .admin-input,
+body.dark-mode .admin-select,
+body.dark-mode .admin-textarea {
+    background:
+        #160522;
+
+    color:
+        #f9f1ff;
+
+    border:
+        1px solid rgba(191, 103, 241, 0.55);
+
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.01);
+}
+
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color:
+        #8e789c;
+}
+
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus,
+body.dark-mode .admin-input:focus {
+    border-color:
+        #d67cff;
+
+    box-shadow:
+        0 0 0 3px rgba(190, 86, 244, 0.15);
+
+    outline:
+        none;
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+body.dark-mode select option {
+    background:
+        #160522;
+
+    color:
+        #ffffff;
+}
+
+
+/* =========================================================
+   DROPZONE ILLUSTRATION
+========================================================= */
+
+body.dark-mode .admin-upload-zone,
+body.dark-mode .admin-dropzone {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(63, 16, 85, 0.5),
+            rgba(24, 5, 37, 0.8)
+        );
+
+    border:
+        2px dashed rgba(211, 116, 255, 0.65);
+
+    color:
+        #e7ccf4;
+}
+
+
+body.dark-mode .admin-upload-zone:hover,
+body.dark-mode .admin-dropzone:hover,
+body.dark-mode .admin-dropzone.is-dragover {
+    border-color:
+        #ef7bdc;
+
+    background:
+        rgba(124, 22, 157, 0.24);
+}
+
+
+/* =========================================================
+   APERÇU UPLOAD
+========================================================= */
+
+body.dark-mode .admin-upload-preview {
+    background:
+        #11021c;
+
+    border:
+        1px solid rgba(216, 123, 255, 0.35);
+}
+
+
+body.dark-mode .admin-upload-preview-info {
+    color:
+        #f6eaff;
+}
+
+
+/* =========================================================
+   LISTE DES ILLUSTRATIONS
+========================================================= */
+
+body.dark-mode .admin-list-item {
+    background:
+        linear-gradient(
+            145deg,
+            #230a31,
+            #160520
+        );
+
+    border:
+        1px solid rgba(201, 103, 255, 0.28);
+
+    border-radius:
+        22px;
+
+    overflow:
+        hidden;
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.28);
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+body.dark-mode .admin-list-item:hover {
+    transform:
+        translateY(-4px);
+
+    border-color:
+        rgba(226, 128, 255, 0.6);
+
+    box-shadow:
+        0 18px 38px rgba(0, 0, 0, 0.4);
+}
+
+
+/* =========================================================
+   IMAGE DES CARTES
+========================================================= */
+
+body.dark-mode .admin-list-thumb {
+    background:
+        #09010e;
+}
+
+
+body.dark-mode .admin-list-thumb img,
+body.dark-mode .admin-list-thumb video {
+    display:
+        block;
+
+    width:
+        100%;
+
+    object-fit:
+        cover;
+}
+
+
+/* =========================================================
+   CONTENU DES CARTES
+========================================================= */
+
+body.dark-mode .admin-list-content {
+    color:
+        #f6ecfb;
+}
+
+
+body.dark-mode .admin-list-content h3 {
+    color:
+        #ffffff;
+}
+
+
+body.dark-mode .admin-artwork-role {
+    color:
+        #d5bfdc;
+}
+
+
+/* =========================================================
+   STATUTS
+========================================================= */
+
+body.dark-mode .admin-artwork-status {
+    color:
+        #e8d7f0;
+}
+
+
+body.dark-mode .admin-artwork-status.is-sensitive {
+    color:
+        #ff88a8;
+}
+
+
+/* =========================================================
+   TAGS
+========================================================= */
+
+body.dark-mode .admin-artwork-tags {
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    justify-content:
+        center;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    margin-top:
+        14px;
+}
+
+
+body.dark-mode .admin-artwork-tag {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(146, 44, 205, 0.25),
+            rgba(237, 77, 181, 0.14)
+        );
+
+    color:
+        #efceff;
+
+    border:
+        1px solid rgba(215, 126, 255, 0.42);
+
+    border-radius:
+        999px;
+
+    padding:
+        7px 13px;
+
+    font-size:
+        0.85rem;
+
+    font-weight:
+        700;
+}
+
+
+/* =========================================================
+   BOUTON MODIFIER
+========================================================= */
+
+body.dark-mode .admin-secondary-button {
+    background:
+        rgba(128, 31, 170, 0.15);
+
+    color:
+        #dc9bff;
+
+    border:
+        1px solid rgba(199, 101, 246, 0.7);
+}
+
+
+body.dark-mode .admin-secondary-button:hover {
+    background:
+        rgba(170, 42, 222, 0.3);
+
+    color:
+        #ffffff;
+
+    box-shadow:
+        0 6px 18px rgba(141, 36, 189, 0.25);
+}
+
+
+/* =========================================================
+   BOUTON SUPPRIMER
+========================================================= */
+
+body.dark-mode .admin-danger-button {
+    background:
+        rgba(198, 40, 40, 0.12);
+
+    color:
+        #ff8b9b;
+
+    border:
+        1px solid rgba(255, 92, 109, 0.55);
+}
+
+
+body.dark-mode .admin-danger-button:hover {
+    background:
+        rgba(213, 43, 68, 0.28);
+
+    color:
+        #ffffff;
+}
+
+
+/* =========================================================
+   BOUTON PRINCIPAL
+========================================================= */
+
+body.dark-mode .admin-primary-button {
+    background:
+        linear-gradient(
+            135deg,
+            #8700c4,
+            #b400c8
+        );
+
+    color:
+        #ffffff;
+
+    border:
+        1px solid rgba(230, 137, 255, 0.3);
+
+    box-shadow:
+        0 8px 22px rgba(126, 0, 177, 0.25);
+}
+
+
+body.dark-mode .admin-primary-button:hover {
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 12px 30px rgba(164, 28, 205, 0.35);
+}
+
+
+/* =========================================================
+   RECHERCHE GALERIE
+========================================================= */
+
+body.dark-mode #admin-artworks-search,
+body.dark-mode #admin-artworks-filter {
+    background:
+        #160522;
+
+    color:
+        #f8efff;
+
+    border-color:
+        rgba(211, 118, 255, 0.5);
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+body.dark-mode ::-webkit-scrollbar-track {
+    background:
+        #0e0216;
+}
+
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background:
+        linear-gradient(
+            #8117ac,
+            #c23ab5
+        );
+
+    border-radius:
+        999px;
+}

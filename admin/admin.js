@@ -2805,284 +2805,381 @@ document.addEventListener(
 
 
         /* =====================================================
-           ARTWORKS — AFFICHAGE
-        ====================================================== */
+   ARTWORKS — AFFICHAGE
+====================================================== */
 
-        function renderArtworks() {
+function renderArtworks() {
 
-            if (
-                !artworksList
-            ) {
+    if (
+        !artworksList
+    ) {
 
-                return;
-            }
-
-
-            const query =
-                normalizeText(
-                    artworksSearch?.value
-                )
-                    .toLowerCase();
+        return;
+    }
 
 
-            const filteredArtworks =
-                artworks
-                    .filter(
-                        artwork => {
-
-                            if (
-                                !query
-                            ) {
-
-                                return true;
-                            }
+    const query =
+        normalizeText(
+            artworksSearch?.value
+        )
+            .toLowerCase();
 
 
-                            const haystack =
-                                [
-                                    artwork.artId,
-                                    artwork.artist,
-                                    artwork.artistRole,
-                                    artwork.description,
-                                    artwork.imageAlt,
-                                    artwork.mediaType,
-                                    ...artwork.tags
-                                ]
-                                    .join(
-                                        " "
-                                    )
-                                    .toLowerCase();
+    const filteredArtworks =
+        artworks
+            .filter(
+                artwork => {
+
+                    if (
+                        !query
+                    ) {
+
+                        return true;
+                    }
 
 
-                            return haystack.includes(
-                                query
-                            );
-                        }
-                    )
-                    .sort(
-                        (
-                            a,
-                            b
-                        ) =>
-                            a.sortOrder -
-                            b.sortOrder
+                    const haystack =
+                        [
+                            artwork.artId,
+                            artwork.artist,
+                            artwork.artistRole,
+                            artwork.description,
+                            artwork.imageAlt,
+                            artwork.mediaType,
+                            ...artwork.tags
+                        ]
+                            .join(
+                                " "
+                            )
+                            .toLowerCase();
+
+
+                    return haystack.includes(
+                        query
                     );
+                }
+            )
+            .sort(
+                (
+                    a,
+                    b
+                ) =>
+                    a.sortOrder -
+                    b.sortOrder
+            );
 
 
-            if (
-                filteredArtworks.length ===
-                0
-            ) {
+    /* =================================================
+       AUCUNE ŒUVRE
+    ================================================= */
 
-                artworksList.innerHTML = `
-                    <div class="admin-empty-state">
+    if (
+        filteredArtworks.length ===
+        0
+    ) {
 
-                        <span
-                            class="admin-empty-icon"
-                            aria-hidden="true"
-                        >
-                            🎨
-                        </span>
+        artworksList.innerHTML = `
+            <div class="admin-empty-state">
 
-                        <h3>
-                            Aucune illustration
-                        </h3>
+                <span
+                    class="admin-empty-icon"
+                    aria-hidden="true"
+                >
+                    🎨
+                </span>
 
-                        <p>
-                            Ajoute ta première œuvre depuis
-                            l'administration.
-                        </p>
+                <h3>
+                    Aucune illustration
+                </h3>
 
-                    </div>
-                `;
+                <p>
+                    Ajoute ta première œuvre depuis
+                    l'administration.
+                </p>
+
+            </div>
+        `;
 
 
-                return;
-            }
+        return;
+    }
 
 
-            artworksList.innerHTML =
-                filteredArtworks
-                    .map(
-                        artwork => {
+    /* =================================================
+       CARTES
+    ================================================= */
 
-                            const tags =
-                                artwork.tags.length >
-                                0
-                                    ? artwork.tags
-                                        .map(
-                                            tag => `
-                                                <span>
-                                                    ${escapeHtml(
-                                                        tag
-                                                    )}
-                                                </span>
-                                            `
-                                        )
-                                        .join(
-                                            ""
-                                        )
-                                    : `
-                                        <span>
-                                            Aucun tag
+    artworksList.innerHTML =
+        filteredArtworks
+            .map(
+                artwork => {
+
+                    /* =====================================
+                       TAGS
+                    ====================================== */
+
+                    const tags =
+                        Array.isArray(
+                            artwork.tags
+                        ) &&
+                        artwork.tags.length >
+                        0
+                            ? artwork.tags
+                                .map(
+                                    tag => `
+                                        <span
+                                            class="admin-artwork-tag"
+                                        >
+                                            ${escapeHtml(
+                                                tag
+                                            )}
                                         </span>
-                                    `;
+                                    `
+                                )
+                                .join(
+                                    ""
+                                )
+                            : `
+                                <span
+                                    class="admin-artwork-tag is-empty"
+                                >
+                                    Aucun tag
+                                </span>
+                            `;
 
 
-                            const visibilityLabel =
-                                artwork.visible
-                                    ? "👁️ Visible"
-                                    : "🙈 Masquée";
+                    /* =====================================
+                       VISIBILITÉ
+                    ====================================== */
+
+                    const visibilityLabel =
+                        artwork.visible
+                            ? "👁️ Visible"
+                            : "🙈 Masquée";
 
 
-                            const sensitiveLabel =
-                                artwork.sensitive
-                                    ? " • 🔞 Sensible"
-                                    : "";
+                    /* =====================================
+                       SENSIBLE
+                    ====================================== */
+
+                    const sensitiveLabel =
+                        artwork.sensitive
+                            ? `
+                                <span
+                                    class="admin-artwork-status is-sensitive"
+                                >
+                                    🔞 Sensible
+                                </span>
+                            `
+                            : "";
 
 
-                            return `
-                                <article
-                                    class="admin-list-item"
-                                    data-artwork-id="${escapeHtml(
-                                        artwork.id
-                                    )}"
+                    /* =====================================
+                       FAVORIS
+                    ====================================== */
+
+                    const favoriteLabel =
+                        artwork.favoriteEnabled
+                            ? `
+                                <span
+                                    class="admin-artwork-status"
+                                >
+                                    ❤️ Favoris
+                                </span>
+                            `
+                            : "";
+
+
+                    /* =====================================
+                       RETOUR CARTE
+                    ====================================== */
+
+                    return `
+                        <article
+                            class="admin-list-item"
+                            data-artwork-id="${escapeHtml(
+                                artwork.id
+                            )}"
+                        >
+
+                            <div
+                                class="admin-list-thumb"
+                            >
+                                ${createArtworkMediaHtml(
+                                    artwork
+                                )}
+                            </div>
+
+
+                            <div
+                                class="admin-list-content"
+                            >
+
+                                <div
+                                    class="admin-list-heading"
                                 >
 
-                                    <div class="admin-list-thumb">
-                                        ${createArtworkMediaHtml(
-                                            artwork
-                                        )}
-                                    </div>
+                                    <div
+                                        class="admin-artwork-main-info"
+                                    >
 
-                                    <div class="admin-list-content">
+                                        <h3>
+                                            ${escapeHtml(
+                                                artwork.artist ||
+                                                "Artiste inconnu"
+                                            )}
+                                        </h3>
 
-                                        <div class="admin-list-heading">
 
-                                            <div>
+                                        <p
+                                            class="admin-artwork-role"
+                                        >
+                                            ${escapeHtml(
+                                                artwork.artistRole ||
+                                                "Illustration"
+                                            )}
+                                        </p>
 
-                                                <h3>
-                                                    ${escapeHtml(
-                                                        artwork.artist ||
-                                                        "Artiste inconnu"
-                                                    )}
-                                                </h3>
 
-                                                <p>
-                                                    ${escapeHtml(
-                                                        artwork.artistRole ||
-                                                        "Illustration"
-                                                    )}
-                                                </p>
+                                        <div
+                                            class="admin-artwork-statuses"
+                                        >
 
-                                                <p>
-                                                    #${escapeHtml(
-                                                        artwork.artId ||
-                                                        "—"
-                                                    )}
-                                                    •
-                                                    ${visibilityLabel}
-                                                    ${sensitiveLabel}
-                                                </p>
+                                            <span
+                                                class="admin-artwork-status"
+                                            >
+                                                #${escapeHtml(
+                                                    artwork.artId ||
+                                                    "—"
+                                                )}
+                                            </span>
 
-                                            </div>
 
-                                            <div class="admin-list-actions">
+                                            <span
+                                                class="admin-artwork-status"
+                                            >
+                                                ${visibilityLabel}
+                                            </span>
 
-                                                <button
-                                                    type="button"
-                                                    class="admin-secondary-button"
-                                                    data-edit-artwork="${escapeHtml(
-                                                        artwork.id
-                                                    )}"
-                                                >
-                                                    ✏️ Modifier
-                                                </button>
 
-                                                <button
-                                                    type="button"
-                                                    class="admin-danger-button"
-                                                    data-delete-artwork="${escapeHtml(
-                                                        artwork.id
-                                                    )}"
-                                                >
-                                                    🗑️ Supprimer
-                                                </button>
+                                            ${sensitiveLabel}
 
-                                            </div>
+                                            ${favoriteLabel}
 
-                                        </div>
-
-                                        <div class="admin-item-tags">
-                                            ${tags}
                                         </div>
 
                                     </div>
 
-                                </article>
-                            `;
-                        }
-                    )
-                    .join(
-                        ""
-                    );
+
+                                    <div
+                                        class="admin-list-actions"
+                                    >
+
+                                        <button
+                                            type="button"
+                                            class="admin-secondary-button"
+                                            data-edit-artwork="${escapeHtml(
+                                                artwork.id
+                                            )}"
+                                        >
+                                            ✏️ Modifier
+                                        </button>
 
 
-            artworksList
-                .querySelectorAll(
-                    "[data-edit-artwork]"
-                )
-                .forEach(
-                    button => {
+                                        <button
+                                            type="button"
+                                            class="admin-danger-button"
+                                            data-delete-artwork="${escapeHtml(
+                                                artwork.id
+                                            )}"
+                                        >
+                                            🗑️ Supprimer
+                                        </button>
 
-                        button.addEventListener(
-                            "click",
-                            () => {
+                                    </div>
 
-                                const artwork =
-                                    artworks.find(
-                                        item =>
-                                            item.id ===
-                                            button.dataset
-                                                .editArtwork
-                                    );
+                                </div>
 
 
-                                if (
-                                    artwork
-                                ) {
+                                <div
+                                    class="admin-artwork-tags"
+                                >
+                                    ${tags}
+                                </div>
 
-                                    fillArtworkForm(
-                                        artwork
-                                    );
-                                }
-                            }
-                        );
-                    }
-                );
+                            </div>
+
+                        </article>
+                    `;
+                }
+            )
+            .join(
+                ""
+            );
 
 
-            artworksList
-                .querySelectorAll(
-                    "[data-delete-artwork]"
-                )
-                .forEach(
-                    button => {
+    /* =================================================
+       MODIFIER
+    ================================================= */
 
-                        button.addEventListener(
-                            "click",
-                            () => {
+    artworksList
+        .querySelectorAll(
+            "[data-edit-artwork]"
+        )
+        .forEach(
+            button => {
 
-                                deleteArtwork(
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        const artwork =
+                            artworks.find(
+                                item =>
+                                    item.id ===
                                     button.dataset
-                                        .deleteArtwork
-                                );
-                            }
+                                        .editArtwork
+                            );
+
+
+                        if (
+                            artwork
+                        ) {
+
+                            fillArtworkForm(
+                                artwork
+                            );
+                        }
+                    }
+                );
+            }
+        );
+
+
+    /* =================================================
+       SUPPRIMER
+    ================================================= */
+
+    artworksList
+        .querySelectorAll(
+            "[data-delete-artwork]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        deleteArtwork(
+                            button.dataset
+                                .deleteArtwork
                         );
                     }
                 );
-        }
-
+            }
+        );
+}
 
         if (
             artworksSearch
