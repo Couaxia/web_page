@@ -21,15 +21,40 @@ import {
 const ARTWORKS_BUCKET =
     "artworks";
 
+/*
+ * Taille maximale autorisée :
+ *
+ * 50 Mo
+ *
+ * Attention :
+ * la limite du bucket Supabase doit également
+ * être configurée à au moins 50 Mo.
+ */
 const MAX_FILE_SIZE =
-    10 * 1024 * 1024;
+    50 * 1024 * 1024;
 
+
+/*
+ * Formats acceptés dans la galerie.
+ *
+ * Images :
+ * - PNG
+ * - JPG / JPEG
+ * - WEBP
+ * - GIF
+ *
+ * Vidéos :
+ * - MP4
+ * - WEBM
+ */
 const ALLOWED_MIME_TYPES =
     new Set([
         "image/png",
         "image/jpeg",
         "image/webp",
-        "image/gif"
+        "image/gif",
+        "video/mp4",
+        "video/webm"
     ]);
 
 
@@ -68,7 +93,7 @@ function getRequestBody(
     if (
         request?.body &&
         typeof request.body ===
-        "object"
+            "object"
     ) {
 
         return request.body;
@@ -93,17 +118,21 @@ function sanitizePathSegment(
         value
     )
         .toLowerCase()
+
         .normalize(
             "NFD"
         )
+
         .replace(
             /[\u0300-\u036f]/g,
             ""
         )
+
         .replace(
             /[^a-z0-9_-]+/g,
             "-"
         )
+
         .replace(
             /^-+|-+$/g,
             ""
@@ -168,6 +197,7 @@ function sanitizeFilename(
     extension =
         extension
             .toLowerCase()
+
             .replace(
                 /[^a-z0-9.]/g,
                 ""
@@ -204,7 +234,13 @@ function getExtensionFromMimeType(
             ".webp",
 
         "image/gif":
-            ".gif"
+            ".gif",
+
+        "video/mp4":
+            ".mp4",
+
+        "video/webm":
+            ".webm"
 
     };
 
@@ -250,6 +286,7 @@ function ensureFileExtension(
 /**
  * Nettoie éventuellement le préfixe
  * data:image/...;base64,...
+ * ou data:video/...;base64,...
  *
  * @param {string} value
  * @returns {string}
@@ -292,6 +329,88 @@ function cleanBase64(
 
 
     return text;
+}
+
+
+/**
+ * Retourne la catégorie du média.
+ *
+ * @param {string} mimeType
+ * @returns {"image"|"video"}
+ */
+function getMediaType(
+    mimeType
+) {
+
+    if (
+        mimeType.startsWith(
+            "video/"
+        )
+    ) {
+
+        return "video";
+    }
+
+
+    return "image";
+}
+
+
+/**
+ * Retourne une taille lisible.
+ *
+ * @param {number} bytes
+ * @returns {string}
+ */
+function formatFileSize(
+    bytes
+) {
+
+    if (
+        !Number.isFinite(
+            bytes
+        ) ||
+        bytes <= 0
+    ) {
+
+        return "0 octet";
+    }
+
+
+    if (
+        bytes <
+        1024
+    ) {
+
+        return `${bytes} octets`;
+    }
+
+
+    if (
+        bytes <
+        1024 * 1024
+    ) {
+
+        return `${
+            (
+                bytes /
+                1024
+            ).toFixed(
+                1
+            )
+        } Ko`;
+    }
+
+
+    return `${
+        (
+            bytes /
+            1024 /
+            1024
+        ).toFixed(
+            1
+        )
+    } Mo`;
 }
 
 
@@ -351,11 +470,13 @@ export default async function handler(
         response
             .status(405)
             .json({
+
                 success:
                     false,
 
                 error:
                     "Méthode non autorisée."
+
             });
 
 
@@ -404,7 +525,7 @@ export default async function handler(
 
 
         /* =================================================
-           VALIDATION
+           VALIDATION — ID
         ================================================== */
 
         if (
@@ -414,17 +535,23 @@ export default async function handler(
             response
                 .status(400)
                 .json({
+
                     success:
                         false,
 
                     error:
                         "L'ID de l'œuvre est obligatoire."
+
                 });
 
 
             return;
         }
 
+
+        /* =================================================
+           VALIDATION — NOM DU FICHIER
+        ================================================== */
 
         if (
             !filename
@@ -433,17 +560,23 @@ export default async function handler(
             response
                 .status(400)
                 .json({
+
                     success:
                         false,
 
                     error:
                         "Le nom du fichier est obligatoire."
+
                 });
 
 
             return;
         }
 
+
+        /* =================================================
+           VALIDATION — MIME
+        ================================================== */
 
         if (
             !mimeType
@@ -452,11 +585,13 @@ export default async function handler(
             response
                 .status(400)
                 .json({
+
                     success:
                         false,
 
                     error:
                         "Le type du fichier est obligatoire."
+
                 });
 
 
@@ -473,17 +608,23 @@ export default async function handler(
             response
                 .status(400)
                 .json({
+
                     success:
                         false,
 
                     error:
-                        "Format non autorisé. Utilise PNG, JPG, WEBP ou GIF."
+                        "Format non autorisé. Utilise PNG, JPG, WEBP, GIF, MP4 ou WEBM."
+
                 });
 
 
             return;
         }
 
+
+        /* =================================================
+           VALIDATION — CONTENU
+        ================================================== */
 
         if (
             !fileBase64
@@ -492,11 +633,13 @@ export default async function handler(
             response
                 .status(400)
                 .json({
+
                     success:
                         false,
 
                     error:
-                        "Aucune image n'a été reçue."
+                        "Aucun fichier n'a été reçu."
+
                 });
 
 
@@ -532,17 +675,23 @@ export default async function handler(
             response
                 .status(400)
                 .json({
+
                     success:
                         false,
 
                     error:
                         "Le fichier envoyé est invalide."
+
                 });
 
 
             return;
         }
 
+
+        /* =================================================
+           FICHIER VIDE
+        ================================================== */
 
         if (
             fileBuffer.length ===
@@ -552,17 +701,23 @@ export default async function handler(
             response
                 .status(400)
                 .json({
+
                     success:
                         false,
 
                     error:
                         "Le fichier envoyé est vide."
+
                 });
 
 
             return;
         }
 
+
+        /* =================================================
+           TAILLE MAXIMALE
+        ================================================== */
 
         if (
             fileBuffer.length >
@@ -572,11 +727,29 @@ export default async function handler(
             response
                 .status(413)
                 .json({
+
                     success:
                         false,
 
                     error:
-                        "L'image dépasse la limite de 10 Mo."
+                        "Le fichier dépasse la limite de 50 Mo.",
+
+                    maximumSize:
+                        MAX_FILE_SIZE,
+
+                    maximumSizeFormatted:
+                        formatFileSize(
+                            MAX_FILE_SIZE
+                        ),
+
+                    receivedSize:
+                        fileBuffer.length,
+
+                    receivedSizeFormatted:
+                        formatFileSize(
+                            fileBuffer.length
+                        )
+
                 });
 
 
@@ -601,11 +774,13 @@ export default async function handler(
             response
                 .status(400)
                 .json({
+
                     success:
                         false,
 
                     error:
                         "L'ID de l'œuvre est invalide."
+
                 });
 
 
@@ -630,10 +805,40 @@ export default async function handler(
          * Exemple :
          *
          * 05/eilionfate-panels.png
+         *
+         * ou :
+         *
+         * 80/animated-couaxia.mp4
          */
 
         const storagePath =
             `${safeArtId}/${safeFilename}`;
+
+
+        /* =================================================
+           LOG UPLOAD
+        ================================================== */
+
+        console.info(
+            "[Gallery Upload] Upload demandé :",
+            {
+                artId,
+                filename,
+                safeFilename,
+                mimeType,
+                mediaType:
+                    getMediaType(
+                        mimeType
+                    ),
+                size:
+                    fileBuffer.length,
+                sizeFormatted:
+                    formatFileSize(
+                        fileBuffer.length
+                    ),
+                storagePath
+            }
+        );
 
 
         /* =================================================
@@ -653,17 +858,27 @@ export default async function handler(
                     storagePath,
                     fileBuffer,
                     {
+
                         contentType:
                             mimeType,
 
                         cacheControl:
                             "3600",
 
+                        /*
+                         * Si un fichier existe déjà au même
+                         * emplacement, il sera remplacé.
+                         */
                         upsert:
                             true
+
                     }
                 );
 
+
+        /* =================================================
+           ERREUR STORAGE
+        ================================================== */
 
         if (
             uploadError
@@ -678,17 +893,28 @@ export default async function handler(
             response
                 .status(500)
                 .json({
+
                     success:
                         false,
 
                     error:
                         uploadError?.message ||
-                        "Impossible d'envoyer l'image dans Supabase Storage."
+                        "Impossible d'envoyer le fichier dans Supabase Storage."
+
                 });
 
 
             return;
         }
+
+
+        /* =================================================
+           CHEMIN RETOURNÉ
+        ================================================== */
+
+        const uploadedPath =
+            uploadData?.path ||
+            storagePath;
 
 
         /* =================================================
@@ -704,7 +930,7 @@ export default async function handler(
                     ARTWORKS_BUCKET
                 )
                 .getPublicUrl(
-                    uploadData.path
+                    uploadedPath
                 );
 
 
@@ -713,6 +939,10 @@ export default async function handler(
                 ?.publicUrl;
 
 
+        /* =================================================
+           URL INTROUVABLE
+        ================================================== */
+
         if (
             !publicUrl
         ) {
@@ -720,7 +950,8 @@ export default async function handler(
             console.error(
                 "[Gallery Upload] URL publique introuvable.",
                 {
-                    uploadData
+                    uploadData,
+                    uploadedPath
                 }
             );
 
@@ -728,16 +959,46 @@ export default async function handler(
             response
                 .status(500)
                 .json({
+
                     success:
                         false,
 
                     error:
-                        "L'image a été envoyée mais son URL publique est introuvable."
+                        "Le fichier a été envoyé mais son URL publique est introuvable."
+
                 });
 
 
             return;
         }
+
+
+        /* =================================================
+           TYPE DE MÉDIA
+        ================================================== */
+
+        const mediaType =
+            getMediaType(
+                mimeType
+            );
+
+
+        /* =================================================
+           LOG SUCCÈS
+        ================================================== */
+
+        console.info(
+            "[Gallery Upload] Upload réussi :",
+            {
+                artId,
+                path:
+                    uploadedPath,
+                mimeType,
+                mediaType,
+                size:
+                    fileBuffer.length
+            }
+        );
 
 
         /* =================================================
@@ -757,7 +1018,7 @@ export default async function handler(
                         ARTWORKS_BUCKET,
 
                     path:
-                        uploadData.path,
+                        uploadedPath,
 
                     url:
                         publicUrl,
@@ -765,10 +1026,21 @@ export default async function handler(
                     filename:
                         safeFilename,
 
+                    originalFilename:
+                        filename,
+
                     mimeType,
 
+                    mediaType,
+
                     size:
-                        fileBuffer.length
+                        fileBuffer.length,
+
+                    sizeFormatted:
+                        formatFileSize(
+                            fileBuffer.length
+                        )
+
                 }
 
             });
@@ -784,6 +1056,9 @@ export default async function handler(
         );
 
 
+        /*
+         * Évite une seconde réponse Express.
+         */
         if (
             response.headersSent
         ) {
@@ -795,12 +1070,14 @@ export default async function handler(
         response
             .status(500)
             .json({
+
                 success:
                     false,
 
                 error:
                     error?.message ||
-                    "Erreur interne pendant l'envoi de l'image."
+                    "Erreur interne pendant l'envoi du fichier."
+
             });
     }
 }

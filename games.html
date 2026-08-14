@@ -1,825 +1,489 @@
 <!DOCTYPE html>
-<HTML lang="fr">
-<head>
-    <meta charset="utf-8" />
-    
-         <title>Couaxia</title>
-         <link rel="icon" type="image/png" href="./images/logo/Logo Transparents 2.png">
-         <link href="./css/games.css" rel="stylesheet">     
-         <link href="./css/style.css" rel="stylesheet"> 
-         <link href="./css/scroll-page.css" rel="stylesheet">
-</head>
-         <body>
+<html lang="fr">
 
-<header class="site-header">
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>Couaxia - Mes jeux</title>
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="./images/logo/Logo Transparents 2.png"
+    >
+
+    <link
+        href="./css/games.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="./css/style.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="./css/scroll-page.css"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="site-header">
+
         <nav class="navbar">
-            <a class="navbar-logo">
-                <video autoplay muted loop playsinline  aria-label="Logo animé de Couaxia">
-                        <source src="./images/logo/Transparents.webm" alt="Accueil Couaxia" type="video/webm"> 
-                </video> 
+
+
+            <!-- LOGO -->
+
+            <a
+                class="navbar-logo"
+                href="./accueil.html"
+                aria-label="Accueil Couaxia"
+            >
+
+                <video
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                    aria-label="Logo animé de Couaxia"
+                >
+
+                    <source
+                        src="./images/logo/Transparents.webm"
+                        type="video/webm"
+                    >
+
+                </video>
+
             </a>
+
+
+            <!-- NAVIGATION -->
+
             <div class="navbar-links">
-                <a href="./accueil.html">🏠 Accueil</a>
-                <a href="./a-propos.html" >👤 Mes informations</a>
-                <a href="./games.html" aria-current="page">🕹️ Jeux</a>
-                <a href="./Histoire/debut_histoire.html" >📖 Mon histoire</a>
-                <a href="./credits.html" >🎨 Crédits</a>
+
+                <a href="./accueil.html">
+                    🏠 Accueil
+                </a>
+
+                <a href="./a-propos.html">
+                    👤 Mes informations
+                </a>
+
+                <a
+                    href="./games.html"
+                    aria-current="page"
+                >
+                    🕹️ Jeux
+                </a>
+
+                <a href="./Histoire/debut_histoire.html">
+                    📖 Mon histoire
+                </a>
+
+                <a href="./credits.html">
+                    🎨 Crédits
+                </a>
+
             </div>
-                <a href="./admin/admin.html" class="admin-access-link">⚙️ Admin</a>
-                <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Activer le mode nuit" title="Changer le thème">
-                    <span class="theme-icon" aria-hidden="true">🌙</span>
-                    <span class="theme-text">Mode nuit</span>
-                </button>
+
+
+            <!-- ADMIN -->
+
+            <a
+                href="./admin/admin.html"
+                class="admin-access-link"
+            >
+                ⚙️ Admin
+            </a>
+
+
+            <!-- THÈME -->
+
+            <button
+                id="theme-toggle"
+                class="theme-toggle"
+                type="button"
+                aria-label="Activer le mode nuit"
+                title="Changer le thème"
+            >
+
+                <span
+                    class="theme-icon"
+                    aria-hidden="true"
+                >
+                    🌙
+                </span>
+
+                <span class="theme-text">
+                    Mode nuit
+                </span>
+
+            </button>
+
         </nav>
+
     </header>
-                 <!-- =====================================================
+
+
+
+    <!-- =====================================================
          CONTENU PRINCIPAL
     ====================================================== -->
 
     <main class="games-page">
 
 
-            <!-- =================================================
-                INTRODUCTION
-            ================================================== -->
+        <!-- =================================================
+             INTRODUCTION
+        ================================================== -->
 
-            <section class="games-hero">
+        <section class="games-hero">
 
-                <p class="games-eyebrow">
-                    🎮 La bibliothèque de Couaxia
-                </p>
+            <p class="games-eyebrow">
+                🎮 La bibliothèque de Couaxia
+            </p>
 
+            <h1>
+                Mes jeux
+            </h1>
 
-                <h1>
-                    Mes jeux
-                </h1>
+            <p class="games-intro">
 
+                Retrouve les jeux auxquels je joue
+                actuellement, mes jeux réguliers,
+                les prochaines aventures prévues
+                et celles que nous avons déjà terminées
+                ensemble !
 
-                <p class="games-intro">
+            </p>
 
-                    Retrouve les jeux auxquels je joue
-                    actuellement, mes jeux réguliers,
-                    les prochaines aventures prévues
-                    et celles que nous avons déjà terminées
-                    ensemble !
-
-                </p>
-
-            </section>
+        </section>
 
 
 
-            <!-- =================================================
-                STATISTIQUES
-            ================================================== -->
+        <!-- =================================================
+             STATISTIQUES
+        ================================================== -->
 
-            <section
-                class="games-stats"
-                aria-label="Statistiques des jeux"
+        <section
+            class="games-stats"
+            aria-label="Statistiques des jeux"
+        >
+
+
+            <!-- EN COURS -->
+
+            <article class="games-stat">
+
+                <span
+                    class="games-stat-icon"
+                    aria-hidden="true"
+                >
+                    🔥
+                </span>
+
+                <strong
+                    id="games-stat-current"
+                    class="games-stat-number"
+                >
+                    0
+                </strong>
+
+                <span>
+                    En cours
+                </span>
+
+            </article>
+
+
+            <!-- RÉGULIERS -->
+
+            <article class="games-stat">
+
+                <span
+                    class="games-stat-icon"
+                    aria-hidden="true"
+                >
+                    🔁
+                </span>
+
+                <strong
+                    id="games-stat-regular"
+                    class="games-stat-number"
+                >
+                    0
+                </strong>
+
+                <span>
+                    Réguliers
+                </span>
+
+            </article>
+
+
+            <!-- À FAIRE -->
+
+            <article class="games-stat">
+
+                <span
+                    class="games-stat-icon"
+                    aria-hidden="true"
+                >
+                    📚
+                </span>
+
+                <strong
+                    id="games-stat-backlog"
+                    class="games-stat-number"
+                >
+                    0
+                </strong>
+
+                <span>
+                    À faire
+                </span>
+
+            </article>
+
+
+            <!-- TERMINÉS -->
+
+            <article class="games-stat">
+
+                <span
+                    class="games-stat-icon"
+                    aria-hidden="true"
+                >
+                    🏆
+                </span>
+
+                <strong
+                    id="games-stat-finished"
+                    class="games-stat-number"
+                >
+                    0
+                </strong>
+
+                <span>
+                    Terminés
+                </span>
+
+            </article>
+
+        </section>
+
+
+
+        <!-- =================================================
+             OUTILS
+        ================================================== -->
+
+        <section class="games-toolbar">
+
+
+            <!-- FILTRE -->
+
+            <div class="games-filter">
+
+                <label for="games-status-filter">
+                    🔎 Explorer les jeux
+                </label>
+
+                <select id="games-status-filter">
+
+                    <option value="all">
+                        🎮 Tous les jeux
+                    </option>
+
+                    <option value="current">
+                        🔥 En cours
+                    </option>
+
+                    <option value="regular">
+                        🔁 Réguliers
+                    </option>
+
+                    <option value="backlog">
+                        📚 À faire
+                    </option>
+
+                    <option value="paused">
+                        ⏸️ En pause
+                    </option>
+
+                    <option value="finished">
+                        🏆 Terminés
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- SONDAGE COMMUNAUTAIRE -->
+
+            <button
+                id="games-vote-button"
+                class="games-vote-button"
+                type="button"
+                data-messages="Quel jeu voudrais-tu voir en stream ? 👀|À toi de choisir ! 🗳️|Ton vote pourrait avoir des conséquences... 😏|Voyons ce que les Poupe vont choisir ! 🐙"
             >
 
+                <span
+                    class="games-vote-icon"
+                    aria-hidden="true"
+                >
+                    🗳️
+                </span>
 
-                <!-- EN COURS -->
+                <span>
+                    Vote pour le prochain jeu
+                </span>
 
-                <article class="games-stat">
+            </button>
 
-                    <span
-                        class="games-stat-icon"
-                        aria-hidden="true"
-                    >
-                        🔥
-                    </span>
-
-                    <strong
-                        id="games-stat-current"
-                        class="games-stat-number"
-                    >
-                        0
-                    </strong>
-
-                    <span>
-                        En cours
-                    </span>
-
-                </article>
-
-
-                <!-- RÉGULIERS -->
-
-                <article class="games-stat">
-
-                    <span
-                        class="games-stat-icon"
-                        aria-hidden="true"
-                    >
-                        🔁
-                    </span>
-
-                    <strong
-                        id="games-stat-regular"
-                        class="games-stat-number"
-                    >
-                        0
-                    </strong>
-
-                    <span>
-                        Réguliers
-                    </span>
-
-                </article>
-
-
-                <!-- À FAIRE -->
-
-                <article class="games-stat">
-
-                    <span
-                        class="games-stat-icon"
-                        aria-hidden="true"
-                    >
-                        📚
-                    </span>
-
-                    <strong
-                        id="games-stat-backlog"
-                        class="games-stat-number"
-                    >
-                        0
-                    </strong>
-
-                    <span>
-                        À faire
-                    </span>
-
-                </article>
-
-
-                <!-- TERMINÉS -->
-
-                <article class="games-stat">
-
-                    <span
-                        class="games-stat-icon"
-                        aria-hidden="true"
-                    >
-                        🏆
-                    </span>
-
-                    <strong
-                        id="games-stat-finished"
-                        class="games-stat-number"
-                    >
-                        0
-                    </strong>
-
-                    <span>
-                        Terminés
-                    </span>
-
-                </article>
-
-            </section>
+        </section>
 
 
 
-            <!-- =================================================
-                OUTILS
-            ================================================== -->
+        <!-- =================================================
+             RÉSULTAT DU FILTRE
+        ================================================== -->
 
-            <section class="games-toolbar">
-
-
-                <!-- =============================================
-                    FILTRE
-                ============================================== -->
-
-                <div class="games-filter">
-
-                    <label for="games-status-filter">
-                        🔎 Explorer les jeux
-                    </label>
+        <p
+            id="games-results"
+            class="games-results"
+            aria-live="polite"
+        ></p>
 
 
-                    <select id="games-status-filter">
 
-                        <option value="all">
-                            🎮 Tous les jeux
-                        </option>
+        <!-- =================================================
+             GRILLE DES JEUX
 
-                        <option value="current">
-                            🔥 En cours
-                        </option>
+             Cette zone est volontairement vide.
+             Les jeux seront ajoutés dynamiquement
+             par JavaScript / API.
+        ================================================== -->
 
-                        <option value="regular">
-                            🔁 Réguliers
-                        </option>
+        <section
+            id="games-grid"
+            class="games-grid"
+            aria-label="Liste des jeux"
+        ></section>
 
-                        <option value="backlog">
-                            📚 À faire
-                        </option>
 
-                        <option value="paused">
-                            ⏸️ En pause
-                        </option>
 
-                        <option value="finished">
-                            🏆 Terminés
-                        </option>
+        <!-- =================================================
+             ÉTAT VIDE
+        ================================================== -->
 
-                    </select>
+        <section
+            id="games-empty-state"
+            class="games-empty-state"
+        >
+
+            <span
+                class="games-empty-icon"
+                aria-hidden="true"
+            >
+                🎮
+            </span>
+
+            <h2>
+                Aucun jeu pour le moment
+            </h2>
+
+            <p>
+                Les jeux ajoutés depuis l'administration
+                apparaîtront ici automatiquement.
+            </p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             SONDAGE COMMUNAUTAIRE
+        ================================================== -->
+
+        <section
+            id="games-poll-summary"
+            class="games-poll-summary"
+            hidden
+        >
+
+            <div class="games-poll-summary-content">
+
+                <span
+                    class="games-poll-summary-icon"
+                    aria-hidden="true"
+                >
+                    🗳️
+                </span>
+
+                <div>
+
+                    <h2>
+                        Le vote de la communauté
+                    </h2>
+
+                    <p id="games-poll-summary-text">
+
+                        Vote pour décider quelle sera
+                        notre prochaine aventure !
+
+                    </p>
 
                 </div>
-
-
-
-                <!-- =============================================
-                    SONDAGE COMMUNAUTAIRE
-                ============================================== -->
 
                 <button
-                    id="games-vote-button"
-                    class="games-vote-button"
+                    id="games-poll-summary-button"
+                    class="games-poll-summary-button"
                     type="button"
-
-                    data-messages="
-                        Quel jeu voudrais-tu voir en stream ? 👀|
-                        À toi de choisir ! 🗳️|
-                        Ton vote pourrait avoir des conséquences... 😏|
-                        Voyons ce que les Poupe vont choisir ! 🐙
-                    "
                 >
-
-                    <span
-                        class="games-vote-icon"
-                        aria-hidden="true"
-                    >
-                        🗳️
-                    </span>
-
-                    <span>
-                        Vote pour le prochain jeu
-                    </span>
-
+                    Voter
                 </button>
 
-            </section>
+            </div>
 
+        </section>
 
 
-            <!-- =================================================
-                RÉSULTAT DU FILTRE
-            ================================================== -->
-
-            <p
-                id="games-results"
-                class="games-results"
-                aria-live="polite"
-            ></p>
-
-
-
-            <!-- =================================================
-                GRILLE DES JEUX
-            ================================================== -->
-
-            <section
-                id="games-grid"
-                class="games-grid"
-                aria-label="Liste des jeux"
-            >
-
-
-                <!-- =================================================
-                    JEU 01
-                    MIDNIGHT HEIST
-
-                    Twitch fournira :
-                    - nom
-                    - jaquette
-
-                    Couaxia fournit :
-                    - statut
-                    - tags
-                    - progression
-                    - description
-                    - sondage
-                    - playlist YouTube
-                ================================================== -->
-
-                <article
-                    class="game-card"
-
-                    data-game-id="01"
-
-                    data-twitch-game="Midnight Heist"
-
-                    data-status="current"
-
-                    data-tags="
-                        horreur
-                        coop
-                    "
-
-                    data-poll="false"
-
-                    data-youtube-playlist=""
-                >
-
-
-                    <!-- =========================================
-                        TWITCH
-                    ========================================== -->
-
-                    <div class="game-cover">
-
-                        <img
-                            class="game-cover-image"
-                            src="./images/games/game-placeholder.jpg"
-                            alt=""
-                            loading="lazy"
-                            draggable="false"
-                        >
-
-
-                        <span
-                            class="
-                                game-status
-                                game-status-current
-                            "
-                        >
-                            🔥 En cours
-                        </span>
-
-
-                        <span
-                            class="game-twitch-source"
-                            title="Informations du jeu via Twitch"
-                        >
-                            Twitch
-                        </span>
-
-                    </div>
-
-
-
-                    <!-- =========================================
-                        INFORMATIONS
-                    ========================================== -->
-
-                    <div class="game-content">
-
-
-                        <!-- Rempli par Twitch -->
-
-                        <h2 class="game-title">
-                            Chargement...
-                        </h2>
-
-
-
-                        <!-- =====================================
-                            TAGS
-                        ====================================== -->
-
-                        <div class="game-tags">
-
-                            <span>
-                                😱 Horreur
-                            </span>
-
-                            <span>
-                                👥 Coop
-                            </span>
-
-                        </div>
-
-
-
-                        <!-- =====================================
-                            DESCRIPTION COUAXIA
-                        ====================================== -->
-
-                        <p class="game-description">
-
-                            Braquages, énigmes et surtout
-                            beaucoup trop de choses qui
-                            veulent me tuer.
-
-                        </p>
-
-
-
-                        <!-- =====================================
-                            PROGRESSION
-                        ====================================== -->
-
-                        <div class="game-progress">
-
-                            <div class="game-progress-header">
-
-                                <span>
-                                    Progression
-                                </span>
-
-                                <span>
-                                    45 %
-                                </span>
-
-                            </div>
-
-
-                            <div
-                                class="game-progress-bar"
-                                role="progressbar"
-                                aria-valuemin="0"
-                                aria-valuemax="100"
-                                aria-valuenow="45"
-                            >
-
-                                <span
-                                    style="--progress: 45%;"
-                                ></span>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- =====================================
-                            VOD YOUTUBE
-
-                            Caché automatiquement tant qu'aucune
-                            playlist n'est renseignée.
-                        ====================================== -->
-
-                        <button
-                            class="game-vods-button"
-                            type="button"
-                            hidden
-                        >
-                            ▶ Voir les VOD
-                        </button>
-
-                    </div>
-
-                </article>
-
-
-
-                <!-- =================================================
-                    JEU 02
-                    PARTY ANIMALS
-                ================================================== -->
-
-                <article
-                    class="game-card"
-
-                    data-game-id="02"
-
-                    data-twitch-game="Party Animals"
-
-                    data-status="regular"
-
-                    data-tags="
-                        coop
-                        communaute
-                        fun
-                    "
-
-                    data-poll="false"
-
-                    data-youtube-playlist=""
-                >
-
-
-                    <div class="game-cover">
-
-                        <img
-                            class="game-cover-image"
-                            src="./images/games/game-placeholder.jpg"
-                            alt=""
-                            loading="lazy"
-                            draggable="false"
-                        >
-
-
-                        <span
-                            class="
-                                game-status
-                                game-status-regular
-                            "
-                        >
-                            🔁 Régulier
-                        </span>
-
-
-                        <span class="game-twitch-source">
-                            Twitch
-                        </span>
-
-                    </div>
-
-
-
-                    <div class="game-content">
-
-                        <h2 class="game-title">
-                            Chargement...
-                        </h2>
-
-
-                        <div class="game-tags">
-
-                            <span>
-                                👥 Communauté
-                            </span>
-
-                            <span>
-                                😂 Fun
-                            </span>
-
-                        </div>
-
-
-                        <p class="game-description">
-
-                            Le jeu parfait pour perdre
-                            ses amis dans la bonne humeur.
-
-                        </p>
-
-
-                        <button
-                            class="game-vods-button"
-                            type="button"
-                            hidden
-                        >
-                            ▶ Voir les VOD
-                        </button>
-
-                    </div>
-
-                </article>
-
-
-
-                <!-- =================================================
-                    EXEMPLE : JEU À FAIRE + SONDAGE
-                ================================================== -->
-
-                <article
-                    class="game-card"
-
-                    data-game-id="03"
-
-                    data-twitch-game="Nom exact du jeu sur Twitch"
-
-                    data-status="backlog"
-
-                    data-tags="
-                        solo
-                        horreur
-                    "
-
-                    data-poll="true"
-
-                    data-youtube-playlist=""
-                >
-
-
-                    <div class="game-cover">
-
-                        <img
-                            class="game-cover-image"
-                            src="./images/games/game-placeholder.jpg"
-                            alt=""
-                            loading="lazy"
-                            draggable="false"
-                        >
-
-
-                        <span
-                            class="
-                                game-status
-                                game-status-backlog
-                            "
-                        >
-                            📚 À faire
-                        </span>
-
-
-                        <!-- Jeu participant au sondage -->
-
-                        <span
-                            class="game-poll-badge"
-                            title="Ce jeu participe au sondage"
-                        >
-                            🗳️
-                        </span>
-
-                    </div>
-
-
-
-                    <div class="game-content">
-
-                        <h2 class="game-title">
-                            Chargement...
-                        </h2>
-
-
-                        <div class="game-tags">
-
-                            <span>
-                                🎮 Solo
-                            </span>
-
-                            <span>
-                                😱 Horreur
-                            </span>
-
-                        </div>
-
-
-                        <p class="game-description">
-
-                            Une future aventure que
-                            vous pourrez peut-être
-                            choisir pour moi !
-
-                        </p>
-
-                    </div>
-
-                </article>
-
-
-
-                <!-- =================================================
-                    EXEMPLE : JEU TERMINÉ + VOD
-                ================================================== -->
-
-                <article
-                    class="game-card"
-
-                    data-game-id="04"
-
-                    data-twitch-game="Nom exact du jeu sur Twitch"
-
-                    data-status="finished"
-
-                    data-tags="
-                        solo
-                    "
-
-                    data-poll="false"
-
-                    data-youtube-playlist="ID_PLAYLIST_YOUTUBE"
-                >
-
-
-                    <div class="game-cover">
-
-                        <img
-                            class="game-cover-image"
-                            src="./images/games/game-placeholder.jpg"
-                            alt=""
-                            loading="lazy"
-                            draggable="false"
-                        >
-
-
-                        <span
-                            class="
-                                game-status
-                                game-status-finished
-                            "
-                        >
-                            🏆 Terminé
-                        </span>
-
-                    </div>
-
-
-
-                    <div class="game-content">
-
-                        <h2 class="game-title">
-                            Chargement...
-                        </h2>
-
-
-
-                        <!-- =====================================
-                            NOTE
-                        ====================================== -->
-
-                        <div class="game-rating">
-
-                            <span>
-                                Ma note
-                            </span>
-
-                            <strong>
-                                💜 9/10
-                            </strong>
-
-                        </div>
-
-
-
-                        <p class="game-description">
-
-                            Une aventure terminée avec
-                            un très bon souvenir !
-
-                        </p>
-
-
-
-                        <!-- =====================================
-                            YOUTUBE
-                        ====================================== -->
-
-                        <button class="game-vods-button" type="button">
-                            <span aria-hidden="true">
-                                ▶
-                            </span>
-                            Voir les VOD
-                        </button>
-                    </div>
-                </article>
-            </section>
-
-
-            <!-- =================================================
-                INFORMATIONS DU SONDAGE
-
-                Cette zone pourra ensuite être alimentée
-                automatiquement par games-poll.js.
-            ================================================== -->
-
-            <section id="games-poll-summary" class="games-poll-summary" hidden>
-                <div class="games-poll-summary-content">
-                    <span class="games-poll-summary-icon">
-                        🗳️
-                    </span>
-
-                    <div>
-                        <h2>
-                            Le vote de la communauté
-                        </h2>
-                        <p id="games-poll-summary-text">
-                            Vote pour décider quelle sera
-                            notre prochaine aventure !
-                        </p>
-                    </div>
-
-
-                    <button id="games-poll-summary-button" class="games-poll-summary-button" type="button">
-                        Voter
-                    </button>
-                </div>
-            </section>
-        </main>
-
-
+    </main>
 
 
 
     <!-- =====================================================
-         JAVASCRIPT JEUX
+         JAVASCRIPT
     ====================================================== -->
 
-    <!--
-        Gestion générale :
-        filtres / compteurs / cartes
-    -->
- 
-
-    <script src="./js/games-twitch.js"></script>
-
-
-    <!--
-        Sondage communautaire
-    -->
-
+    <script src="./js/games.js"></script>
+    <script type="module" src="./js/games-twitch.js"></script>
     <script src="./js/games-poll.js"></script>
+    <script src="./js/scroll-page.js"></script>
+    <script src="./js/mascotte.js"></script>
+    <script src="./js/mascotte-navigation.js"></script>
+    <script src="./js/protection.js"></script>
+    <script src="./js/theme.js"></script>
 
+</body>
 
-    <!--
-        VOD YouTube
-    -->
-
-
-
-
-                 <script src="./js/games.js"></script>
-                 <script type="module"src="./js/games-twitch.js"></script>
-                 <script src="./js/scroll-page.js"></script>
-                 <script src="./js/mascotte.js"></script>
-                 <script src="./js/mascotte-navigation.js"></script>
-                 <script src="./js/protection.js"></script>                 
-                 <script src="./js/theme.js"></script>
-         </body>     
-</HTML>
+</html>

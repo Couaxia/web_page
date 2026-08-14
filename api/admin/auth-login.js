@@ -2,6 +2,7 @@
 
 /* =========================================================
    AUTH LOGIN ADMIN — TWITCH
+   COUAXIA / RENDER
 ========================================================= */
 
 import crypto from "node:crypto";
@@ -31,7 +32,7 @@ const OAUTH_STATE_DURATION_SECONDS =
 
 /**
  * Récupère l'URL de redirection OAuth
- * configurée dans Vercel.
+ * configurée dans Render.
  *
  * @returns {string}
  */
@@ -43,12 +44,13 @@ function getAdminRedirectUri() {
             ?.trim();
 
 
-    if (!redirectUri) {
+    if (
+        !redirectUri
+    ) {
 
         throw new Error(
-            "TWITCH_ADMIN_REDIRECT_URI est absent dans les variables Vercel."
+            "TWITCH_ADMIN_REDIRECT_URI est absente des variables d'environnement."
         );
-
     }
 
 
@@ -85,13 +87,17 @@ function createOAuthStateCookie(
 ) {
 
     return [
-        `${OAUTH_STATE_COOKIE}=${encodeURIComponent(state)}`,
+        `${OAUTH_STATE_COOKIE}=${encodeURIComponent(
+            state
+        )}`,
         "Path=/",
         "HttpOnly",
         "Secure",
         "SameSite=Lax",
         `Max-Age=${OAUTH_STATE_DURATION_SECONDS}`
-    ].join("; ");
+    ].join(
+        "; "
+    );
 }
 
 
@@ -122,6 +128,9 @@ export default async function handler(
         response
             .status(405)
             .json({
+                success:
+                    false,
+
                 error:
                     "Méthode non autorisée."
             });
@@ -198,9 +207,6 @@ export default async function handler(
         /*
          * Aucun scope particulier n'est nécessaire
          * simplement pour identifier le compte Twitch.
-         *
-         * Le callback utilisera ensuite /helix/users
-         * avec le User Access Token obtenu.
          */
         twitchUrl.searchParams.set(
             "scope",
@@ -210,15 +216,26 @@ export default async function handler(
 
         /*
          * Force Twitch à afficher l'écran
-         * de connexion/autorisation.
-         *
-         * C'est utile pour éviter qu'un autre
-         * compte déjà connecté au navigateur
-         * soit utilisé silencieusement.
+         * d'autorisation.
          */
         twitchUrl.searchParams.set(
             "force_verify",
             "true"
+        );
+
+
+        /* =================================================
+           LOG UTILE POUR RENDER
+        ================================================== */
+
+        console.info(
+            "[Admin Auth Login] Redirection OAuth vers Twitch."
+        );
+
+
+        console.info(
+            "[Admin Auth Login] Callback :",
+            redirectUri
         );
 
 
@@ -231,7 +248,10 @@ export default async function handler(
             twitchUrl.toString()
         );
 
-    } catch (error) {
+
+    } catch (
+        error
+    ) {
 
         console.error(
             "[Admin Auth Login]",
@@ -242,10 +262,17 @@ export default async function handler(
         response
             .status(500)
             .json({
+                success:
+                    false,
+
                 error:
-                    "Impossible de démarrer la connexion administrateur Twitch."
+                    "Impossible de démarrer la connexion administrateur Twitch.",
+
+                details:
+                    process.env.NODE_ENV ===
+                        "development"
+                        ? error?.message
+                        : undefined
             });
-
     }
-
 }
