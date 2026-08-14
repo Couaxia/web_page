@@ -3565,133 +3565,232 @@ document.addEventListener(
 
         async function uploadSelectedArtworkFile() {
 
-            if (
-                !selectedArtworkFile
-            ) {
+    if (
+        !selectedArtworkFile
+    ) {
 
-                return null;
+        return null;
+    }
+
+
+    validateArtworkFile(
+        selectedArtworkFile
+    );
+
+
+    const artId =
+        normalizeText(
+            artworkArtIdInput?.value
+        );
+
+
+    if (
+        !artId
+    ) {
+
+        throw new Error(
+            "L'ID de l'œuvre est obligatoire avant l'upload."
+        );
+    }
+
+
+    /* =====================================================
+       1 — DEMANDE D'URL SIGNÉE À TON API
+    ====================================================== */
+
+    const signature =
+        await adminApiRequest(
+            ADMIN_GALLERY_UPLOAD_API,
+            {
+                method:
+                    "POST",
+
+                body: {
+
+                    artId,
+
+                    filename:
+                        selectedArtworkFile.name,
+
+                    mimeType:
+                        selectedArtworkFile.type,
+
+                    fileSize:
+                        selectedArtworkFile.size
+                }
             }
+        );
 
 
-            validateArtworkFile(
-                selectedArtworkFile
+    const upload =
+        signature?.upload;
+
+
+    if (
+        !upload
+    ) {
+
+        throw new Error(
+            "La préparation de l'upload a échoué."
+        );
+    }
+
+
+    if (
+        !upload.signedUrl
+    ) {
+
+        throw new Error(
+            "L'URL d'upload Supabase est absente."
+        );
+    }
+
+
+    if (
+        !upload.publicUrl
+    ) {
+
+        throw new Error(
+            "L'URL publique du fichier est absente."
+        );
+    }
+
+
+    /* =====================================================
+       2 — ENVOI DIRECT DU FICHIER À SUPABASE
+    ====================================================== */
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "cacheControl",
+        "3600"
+    );
+
+
+    formData.append(
+        "",
+        selectedArtworkFile,
+        selectedArtworkFile.name
+    );
+
+
+    let uploadResponse;
+
+
+    try {
+
+        uploadResponse =
+            await fetch(
+                upload.signedUrl,
+                {
+                    method:
+                        "PUT",
+
+                    body:
+                        formData
+                }
             );
 
 
-            const formData =
-                new FormData();
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "[Artwork Direct Upload]",
+            error
+        );
 
 
-            formData.append(
-                "file",
-                selectedArtworkFile
-            );
+        throw new Error(
+            "Impossible de contacter Supabase Storage."
+        );
+    }
 
 
-            const response =
-                await fetch(
-                    ADMIN_GALLERY_UPLOAD_API,
-                    {
-                        method:
-                            "POST",
+    /* =====================================================
+       3 — ERREUR SUPABASE
+    ====================================================== */
 
-                        credentials:
-                            "same-origin",
+    if (
+        !uploadResponse.ok
+    ) {
 
-                        cache:
-                            "no-store",
-
-                        body:
-                            formData,
-
-                        headers: {
-                            Accept:
-                                "application/json"
-                        }
-                    }
-                );
+        let errorData =
+            null;
 
 
-            if (
-                response.status ===
-                    401 ||
-                response.status ===
-                    403
-            ) {
+        try {
 
-                window.location.replace(
-                    "/api/admin/auth-login"
-                );
+            errorData =
+                await uploadResponse
+                    .json();
 
+        } catch {
 
-                throw new Error(
-                    "Session administrateur expirée."
-                );
-            }
-
-
-            const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
-
-
-            if (
-                !response.ok ||
-                !data?.success
-            ) {
-
-                throw new Error(
-                    data?.error ||
-                    `Erreur HTTP ${response.status}`
-                );
-            }
-
-
-            const uploadedUrl =
-                normalizeText(
-                    data?.url ??
-                    data?.publicUrl ??
-                    data?.public_url ??
-                    data?.imageUrl ??
-                    data?.image_url
-                );
-
-
-            if (
-                !uploadedUrl
-            ) {
-
-                throw new Error(
-                    "L'upload a réussi mais aucune URL n'a été retournée."
-                );
-            }
-
-
-            return {
-
-                url:
-                    uploadedUrl,
-
-                mediaType:
-                    normalizeText(
-                        data?.mediaType ??
-                        data?.media_type
-                    ) ||
-                    (
-                        selectedArtworkFile.type
-                            .startsWith(
-                                "video/"
-                            )
-                            ? "video"
-                            : "image"
-                    )
-
-            };
+            errorData =
+                null;
         }
 
+
+        console.error(
+            "[Artwork Direct Upload] Supabase :",
+            {
+                status:
+                    uploadResponse.status,
+
+                statusText:
+                    uploadResponse.statusText,
+
+                data:
+                    errorData
+            }
+        );
+
+
+        throw new Error(
+            errorData?.message ||
+            errorData?.error ||
+            `Erreur Supabase (${uploadResponse.status}).`
+        );
+    }
+
+
+    /* =====================================================
+       4 — RETOUR
+    ====================================================== */
+
+    return {
+
+        url:
+            upload.publicUrl,
+
+        mediaType:
+            upload.mediaType ||
+            (
+                selectedArtworkFile.type
+                    .startsWith(
+                        "video/"
+                    )
+                    ? "video"
+                    : "image"
+            ),
+
+        path:
+            upload.path,
+
+        bucket:
+            upload.bucket,
+
+        filename:
+            upload.filename ||
+            selectedArtworkFile.name
+
+    };
+}
 
         /* =====================================================
            ARTWORKS — FORMULAIRE
