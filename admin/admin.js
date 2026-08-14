@@ -32,7 +32,9 @@ document.addEventListener(
                 "image/png",
                 "image/jpeg",
                 "image/webp",
-                "image/gif"
+                "image/gif",
+                "video/mp4",
+                "video/webm"
             ]);
 
 
@@ -371,6 +373,25 @@ document.addEventListener(
                 "admin-artwork-preview-image"
             );
 
+        /*
+         * Aperçu vidéo.
+         *
+         * Cette balise doit être présente dans admin.html :
+         *
+         * <video
+         *     id="admin-artwork-preview-video"
+         *     muted
+         *     loop
+         *     controls
+         *     playsinline
+         *     hidden
+         * ></video>
+         */
+        const artworkPreviewVideo =
+            document.getElementById(
+                "admin-artwork-preview-video"
+            );
+
         const artworkFileName =
             document.getElementById(
                 "admin-artwork-file-name"
@@ -401,59 +422,59 @@ document.addEventListener(
                 "admin-artworks-search"
             );
 
-        const artworksFilter =
-            document.getElementById(
-                "admin-artworks-filter"
-            );
-
 
         /* =====================================================
            SONDAGE
         ====================================================== */
 
-        const pollGamesList =
+        const pollForm =
             document.getElementById(
-                "admin-poll-games-list"
+                "admin-poll-form"
             );
 
-        const pollGameCount =
+        const pollQuestionInput =
             document.getElementById(
-                "admin-poll-game-count"
+                "admin-poll-question"
+            );
+
+        const pollStatusInput =
+            document.getElementById(
+                "admin-poll-status"
+            );
+
+        const pollOptionsList =
+            document.getElementById(
+                "admin-poll-options-list"
+            );
+
+        const pollAddOptionButton =
+            document.getElementById(
+                "admin-poll-add-option"
+            );
+
+        const pollResetButton =
+            document.getElementById(
+                "admin-poll-reset"
+            );
+
+        const pollPreview =
+            document.getElementById(
+                "admin-poll-preview"
+            );
+
+        const pollPreviewQuestion =
+            document.getElementById(
+                "admin-poll-preview-question"
+            );
+
+        const pollPreviewOptions =
+            document.getElementById(
+                "admin-poll-preview-options"
             );
 
 
         /* =====================================================
-           MODAL SUPPRESSION
-        ====================================================== */
-
-        const confirmModal =
-            document.getElementById(
-                "admin-confirm-modal"
-            );
-
-        const confirmMessage =
-            document.getElementById(
-                "admin-confirm-message"
-            );
-
-        const confirmClose =
-            document.getElementById(
-                "admin-confirm-close"
-            );
-
-        const confirmCancel =
-            document.getElementById(
-                "admin-confirm-cancel"
-            );
-
-        const confirmDelete =
-            document.getElementById(
-                "admin-confirm-delete"
-            );
-
-
-        /* =====================================================
-           TOAST
+           TOASTS
         ====================================================== */
 
         const toastContainer =
@@ -463,7 +484,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           ÉTAT
+           ÉTAT LOCAL
         ====================================================== */
 
         let games =
@@ -472,13 +493,10 @@ document.addEventListener(
         let artworks =
             [];
 
-        let currentEditingGameId =
+        let poll =
             null;
 
-        let currentEditingArtworkId =
-            null;
-
-        let currentTwitchPreview =
+        let currentAdminUser =
             null;
 
         let selectedArtworkFile =
@@ -486,14 +504,6 @@ document.addEventListener(
 
         let artworkPreviewObjectUrl =
             null;
-
-        let pendingDelete = {
-            type:
-                null,
-
-            id:
-                null
-        };
 
 
         /* =====================================================
@@ -504,35 +514,56 @@ document.addEventListener(
             value
         ) {
 
-            const element =
-                document.createElement(
-                    "div"
+            return String(
+                value ?? ""
+            )
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
                 );
-
-            element.textContent =
-                String(
-                    value ?? ""
-                );
-
-            return element.innerHTML;
         }
 
 
-        function escapeHtmlAttribute(
+        function normalizeText(
             value
         ) {
 
-            return escapeHtml(
-                value
-            )
-                .replaceAll(
-                    '"',
-                    "&quot;"
-                )
-                .replaceAll(
-                    "'",
-                    "&#039;"
-                );
+            return String(
+                value ?? ""
+            ).trim();
+        }
+
+
+        function normalizeBoolean(
+            value
+        ) {
+
+            return (
+                value ===
+                    true ||
+                value ===
+                    "true" ||
+                value ===
+                    1 ||
+                value ===
+                    "1"
+            );
         }
 
 
@@ -1003,6 +1034,7 @@ document.addEventListener(
                     "button"
                 );
 
+
             button.id =
                 "admin-logout-button";
 
@@ -1010,7 +1042,7 @@ document.addEventListener(
                 "button";
 
             button.className =
-                "admin-secondary-button";
+                "admin-logout-button";
 
             button.textContent =
                 "🚪 Déconnexion";
@@ -1020,14 +1052,29 @@ document.addEventListener(
                 "click",
                 async () => {
 
+                    button.disabled =
+                        true;
+
+
                     try {
 
-                        await adminApiRequest(
+                        await fetch(
                             "/api/admin/auth-logout",
                             {
                                 method:
-                                    "POST"
+                                    "POST",
+
+                                credentials:
+                                    "same-origin",
+
+                                cache:
+                                    "no-store"
                             }
+                        );
+
+
+                        window.location.replace(
+                            "../accueil.html"
                         );
 
                     } catch (
@@ -1035,14 +1082,20 @@ document.addEventListener(
                     ) {
 
                         console.error(
+                            "[Admin Logout]",
                             error
                         );
+
+
+                        showToast(
+                            "Impossible de se déconnecter.",
+                            "error"
+                        );
+
+
+                        button.disabled =
+                            false;
                     }
-
-
-                    window.location.replace(
-                        "/api/admin/auth-login"
-                    );
                 }
             );
 
@@ -1054,7 +1107,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           NAVIGATION
+           NAVIGATION ADMIN
         ====================================================== */
 
         function openSection(
@@ -1062,25 +1115,16 @@ document.addEventListener(
         ) {
 
             const normalizedSection =
-                String(
-                    sectionName ||
-                    ""
-                )
-                    .trim();
-
-
-            if (
-                !normalizedSection
-            ) {
-
-                return;
-            }
+                normalizeText(
+                    sectionName
+                ) ||
+                "dashboard";
 
 
             navButtons.forEach(
                 button => {
 
-                    const active =
+                    const isActive =
                         button.dataset
                             .adminSection ===
                         normalizedSection;
@@ -1088,8 +1132,25 @@ document.addEventListener(
 
                     button.classList.toggle(
                         "is-active",
-                        active
+                        isActive
                     );
+
+
+                    if (
+                        isActive
+                    ) {
+
+                        button.setAttribute(
+                            "aria-current",
+                            "page"
+                        );
+
+                    } else {
+
+                        button.removeAttribute(
+                            "aria-current"
+                        );
+                    }
                 }
             );
 
@@ -1097,153 +1158,221 @@ document.addEventListener(
             sections.forEach(
                 section => {
 
-                    const active =
+                    const isActive =
                         section.dataset
                             .adminPanel ===
                         normalizedSection;
 
 
-                    section.hidden =
-                        !active;
-
-
                     section.classList.toggle(
                         "is-active",
-                        active
+                        isActive
                     );
+
+
+                    section.hidden =
+                        !isActive;
                 }
             );
 
 
+            try {
+
+                window.history
+                    .replaceState(
+                        null,
+                        "",
+                        `#${normalizedSection}`
+                    );
+
+            } catch {
+
+                /* Rien à faire */
+            }
+        }
+
+
+        navButtons.forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        openSection(
+                            button.dataset
+                                .adminSection
+                        );
+                    }
+                );
+            }
+        );
+
+
+        quickActions.forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        openSection(
+                            button.dataset
+                                .openSection
+                        );
+                    }
+                );
+            }
+        );
+
+
+        /* =====================================================
+           DASHBOARD — STATISTIQUES
+        ====================================================== */
+
+        function updateDashboardStats() {
+
             if (
-                normalizedSection ===
-                "games"
+                statGames
             ) {
 
-                renderGames();
+                statGames.textContent =
+                    String(
+                        games.length
+                    );
             }
 
 
             if (
-                normalizedSection ===
-                "gallery"
+                statArtworks
             ) {
 
-                renderArtworks();
+                statArtworks.textContent =
+                    String(
+                        artworks.length
+                    );
             }
 
 
             if (
-                normalizedSection ===
-                "poll"
+                statPoll
             ) {
 
-                renderPollGames();
+                statPoll.textContent =
+                    poll?.status ===
+                        "open"
+                        ? "Ouvert"
+                        : "Fermé";
+            }
+
+
+            if (
+                statVotes
+            ) {
+
+                const totalVotes =
+                    Array.isArray(
+                        poll?.options
+                    )
+                        ? poll.options.reduce(
+                            (
+                                total,
+                                option
+                            ) =>
+                                total +
+                                Number(
+                                    option?.votes ||
+                                    0
+                                ),
+                            0
+                        )
+                        : 0;
+
+
+                statVotes.textContent =
+                    String(
+                        totalVotes
+                    );
             }
         }
 
 
         /* =====================================================
-           TWITCH — GET GAME
+           JEUX — NORMALISATION
         ====================================================== */
 
-        async function getGame(
-            gameId
+        function normalizeGame(
+            game
         ) {
 
-            const normalizedGameId =
-                String(
-                    gameId ?? ""
-                )
-                    .trim();
+            return {
 
+                id:
+                    normalizeText(
+                        game?.id
+                    ),
 
-            if (
-                !normalizedGameId
-            ) {
+                twitchGameId:
+                    normalizeText(
+                        game?.twitchGameId ??
+                        game?.twitch_game_id
+                    ),
 
-                return null;
-            }
+                name:
+                    normalizeText(
+                        game?.name
+                    ),
 
+                boxArtUrl:
+                    normalizeText(
+                        game?.boxArtUrl ??
+                        game?.box_art_url
+                    ),
 
-            const url =
-                new URL(
-                    TWITCH_GAME_API,
-                    window.location.origin
-                );
+                status:
+                    normalizeText(
+                        game?.status
+                    ) ||
+                    "backlog",
 
+                tags:
+                    normalizeTags(
+                        game?.tags
+                    ),
 
-            url.searchParams.set(
-                "id",
-                normalizedGameId
-            );
+                description:
+                    normalizeText(
+                        game?.description
+                    ),
 
+                rating:
+                    Number(
+                        game?.rating ||
+                        0
+                    ),
 
-            const response =
-                await fetch(
-                    url.toString(),
-                    {
-                        method:
-                            "GET",
+                youtubePlaylist:
+                    normalizeText(
+                        game?.youtubePlaylist ??
+                        game?.youtube_playlist
+                    ),
 
-                        credentials:
-                            "same-origin",
+                pollEnabled:
+                    normalizeBoolean(
+                        game?.pollEnabled ??
+                        game?.poll_enabled
+                    ),
 
-                        cache:
-                            "no-store",
+                createdAt:
+                    game?.createdAt ??
+                    game?.created_at ??
+                    null,
 
-                        headers: {
-                            Accept:
-                                "application/json"
-                        }
-                    }
-                );
-
-
-            const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
-
-
-            if (
-                response.status ===
-                404
-            ) {
-
-                return {
-                    found:
-                        false,
-
-                    id:
-                        normalizedGameId,
-
-                    name:
-                        null,
-
-                    boxArtUrl:
-                        null
-                };
-            }
-
-
-            if (
-                !response.ok
-            ) {
-
-                throw new Error(
-                    data?.error ||
-                    `Erreur HTTP ${response.status}`
-                );
-            }
-
-
-            return (
-                data?.game ??
-                null
-            );
+                updatedAt:
+                    game?.updatedAt ??
+                    game?.updated_at ??
+                    null
+            };
         }
 
 
@@ -1269,13 +1398,13 @@ document.addEventListener(
                     Array.isArray(
                         data?.games
                     )
-                        ? data.games
+                        ? data.games.map(
+                            normalizeGame
+                        )
                         : [];
 
 
                 renderGames();
-
-                renderPollGames();
 
                 updateDashboardStats();
 
@@ -1284,13 +1413,23 @@ document.addEventListener(
             ) {
 
                 console.error(
-                    "[Games]",
+                    "[Admin Games]",
                     error
                 );
 
 
+                games =
+                    [];
+
+
+                renderGames();
+
+                updateDashboardStats();
+
+
                 showToast(
-                    error.message,
+                    error.message ||
+                    "Impossible de charger les jeux.",
                     "error"
                 );
             }
@@ -1298,14 +1437,326 @@ document.addEventListener(
 
 
         /* =====================================================
-           TWITCH — APERÇU
+           JEUX — STATUT
         ====================================================== */
 
-        function resetTwitchPreview() {
+        function getGameStatusLabel(
+            status
+        ) {
 
-            currentTwitchPreview =
-                null;
+            const labels = {
 
+                current:
+                    "🔥 En cours",
+
+                regular:
+                    "🔁 Régulier",
+
+                backlog:
+                    "📚 À faire",
+
+                paused:
+                    "⏸️ En pause",
+
+                finished:
+                    "🏆 Terminé"
+            };
+
+
+            return (
+                labels[
+                    status
+                ] ||
+                status ||
+                "—"
+            );
+        }
+
+
+        /* =====================================================
+           JEUX — AFFICHAGE
+        ====================================================== */
+
+        function renderGames() {
+
+            if (
+                !gamesList
+            ) {
+
+                return;
+            }
+
+
+            const query =
+                normalizeText(
+                    gamesSearch?.value
+                )
+                    .toLowerCase();
+
+
+            const filteredGames =
+                games.filter(
+                    game => {
+
+                        if (
+                            !query
+                        ) {
+
+                            return true;
+                        }
+
+
+                        const haystack =
+                            [
+                                game.name,
+                                game.twitchGameId,
+                                game.status,
+                                game.description,
+                                ...game.tags
+                            ]
+                                .join(
+                                    " "
+                                )
+                                .toLowerCase();
+
+
+                        return haystack.includes(
+                            query
+                        );
+                    }
+                );
+
+
+            if (
+                filteredGames.length ===
+                0
+            ) {
+
+                gamesList.innerHTML = `
+                    <div class="admin-empty-state">
+
+                        <span
+                            class="admin-empty-icon"
+                            aria-hidden="true"
+                        >
+                            🎮
+                        </span>
+
+                        <h3>
+                            Aucun jeu
+                        </h3>
+
+                        <p>
+                            Ajoute ton premier jeu depuis
+                            l'administration.
+                        </p>
+
+                    </div>
+                `;
+
+
+                return;
+            }
+
+
+            gamesList.innerHTML =
+                filteredGames
+                    .map(
+                        game => {
+
+                            const cover =
+                                game.boxArtUrl
+                                    ? `
+                                        <img
+                                            src="${escapeHtml(
+                                                game.boxArtUrl
+                                            )}"
+                                            alt=""
+                                            loading="lazy"
+                                            draggable="false"
+                                        >
+                                    `
+                                    : `
+                                        <div
+                                            class="admin-item-placeholder"
+                                            aria-hidden="true"
+                                        >
+                                            🎮
+                                        </div>
+                                    `;
+
+
+                            const tags =
+                                game.tags.length >
+                                0
+                                    ? game.tags
+                                        .map(
+                                            tag => `
+                                                <span>
+                                                    ${escapeHtml(
+                                                        tag
+                                                    )}
+                                                </span>
+                                            `
+                                        )
+                                        .join(
+                                            ""
+                                        )
+                                    : `
+                                        <span>
+                                            Aucun tag
+                                        </span>
+                                    `;
+
+
+                            return `
+                                <article
+                                    class="admin-list-item"
+                                    data-game-id="${escapeHtml(
+                                        game.id
+                                    )}"
+                                >
+
+                                    <div class="admin-list-thumb">
+                                        ${cover}
+                                    </div>
+
+                                    <div class="admin-list-content">
+
+                                        <div class="admin-list-heading">
+
+                                            <div>
+
+                                                <h3>
+                                                    ${escapeHtml(
+                                                        game.name ||
+                                                        "Jeu sans nom"
+                                                    )}
+                                                </h3>
+
+                                                <p>
+                                                    ${escapeHtml(
+                                                        getGameStatusLabel(
+                                                            game.status
+                                                        )
+                                                    )}
+                                                </p>
+
+                                            </div>
+
+                                            <div class="admin-list-actions">
+
+                                                <button
+                                                    type="button"
+                                                    class="admin-secondary-button"
+                                                    data-edit-game="${escapeHtml(
+                                                        game.id
+                                                    )}"
+                                                >
+                                                    ✏️ Modifier
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    class="admin-danger-button"
+                                                    data-delete-game="${escapeHtml(
+                                                        game.id
+                                                    )}"
+                                                >
+                                                    🗑️ Supprimer
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="admin-item-tags">
+                                            ${tags}
+                                        </div>
+
+                                    </div>
+
+                                </article>
+                            `;
+                        }
+                    )
+                    .join(
+                        ""
+                    );
+
+
+            gamesList
+                .querySelectorAll(
+                    "[data-edit-game]"
+                )
+                .forEach(
+                    button => {
+
+                        button.addEventListener(
+                            "click",
+                            () => {
+
+                                const game =
+                                    games.find(
+                                        item =>
+                                            item.id ===
+                                            button.dataset
+                                                .editGame
+                                    );
+
+
+                                if (
+                                    game
+                                ) {
+
+                                    fillGameForm(
+                                        game
+                                    );
+                                }
+                            }
+                        );
+                    }
+                );
+
+
+            gamesList
+                .querySelectorAll(
+                    "[data-delete-game]"
+                )
+                .forEach(
+                    button => {
+
+                        button.addEventListener(
+                            "click",
+                            () => {
+
+                                deleteGame(
+                                    button.dataset
+                                        .deleteGame
+                                );
+                            }
+                        );
+                    }
+                );
+        }
+
+
+        if (
+            gamesSearch
+        ) {
+
+            gamesSearch.addEventListener(
+                "input",
+                renderGames
+            );
+        }
+
+
+        /* =====================================================
+           JEUX — APERÇU TWITCH
+        ====================================================== */
+
+        function hideTwitchPreview() {
 
             if (
                 twitchResult
@@ -1340,88 +1791,26 @@ document.addEventListener(
             ) {
 
                 twitchPreviewId.textContent =
-                    "";
+                    "—";
             }
         }
 
 
-        function showTwitchPreview(
-            game
-        ) {
+        async function loadTwitchGamePreview() {
 
-            if (
-                !game
-            ) {
-
-                return;
-            }
-
-
-            currentTwitchPreview =
-                game;
+            const gameId =
+                normalizeText(
+                    twitchGameIdInput?.value
+                );
 
 
             if (
-                twitchPreviewName
-            ) {
-
-                twitchPreviewName.textContent =
-                    game.name ||
-                    "Jeu Twitch";
-            }
-
-
-            if (
-                twitchPreviewId
-            ) {
-
-                twitchPreviewId.textContent =
-                    `ID Twitch : ${game.id}`;
-            }
-
-
-            if (
-                twitchPreviewCover &&
-                game.boxArtUrl
-            ) {
-
-                twitchPreviewCover.src =
-                    game.boxArtUrl;
-
-                twitchPreviewCover.alt =
-                    game.name ||
-                    "Jaquette Twitch";
-            }
-
-
-            if (
-                twitchResult
-            ) {
-
-                twitchResult.hidden =
-                    false;
-            }
-        }
-
-
-        async function previewTwitchGame() {
-
-            const id =
-                String(
-                    twitchGameIdInput
-                        ?.value ||
-                    ""
-                )
-                    .trim();
-
-
-            if (
-                !id
+                !gameId
             ) {
 
                 showToast(
-                    "Entre un ID Twitch.",
-                    "warning"
+                    "Entre d'abord l'ID Twitch du jeu.",
+                    "error"
                 );
 
                 return;
@@ -1429,47 +1818,110 @@ document.addEventListener(
 
 
             if (
-                !twitchPreviewButton
+                twitchPreviewButton
             ) {
-
-                return;
-            }
-
-
-            try {
 
                 twitchPreviewButton.disabled =
                     true;
 
                 twitchPreviewButton.textContent =
-                    "⏳ Vérification...";
+                    "Chargement...";
+            }
 
 
-                const game =
-                    await getGame(
-                        id
+            try {
+
+                const response =
+                    await fetch(
+                        `${TWITCH_GAME_API}?id=${encodeURIComponent(
+                            gameId
+                        )}`,
+                        {
+                            method:
+                                "GET",
+
+                            cache:
+                                "no-store",
+
+                            headers: {
+                                Accept:
+                                    "application/json"
+                            }
+                        }
                     );
 
 
+                const data =
+                    await response
+                        .json()
+                        .catch(
+                            () => ({})
+                        );
+
+
                 if (
-                    !game ||
-                    game.found ===
-                        false
+                    !response.ok ||
+                    !data?.success ||
+                    !data?.game
                 ) {
 
                     throw new Error(
+                        data?.error ||
                         "Jeu Twitch introuvable."
                     );
                 }
 
 
-                showTwitchPreview(
-                    game
-                );
+                const game =
+                    data.game;
+
+
+                if (
+                    twitchPreviewCover
+                ) {
+
+                    twitchPreviewCover.src =
+                        game.boxArtUrl ||
+                        "";
+
+                    twitchPreviewCover.alt =
+                        game.name
+                            ? `Jaquette de ${game.name}`
+                            : "";
+                }
+
+
+                if (
+                    twitchPreviewName
+                ) {
+
+                    twitchPreviewName.textContent =
+                        game.name ||
+                        "—";
+                }
+
+
+                if (
+                    twitchPreviewId
+                ) {
+
+                    twitchPreviewId.textContent =
+                        game.id ||
+                        gameId;
+                }
+
+
+                if (
+                    twitchResult
+                ) {
+
+                    twitchResult.hidden =
+                        false;
+                }
 
 
                 showToast(
-                    `${game.name} trouvé.`,
+                    "Jeu Twitch trouvé.",
                     "success"
                 );
 
@@ -1477,19 +1929,45 @@ document.addEventListener(
                 error
             ) {
 
+                console.error(
+                    "[Twitch Game Preview]",
+                    error
+                );
+
+
+                hideTwitchPreview();
+
+
                 showToast(
-                    error.message,
+                    error.message ||
+                    "Impossible de récupérer le jeu Twitch.",
                     "error"
                 );
 
             } finally {
 
-                twitchPreviewButton.disabled =
-                    false;
+                if (
+                    twitchPreviewButton
+                ) {
 
-                twitchPreviewButton.textContent =
-                    "🔎 Vérifier";
+                    twitchPreviewButton.disabled =
+                        false;
+
+                    twitchPreviewButton.textContent =
+                        "🔎 Vérifier";
+                }
             }
+        }
+
+
+        if (
+            twitchPreviewButton
+        ) {
+
+            twitchPreviewButton.addEventListener(
+                "click",
+                loadTwitchGamePreview
+            );
         }
 
 
@@ -1499,14 +1977,12 @@ document.addEventListener(
 
         function resetGameForm() {
 
-            currentEditingGameId =
-                null;
+            if (
+                gameForm
+            ) {
 
-
-            gameForm?.reset();
-
-
-            resetTwitchPreview();
+                gameForm.reset();
+            }
 
 
             if (
@@ -1519,23 +1995,29 @@ document.addEventListener(
 
 
             if (
-                twitchGameIdInput
-            ) {
-
-                twitchGameIdInput.disabled =
-                    false;
-
-                twitchGameIdInput.value =
-                    "";
-            }
-
-
-            if (
                 statusInput
             ) {
 
                 statusInput.value =
                     "backlog";
+            }
+
+
+            if (
+                ratingInput
+            ) {
+
+                ratingInput.value =
+                    "";
+            }
+
+
+            if (
+                pollInput
+            ) {
+
+                pollInput.checked =
+                    false;
             }
 
 
@@ -1553,40 +2035,48 @@ document.addEventListener(
             ) {
 
                 submitGameButton.textContent =
-                    "💾 Enregistrer";
+                    "💾 Enregistrer le jeu";
             }
+
+
+            hideTwitchPreview();
         }
 
 
-        function openNewGameForm() {
+        function openGameForm() {
 
-            openSection(
-                "games"
-            );
+            if (
+                gameFormPanel
+            ) {
 
-
-            resetGameForm();
-
-
-            gameFormPanel
-                ?.scrollIntoView({
-                    behavior:
-                        "smooth",
-
-                    block:
-                        "start"
-                });
+                gameFormPanel.hidden =
+                    false;
+            }
 
 
             window.setTimeout(
                 () => {
 
-                    twitchGameIdInput
-                        ?.focus();
+                    twitchGameIdInput?.focus();
 
                 },
-                300
+                50
             );
+        }
+
+
+        function closeGameForm() {
+
+            resetGameForm();
+
+
+            if (
+                gameFormPanel
+            ) {
+
+                gameFormPanel.hidden =
+                    true;
+            }
         }
 
 
@@ -1594,21 +2084,7 @@ document.addEventListener(
             game
         ) {
 
-            if (
-                !game
-            ) {
-
-                return;
-            }
-
-
-            openSection(
-                "games"
-            );
-
-
-            currentEditingGameId =
-                game.id;
+            openGameForm();
 
 
             if (
@@ -1616,8 +2092,7 @@ document.addEventListener(
             ) {
 
                 gameIdInput.value =
-                    game.id ||
-                    "";
+                    game.id;
             }
 
 
@@ -1626,11 +2101,7 @@ document.addEventListener(
             ) {
 
                 twitchGameIdInput.value =
-                    game.twitchGameId ||
-                    "";
-
-                twitchGameIdInput.disabled =
-                    true;
+                    game.twitchGameId;
             }
 
 
@@ -1649,13 +2120,9 @@ document.addEventListener(
             ) {
 
                 tagsInput.value =
-                    (
-                        game.tags ||
-                        []
-                    )
-                        .join(
-                            ", "
-                        );
+                    game.tags.join(
+                        ", "
+                    );
             }
 
 
@@ -1664,8 +2131,7 @@ document.addEventListener(
             ) {
 
                 descriptionInput.value =
-                    game.description ||
-                    "";
+                    game.description;
             }
 
 
@@ -1674,7 +2140,7 @@ document.addEventListener(
             ) {
 
                 ratingInput.value =
-                    game.rating ??
+                    game.rating ||
                     "";
             }
 
@@ -1684,8 +2150,7 @@ document.addEventListener(
             ) {
 
                 youtubeInput.value =
-                    game.youtubePlaylist ||
-                    "";
+                    game.youtubePlaylist;
             }
 
 
@@ -1694,9 +2159,7 @@ document.addEventListener(
             ) {
 
                 pollInput.checked =
-                    Boolean(
-                        game.pollEnabled
-                    );
+                    game.pollEnabled;
             }
 
 
@@ -1718,578 +2181,467 @@ document.addEventListener(
             }
 
 
-            showTwitchPreview({
-                id:
-                    game.twitchGameId,
+            if (
+                twitchPreviewCover
+            ) {
 
-                name:
-                    game.twitchName,
+                twitchPreviewCover.src =
+                    game.boxArtUrl ||
+                    "";
 
-                boxArtUrl:
-                    game.boxArtUrl
-            });
-
-
-            gameFormPanel
-                ?.scrollIntoView({
-                    behavior:
-                        "smooth",
-
-                    block:
-                        "start"
-                });
-        }
-
-
-        function buildGameFromForm() {
-
-            return {
-                id:
-                    currentEditingGameId,
-
-                twitchGameId:
-                    String(
-                        twitchGameIdInput
-                            ?.value ||
-                        ""
-                    )
-                        .trim(),
-
-                status:
-                    statusInput
-                        ?.value ||
-                    "backlog",
-
-                tags:
-                    normalizeTags(
-                        tagsInput
-                            ?.value
-                    ),
-
-                description:
-                    String(
-                        descriptionInput
-                            ?.value ||
-                        ""
-                    )
-                        .trim(),
-
-                rating:
-                    ratingInput
-                        ?.value
-                        ? Number(
-                            ratingInput.value
-                        )
-                        : null,
-
-                youtubePlaylist:
-                    String(
-                        youtubeInput
-                            ?.value ||
-                        ""
-                    )
-                        .trim(),
-
-                pollEnabled:
-                    Boolean(
-                        pollInput
-                            ?.checked
-                    )
-            };
-        }
-
-
-        async function saveGameFromForm(
-            event
-        ) {
-
-            event.preventDefault();
-
-
-            const game =
-                buildGameFromForm();
+                twitchPreviewCover.alt =
+                    game.name
+                        ? `Jaquette de ${game.name}`
+                        : "";
+            }
 
 
             if (
-                !game.twitchGameId
+                twitchPreviewName
             ) {
 
-                showToast(
-                    "L'ID Twitch est obligatoire.",
-                    "warning"
+                twitchPreviewName.textContent =
+                    game.name ||
+                    "—";
+            }
+
+
+            if (
+                twitchPreviewId
+            ) {
+
+                twitchPreviewId.textContent =
+                    game.twitchGameId ||
+                    "—";
+            }
+
+
+            if (
+                twitchResult &&
+                (
+                    game.name ||
+                    game.boxArtUrl
+                )
+            ) {
+
+                twitchResult.hidden =
+                    false;
+            }
+        }
+
+
+        if (
+            newGameButton
+        ) {
+
+            newGameButton.addEventListener(
+                "click",
+                () => {
+
+                    resetGameForm();
+
+                    openGameForm();
+                }
+            );
+        }
+
+
+        if (
+            cancelGameButton
+        ) {
+
+            cancelGameButton.addEventListener(
+                "click",
+                closeGameForm
+            );
+        }
+                /* =====================================================
+           JEUX — ENREGISTREMENT
+        ====================================================== */
+
+        if (
+            gameForm
+        ) {
+
+            gameForm.addEventListener(
+                "submit",
+                async event => {
+
+                    event.preventDefault();
+
+
+                    const existingId =
+                        normalizeText(
+                            gameIdInput?.value
+                        );
+
+                    const twitchGameId =
+                        normalizeText(
+                            twitchGameIdInput?.value
+                        );
+
+
+                    if (
+                        !twitchGameId
+                    ) {
+
+                        showToast(
+                            "L'ID Twitch du jeu est obligatoire.",
+                            "error"
+                        );
+
+                        twitchGameIdInput?.focus();
+
+                        return;
+                    }
+
+
+                    const payload = {
+
+                        twitchGameId,
+
+                        status:
+                            normalizeText(
+                                statusInput?.value
+                            ) ||
+                            "backlog",
+
+                        tags:
+                            normalizeTags(
+                                tagsInput?.value
+                            ),
+
+                        description:
+                            normalizeText(
+                                descriptionInput?.value
+                            ),
+
+                        rating:
+                            Number(
+                                ratingInput?.value ||
+                                0
+                            ),
+
+                        youtubePlaylist:
+                            normalizeText(
+                                youtubeInput?.value
+                            ),
+
+                        pollEnabled:
+                            Boolean(
+                                pollInput?.checked
+                            )
+
+                    };
+
+
+                    if (
+                        submitGameButton
+                    ) {
+
+                        submitGameButton.disabled =
+                            true;
+
+                        submitGameButton.textContent =
+                            existingId
+                                ? "Enregistrement..."
+                                : "Ajout...";
+                    }
+
+
+                    try {
+
+                        if (
+                            existingId
+                        ) {
+
+                            await adminApiRequest(
+                                `${ADMIN_GAMES_API}?id=${encodeURIComponent(
+                                    existingId
+                                )}`,
+                                {
+                                    method:
+                                        "PUT",
+
+                                    body:
+                                        payload
+                                }
+                            );
+
+
+                            showToast(
+                                "Le jeu a bien été modifié.",
+                                "success"
+                            );
+
+                        } else {
+
+                            await adminApiRequest(
+                                ADMIN_GAMES_API,
+                                {
+                                    method:
+                                        "POST",
+
+                                    body:
+                                        payload
+                                }
+                            );
+
+
+                            showToast(
+                                "Le jeu a bien été ajouté.",
+                                "success"
+                            );
+                        }
+
+
+                        closeGameForm();
+
+                        await loadGames();
+
+
+                    } catch (
+                        error
+                    ) {
+
+                        console.error(
+                            "[Admin Game Save]",
+                            error
+                        );
+
+
+                        showToast(
+                            error.message ||
+                            "Impossible d'enregistrer le jeu.",
+                            "error"
+                        );
+
+
+                    } finally {
+
+                        if (
+                            submitGameButton
+                        ) {
+
+                            submitGameButton.disabled =
+                                false;
+
+                            submitGameButton.textContent =
+                                existingId
+                                    ? "💾 Enregistrer les modifications"
+                                    : "💾 Enregistrer le jeu";
+                        }
+                    }
+                }
+            );
+        }
+
+
+        /* =====================================================
+           JEUX — SUPPRESSION
+        ====================================================== */
+
+        async function deleteGame(
+            gameId
+        ) {
+
+            const game =
+                games.find(
+                    item =>
+                        item.id ===
+                        gameId
                 );
+
+
+            const gameName =
+                game?.name ||
+                "ce jeu";
+
+
+            const confirmed =
+                window.confirm(
+                    `Supprimer définitivement "${gameName}" ?`
+                );
+
+
+            if (
+                !confirmed
+            ) {
 
                 return;
             }
 
 
-            const editing =
-                Boolean(
-                    currentEditingGameId
-                );
-
-
             try {
 
-                if (
-                    submitGameButton
-                ) {
-
-                    submitGameButton.disabled =
-                        true;
-
-                    submitGameButton.textContent =
-                        "⏳ Enregistrement...";
-                }
-
-
-                const data =
-                    await adminApiRequest(
-                        ADMIN_GAMES_API,
-                        {
-                            method:
-                                editing
-                                    ? "PUT"
-                                    : "POST",
-
-                            body:
-                                game
-                        }
-                    );
-
-
-                if (
-                    !data?.game
-                ) {
-
-                    throw new Error(
-                        "Le jeu enregistré n'a pas été retourné."
-                    );
-                }
-
-
-                if (
-                    editing
-                ) {
-
-                    const index =
-                        games.findIndex(
-                            item =>
-                                item.id ===
-                                data.game.id
-                        );
-
-
-                    if (
-                        index >=
-                        0
-                    ) {
-
-                        games[index] =
-                            data.game;
-
-                    } else {
-
-                        games.push(
-                            data.game
-                        );
+                await adminApiRequest(
+                    `${ADMIN_GAMES_API}?id=${encodeURIComponent(
+                        gameId
+                    )}`,
+                    {
+                        method:
+                            "DELETE"
                     }
-
-                } else {
-
-                    games.unshift(
-                        data.game
-                    );
-                }
-
-
-                renderGames();
-
-                renderPollGames();
-
-                updateDashboardStats();
-
-                resetGameForm();
+                );
 
 
                 showToast(
-                    editing
-                        ? "Jeu modifié."
-                        : "Jeu ajouté.",
+                    `"${gameName}" a été supprimé.`,
                     "success"
                 );
+
+
+                await loadGames();
+
 
             } catch (
                 error
             ) {
 
                 console.error(
-                    "[Game Save]",
+                    "[Admin Game Delete]",
                     error
                 );
 
 
                 showToast(
-                    error.message,
+                    error.message ||
+                    "Impossible de supprimer le jeu.",
                     "error"
                 );
-
-            } finally {
-
-                if (
-                    submitGameButton
-                ) {
-
-                    submitGameButton.disabled =
-                        false;
-
-                    submitGameButton.textContent =
-                        currentEditingGameId
-                            ? "💾 Enregistrer les modifications"
-                            : "💾 Enregistrer";
-                }
             }
         }
 
 
         /* =====================================================
-           JEUX — AFFICHAGE
+           ARTWORKS — NORMALISATION
         ====================================================== */
 
-        function getStatusLabel(
-            status
-        ) {
-
-            const labels = {
-                current:
-                    "🔥 En cours",
-
-                regular:
-                    "🔁 Régulier",
-
-                backlog:
-                    "📚 À faire",
-
-                paused:
-                    "⏸️ En pause",
-
-                finished:
-                    "🏆 Terminé"
-            };
-
-
-            return (
-                labels[
-                    status
-                ] ||
-                status ||
-                "Jeu"
-            );
-        }
-
-
-        function createGameItem(
-            game
-        ) {
-
-            const article =
-                document.createElement(
-                    "article"
-                );
-
-
-            article.className =
-                "admin-game-item";
-
-
-            article.innerHTML = `
-                <div
-                    class="admin-game-item-cover"
-                >
-
-                    ${
-                        game.boxArtUrl
-                            ? `
-                                <img
-                                    src="${escapeHtmlAttribute(
-                                        game.boxArtUrl
-                                    )}"
-                                    alt="${escapeHtmlAttribute(
-                                        game.twitchName ||
-                                        "Jeu"
-                                    )}"
-                                    loading="lazy"
-                                >
-                            `
-                            : "🎮"
-                    }
-
-                </div>
-
-
-                <div
-                    class="admin-game-item-content"
-                >
-
-                    <h3>
-                        ${escapeHtml(
-                            game.twitchName ||
-                            game.name ||
-                            "Jeu Twitch"
-                        )}
-                    </h3>
-
-
-                    <div
-                        class="admin-game-item-meta"
-                    >
-
-                        <span>
-                            ${escapeHtml(
-                                getStatusLabel(
-                                    game.status
-                                )
-                            )}
-                        </span>
-
-                        ${
-                            game.pollEnabled
-                                ? "<span>🗳️ Sondage</span>"
-                                : ""
-                        }
-
-                    </div>
-
-
-                    ${
-                        game.description
-                            ? `
-                                <p>
-                                    ${escapeHtml(
-                                        game.description
-                                    )}
-                                </p>
-                            `
-                            : ""
-                    }
-
-
-                    <div
-                        class="admin-game-item-actions"
-                    >
-
-                        <button
-                            type="button"
-                            class="admin-secondary-button"
-                            data-edit-game="${escapeHtmlAttribute(
-                                game.id
-                            )}"
-                        >
-                            ✏️ Modifier
-                        </button>
-
-
-                        <button
-                            type="button"
-                            class="admin-danger-button"
-                            data-delete-game="${escapeHtmlAttribute(
-                                game.id
-                            )}"
-                        >
-                            🗑️ Supprimer
-                        </button>
-
-                    </div>
-
-                </div>
-            `;
-
-
-            return article;
-        }
-
-
-        function renderGames() {
-
-            if (
-                !gamesList
-            ) {
-
-                return;
-            }
-
-
-            const search =
-                String(
-                    gamesSearch
-                        ?.value ||
-                    ""
-                )
-                    .trim()
-                    .toLowerCase();
-
-
-            const filtered =
-                games.filter(
-                    game => {
-
-                        if (
-                            !search
-                        ) {
-
-                            return true;
-                        }
-
-
-                        return [
-                            game.twitchName,
-                            game.name,
-                            game.status,
-                            game.description,
-                            ...(
-                                game.tags ||
-                                []
-                            )
-                        ]
-                            .join(
-                                " "
-                            )
-                            .toLowerCase()
-                            .includes(
-                                search
-                            );
-                    }
-                );
-
-
-            gamesList.innerHTML =
-                "";
-
-
-            if (
-                filtered.length ===
-                0
-            ) {
-
-                gamesList.innerHTML = `
-                    <p
-                        class="admin-empty-state"
-                    >
-                        Aucun jeu trouvé.
-                    </p>
-                `;
-
-                return;
-            }
-
-
-            filtered.forEach(
-                game => {
-
-                    gamesList.appendChild(
-                        createGameItem(
-                            game
-                        )
-                    );
-                }
-            );
-        }
-
-
-        /* =====================================================
-           ARTWORKS — FORMAT
-        ====================================================== */
-
-        function formatArtwork(
+        function normalizeArtwork(
             artwork
         ) {
 
             return {
+
                 id:
-                    artwork.id,
+                    normalizeText(
+                        artwork?.id
+                    ),
 
                 artId:
-                    artwork.art_id ??
-                    artwork.artId,
+                    normalizeText(
+                        artwork?.artId ??
+                        artwork?.art_id
+                    ),
+
+                sortOrder:
+                    Number(
+                        artwork?.sortOrder ??
+                        artwork?.sort_order ??
+                        0
+                    ),
 
                 artist:
-                    artwork.artist,
+                    normalizeText(
+                        artwork?.artist
+                    ),
 
                 artistRole:
-                    artwork.artist_role ??
-                    artwork.artistRole,
+                    normalizeText(
+                        artwork?.artistRole ??
+                        artwork?.artist_role
+                    ),
 
                 description:
-                    artwork.description,
+                    normalizeText(
+                        artwork?.description
+                    ),
 
                 imageUrl:
-                    artwork.image_url ??
-                    artwork.imageUrl,
+                    normalizeText(
+                        artwork?.imageUrl ??
+                        artwork?.image_url
+                    ),
 
                 imageAlt:
-                    artwork.image_alt ??
-                    artwork.imageAlt,
+                    normalizeText(
+                        artwork?.imageAlt ??
+                        artwork?.image_alt
+                    ),
 
                 mediaType:
-                    artwork.media_type ??
-                    artwork.mediaType ??
+                    normalizeText(
+                        artwork?.mediaType ??
+                        artwork?.media_type
+                    ) ||
                     "image",
 
                 tags:
                     normalizeTags(
-                        artwork.tags
+                        artwork?.tags
                     ),
 
                 imageMessages:
                     normalizeMessages(
-                        artwork.image_messages ??
-                        artwork.imageMessages
+                        artwork?.imageMessages ??
+                        artwork?.image_messages
                     ),
 
                 artistUrl:
-                    artwork.artist_url ??
-                    artwork.artistUrl,
+                    normalizeText(
+                        artwork?.artistUrl ??
+                        artwork?.artist_url
+                    ),
 
                 buttonText:
-                    artwork.button_text ??
-                    artwork.buttonText ??
+                    normalizeText(
+                        artwork?.buttonText ??
+                        artwork?.button_text
+                    ) ||
                     "Voir son profil",
 
                 buttonMessages:
                     normalizeMessages(
-                        artwork.button_messages ??
-                        artwork.buttonMessages
+                        artwork?.buttonMessages ??
+                        artwork?.button_messages
                     ),
 
                 sensitive:
-                    Boolean(
-                        artwork.sensitive
+                    normalizeBoolean(
+                        artwork?.sensitive
                     ),
 
                 favoriteEnabled:
-                    artwork.favorite_enabled !==
-                    undefined
-                        ? Boolean(
-                            artwork.favorite_enabled
-                        )
-                        : Boolean(
+                    artwork?.favoriteEnabled !==
+                        undefined
+                        ? normalizeBoolean(
                             artwork.favoriteEnabled
-                        ),
+                        )
+                        : artwork?.favorite_enabled !==
+                            undefined
+                            ? normalizeBoolean(
+                                artwork.favorite_enabled
+                            )
+                            : true,
 
                 visible:
-                    artwork.visible !==
-                    undefined
-                        ? Boolean(
+                    artwork?.visible !==
+                        undefined
+                        ? normalizeBoolean(
                             artwork.visible
                         )
                         : true,
 
-                sortOrder:
-                    Number(
-                        artwork.sort_order ??
-                        artwork.sortOrder ??
-                        0
-                    )
+                createdAt:
+                    artwork?.createdAt ??
+                    artwork?.created_at ??
+                    null,
+
+                updatedAt:
+                    artwork?.updatedAt ??
+                    artwork?.updated_at ??
+                    null
+
             };
         }
 
@@ -2317,7 +2669,7 @@ document.addEventListener(
                         data?.artworks
                     )
                         ? data.artworks.map(
-                            formatArtwork
+                            normalizeArtwork
                         )
                         : [];
 
@@ -2326,18 +2678,29 @@ document.addEventListener(
 
                 updateDashboardStats();
 
+
             } catch (
                 error
             ) {
 
                 console.error(
-                    "[Artworks]",
+                    "[Admin Gallery]",
                     error
                 );
 
 
+                artworks =
+                    [];
+
+
+                renderArtworks();
+
+                updateDashboardStats();
+
+
                 showToast(
-                    error.message,
+                    error.message ||
+                    "Impossible de charger les illustrations.",
                     "error"
                 );
             }
@@ -2345,7 +2708,395 @@ document.addEventListener(
 
 
         /* =====================================================
-           ARTWORK — APERÇU
+           ARTWORKS — MÉDIA
+        ====================================================== */
+
+        function isVideoMedia(
+            artwork
+        ) {
+
+            if (
+                artwork?.mediaType ===
+                "video"
+            ) {
+
+                return true;
+            }
+
+
+            const url =
+                normalizeText(
+                    artwork?.imageUrl
+                )
+                    .toLowerCase();
+
+
+            return (
+                url.endsWith(
+                    ".mp4"
+                ) ||
+                url.endsWith(
+                    ".webm"
+                )
+            );
+        }
+
+
+        function createArtworkMediaHtml(
+            artwork
+        ) {
+
+            const url =
+                escapeHtml(
+                    artwork.imageUrl
+                );
+
+            const alt =
+                escapeHtml(
+                    artwork.imageAlt ||
+                    artwork.artist ||
+                    "Illustration"
+                );
+
+
+            if (
+                !url
+            ) {
+
+                return `
+                    <div
+                        class="admin-item-placeholder"
+                        aria-hidden="true"
+                    >
+                        🎨
+                    </div>
+                `;
+            }
+
+
+            if (
+                isVideoMedia(
+                    artwork
+                )
+            ) {
+
+                return `
+                    <video
+                        src="${url}"
+                        muted
+                        loop
+                        autoplay
+                        playsinline
+                        preload="metadata"
+                    ></video>
+                `;
+            }
+
+
+            return `
+                <img
+                    src="${url}"
+                    alt="${alt}"
+                    loading="lazy"
+                    draggable="false"
+                >
+            `;
+        }
+
+
+        /* =====================================================
+           ARTWORKS — AFFICHAGE
+        ====================================================== */
+
+        function renderArtworks() {
+
+            if (
+                !artworksList
+            ) {
+
+                return;
+            }
+
+
+            const query =
+                normalizeText(
+                    artworksSearch?.value
+                )
+                    .toLowerCase();
+
+
+            const filteredArtworks =
+                artworks
+                    .filter(
+                        artwork => {
+
+                            if (
+                                !query
+                            ) {
+
+                                return true;
+                            }
+
+
+                            const haystack =
+                                [
+                                    artwork.artId,
+                                    artwork.artist,
+                                    artwork.artistRole,
+                                    artwork.description,
+                                    artwork.imageAlt,
+                                    artwork.mediaType,
+                                    ...artwork.tags
+                                ]
+                                    .join(
+                                        " "
+                                    )
+                                    .toLowerCase();
+
+
+                            return haystack.includes(
+                                query
+                            );
+                        }
+                    )
+                    .sort(
+                        (
+                            a,
+                            b
+                        ) =>
+                            a.sortOrder -
+                            b.sortOrder
+                    );
+
+
+            if (
+                filteredArtworks.length ===
+                0
+            ) {
+
+                artworksList.innerHTML = `
+                    <div class="admin-empty-state">
+
+                        <span
+                            class="admin-empty-icon"
+                            aria-hidden="true"
+                        >
+                            🎨
+                        </span>
+
+                        <h3>
+                            Aucune illustration
+                        </h3>
+
+                        <p>
+                            Ajoute ta première œuvre depuis
+                            l'administration.
+                        </p>
+
+                    </div>
+                `;
+
+
+                return;
+            }
+
+
+            artworksList.innerHTML =
+                filteredArtworks
+                    .map(
+                        artwork => {
+
+                            const tags =
+                                artwork.tags.length >
+                                0
+                                    ? artwork.tags
+                                        .map(
+                                            tag => `
+                                                <span>
+                                                    ${escapeHtml(
+                                                        tag
+                                                    )}
+                                                </span>
+                                            `
+                                        )
+                                        .join(
+                                            ""
+                                        )
+                                    : `
+                                        <span>
+                                            Aucun tag
+                                        </span>
+                                    `;
+
+
+                            const visibilityLabel =
+                                artwork.visible
+                                    ? "👁️ Visible"
+                                    : "🙈 Masquée";
+
+
+                            const sensitiveLabel =
+                                artwork.sensitive
+                                    ? " • 🔞 Sensible"
+                                    : "";
+
+
+                            return `
+                                <article
+                                    class="admin-list-item"
+                                    data-artwork-id="${escapeHtml(
+                                        artwork.id
+                                    )}"
+                                >
+
+                                    <div class="admin-list-thumb">
+                                        ${createArtworkMediaHtml(
+                                            artwork
+                                        )}
+                                    </div>
+
+                                    <div class="admin-list-content">
+
+                                        <div class="admin-list-heading">
+
+                                            <div>
+
+                                                <h3>
+                                                    ${escapeHtml(
+                                                        artwork.artist ||
+                                                        "Artiste inconnu"
+                                                    )}
+                                                </h3>
+
+                                                <p>
+                                                    ${escapeHtml(
+                                                        artwork.artistRole ||
+                                                        "Illustration"
+                                                    )}
+                                                </p>
+
+                                                <p>
+                                                    #${escapeHtml(
+                                                        artwork.artId ||
+                                                        "—"
+                                                    )}
+                                                    •
+                                                    ${visibilityLabel}
+                                                    ${sensitiveLabel}
+                                                </p>
+
+                                            </div>
+
+                                            <div class="admin-list-actions">
+
+                                                <button
+                                                    type="button"
+                                                    class="admin-secondary-button"
+                                                    data-edit-artwork="${escapeHtml(
+                                                        artwork.id
+                                                    )}"
+                                                >
+                                                    ✏️ Modifier
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    class="admin-danger-button"
+                                                    data-delete-artwork="${escapeHtml(
+                                                        artwork.id
+                                                    )}"
+                                                >
+                                                    🗑️ Supprimer
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="admin-item-tags">
+                                            ${tags}
+                                        </div>
+
+                                    </div>
+
+                                </article>
+                            `;
+                        }
+                    )
+                    .join(
+                        ""
+                    );
+
+
+            artworksList
+                .querySelectorAll(
+                    "[data-edit-artwork]"
+                )
+                .forEach(
+                    button => {
+
+                        button.addEventListener(
+                            "click",
+                            () => {
+
+                                const artwork =
+                                    artworks.find(
+                                        item =>
+                                            item.id ===
+                                            button.dataset
+                                                .editArtwork
+                                    );
+
+
+                                if (
+                                    artwork
+                                ) {
+
+                                    fillArtworkForm(
+                                        artwork
+                                    );
+                                }
+                            }
+                        );
+                    }
+                );
+
+
+            artworksList
+                .querySelectorAll(
+                    "[data-delete-artwork]"
+                )
+                .forEach(
+                    button => {
+
+                        button.addEventListener(
+                            "click",
+                            () => {
+
+                                deleteArtwork(
+                                    button.dataset
+                                        .deleteArtwork
+                                );
+                            }
+                        );
+                    }
+                );
+        }
+
+
+        if (
+            artworksSearch
+        ) {
+
+            artworksSearch.addEventListener(
+                "input",
+                renderArtworks
+            );
+        }
+
+
+        /* =====================================================
+           ARTWORKS — APERÇU UPLOAD
         ====================================================== */
 
         function revokeArtworkPreviewUrl() {
@@ -2364,47 +3115,109 @@ document.addEventListener(
         }
 
 
-        function showArtworkPreview({
-            src,
-            filename =
-                "",
-            size =
-                null
-        }) {
+        function hideArtworkPreviewMedia() {
 
             if (
                 artworkPreviewImage
             ) {
 
-                artworkPreviewImage.src =
-                    src;
+                artworkPreviewImage.hidden =
+                    true;
 
-                artworkPreviewImage.alt =
-                    "Aperçu de l'illustration";
+                artworkPreviewImage.removeAttribute(
+                    "src"
+                );
             }
 
 
             if (
-                artworkFileName
+                artworkPreviewVideo
             ) {
 
-                artworkFileName.textContent =
-                    filename ||
-                    "Illustration actuelle";
+                artworkPreviewVideo.pause();
+
+                artworkPreviewVideo.hidden =
+                    true;
+
+                artworkPreviewVideo.removeAttribute(
+                    "src"
+                );
+
+                artworkPreviewVideo.load();
             }
+        }
+
+
+        function showArtworkPreviewFromUrl(
+            url,
+            mediaType =
+                "image"
+        ) {
+
+            hideArtworkPreviewMedia();
 
 
             if (
-                artworkFileSize
+                !url
             ) {
 
-                artworkFileSize.textContent =
-                    size !==
-                    null
-                        ? formatFileSize(
-                            size
-                        )
-                        : "";
+                if (
+                    artworkUploadPreview
+                ) {
+
+                    artworkUploadPreview.hidden =
+                        true;
+                }
+
+                return;
+            }
+
+
+            const isVideo =
+                mediaType ===
+                    "video" ||
+                /\.(mp4|webm)(?:$|\?)/i.test(
+                    url
+                );
+
+
+            if (
+                isVideo
+            ) {
+
+                if (
+                    artworkPreviewVideo
+                ) {
+
+                    artworkPreviewVideo.src =
+                        url;
+
+                    artworkPreviewVideo.hidden =
+                        false;
+
+                    artworkPreviewVideo.load();
+
+                    artworkPreviewVideo
+                        .play()
+                        .catch(
+                            () => {
+                                /* autoplay non disponible */
+                            }
+                        );
+                }
+
+            } else {
+
+                if (
+                    artworkPreviewImage
+                ) {
+
+                    artworkPreviewImage.src =
+                        url;
+
+                    artworkPreviewImage.hidden =
+                        false;
+                }
             }
 
 
@@ -2418,118 +3231,22 @@ document.addEventListener(
         }
 
 
-        function hideArtworkPreview() {
-
-            revokeArtworkPreviewUrl();
-
-
-            if (
-                artworkPreviewImage
-            ) {
-
-                artworkPreviewImage.removeAttribute(
-                    "src"
-                );
-            }
-
-
-            if (
-                artworkUploadPreview
-            ) {
-
-                artworkUploadPreview.hidden =
-                    true;
-            }
-        }
-
-
-        /* =====================================================
-           ARTWORK — FICHIER
-        ====================================================== */
-
-        function selectArtworkFile(
-            file
+        function clearArtworkFileSelection(
+            options = {}
         ) {
 
-            if (
-                !file
-            ) {
+            const {
+                keepExistingPreview =
+                    false
+            } =
+                options;
 
-                return;
-            }
-
-
-            if (
-                !ALLOWED_ARTWORK_TYPES.has(
-                    file.type
-                )
-            ) {
-
-                showToast(
-                    "Format non autorisé. PNG, JPG, WEBP ou GIF uniquement.",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (
-                file.size >
-                MAX_ARTWORK_FILE_SIZE
-            ) {
-
-                showToast(
-                    "L'image dépasse 50 Mo.",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            selectedArtworkFile =
-                file;
-
-
-            revokeArtworkPreviewUrl();
-
-
-            artworkPreviewObjectUrl =
-                URL.createObjectURL(
-                    file
-                );
-
-
-            showArtworkPreview({
-                src:
-                    artworkPreviewObjectUrl,
-
-                filename:
-                    file.name,
-
-                size:
-                    file.size
-            });
-
-
-            if (
-                artworkMediaTypeInput
-            ) {
-
-                artworkMediaTypeInput.value =
-                    file.type ===
-                        "image/gif"
-                        ? "gif"
-                        : "image";
-            }
-        }
-
-
-        function removeSelectedArtworkImage() {
 
             selectedArtworkFile =
                 null;
+
+
+            revokeArtworkPreviewUrl();
 
 
             if (
@@ -2542,140 +3259,452 @@ document.addEventListener(
 
 
             if (
-                artworkImageUrlInput
+                artworkFileName
             ) {
 
-                artworkImageUrlInput.value =
+                artworkFileName.textContent =
                     "";
             }
 
 
-            hideArtworkPreview();
+            if (
+                artworkFileSize
+            ) {
+
+                artworkFileSize.textContent =
+                    "";
+            }
+
+
+            if (
+                !keepExistingPreview
+            ) {
+
+                hideArtworkPreviewMedia();
+
+
+                if (
+                    artworkUploadPreview
+                ) {
+
+                    artworkUploadPreview.hidden =
+                        true;
+                }
+            }
         }
 
 
-        function fileToBase64(
+        function validateArtworkFile(
             file
         ) {
 
-            return new Promise(
-                (
-                    resolve,
-                    reject
-                ) => {
+            if (
+                !file
+            ) {
 
-                    const reader =
-                        new FileReader();
-
-
-                    reader.onload =
-                        () => {
-
-                            const result =
-                                String(
-                                    reader.result ||
-                                    ""
-                                );
+                throw new Error(
+                    "Aucun fichier sélectionné."
+                );
+            }
 
 
-                            const commaIndex =
-                                result.indexOf(
-                                    ","
-                                );
+            if (
+                !ALLOWED_ARTWORK_TYPES.has(
+                    file.type
+                )
+            ) {
+
+                throw new Error(
+                    "Format non autorisé. Utilise PNG, JPG, WEBP, GIF, MP4 ou WEBM."
+                );
+            }
 
 
-                            resolve(
-                                commaIndex >=
-                                    0
-                                    ? result.slice(
-                                        commaIndex +
-                                        1
-                                    )
-                                    : result
-                            );
-                        };
+            if (
+                file.size >
+                MAX_ARTWORK_FILE_SIZE
+            ) {
+
+                throw new Error(
+                    `Le fichier dépasse la limite de ${
+                        formatFileSize(
+                            MAX_ARTWORK_FILE_SIZE
+                        )
+                    }.`
+                );
+            }
 
 
-                    reader.onerror =
-                        () => {
-
-                            reject(
-                                new Error(
-                                    "Impossible de lire l'image."
-                                )
-                            );
-                        };
+            return true;
+        }
 
 
-                    reader.readAsDataURL(
+        function selectArtworkFile(
+            file
+        ) {
+
+            try {
+
+                validateArtworkFile(
+                    file
+                );
+
+
+                clearArtworkFileSelection();
+
+
+                selectedArtworkFile =
+                    file;
+
+
+                artworkPreviewObjectUrl =
+                    URL.createObjectURL(
                         file
+                    );
+
+
+                if (
+                    artworkFileName
+                ) {
+
+                    artworkFileName.textContent =
+                        file.name;
+                }
+
+
+                if (
+                    artworkFileSize
+                ) {
+
+                    artworkFileSize.textContent =
+                        formatFileSize(
+                            file.size
+                        );
+                }
+
+
+                const mediaType =
+                    file.type.startsWith(
+                        "video/"
+                    )
+                        ? "video"
+                        : "image";
+
+
+                if (
+                    artworkMediaTypeInput
+                ) {
+
+                    artworkMediaTypeInput.value =
+                        mediaType;
+                }
+
+
+                showArtworkPreviewFromUrl(
+                    artworkPreviewObjectUrl,
+                    mediaType
+                );
+
+
+                showToast(
+                    "Fichier prêt à être envoyé.",
+                    "success"
+                );
+
+
+            } catch (
+                error
+            ) {
+
+                clearArtworkFileSelection();
+
+
+                showToast(
+                    error.message ||
+                    "Fichier invalide.",
+                    "error"
+                );
+            }
+        }
+
+
+        if (
+            artworkFileInput
+        ) {
+
+            artworkFileInput.addEventListener(
+                "change",
+                () => {
+
+                    const file =
+                        artworkFileInput
+                            .files?.[0];
+
+
+                    if (
+                        file
+                    ) {
+
+                        selectArtworkFile(
+                            file
+                        );
+                    }
+                }
+            );
+        }
+
+
+        if (
+            artworkDropzone
+        ) {
+
+            artworkDropzone.addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target.closest(
+                            "button"
+                        )
+                    ) {
+
+                        return;
+                    }
+
+
+                    artworkFileInput?.click();
+                }
+            );
+
+
+            artworkDropzone.addEventListener(
+                "dragover",
+                event => {
+
+                    event.preventDefault();
+
+                    artworkDropzone.classList.add(
+                        "is-dragover"
+                    );
+                }
+            );
+
+
+            artworkDropzone.addEventListener(
+                "dragleave",
+                () => {
+
+                    artworkDropzone.classList.remove(
+                        "is-dragover"
+                    );
+                }
+            );
+
+
+            artworkDropzone.addEventListener(
+                "drop",
+                event => {
+
+                    event.preventDefault();
+
+                    artworkDropzone.classList.remove(
+                        "is-dragover"
+                    );
+
+
+                    const file =
+                        event.dataTransfer
+                            ?.files?.[0];
+
+
+                    if (
+                        file
+                    ) {
+
+                        selectArtworkFile(
+                            file
+                        );
+                    }
+                }
+            );
+        }
+
+
+        if (
+            artworkRemoveImage
+        ) {
+
+            artworkRemoveImage.addEventListener(
+                "click",
+                () => {
+
+                    clearArtworkFileSelection();
+
+
+                    if (
+                        artworkImageUrlInput
+                    ) {
+
+                        artworkImageUrlInput.value =
+                            "";
+                    }
+
+
+                    showToast(
+                        "Média retiré du formulaire.",
+                        "success"
                     );
                 }
             );
         }
 
 
-        async function uploadArtworkFile(
-            file,
-            artId
-        ) {
+        /* =====================================================
+           ARTWORKS — UPLOAD SERVEUR
+        ====================================================== */
 
-            const fileBase64 =
-                await fileToBase64(
-                    file
-                );
+        async function uploadSelectedArtworkFile() {
+
+            if (
+                !selectedArtworkFile
+            ) {
+
+                return null;
+            }
 
 
-            const data =
-                await adminApiRequest(
+            validateArtworkFile(
+                selectedArtworkFile
+            );
+
+
+            const formData =
+                new FormData();
+
+
+            formData.append(
+                "file",
+                selectedArtworkFile
+            );
+
+
+            const response =
+                await fetch(
                     ADMIN_GALLERY_UPLOAD_API,
                     {
                         method:
                             "POST",
 
-                        body: {
-                            artId,
+                        credentials:
+                            "same-origin",
 
-                            filename:
-                                file.name,
+                        cache:
+                            "no-store",
 
-                            mimeType:
-                                file.type,
+                        body:
+                            formData,
 
-                            fileBase64
+                        headers: {
+                            Accept:
+                                "application/json"
                         }
                     }
                 );
 
 
             if (
-                !data?.file?.url
+                response.status ===
+                    401 ||
+                response.status ===
+                    403
             ) {
 
+                window.location.replace(
+                    "/api/admin/auth-login"
+                );
+
+
                 throw new Error(
-                    "L'URL de l'image n'a pas été retournée."
+                    "Session administrateur expirée."
                 );
             }
 
 
-            return data.file;
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if (
+                !response.ok ||
+                !data?.success
+            ) {
+
+                throw new Error(
+                    data?.error ||
+                    `Erreur HTTP ${response.status}`
+                );
+            }
+
+
+            const uploadedUrl =
+                normalizeText(
+                    data?.url ??
+                    data?.publicUrl ??
+                    data?.public_url ??
+                    data?.imageUrl ??
+                    data?.image_url
+                );
+
+
+            if (
+                !uploadedUrl
+            ) {
+
+                throw new Error(
+                    "L'upload a réussi mais aucune URL n'a été retournée."
+                );
+            }
+
+
+            return {
+
+                url:
+                    uploadedUrl,
+
+                mediaType:
+                    normalizeText(
+                        data?.mediaType ??
+                        data?.media_type
+                    ) ||
+                    (
+                        selectedArtworkFile.type
+                            .startsWith(
+                                "video/"
+                            )
+                            ? "video"
+                            : "image"
+                    )
+
+            };
         }
 
 
         /* =====================================================
-           ARTWORK — FORMULAIRE
+           ARTWORKS — FORMULAIRE
         ====================================================== */
 
         function resetArtworkForm() {
 
-            currentEditingArtworkId =
-                null;
+            if (
+                artworkForm
+            ) {
 
-            selectedArtworkFile =
-                null;
-
-
-            artworkForm?.reset();
+                artworkForm.reset();
+            }
 
 
             if (
@@ -2688,29 +3717,20 @@ document.addEventListener(
 
 
             if (
-                artworkImageUrlInput
-            ) {
-
-                artworkImageUrlInput.value =
-                    "";
-            }
-
-
-            if (
-                artworkFileInput
-            ) {
-
-                artworkFileInput.value =
-                    "";
-            }
-
-
-            if (
                 artworkSortOrderInput
             ) {
 
                 artworkSortOrderInput.value =
                     "0";
+            }
+
+
+            if (
+                artworkMediaTypeInput
+            ) {
+
+                artworkMediaTypeInput.value =
+                    "image";
             }
 
 
@@ -2748,18 +3768,6 @@ document.addEventListener(
                 artworkSensitiveInput.checked =
                     false;
             }
-
-
-            if (
-                artworkMediaTypeInput
-            ) {
-
-                artworkMediaTypeInput.value =
-                    "image";
-            }
-
-
-            hideArtworkPreview();
 
 
             if (
@@ -2776,40 +3784,48 @@ document.addEventListener(
             ) {
 
                 artworkSubmitButton.textContent =
-                    "💾 Enregistrer l'œuvre";
+                    "💾 Enregistrer l'illustration";
             }
+
+
+            clearArtworkFileSelection();
         }
 
 
-        function openNewArtworkForm() {
+        function openArtworkForm() {
 
-            openSection(
-                "gallery"
-            );
+            if (
+                artworkFormPanel
+            ) {
 
-
-            resetArtworkForm();
-
-
-            artworkFormPanel
-                ?.scrollIntoView({
-                    behavior:
-                        "smooth",
-
-                    block:
-                        "start"
-                });
+                artworkFormPanel.hidden =
+                    false;
+            }
 
 
             window.setTimeout(
                 () => {
 
-                    artworkArtIdInput
-                        ?.focus();
+                    artworkArtIdInput?.focus();
 
                 },
-                300
+                50
             );
+        }
+
+
+        function closeArtworkForm() {
+
+            resetArtworkForm();
+
+
+            if (
+                artworkFormPanel
+            ) {
+
+                artworkFormPanel.hidden =
+                    true;
+            }
         }
 
 
@@ -2817,24 +3833,9 @@ document.addEventListener(
             artwork
         ) {
 
-            if (
-                !artwork
-            ) {
+            resetArtworkForm();
 
-                return;
-            }
-
-
-            openSection(
-                "gallery"
-            );
-
-
-            currentEditingArtworkId =
-                artwork.id;
-
-            selectedArtworkFile =
-                null;
+            openArtworkForm();
 
 
             if (
@@ -2842,8 +3843,7 @@ document.addEventListener(
             ) {
 
                 artworkIdInput.value =
-                    artwork.id ||
-                    "";
+                    artwork.id;
             }
 
 
@@ -2852,8 +3852,7 @@ document.addEventListener(
             ) {
 
                 artworkArtIdInput.value =
-                    artwork.artId ||
-                    "";
+                    artwork.artId;
             }
 
 
@@ -2862,8 +3861,9 @@ document.addEventListener(
             ) {
 
                 artworkSortOrderInput.value =
-                    artwork.sortOrder ??
-                    0;
+                    String(
+                        artwork.sortOrder
+                    );
             }
 
 
@@ -2872,8 +3872,7 @@ document.addEventListener(
             ) {
 
                 artworkArtistInput.value =
-                    artwork.artist ||
-                    "";
+                    artwork.artist;
             }
 
 
@@ -2882,8 +3881,7 @@ document.addEventListener(
             ) {
 
                 artworkRoleInput.value =
-                    artwork.artistRole ||
-                    "";
+                    artwork.artistRole;
             }
 
 
@@ -2892,8 +3890,7 @@ document.addEventListener(
             ) {
 
                 artworkImageUrlInput.value =
-                    artwork.imageUrl ||
-                    "";
+                    artwork.imageUrl;
             }
 
 
@@ -2902,8 +3899,7 @@ document.addEventListener(
             ) {
 
                 artworkImageAltInput.value =
-                    artwork.imageAlt ||
-                    "";
+                    artwork.imageAlt;
             }
 
 
@@ -2912,8 +3908,7 @@ document.addEventListener(
             ) {
 
                 artworkMediaTypeInput.value =
-                    artwork.mediaType ||
-                    "image";
+                    artwork.mediaType;
             }
 
 
@@ -2922,13 +3917,9 @@ document.addEventListener(
             ) {
 
                 artworkTagsInput.value =
-                    (
-                        artwork.tags ||
-                        []
-                    )
-                        .join(
-                            ", "
-                        );
+                    artwork.tags.join(
+                        ", "
+                    );
             }
 
 
@@ -2937,8 +3928,7 @@ document.addEventListener(
             ) {
 
                 artworkDescriptionInput.value =
-                    artwork.description ||
-                    "";
+                    artwork.description;
             }
 
 
@@ -2947,13 +3937,9 @@ document.addEventListener(
             ) {
 
                 artworkImageMessagesInput.value =
-                    (
-                        artwork.imageMessages ||
-                        []
-                    )
-                        .join(
-                            "|"
-                        );
+                    artwork.imageMessages.join(
+                        " | "
+                    );
             }
 
 
@@ -2962,8 +3948,7 @@ document.addEventListener(
             ) {
 
                 artworkArtistUrlInput.value =
-                    artwork.artistUrl ||
-                    "";
+                    artwork.artistUrl;
             }
 
 
@@ -2972,8 +3957,7 @@ document.addEventListener(
             ) {
 
                 artworkButtonTextInput.value =
-                    artwork.buttonText ||
-                    "Voir son profil";
+                    artwork.buttonText;
             }
 
 
@@ -2982,13 +3966,9 @@ document.addEventListener(
             ) {
 
                 artworkButtonMessagesInput.value =
-                    (
-                        artwork.buttonMessages ||
-                        []
-                    )
-                        .join(
-                            "|"
-                        );
+                    artwork.buttonMessages.join(
+                        " | "
+                    );
             }
 
 
@@ -2997,9 +3977,7 @@ document.addEventListener(
             ) {
 
                 artworkSensitiveInput.checked =
-                    Boolean(
-                        artwork.sensitive
-                    );
+                    artwork.sensitive;
             }
 
 
@@ -3008,9 +3986,7 @@ document.addEventListener(
             ) {
 
                 artworkFavoriteInput.checked =
-                    Boolean(
-                        artwork.favoriteEnabled
-                    );
+                    artwork.favoriteEnabled;
             }
 
 
@@ -3019,23 +3995,7 @@ document.addEventListener(
             ) {
 
                 artworkVisibleInput.checked =
-                    Boolean(
-                        artwork.visible
-                    );
-            }
-
-
-            if (
-                artwork.imageUrl
-            ) {
-
-                showArtworkPreview({
-                    src:
-                        artwork.imageUrl,
-
-                    filename:
-                        "Image actuelle"
-                });
+                    artwork.visible;
             }
 
 
@@ -3057,251 +4017,120 @@ document.addEventListener(
             }
 
 
-            artworkFormPanel
-                ?.scrollIntoView({
-                    behavior:
-                        "smooth",
-
-                    block:
-                        "start"
-                });
-        }
-
-
-        function buildArtworkFromForm(
-            imageUrl
-        ) {
-
-            return {
-                id:
-                    currentEditingArtworkId,
-
-                artId:
-                    String(
-                        artworkArtIdInput
-                            ?.value ||
-                        ""
-                    )
-                        .trim(),
-
-                artist:
-                    String(
-                        artworkArtistInput
-                            ?.value ||
-                        ""
-                    )
-                        .trim(),
-
-                artistRole:
-                    String(
-                        artworkRoleInput
-                            ?.value ||
-                        ""
-                    )
-                        .trim(),
-
-                description:
-                    String(
-                        artworkDescriptionInput
-                            ?.value ||
-                        ""
-                    )
-                        .trim(),
-
-                imageUrl,
-
-                imageAlt:
-                    String(
-                        artworkImageAltInput
-                            ?.value ||
-                        ""
-                    )
-                        .trim(),
-
-                mediaType:
-                    artworkMediaTypeInput
-                        ?.value ||
-                    "image",
-
-                tags:
-                    normalizeTags(
-                        artworkTagsInput
-                            ?.value
-                    ),
-
-                imageMessages:
-                    normalizeMessages(
-                        artworkImageMessagesInput
-                            ?.value
-                    ),
-
-                artistUrl:
-                    String(
-                        artworkArtistUrlInput
-                            ?.value ||
-                        ""
-                    )
-                        .trim(),
-
-                buttonText:
-                    String(
-                        artworkButtonTextInput
-                            ?.value ||
-                        "Voir son profil"
-                    )
-                        .trim(),
-
-                buttonMessages:
-                    normalizeMessages(
-                        artworkButtonMessagesInput
-                            ?.value
-                    ),
-
-                sensitive:
-                    Boolean(
-                        artworkSensitiveInput
-                            ?.checked
-                    ),
-
-                favoriteEnabled:
-                    Boolean(
-                        artworkFavoriteInput
-                            ?.checked
-                    ),
-
-                visible:
-                    Boolean(
-                        artworkVisibleInput
-                            ?.checked
-                    ),
-
-                sortOrder:
-                    Number(
-                        artworkSortOrderInput
-                            ?.value ||
-                        0
-                    )
-            };
-        }
-
-
-        async function saveArtworkFromForm(
-            event
-        ) {
-
-            event.preventDefault();
-
-
-            const artId =
-                String(
-                    artworkArtIdInput
-                        ?.value ||
-                    ""
-                )
-                    .trim();
-
-
-            const artist =
-                String(
-                    artworkArtistInput
-                        ?.value ||
-                    ""
-                )
-                    .trim();
-
-
             if (
-                !artId
+                artwork.imageUrl
             ) {
 
-                showToast(
-                    "L'ID de l'œuvre est obligatoire.",
-                    "warning"
+                showArtworkPreviewFromUrl(
+                    artwork.imageUrl,
+                    artwork.mediaType
                 );
 
-                return;
-            }
-
-
-            if (
-                !artist
-            ) {
-
-                showToast(
-                    "Le nom de l'artiste est obligatoire.",
-                    "warning"
-                );
-
-                return;
-            }
-
-
-            const editing =
-                Boolean(
-                    currentEditingArtworkId
-                );
-
-
-            let imageUrl =
-                String(
-                    artworkImageUrlInput
-                        ?.value ||
-                    ""
-                )
-                    .trim();
-
-
-            if (
-                !selectedArtworkFile &&
-                !imageUrl
-            ) {
-
-                showToast(
-                    "Ajoute une image.",
-                    "warning"
-                );
-
-                return;
-            }
-
-
-            try {
 
                 if (
-                    artworkSubmitButton
+                    artworkFileName
                 ) {
 
-                    artworkSubmitButton.disabled =
-                        true;
-
-                    artworkSubmitButton.textContent =
-                        selectedArtworkFile
-                            ? "⏳ Upload de l'image..."
-                            : "⏳ Enregistrement...";
+                    artworkFileName.textContent =
+                        "Média actuel";
                 }
 
 
                 if (
-                    selectedArtworkFile
+                    artworkFileSize
                 ) {
 
-                    const uploaded =
-                        await uploadArtworkFile(
-                            selectedArtworkFile,
-                            artId
+                    artworkFileSize.textContent =
+                        "";
+                }
+            }
+        }
+
+
+        if (
+            newArtworkButton
+        ) {
+
+            newArtworkButton.addEventListener(
+                "click",
+                () => {
+
+                    resetArtworkForm();
+
+                    openArtworkForm();
+                }
+            );
+        }
+
+
+        if (
+            artworkCancelButton
+        ) {
+
+            artworkCancelButton.addEventListener(
+                "click",
+                closeArtworkForm
+            );
+        }        /* =====================================================
+           ARTWORKS — ENREGISTREMENT
+        ====================================================== */
+
+        if (
+            artworkForm
+        ) {
+
+            artworkForm.addEventListener(
+                "submit",
+                async event => {
+
+                    event.preventDefault();
+
+
+                    const existingId =
+                        normalizeText(
+                            artworkIdInput?.value
                         );
 
 
-                    imageUrl =
-                        uploaded.url;
+                    const artId =
+                        normalizeText(
+                            artworkArtIdInput?.value
+                        );
+
+
+                    const artist =
+                        normalizeText(
+                            artworkArtistInput?.value
+                        );
 
 
                     if (
-                        artworkImageUrlInput
+                        !artId
                     ) {
 
-                        artworkImageUrlInput.value =
-                            imageUrl;
+                        showToast(
+                            "L'identifiant de l'illustration est obligatoire.",
+                            "error"
+                        );
+
+                        artworkArtIdInput?.focus();
+
+                        return;
+                    }
+
+
+                    if (
+                        !artist
+                    ) {
+
+                        showToast(
+                            "Le nom de l'artiste est obligatoire.",
+                            "error"
+                        );
+
+                        artworkArtistInput?.focus();
+
+                        return;
                     }
 
 
@@ -3309,1605 +4138,2262 @@ document.addEventListener(
                         artworkSubmitButton
                     ) {
 
+                        artworkSubmitButton.disabled =
+                            true;
+
                         artworkSubmitButton.textContent =
-                            "⏳ Enregistrement...";
+                            selectedArtworkFile
+                                ? "Envoi du média..."
+                                : "Enregistrement...";
                     }
-                }
 
 
-                const artwork =
-                    buildArtworkFromForm(
-                        imageUrl
-                    );
+                    try {
+
+                        let imageUrl =
+                            normalizeText(
+                                artworkImageUrlInput?.value
+                            );
 
 
-                const data =
-                    await adminApiRequest(
-                        ADMIN_GALLERY_API,
-                        {
-                            method:
-                                editing
-                                    ? "PUT"
-                                    : "POST",
+                        let mediaType =
+                            normalizeText(
+                                artworkMediaTypeInput?.value
+                            ) ||
+                            "image";
 
-                            body:
-                                artwork
+
+                        /*
+                         * Si un nouveau fichier a été choisi,
+                         * on l'envoie d'abord sur le serveur.
+                         */
+                        if (
+                            selectedArtworkFile
+                        ) {
+
+                            const uploadResult =
+                                await uploadSelectedArtworkFile();
+
+
+                            if (
+                                uploadResult
+                            ) {
+
+                                imageUrl =
+                                    uploadResult.url;
+
+                                mediaType =
+                                    uploadResult.mediaType;
+
+
+                                if (
+                                    artworkImageUrlInput
+                                ) {
+
+                                    artworkImageUrlInput.value =
+                                        imageUrl;
+                                }
+
+
+                                if (
+                                    artworkMediaTypeInput
+                                ) {
+
+                                    artworkMediaTypeInput.value =
+                                        mediaType;
+                                }
+                            }
                         }
-                    );
 
 
-                if (
-                    !data?.artwork
-                ) {
+                        if (
+                            !imageUrl
+                        ) {
 
-                    throw new Error(
-                        "L'œuvre enregistrée n'a pas été retournée."
-                    );
-                }
-
-
-                const savedArtwork =
-                    formatArtwork(
-                        data.artwork
-                    );
+                            throw new Error(
+                                "Ajoute une image, une vidéo ou une URL de média."
+                            );
+                        }
 
 
-                if (
-                    editing
-                ) {
+                        const payload = {
 
-                    const index =
-                        artworks.findIndex(
-                            item =>
-                                item.id ===
-                                savedArtwork.id
-                        );
+                            artId,
+
+                            sortOrder:
+                                Number(
+                                    artworkSortOrderInput?.value ||
+                                    0
+                                ),
+
+                            artist,
+
+                            artistRole:
+                                normalizeText(
+                                    artworkRoleInput?.value
+                                ),
+
+                            description:
+                                normalizeText(
+                                    artworkDescriptionInput?.value
+                                ),
+
+                            imageUrl,
+
+                            imageAlt:
+                                normalizeText(
+                                    artworkImageAltInput?.value
+                                ),
+
+                            mediaType,
+
+                            tags:
+                                normalizeTags(
+                                    artworkTagsInput?.value
+                                ),
+
+                            imageMessages:
+                                normalizeMessages(
+                                    artworkImageMessagesInput?.value
+                                ),
+
+                            artistUrl:
+                                normalizeText(
+                                    artworkArtistUrlInput?.value
+                                ),
+
+                            buttonText:
+                                normalizeText(
+                                    artworkButtonTextInput?.value
+                                ) ||
+                                "Voir son profil",
+
+                            buttonMessages:
+                                normalizeMessages(
+                                    artworkButtonMessagesInput?.value
+                                ),
+
+                            sensitive:
+                                Boolean(
+                                    artworkSensitiveInput?.checked
+                                ),
+
+                            favoriteEnabled:
+                                Boolean(
+                                    artworkFavoriteInput?.checked
+                                ),
+
+                            visible:
+                                Boolean(
+                                    artworkVisibleInput?.checked
+                                )
+
+                        };
 
 
-                    if (
-                        index >=
-                        0
+                        if (
+                            existingId
+                        ) {
+
+                            await adminApiRequest(
+                                `${ADMIN_GALLERY_API}?id=${encodeURIComponent(
+                                    existingId
+                                )}`,
+                                {
+                                    method:
+                                        "PUT",
+
+                                    body:
+                                        payload
+                                }
+                            );
+
+
+                            showToast(
+                                "L'illustration a bien été modifiée.",
+                                "success"
+                            );
+
+                        } else {
+
+                            await adminApiRequest(
+                                ADMIN_GALLERY_API,
+                                {
+                                    method:
+                                        "POST",
+
+                                    body:
+                                        payload
+                                }
+                            );
+
+
+                            showToast(
+                                "L'illustration a bien été ajoutée.",
+                                "success"
+                            );
+                        }
+
+
+                        closeArtworkForm();
+
+                        await loadArtworks();
+
+
+                    } catch (
+                        error
                     ) {
 
-                        artworks[index] =
-                            savedArtwork;
-
-                    } else {
-
-                        artworks.push(
-                            savedArtwork
+                        console.error(
+                            "[Admin Artwork Save]",
+                            error
                         );
-                    }
-
-                } else {
-
-                    artworks.push(
-                        savedArtwork
-                    );
-                }
 
 
-                artworks.sort(
-                    (
-                        first,
-                        second
-                    ) =>
-                        first.sortOrder -
-                        second.sortOrder
-                );
+                        showToast(
+                            error.message ||
+                            "Impossible d'enregistrer l'illustration.",
+                            "error"
+                        );
 
 
-                renderArtworks();
+                    } finally {
 
-                updateDashboardStats();
+                        if (
+                            artworkSubmitButton
+                        ) {
 
-                resetArtworkForm();
-
-
-                showToast(
-                    editing
-                        ? "Illustration modifiée."
-                        : "Illustration ajoutée.",
-                    "success"
-                );
-
-            } catch (
-                error
-            ) {
-
-                console.error(
-                    "[Artwork Save]",
-                    error
-                );
+                            artworkSubmitButton.disabled =
+                                false;
 
 
-                showToast(
-                    error.message ||
-                    "Impossible d'enregistrer l'œuvre.",
-                    "error"
-                );
-
-            } finally {
-
-                if (
-                    artworkSubmitButton
-                ) {
-
-                    artworkSubmitButton.disabled =
-                        false;
-
-                    artworkSubmitButton.textContent =
-                        currentEditingArtworkId
-                            ? "💾 Enregistrer les modifications"
-                            : "💾 Enregistrer l'œuvre";
-                }
-            }
-        }
-
-
-        /* =====================================================
-           ARTWORK — AFFICHAGE
-        ====================================================== */
-
-        function createArtworkItem(
-            artwork
-        ) {
-
-            const article =
-                document.createElement(
-                    "article"
-                );
-
-
-            article.className =
-                "admin-artwork-item";
-
-
-            const tags =
-                Array.isArray(
-                    artwork.tags
-                )
-                    ? artwork.tags
-                    : [];
-
-
-            article.innerHTML = `
-                <div
-                    class="admin-artwork-item-image"
-                >
-
-                    <img
-                        src="${escapeHtmlAttribute(
-                            artwork.imageUrl
-                        )}"
-                        alt="${escapeHtmlAttribute(
-                            artwork.imageAlt ||
-                            artwork.artist
-                        )}"
-                        loading="lazy"
-                        draggable="false"
-                    >
-
-                    ${
-                        artwork.sensitive
-                            ? `
-                                <span
-                                    class="admin-artwork-badge is-sensitive"
-                                >
-                                    🔞 +18
-                                </span>
-                            `
-                            : ""
-                    }
-
-                    ${
-                        !artwork.visible
-                            ? `
-                                <span
-                                    class="admin-artwork-badge is-hidden"
-                                >
-                                    🚫 Masquée
-                                </span>
-                            `
-                            : ""
-                    }
-
-                </div>
-
-
-                <div
-                    class="admin-artwork-item-content"
-                >
-
-                    <span
-                        class="admin-artwork-id"
-                    >
-                        #${escapeHtml(
-                            artwork.artId
-                        )}
-                    </span>
-
-
-                    <h3>
-                        ${escapeHtml(
-                            artwork.artist
-                        )}
-                    </h3>
-
-
-                    ${
-                        artwork.artistRole
-                            ? `
-                                <p
-                                    class="artist-role"
-                                >
-                                    ${escapeHtml(
-                                        artwork.artistRole
-                                    )}
-                                </p>
-                            `
-                            : ""
-                    }
-
-
-                    ${
-                        artwork.description
-                            ? `
-                                <p
-                                    class="admin-artwork-description"
-                                >
-                                    ${escapeHtml(
-                                        artwork.description
-                                    )}
-                                </p>
-                            `
-                            : ""
-                    }
-
-
-                    ${
-                        tags.length
-                            ? `
-                                <div
-                                    class="admin-game-item-meta"
-                                >
-                                    ${
-                                        tags
-                                            .map(
-                                                tag => `
-                                                    <span>
-                                                        ${escapeHtml(
-                                                            tag
-                                                        )}
-                                                    </span>
-                                                `
-                                            )
-                                            .join(
-                                                ""
-                                            )
-                                    }
-                                </div>
-                            `
-                            : ""
-                    }
-
-
-                    <div
-                        class="admin-game-item-meta"
-                    >
-
-                        ${
-                            artwork.favoriteEnabled
-                                ? "<span>❤️ Favoris</span>"
-                                : "<span>🤍 Favoris désactivés</span>"
+                            artworkSubmitButton.textContent =
+                                existingId
+                                    ? "💾 Enregistrer les modifications"
+                                    : "💾 Enregistrer l'illustration";
                         }
-
-                        ${
-                            artwork.visible
-                                ? "<span>👁️ Visible</span>"
-                                : "<span>🚫 Masquée</span>"
-                        }
-
-                        <span>
-                            ↕️ ${escapeHtml(
-                                artwork.sortOrder
-                            )}
-                        </span>
-
-                    </div>
-
-
-                    <div
-                        class="admin-game-item-actions"
-                    >
-
-                        <button
-                            type="button"
-                            class="admin-secondary-button"
-                            data-edit-artwork="${escapeHtmlAttribute(
-                                artwork.id
-                            )}"
-                        >
-                            ✏️ Modifier
-                        </button>
-
-
-                        <button
-                            type="button"
-                            class="admin-danger-button"
-                            data-delete-artwork="${escapeHtmlAttribute(
-                                artwork.id
-                            )}"
-                        >
-                            🗑️ Supprimer
-                        </button>
-
-                    </div>
-
-                </div>
-            `;
-
-
-            return article;
-        }
-
-
-        function renderArtworks() {
-
-            if (
-                !artworksList
-            ) {
-
-                return;
-            }
-
-
-            const search =
-                String(
-                    artworksSearch
-                        ?.value ||
-                    ""
-                )
-                    .trim()
-                    .toLowerCase();
-
-
-            const filter =
-                artworksFilter
-                    ?.value ||
-                "all";
-
-
-            let filtered =
-                [
-                    ...artworks
-                ];
-
-
-            if (
-                search
-            ) {
-
-                filtered =
-                    filtered.filter(
-                        artwork => {
-
-                            return [
-                                artwork.artId,
-                                artwork.artist,
-                                artwork.artistRole,
-                                artwork.description,
-                                ...(
-                                    artwork.tags ||
-                                    []
-                                )
-                            ]
-                                .join(
-                                    " "
-                                )
-                                .toLowerCase()
-                                .includes(
-                                    search
-                                );
-                        }
-                    );
-            }
-
-
-            switch (
-                filter
-            ) {
-
-                case "visible":
-
-                    filtered =
-                        filtered.filter(
-                            artwork =>
-                                artwork.visible
-                        );
-
-                    break;
-
-
-                case "hidden":
-
-                    filtered =
-                        filtered.filter(
-                            artwork =>
-                                !artwork.visible
-                        );
-
-                    break;
-
-
-                case "sensitive":
-
-                    filtered =
-                        filtered.filter(
-                            artwork =>
-                                artwork.sensitive
-                        );
-
-                    break;
-
-
-                case "favorites":
-
-                    filtered =
-                        filtered.filter(
-                            artwork =>
-                                artwork.favoriteEnabled
-                        );
-
-                    break;
-            }
-
-
-            filtered.sort(
-                (
-                    first,
-                    second
-                ) =>
-                    first.sortOrder -
-                    second.sortOrder
-            );
-
-
-            artworksList.innerHTML =
-                "";
-
-
-            if (
-                filtered.length ===
-                0
-            ) {
-
-                artworksList.innerHTML = `
-                    <p
-                        class="admin-empty-state"
-                    >
-                        Aucune illustration trouvée.
-                    </p>
-                `;
-
-                return;
-            }
-
-
-            filtered.forEach(
-                artwork => {
-
-                    artworksList.appendChild(
-                        createArtworkItem(
-                            artwork
-                        )
-                    );
+                    }
                 }
             );
         }
 
 
         /* =====================================================
-           SONDAGE
+           ARTWORKS — SUPPRESSION
         ====================================================== */
 
-        function renderPollGames() {
-
-            if (
-                !pollGamesList
-            ) {
-
-                return;
-            }
-
-
-            const eligibleGames =
-                games.filter(
-                    game =>
-                        Boolean(
-                            game.pollEnabled
-                        )
-                );
-
-
-            if (
-                pollGameCount
-            ) {
-
-                pollGameCount.textContent =
-                    String(
-                        eligibleGames.length
-                    );
-            }
-
-
-            pollGamesList.innerHTML =
-                "";
-
-
-            if (
-                eligibleGames.length ===
-                0
-            ) {
-
-                pollGamesList.innerHTML = `
-                    <p
-                        class="admin-empty-state"
-                    >
-                        Aucun jeu n'est activé pour le sondage.
-                    </p>
-                `;
-
-                return;
-            }
-
-
-            eligibleGames.forEach(
-                game => {
-
-                    const article =
-                        document.createElement(
-                            "article"
-                        );
-
-
-                    article.className =
-                        "admin-game-item";
-
-
-                    article.innerHTML = `
-                        <div
-                            class="admin-game-item-cover"
-                        >
-
-                            ${
-                                game.boxArtUrl
-                                    ? `
-                                        <img
-                                            src="${escapeHtmlAttribute(
-                                                game.boxArtUrl
-                                            )}"
-                                            alt=""
-                                            loading="lazy"
-                                        >
-                                    `
-                                    : "🎮"
-                            }
-
-                        </div>
-
-                        <div
-                            class="admin-game-item-content"
-                        >
-
-                            <h3>
-                                ${escapeHtml(
-                                    game.twitchName ||
-                                    game.name ||
-                                    "Jeu"
-                                )}
-                            </h3>
-
-                            <div
-                                class="admin-game-item-meta"
-                            >
-                                <span>
-                                    🗳️ Sondage activé
-                                </span>
-                            </div>
-
-                        </div>
-                    `;
-
-
-                    pollGamesList.appendChild(
-                        article
-                    );
-                }
-            );
-        }
-
-
-        /* =====================================================
-           DASHBOARD — STATS
-        ====================================================== */
-
-        function updateDashboardStats() {
-
-            if (
-                statGames
-            ) {
-
-                statGames.textContent =
-                    String(
-                        games.length
-                    );
-            }
-
-
-            if (
-                statArtworks
-            ) {
-
-                statArtworks.textContent =
-                    String(
-                        artworks.length
-                    );
-            }
-
-
-            const pollGames =
-                games.filter(
-                    game =>
-                        Boolean(
-                            game.pollEnabled
-                        )
-                );
-
-
-            if (
-                statPoll
-            ) {
-
-                statPoll.textContent =
-                    String(
-                        pollGames.length
-                    );
-            }
-
-
-            /*
-             * Le vrai système de vote Supabase
-             * n'est pas encore créé.
-             */
-            if (
-                statVotes
-            ) {
-
-                statVotes.textContent =
-                    "0";
-            }
-        }
-
-
-        /* =====================================================
-           MODAL SUPPRESSION
-        ====================================================== */
-
-        function openGameDeleteModal(
-            id
-        ) {
-
-            const game =
-                games.find(
-                    item =>
-                        item.id ===
-                        id
-                );
-
-
-            if (
-                !game
-            ) {
-
-                return;
-            }
-
-
-            pendingDelete = {
-                type:
-                    "game",
-
-                id
-            };
-
-
-            if (
-                confirmMessage
-            ) {
-
-                confirmMessage.textContent =
-                    `Veux-tu vraiment supprimer ${
-                        game.twitchName ||
-                        game.name ||
-                        "ce jeu"
-                    } ?`;
-            }
-
-
-            if (
-                confirmModal
-            ) {
-
-                confirmModal.hidden =
-                    false;
-            }
-        }
-
-
-        function openArtworkDeleteModal(
-            id
+        async function deleteArtwork(
+            artworkId
         ) {
 
             const artwork =
                 artworks.find(
                     item =>
                         item.id ===
-                        id
+                        artworkId
+                );
+
+
+            const artworkName =
+                artwork?.artist
+                    ? `l'illustration de ${artwork.artist}`
+                    : "cette illustration";
+
+
+            const confirmed =
+                window.confirm(
+                    `Supprimer définitivement ${artworkName} ?`
                 );
 
 
             if (
-                !artwork
+                !confirmed
             ) {
 
                 return;
             }
-
-
-            pendingDelete = {
-                type:
-                    "artwork",
-
-                id
-            };
-
-
-            if (
-                confirmMessage
-            ) {
-
-                confirmMessage.textContent =
-                    `Veux-tu vraiment supprimer l'œuvre #${
-                        artwork.artId
-                    } de ${
-                        artwork.artist
-                    } ? L'image sera également supprimée du Storage.`;
-            }
-
-
-            if (
-                confirmModal
-            ) {
-
-                confirmModal.hidden =
-                    false;
-            }
-        }
-
-
-        function closeDeleteModal() {
-
-            pendingDelete = {
-                type:
-                    null,
-
-                id:
-                    null
-            };
-
-
-            if (
-                confirmModal
-            ) {
-
-                confirmModal.hidden =
-                    true;
-            }
-        }
-
-
-        async function confirmPendingDelete() {
-
-            if (
-                !pendingDelete.type ||
-                !pendingDelete.id
-            ) {
-
-                return;
-            }
-
-
-            const {
-                type,
-                id
-            } =
-                pendingDelete;
 
 
             try {
 
-                if (
-                    confirmDelete
-                ) {
-
-                    confirmDelete.disabled =
-                        true;
-
-                    confirmDelete.textContent =
-                        "⏳ Suppression...";
-                }
-
-
-                if (
-                    type ===
-                    "game"
-                ) {
-
-                    await adminApiRequest(
-                        ADMIN_GAMES_API,
-                        {
-                            method:
-                                "DELETE",
-
-                            body: {
-                                id
-                            }
-                        }
-                    );
-
-
-                    games =
-                        games.filter(
-                            game =>
-                                game.id !==
-                                id
-                        );
-
-
-                    if (
-                        currentEditingGameId ===
-                        id
-                    ) {
-
-                        resetGameForm();
+                await adminApiRequest(
+                    `${ADMIN_GALLERY_API}?id=${encodeURIComponent(
+                        artworkId
+                    )}`,
+                    {
+                        method:
+                            "DELETE"
                     }
-
-
-                    renderGames();
-
-                    renderPollGames();
-
-
-                } else if (
-                    type ===
-                    "artwork"
-                ) {
-
-                    await adminApiRequest(
-                        ADMIN_GALLERY_API,
-                        {
-                            method:
-                                "DELETE",
-
-                            body: {
-                                id
-                            }
-                        }
-                    );
-
-
-                    artworks =
-                        artworks.filter(
-                            artwork =>
-                                artwork.id !==
-                                id
-                        );
-
-
-                    if (
-                        currentEditingArtworkId ===
-                        id
-                    ) {
-
-                        resetArtworkForm();
-                    }
-
-
-                    renderArtworks();
-                }
-
-
-                updateDashboardStats();
-
-                closeDeleteModal();
+                );
 
 
                 showToast(
-                    type ===
-                        "game"
-                        ? "Jeu supprimé."
-                        : "Illustration supprimée.",
+                    "L'illustration a été supprimée.",
                     "success"
                 );
+
+
+                await loadArtworks();
+
 
             } catch (
                 error
             ) {
 
+                console.error(
+                    "[Admin Artwork Delete]",
+                    error
+                );
+
+
                 showToast(
-                    error.message,
+                    error.message ||
+                    "Impossible de supprimer l'illustration.",
+                    "error"
+                );
+            }
+        }
+
+
+        /* =====================================================
+           ARTWORKS — URL MANUELLE
+        ====================================================== */
+
+        if (
+            artworkImageUrlInput
+        ) {
+
+            artworkImageUrlInput.addEventListener(
+                "input",
+                () => {
+
+                    /*
+                     * Un fichier local sélectionné reste prioritaire
+                     * tant qu'il n'a pas été retiré.
+                     */
+                    if (
+                        selectedArtworkFile
+                    ) {
+
+                        return;
+                    }
+
+
+                    const url =
+                        normalizeText(
+                            artworkImageUrlInput.value
+                        );
+
+
+                    if (
+                        !url
+                    ) {
+
+                        hideArtworkPreviewMedia();
+
+
+                        if (
+                            artworkUploadPreview
+                        ) {
+
+                            artworkUploadPreview.hidden =
+                                true;
+                        }
+
+
+                        return;
+                    }
+
+
+                    const mediaType =
+                        /\.(mp4|webm)(?:$|\?)/i.test(
+                            url
+                        )
+                            ? "video"
+                            : (
+                                normalizeText(
+                                    artworkMediaTypeInput?.value
+                                ) ||
+                                "image"
+                            );
+
+
+                    if (
+                        artworkMediaTypeInput
+                    ) {
+
+                        artworkMediaTypeInput.value =
+                            mediaType;
+                    }
+
+
+                    showArtworkPreviewFromUrl(
+                        url,
+                        mediaType
+                    );
+                }
+            );
+        }
+
+
+        if (
+            artworkMediaTypeInput
+        ) {
+
+            artworkMediaTypeInput.addEventListener(
+                "change",
+                () => {
+
+                    if (
+                        selectedArtworkFile
+                    ) {
+
+                        return;
+                    }
+
+
+                    const url =
+                        normalizeText(
+                            artworkImageUrlInput?.value
+                        );
+
+
+                    if (
+                        url
+                    ) {
+
+                        showArtworkPreviewFromUrl(
+                            url,
+                            artworkMediaTypeInput.value
+                        );
+                    }
+                }
+            );
+        }
+
+
+        /* =====================================================
+           SONDAGE — NORMALISATION
+        ====================================================== */
+
+        function normalizePoll(
+            pollData
+        ) {
+
+            if (
+                !pollData ||
+                typeof pollData !==
+                    "object"
+            ) {
+
+                return {
+
+                    question:
+                        "",
+
+                    status:
+                        "closed",
+
+                    options:
+                        []
+
+                };
+            }
+
+
+            return {
+
+                id:
+                    normalizeText(
+                        pollData?.id
+                    ),
+
+                question:
+                    normalizeText(
+                        pollData?.question
+                    ),
+
+                status:
+                    normalizeText(
+                        pollData?.status
+                    ) ||
+                    "closed",
+
+                options:
+                    Array.isArray(
+                        pollData?.options
+                    )
+                        ? pollData.options
+                            .map(
+                                (
+                                    option,
+                                    index
+                                ) => ({
+
+                                    id:
+                                        normalizeText(
+                                            option?.id
+                                        ) ||
+                                        String(
+                                            index + 1
+                                        ),
+
+                                    label:
+                                        normalizeText(
+                                            option?.label ??
+                                            option?.name ??
+                                            option?.text
+                                        ),
+
+                                    votes:
+                                        Number(
+                                            option?.votes ||
+                                            0
+                                        )
+
+                                })
+                            )
+                            .filter(
+                                option =>
+                                    Boolean(
+                                        option.label
+                                    )
+                            )
+                        : [],
+
+                createdAt:
+                    pollData?.createdAt ??
+                    pollData?.created_at ??
+                    null,
+
+                updatedAt:
+                    pollData?.updatedAt ??
+                    pollData?.updated_at ??
+                    null
+
+            };
+        }
+
+
+        /* =====================================================
+           SONDAGE — API
+        ====================================================== */
+
+        async function loadPoll() {
+
+            try {
+
+                const data =
+                    await adminApiRequest(
+                        "/api/admin/poll",
+                        {
+                            method:
+                                "GET"
+                        }
+                    );
+
+
+                poll =
+                    normalizePoll(
+                        data?.poll ??
+                        data
+                    );
+
+
+                fillPollForm();
+
+                renderPollPreview();
+
+                updateDashboardStats();
+
+
+            } catch (
+                error
+            ) {
+
+                console.error(
+                    "[Admin Poll]",
+                    error
+                );
+
+
+                poll =
+                    normalizePoll(
+                        null
+                    );
+
+
+                fillPollForm();
+
+                renderPollPreview();
+
+                updateDashboardStats();
+
+
+                showToast(
+                    error.message ||
+                    "Impossible de charger le sondage.",
+                    "error"
+                );
+            }
+        }
+
+
+        /* =====================================================
+           SONDAGE — OPTIONS DU FORMULAIRE
+        ====================================================== */
+
+        function createPollOptionRow(
+            option = {},
+            index = 0
+        ) {
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "admin-poll-option-row";
+
+
+            const input =
+                document.createElement(
+                    "input"
+                );
+
+
+            input.type =
+                "text";
+
+            input.className =
+                "admin-input admin-poll-option-input";
+
+            input.placeholder =
+                `Option ${index + 1}`;
+
+            input.value =
+                normalizeText(
+                    option?.label ??
+                    option?.name ??
+                    option?.text
+                );
+
+            input.maxLength =
+                120;
+
+
+            const votes =
+                document.createElement(
+                    "span"
+                );
+
+
+            votes.className =
+                "admin-poll-option-votes";
+
+            votes.textContent =
+                `${Number(
+                    option?.votes ||
+                    0
+                )} vote${
+                    Number(
+                        option?.votes ||
+                        0
+                    ) > 1
+                        ? "s"
+                        : ""
+                }`;
+
+
+            const removeButton =
+                document.createElement(
+                    "button"
+                );
+
+
+            removeButton.type =
+                "button";
+
+            removeButton.className =
+                "admin-danger-button admin-poll-option-remove";
+
+            removeButton.textContent =
+                "✕";
+
+            removeButton.title =
+                "Supprimer cette option";
+
+            removeButton.setAttribute(
+                "aria-label",
+                "Supprimer cette option"
+            );
+
+
+            removeButton.addEventListener(
+                "click",
+                () => {
+
+                    row.remove();
+
+                    renumberPollOptions();
+
+                    renderPollPreviewFromForm();
+                }
+            );
+
+
+            input.addEventListener(
+                "input",
+                renderPollPreviewFromForm
+            );
+
+
+            row.append(
+                input,
+                votes,
+                removeButton
+            );
+
+
+            return row;
+        }
+
+
+        function renumberPollOptions() {
+
+            if (
+                !pollOptionsList
+            ) {
+
+                return;
+            }
+
+
+            const rows =
+                Array.from(
+                    pollOptionsList.querySelectorAll(
+                        ".admin-poll-option-row"
+                    )
+                );
+
+
+            rows.forEach(
+                (
+                    row,
+                    index
+                ) => {
+
+                    const input =
+                        row.querySelector(
+                            ".admin-poll-option-input"
+                        );
+
+
+                    if (
+                        input
+                    ) {
+
+                        input.placeholder =
+                            `Option ${index + 1}`;
+                    }
+                }
+            );
+        }
+
+
+        function getPollOptionsFromForm() {
+
+            if (
+                !pollOptionsList
+            ) {
+
+                return [];
+            }
+
+
+            return Array.from(
+                pollOptionsList.querySelectorAll(
+                    ".admin-poll-option-input"
+                )
+            )
+                .map(
+                    input =>
+                        normalizeText(
+                            input.value
+                        )
+                )
+                .filter(
+                    Boolean
+                );
+        }
+
+
+        function addPollOption(
+            option = {}
+        ) {
+
+            if (
+                !pollOptionsList
+            ) {
+
+                return;
+            }
+
+
+            const currentRows =
+                pollOptionsList.querySelectorAll(
+                    ".admin-poll-option-row"
+                );
+
+
+            /*
+             * Limite volontaire pour éviter un sondage
+             * avec trop d'options côté interface.
+             */
+            if (
+                currentRows.length >=
+                10
+            ) {
+
+                showToast(
+                    "Le sondage peut contenir au maximum 10 options.",
                     "error"
                 );
 
-            } finally {
+                return;
+            }
+
+
+            const row =
+                createPollOptionRow(
+                    option,
+                    currentRows.length
+                );
+
+
+            pollOptionsList.appendChild(
+                row
+            );
+
+
+            renumberPollOptions();
+
+
+            const input =
+                row.querySelector(
+                    ".admin-poll-option-input"
+                );
+
+
+            if (
+                !normalizeText(
+                    option?.label ??
+                    option?.name ??
+                    option?.text
+                )
+            ) {
+
+                input?.focus();
+            }
+
+
+            renderPollPreviewFromForm();
+        }
+
+
+        if (
+            pollAddOptionButton
+        ) {
+
+            pollAddOptionButton.addEventListener(
+                "click",
+                () => {
+
+                    addPollOption();
+                }
+            );
+        }
+
+
+        /* =====================================================
+           SONDAGE — REMPLISSAGE FORMULAIRE
+        ====================================================== */
+
+        function fillPollForm() {
+
+            if (
+                pollQuestionInput
+            ) {
+
+                pollQuestionInput.value =
+                    poll?.question ||
+                    "";
+            }
+
+
+            if (
+                pollStatusInput
+            ) {
+
+                pollStatusInput.value =
+                    poll?.status ||
+                    "closed";
+            }
+
+
+            if (
+                pollOptionsList
+            ) {
+
+                pollOptionsList.innerHTML =
+                    "";
+
+
+                const options =
+                    Array.isArray(
+                        poll?.options
+                    )
+                        ? poll.options
+                        : [];
+
 
                 if (
-                    confirmDelete
+                    options.length >
+                    0
                 ) {
 
-                    confirmDelete.disabled =
-                        false;
+                    options.forEach(
+                        option => {
 
-                    confirmDelete.textContent =
-                        "🗑️ Supprimer";
+                            addPollOption(
+                                option
+                            );
+                        }
+                    );
+
+                } else {
+
+                    addPollOption();
+
+                    addPollOption();
                 }
             }
         }
 
 
         /* =====================================================
-           UPLOAD — ÉVÉNEMENTS
+           SONDAGE — APERÇU
         ====================================================== */
 
-        artworkDropzone
-            ?.addEventListener(
-                "click",
-                event => {
+        function renderPollPreview() {
 
-                    if (
-                        event.target instanceof
-                            Element &&
-                        event.target.closest(
-                            "button"
-                        )
-                    ) {
+            if (
+                pollPreviewQuestion
+            ) {
 
-                        return;
-                    }
-
-
-                    artworkFileInput
-                        ?.click();
-                }
-            );
-
-
-        artworkDropzone
-            ?.addEventListener(
-                "keydown",
-                event => {
-
-                    if (
-                        event.key !==
-                            "Enter" &&
-                        event.key !==
-                            " "
-                    ) {
-
-                        return;
-                    }
-
-
-                    event.preventDefault();
-
-
-                    artworkFileInput
-                        ?.click();
-                }
-            );
-
-
-        artworkFileInput
-            ?.addEventListener(
-                "change",
-                () => {
-
-                    const file =
-                        artworkFileInput
-                            .files?.[0];
-
-
-                    if (
-                        file
-                    ) {
-
-                        selectArtworkFile(
-                            file
-                        );
-                    }
-                }
-            );
-
-
-        [
-            "dragenter",
-            "dragover"
-        ].forEach(
-            eventName => {
-
-                artworkDropzone
-                    ?.addEventListener(
-                        eventName,
-                        event => {
-
-                            event.preventDefault();
-
-
-                            artworkDropzone
-                                .classList
-                                .add(
-                                    "is-dragging"
-                                );
-                        }
-                    );
+                pollPreviewQuestion.textContent =
+                    poll?.question ||
+                    "Aucune question définie";
             }
-        );
 
 
-        [
-            "dragleave",
-            "drop"
-        ].forEach(
-            eventName => {
+            if (
+                !pollPreviewOptions
+            ) {
 
-                artworkDropzone
-                    ?.addEventListener(
-                        eventName,
-                        event => {
-
-                            event.preventDefault();
-
-
-                            artworkDropzone
-                                .classList
-                                .remove(
-                                    "is-dragging"
-                                );
-                        }
-                    );
+                return;
             }
-        );
 
 
-        artworkDropzone
-            ?.addEventListener(
-                "drop",
-                event => {
-
-                    const file =
-                        event
-                            .dataTransfer
-                            ?.files?.[0];
+            const options =
+                Array.isArray(
+                    poll?.options
+                )
+                    ? poll.options
+                    : [];
 
 
-                    if (
-                        file
-                    ) {
+            if (
+                options.length ===
+                0
+            ) {
 
-                        selectArtworkFile(
-                            file
-                        );
-                    }
-                }
-            );
+                pollPreviewOptions.innerHTML = `
+                    <p class="admin-empty-text">
+                        Aucune option définie.
+                    </p>
+                `;
 
-
-        artworkRemoveImage
-            ?.addEventListener(
-                "click",
-                event => {
-
-                    event.preventDefault();
-
-                    removeSelectedArtworkImage();
-                }
-            );
+                return;
+            }
 
 
-        /* =====================================================
-           NAVIGATION — MENU
-        ====================================================== */
-
-        navButtons.forEach(
-            button => {
-
-                button.addEventListener(
-                    "click",
-                    event => {
-
-                        event.preventDefault();
-
-
-                        openSection(
-                            button.dataset
-                                .adminSection
-                        );
-                    }
+            const maxVotes =
+                Math.max(
+                    1,
+                    ...options.map(
+                        option =>
+                            Number(
+                                option.votes ||
+                                0
+                            )
+                    )
                 );
+
+
+            pollPreviewOptions.innerHTML =
+                options
+                    .map(
+                        option => {
+
+                            const votes =
+                                Number(
+                                    option.votes ||
+                                    0
+                                );
+
+
+                            const percentage =
+                                Math.round(
+                                    (
+                                        votes /
+                                        maxVotes
+                                    ) *
+                                    100
+                                );
+
+
+                            return `
+                                <div class="admin-poll-preview-option">
+
+                                    <div class="admin-poll-preview-option-header">
+
+                                        <span>
+                                            ${escapeHtml(
+                                                option.label
+                                            )}
+                                        </span>
+
+                                        <strong>
+                                            ${votes}
+                                        </strong>
+
+                                    </div>
+
+                                    <div
+                                        class="admin-poll-preview-bar"
+                                        aria-hidden="true"
+                                    >
+                                        <span
+                                            style="width:${percentage}%"
+                                        ></span>
+                                    </div>
+
+                                </div>
+                            `;
+                        }
+                    )
+                    .join(
+                        ""
+                    );
+        }
+
+
+        function renderPollPreviewFromForm() {
+
+            const question =
+                normalizeText(
+                    pollQuestionInput?.value
+                );
+
+
+            const options =
+                getPollOptionsFromForm();
+
+
+            if (
+                pollPreviewQuestion
+            ) {
+
+                pollPreviewQuestion.textContent =
+                    question ||
+                    "Aucune question définie";
             }
-        );
+
+
+            if (
+                !pollPreviewOptions
+            ) {
+
+                return;
+            }
+
+
+            if (
+                options.length ===
+                0
+            ) {
+
+                pollPreviewOptions.innerHTML = `
+                    <p class="admin-empty-text">
+                        Aucune option définie.
+                    </p>
+                `;
+
+                return;
+            }
+
+
+            pollPreviewOptions.innerHTML =
+                options
+                    .map(
+                        option => `
+                            <div class="admin-poll-preview-option">
+
+                                <div class="admin-poll-preview-option-header">
+
+                                    <span>
+                                        ${escapeHtml(
+                                            option
+                                        )}
+                                    </span>
+
+                                    <strong>
+                                        0
+                                    </strong>
+
+                                </div>
+
+                                <div
+                                    class="admin-poll-preview-bar"
+                                    aria-hidden="true"
+                                >
+                                    <span
+                                        style="width:0%"
+                                    ></span>
+                                </div>
+
+                            </div>
+                        `
+                    )
+                    .join(
+                        ""
+                    );
+        }
+
+
+        if (
+            pollQuestionInput
+        ) {
+
+            pollQuestionInput.addEventListener(
+                "input",
+                renderPollPreviewFromForm
+            );
+        }
+
+
+        if (
+            pollStatusInput
+        ) {
+
+            pollStatusInput.addEventListener(
+                "change",
+                renderPollPreviewFromForm
+            );
+        }           
 
 
         /* =====================================================
-           ACTIONS RAPIDES DU DASHBOARD
+           SONDAGE — ENREGISTREMENT
         ====================================================== */
 
-        quickActions.forEach(
-            button => {
+        if (
+            pollForm
+        ) {
 
-                button.addEventListener(
-                    "click",
-                    event => {
+            pollForm.addEventListener(
+                "submit",
+                async event => {
 
-                        /*
-                         * IMPORTANT :
-                         *
-                         * Empêche un bouton du dashboard
-                         * de soumettre un formulaire ou
-                         * d'exécuter une navigation parasite.
-                         */
-                        event.preventDefault();
+                    event.preventDefault();
 
 
-                        const section =
-                            String(
-                                button.dataset
-                                    .openSection ||
-                                ""
-                            )
-                                .trim();
+                    const question =
+                        normalizeText(
+                            pollQuestionInput?.value
+                        );
 
 
-                        const action =
-                            String(
-                                button.dataset
-                                    .adminAction ||
-                                ""
-                            )
-                                .trim();
+                    const status =
+                        normalizeText(
+                            pollStatusInput?.value
+                        ) ||
+                        "closed";
 
 
-                        console.info(
-                            "[Admin Action]",
-                            {
-                                section,
-                                action
+                    const options =
+                        getPollOptionsFromForm();
+
+
+                    if (
+                        !question
+                    ) {
+
+                        showToast(
+                            "La question du sondage est obligatoire.",
+                            "error"
+                        );
+
+                        pollQuestionInput?.focus();
+
+                        return;
+                    }
+
+
+                    if (
+                        options.length <
+                        2
+                    ) {
+
+                        showToast(
+                            "Ajoute au moins deux options au sondage.",
+                            "error"
+                        );
+
+                        return;
+                    }
+
+
+                    /*
+                     * Vérifie qu'il n'y a pas deux options
+                     * identiques, même avec une casse différente.
+                     */
+                    const normalizedOptionLabels =
+                        options.map(
+                            option =>
+                                option.toLowerCase()
+                        );
+
+
+                    const uniqueOptionLabels =
+                        new Set(
+                            normalizedOptionLabels
+                        );
+
+
+                    if (
+                        uniqueOptionLabels.size !==
+                        normalizedOptionLabels.length
+                    ) {
+
+                        showToast(
+                            "Deux options du sondage ne peuvent pas être identiques.",
+                            "error"
+                        );
+
+                        return;
+                    }
+
+
+                    const existingOptions =
+                        Array.isArray(
+                            poll?.options
+                        )
+                            ? poll.options
+                            : [];
+
+
+                    /*
+                     * On conserve l'ID et le nombre de votes
+                     * d'une option existante lorsque son libellé
+                     * n'a pas changé.
+                     */
+                    const pollOptions =
+                        options.map(
+                            (
+                                label,
+                                index
+                            ) => {
+
+                                const existingOption =
+                                    existingOptions.find(
+                                        option =>
+                                            normalizeText(
+                                                option.label
+                                            ).toLowerCase() ===
+                                            label.toLowerCase()
+                                    );
+
+
+                                return {
+
+                                    id:
+                                        existingOption?.id ||
+                                        String(
+                                            index + 1
+                                        ),
+
+                                    label,
+
+                                    votes:
+                                        Number(
+                                            existingOption?.votes ||
+                                            0
+                                        )
+
+                                };
                             }
                         );
 
 
-                        if (
-                            action ===
-                            "new-game"
-                        ) {
+                    const payload = {
 
-                            openNewGameForm();
+                        question,
 
-                            return;
-                        }
+                        status,
 
+                        options:
+                            pollOptions
 
-                        if (
-                            action ===
-                            "new-artwork"
-                        ) {
-
-                            openNewArtworkForm();
-
-                            return;
-                        }
+                    };
 
 
-                        if (
-                            section
-                        ) {
+                    const submitButton =
+                        pollForm.querySelector(
+                            'button[type="submit"]'
+                        );
 
-                            openSection(
-                                section
+
+                    if (
+                        submitButton
+                    ) {
+
+                        submitButton.disabled =
+                            true;
+
+                        submitButton.textContent =
+                            "Enregistrement...";
+                    }
+
+
+                    try {
+
+                        const data =
+                            await adminApiRequest(
+                                "/api/admin/poll",
+                                {
+                                    method:
+                                        "PUT",
+
+                                    body:
+                                        payload
+                                }
                             );
+
+
+                        poll =
+                            normalizePoll(
+                                data?.poll ??
+                                {
+                                    ...payload,
+
+                                    id:
+                                        poll?.id,
+
+                                    createdAt:
+                                        poll?.createdAt,
+
+                                    updatedAt:
+                                        new Date()
+                                            .toISOString()
+                                }
+                            );
+
+
+                        fillPollForm();
+
+                        renderPollPreview();
+
+                        updateDashboardStats();
+
+
+                        showToast(
+                            "Le sondage a bien été enregistré.",
+                            "success"
+                        );
+
+
+                    } catch (
+                        error
+                    ) {
+
+                        console.error(
+                            "[Admin Poll Save]",
+                            error
+                        );
+
+
+                        showToast(
+                            error.message ||
+                            "Impossible d'enregistrer le sondage.",
+                            "error"
+                        );
+
+
+                    } finally {
+
+                        if (
+                            submitButton
+                        ) {
+
+                            submitButton.disabled =
+                                false;
+
+                            submitButton.textContent =
+                                "💾 Enregistrer le sondage";
                         }
                     }
+                }
+            );
+        }
+
+
+        /* =====================================================
+           SONDAGE — RÉINITIALISATION
+        ====================================================== */
+
+        async function resetPoll() {
+
+            const confirmed =
+                window.confirm(
+                    "Réinitialiser complètement le sondage et supprimer tous les votes ?"
                 );
+
+
+            if (
+                !confirmed
+            ) {
+
+                return;
             }
-        );
 
 
-        /* =====================================================
-           JEUX — ÉVÉNEMENTS
-        ====================================================== */
+            if (
+                pollResetButton
+            ) {
 
-        newGameButton
-            ?.addEventListener(
-                "click",
-                event => {
+                pollResetButton.disabled =
+                    true;
 
-                    event.preventDefault();
-
-                    openNewGameForm();
-                }
-            );
+                pollResetButton.textContent =
+                    "Réinitialisation...";
+            }
 
 
-        cancelGameButton
-            ?.addEventListener(
-                "click",
-                event => {
+            try {
 
-                    event.preventDefault();
-
-                    resetGameForm();
-                }
-            );
-
-
-        twitchPreviewButton
-            ?.addEventListener(
-                "click",
-                event => {
-
-                    event.preventDefault();
-
-                    previewTwitchGame();
-                }
-            );
-
-
-        gameForm
-            ?.addEventListener(
-                "submit",
-                saveGameFromForm
-            );
-
-
-        gamesSearch
-            ?.addEventListener(
-                "input",
-                renderGames
-            );
-
-
-        gamesList
-            ?.addEventListener(
-                "click",
-                event => {
-
-                    if (
-                        !(
-                            event.target instanceof
-                            Element
-                        )
-                    ) {
-
-                        return;
-                    }
-
-
-                    const editButton =
-                        event.target.closest(
-                            "[data-edit-game]"
-                        );
-
-
-                    if (
-                        editButton
-                    ) {
-
-                        const game =
-                            games.find(
-                                item =>
-                                    item.id ===
-                                    editButton.dataset
-                                        .editGame
-                            );
-
-
-                        if (
-                            game
-                        ) {
-
-                            fillGameForm(
-                                game
-                            );
+                const data =
+                    await adminApiRequest(
+                        "/api/admin/poll",
+                        {
+                            method:
+                                "DELETE"
                         }
+                    );
 
 
-                        return;
-                    }
+                poll =
+                    normalizePoll(
+                        data?.poll ??
+                        null
+                    );
 
 
-                    const deleteButton =
-                        event.target.closest(
-                            "[data-delete-game]"
-                        );
+                fillPollForm();
+
+                renderPollPreview();
+
+                updateDashboardStats();
 
 
-                    if (
-                        deleteButton
-                    ) {
+                showToast(
+                    "Le sondage a été réinitialisé.",
+                    "success"
+                );
 
-                        openGameDeleteModal(
-                            deleteButton.dataset
-                                .deleteGame
-                        );
-                    }
+
+            } catch (
+                error
+            ) {
+
+                console.error(
+                    "[Admin Poll Reset]",
+                    error
+                );
+
+
+                showToast(
+                    error.message ||
+                    "Impossible de réinitialiser le sondage.",
+                    "error"
+                );
+
+
+            } finally {
+
+                if (
+                    pollResetButton
+                ) {
+
+                    pollResetButton.disabled =
+                        false;
+
+                    pollResetButton.textContent =
+                        "🗑️ Réinitialiser";
                 }
+            }
+        }
+
+
+        if (
+            pollResetButton
+        ) {
+
+            pollResetButton.addEventListener(
+                "click",
+                resetPoll
             );
+        }
 
 
         /* =====================================================
-           ARTWORKS — ÉVÉNEMENTS
+           RACCOURCIS CLAVIER — FORMULAIRES
         ====================================================== */
-
-        newArtworkButton
-            ?.addEventListener(
-                "click",
-                event => {
-
-                    event.preventDefault();
-
-                    openNewArtworkForm();
-                }
-            );
-
-
-        artworkCancelButton
-            ?.addEventListener(
-                "click",
-                event => {
-
-                    event.preventDefault();
-
-                    resetArtworkForm();
-                }
-            );
-
-
-        artworkForm
-            ?.addEventListener(
-                "submit",
-                saveArtworkFromForm
-            );
-
-
-        artworksSearch
-            ?.addEventListener(
-                "input",
-                renderArtworks
-            );
-
-
-        artworksFilter
-            ?.addEventListener(
-                "change",
-                renderArtworks
-            );
-
-
-        artworksList
-            ?.addEventListener(
-                "click",
-                event => {
-
-                    if (
-                        !(
-                            event.target instanceof
-                            Element
-                        )
-                    ) {
-
-                        return;
-                    }
-
-
-                    const editButton =
-                        event.target.closest(
-                            "[data-edit-artwork]"
-                        );
-
-
-                    if (
-                        editButton
-                    ) {
-
-                        const artwork =
-                            artworks.find(
-                                item =>
-                                    item.id ===
-                                    editButton.dataset
-                                        .editArtwork
-                            );
-
-
-                        if (
-                            artwork
-                        ) {
-
-                            fillArtworkForm(
-                                artwork
-                            );
-                        }
-
-
-                        return;
-                    }
-
-
-                    const deleteButton =
-                        event.target.closest(
-                            "[data-delete-artwork]"
-                        );
-
-
-                    if (
-                        deleteButton
-                    ) {
-
-                        openArtworkDeleteModal(
-                            deleteButton.dataset
-                                .deleteArtwork
-                        );
-                    }
-                }
-            );
-
-
-        /* =====================================================
-           MODAL — ÉVÉNEMENTS
-        ====================================================== */
-
-        confirmClose
-            ?.addEventListener(
-                "click",
-                event => {
-
-                    event.preventDefault();
-
-                    closeDeleteModal();
-                }
-            );
-
-
-        confirmCancel
-            ?.addEventListener(
-                "click",
-                event => {
-
-                    event.preventDefault();
-
-                    closeDeleteModal();
-                }
-            );
-
-
-        confirmDelete
-            ?.addEventListener(
-                "click",
-                event => {
-
-                    event.preventDefault();
-
-                    confirmPendingDelete();
-                }
-            );
-
-
-        confirmModal
-            ?.addEventListener(
-                "click",
-                event => {
-
-                    if (
-                        event.target ===
-                        confirmModal
-                    ) {
-
-                        closeDeleteModal();
-                    }
-                }
-            );
-
 
         document.addEventListener(
             "keydown",
             event => {
 
                 if (
-                    event.key ===
-                        "Escape" &&
-                    confirmModal &&
-                    !confirmModal.hidden
+                    event.key !==
+                    "Escape"
                 ) {
 
-                    closeDeleteModal();
+                    return;
+                }
+
+
+                /*
+                 * Ferme en priorité le formulaire
+                 * d'illustration s'il est ouvert.
+                 */
+                if (
+                    artworkFormPanel &&
+                    !artworkFormPanel.hidden
+                ) {
+
+                    closeArtworkForm();
+
+                    return;
+                }
+
+
+                /*
+                 * Sinon ferme le formulaire de jeu.
+                 */
+                if (
+                    gameFormPanel &&
+                    !gameFormPanel.hidden
+                ) {
+
+                    closeGameForm();
                 }
             }
         );
 
 
         /* =====================================================
-           INITIALISATION
+           RAFRAÎCHISSEMENT APRÈS RETOUR SUR L'ONGLET
         ====================================================== */
 
-        const authenticatedAdmin =
-            await checkAdminAuthentication();
+        document.addEventListener(
+            "visibilitychange",
+            async () => {
+
+                if (
+                    document.visibilityState !==
+                    "visible"
+                ) {
+
+                    return;
+                }
 
 
-        if (
-            !authenticatedAdmin
-        ) {
+                try {
 
-            return;
-        }
+                    await Promise.all([
+                        loadGames(),
+                        loadArtworks(),
+                        loadPoll()
+                    ]);
 
 
-        applyAdminUser(
-            authenticatedAdmin
+                } catch (
+                    error
+                ) {
+
+                    console.error(
+                        "[Admin Refresh]",
+                        error
+                    );
+                }
+            }
         );
 
 
-        createLogoutButton();
+        /* =====================================================
+           GESTION DES ERREURS D'IMAGES
+        ====================================================== */
+
+        document.addEventListener(
+            "error",
+            event => {
+
+                const target =
+                    event.target;
 
 
-        await Promise.all([
-            loadGames(),
-            loadArtworks()
-        ]);
+                if (
+                    !target ||
+                    target.tagName !==
+                    "IMG"
+                ) {
+
+                    return;
+                }
 
 
-        updateDashboardStats();
+                /*
+                 * Empêche de remplacer plusieurs fois
+                 * la même image en erreur.
+                 */
+                if (
+                    target.dataset
+                        .adminImageErrorHandled ===
+                    "true"
+                ) {
+
+                    return;
+                }
+
+
+                target.dataset
+                    .adminImageErrorHandled =
+                    "true";
+
+
+                /*
+                 * Pour l'avatar administrateur,
+                 * on masque simplement l'image si Twitch
+                 * ne fournit plus l'URL.
+                 */
+                if (
+                    target ===
+                    adminUserAvatar
+                ) {
+
+                    target.hidden =
+                        true;
+
+                    return;
+                }
+
+
+                /*
+                 * Pour les miniatures des listes,
+                 * on affiche un placeholder.
+                 */
+                const thumbnail =
+                    target.closest(
+                        ".admin-list-thumb"
+                    );
+
+
+                if (
+                    thumbnail
+                ) {
+
+                    target.remove();
+
+
+                    const placeholder =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    placeholder.className =
+                        "admin-item-placeholder";
+
+                    placeholder.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+
+                    placeholder.textContent =
+                        "🖼️";
+
+
+                    thumbnail.appendChild(
+                        placeholder
+                    );
+                }
+            },
+            true
+        );
+
+
+        /* =====================================================
+           GESTION DES ERREURS VIDÉO
+        ====================================================== */
+
+        document.addEventListener(
+            "error",
+            event => {
+
+                const target =
+                    event.target;
+
+
+                if (
+                    !target ||
+                    target.tagName !==
+                    "VIDEO"
+                ) {
+
+                    return;
+                }
+
+
+                if (
+                    target.dataset
+                        .adminVideoErrorHandled ===
+                    "true"
+                ) {
+
+                    return;
+                }
+
+
+                target.dataset
+                    .adminVideoErrorHandled =
+                    "true";
+
+
+                const thumbnail =
+                    target.closest(
+                        ".admin-list-thumb"
+                    );
+
+
+                if (
+                    thumbnail
+                ) {
+
+                    target.remove();
+
+
+                    const placeholder =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    placeholder.className =
+                        "admin-item-placeholder";
+
+                    placeholder.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+
+                    placeholder.textContent =
+                        "🎬";
+
+
+                    thumbnail.appendChild(
+                        placeholder
+                    );
+                }
+            },
+            true
+        );
+
+
+        /* =====================================================
+           SYNCHRONISATION DE L'URL
+        ====================================================== */
+
+        window.addEventListener(
+            "hashchange",
+            () => {
+
+                const requestedSection =
+                    normalizeText(
+                        window.location.hash
+                            .replace(
+                                /^#/,
+                                ""
+                            )
+                    );
+
+
+                const sectionExists =
+                    sections.some(
+                        section =>
+                            section.dataset
+                                .adminPanel ===
+                            requestedSection
+                    );
+
+
+                openSection(
+                    sectionExists
+                        ? requestedSection
+                        : "dashboard"
+                );
+            }
+        );
+
+
+        /* =====================================================
+           SECTION INITIALE
+        ====================================================== */
+
+        function openInitialSection() {
+
+            const requestedSection =
+                normalizeText(
+                    window.location.hash
+                        .replace(
+                            /^#/,
+                            ""
+                        )
+                );
+
+
+            const sectionExists =
+                sections.some(
+                    section =>
+                        section.dataset
+                            .adminPanel ===
+                        requestedSection
+                );
+
+
+            openSection(
+                sectionExists
+                    ? requestedSection
+                    : "dashboard"
+            );
+        }
+
+
+        /* =====================================================
+           ÉTAT DE CHARGEMENT INITIAL
+        ====================================================== */
+
+        function setInitialLoadingState(
+            loading
+        ) {
+
+            const interactiveElements =
+                [
+                    newGameButton,
+                    newArtworkButton,
+                    pollAddOptionButton,
+                    pollResetButton
+                ]
+                    .filter(
+                        Boolean
+                    );
+
+
+            interactiveElements.forEach(
+                element => {
+
+                    element.disabled =
+                        Boolean(
+                            loading
+                        );
+                }
+            );
+
+
+            document.body.classList.toggle(
+                "admin-is-loading",
+                Boolean(
+                    loading
+                )
+            );
+        }
+
+
+        /* =====================================================
+           INITIALISATION — PRÉPARATION
+        ====================================================== */
+
+        setInitialLoadingState(
+            true
+        );
 
 
         /*
-         * Si aucune section n'est active,
-         * ouvre le dashboard.
+         * On masque les formulaires au chargement.
+         * Ils seront ouverts uniquement lorsque l'administratrice
+         * clique sur le bouton correspondant.
          */
-        const activeSection =
-            sections.find(
-                section =>
-                    !section.hidden
-            );
+        if (
+            gameFormPanel
+        ) {
+
+            gameFormPanel.hidden =
+                true;
+        }
 
 
         if (
-            !activeSection
+            artworkFormPanel
         ) {
 
-            openSection(
-                "dashboard"
+            artworkFormPanel.hidden =
+                true;
+        }
+
+
+        /*
+         * Prépare l'aperçu des médias.
+         */
+        hideTwitchPreview();
+
+        hideArtworkPreviewMedia();
+
+
+        if (
+            artworkUploadPreview
+        ) {
+
+            artworkUploadPreview.hidden =
+                true;
+        }
+
+
+        /*
+         * Ouvre la bonne section selon le hash de l'URL.
+         */
+        openInitialSection();
+                /* =====================================================
+           INITIALISATION — AUTHENTIFICATION
+        ====================================================== */
+
+        try {
+
+            const authenticatedAdmin =
+                await checkAdminAuthentication();
+
+
+            if (
+                !authenticatedAdmin
+            ) {
+
+                setInitialLoadingState(
+                    false
+                );
+
+                return;
+            }
+
+
+            currentAdminUser =
+                authenticatedAdmin;
+
+
+            applyAdminUser(
+                authenticatedAdmin
+            );
+
+
+            createLogoutButton();
+
+
+            /* =================================================
+               CHARGEMENT DES DONNÉES
+            ================================================= */
+
+            await Promise.all([
+                loadGames(),
+                loadArtworks(),
+                loadPoll()
+            ]);
+
+
+            /* =================================================
+               RAFRAÎCHISSEMENT DES BLOCS
+            ================================================= */
+
+            renderGames();
+
+            renderArtworks();
+
+            renderPollPreview();
+
+            updateDashboardStats();
+
+
+            /* =================================================
+               FORMULAIRES
+            ================================================= */
+
+            if (
+                gameFormPanel
+            ) {
+
+                gameFormPanel.hidden =
+                    true;
+            }
+
+
+            if (
+                artworkFormPanel
+            ) {
+
+                artworkFormPanel.hidden =
+                    true;
+            }
+
+
+            /* =================================================
+               APERÇUS
+            ================================================= */
+
+            hideTwitchPreview();
+
+
+            if (
+                !selectedArtworkFile
+            ) {
+
+                hideArtworkPreviewMedia();
+
+
+                if (
+                    artworkUploadPreview
+                ) {
+
+                    artworkUploadPreview.hidden =
+                        true;
+                }
+            }
+
+
+            /* =================================================
+               SECTION ACTIVE
+            ================================================= */
+
+            openInitialSection();
+
+
+            /* =================================================
+               ADMIN PRÊT
+            ================================================= */
+
+            document.documentElement
+                .classList
+                .add(
+                    "admin-ready"
+                );
+
+
+            console.info(
+                "[Admin] Interface initialisée.",
+                {
+                    user:
+                        currentAdminUser?.login ||
+                        currentAdminUser?.displayName ||
+                        "Couaxia",
+
+                    games:
+                        games.length,
+
+                    artworks:
+                        artworks.length,
+
+                    pollStatus:
+                        poll?.status ||
+                        "closed"
+                }
+            );
+
+
+        } catch (
+            error
+        ) {
+
+            /* =================================================
+               ERREUR GLOBALE D'INITIALISATION
+            ================================================= */
+
+            console.error(
+                "[Admin] Erreur pendant l'initialisation :",
+                error
+            );
+
+
+            showToast(
+                error?.message ||
+                "Une erreur est survenue pendant le chargement de l'administration.",
+                "error"
+            );
+
+
+        } finally {
+
+            setInitialLoadingState(
+                false
             );
         }
 
 
-        console.info(
-            "[Admin] Interface initialisée pour :",
-            authenticatedAdmin.login
+        /* =====================================================
+           NETTOYAGE — AVANT QUITTER LA PAGE
+        ====================================================== */
+
+        window.addEventListener(
+            "beforeunload",
+            () => {
+
+                revokeArtworkPreviewUrl();
+
+
+                if (
+                    artworkPreviewVideo
+                ) {
+
+                    try {
+
+                        artworkPreviewVideo.pause();
+
+                    } catch {
+
+                        /* Rien à faire */
+                    }
+                }
+            }
         );
 
 
-        console.info(
-            "[Admin] Actions rapides trouvées :",
-            quickActions.length
+        /* =====================================================
+           NETTOYAGE — PAGEHIDE
+        ====================================================== */
+
+        window.addEventListener(
+            "pagehide",
+            () => {
+
+                revokeArtworkPreviewUrl();
+            }
         );
+
+
+        /* =====================================================
+           PROTECTION DROP GLOBAL
+        ====================================================== */
+
+        [
+            "dragenter",
+            "dragover",
+            "drop"
+        ].forEach(
+            eventName => {
+
+                document.addEventListener(
+                    eventName,
+                    event => {
+
+                        /*
+                         * Si le drag/drop se fait dans la dropzone,
+                         * son propre gestionnaire s'en occupe.
+                         */
+                        if (
+                            artworkDropzone &&
+                            (
+                                event.target ===
+                                    artworkDropzone ||
+                                artworkDropzone.contains(
+                                    event.target
+                                )
+                            )
+                        ) {
+
+                            return;
+                        }
+
+
+                        /*
+                         * Empêche le navigateur d'ouvrir le fichier
+                         * lorsqu'il est lâché ailleurs sur la page.
+                         */
+                        event.preventDefault();
+                    }
+                );
+            }
+        );
+
+
+        /* =====================================================
+           APERÇU — ERREUR IMAGE
+        ====================================================== */
+
+        artworkPreviewImage
+            ?.addEventListener(
+                "error",
+                () => {
+
+                    console.warn(
+                        "[Admin Gallery Preview] Impossible d'afficher l'image."
+                    );
+                }
+            );
+
+
+        /* =====================================================
+           APERÇU — ERREUR VIDÉO
+        ====================================================== */
+
+        artworkPreviewVideo
+            ?.addEventListener(
+                "error",
+                () => {
+
+                    console.warn(
+                        "[Admin Gallery Preview] Impossible d'afficher la vidéo."
+                    );
+                }
+            );
+
+
+         /* =====================================================
+           FIN
+        ====================================================== */
+
+        console.info(
+            "[Admin] Chargement du script terminé."
+        );
+    
     }
 );

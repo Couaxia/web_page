@@ -1,7 +1,7 @@
 "use strict";
 
 /* =========================================================
-   API ADMIN — UPLOAD ILLUSTRATION
+   API ADMIN — SIGNATURE UPLOAD ILLUSTRATION
    COUAXIA
 ========================================================= */
 
@@ -21,32 +21,11 @@ import {
 const ARTWORKS_BUCKET =
     "artworks";
 
-/*
- * Taille maximale autorisée :
- *
- * 50 Mo
- *
- * Attention :
- * la limite du bucket Supabase doit également
- * être configurée à au moins 50 Mo.
- */
+
 const MAX_FILE_SIZE =
     50 * 1024 * 1024;
 
 
-/*
- * Formats acceptés dans la galerie.
- *
- * Images :
- * - PNG
- * - JPG / JPEG
- * - WEBP
- * - GIF
- *
- * Vidéos :
- * - MP4
- * - WEBM
- */
 const ALLOWED_MIME_TYPES =
     new Set([
         "image/png",
@@ -79,9 +58,7 @@ function normalizeText(
 
 
 /**
- * Retourne le body d'une requête.
- *
- * Compatible Express / serverless.
+ * Retourne le body de la requête.
  *
  * @param {object} request
  * @returns {object}
@@ -212,8 +189,7 @@ function sanitizeFilename(
 
 
 /**
- * Retourne une extension correspondant
- * au MIME si le fichier n'en contient pas.
+ * Retourne une extension à partir du MIME.
  *
  * @param {string} mimeType
  * @returns {string}
@@ -253,7 +229,7 @@ function getExtensionFromMimeType(
 
 
 /**
- * S'assure que le nom possède une extension.
+ * Ajoute une extension si nécessaire.
  *
  * @param {string} filename
  * @param {string} mimeType
@@ -284,56 +260,7 @@ function ensureFileExtension(
 
 
 /**
- * Nettoie éventuellement le préfixe
- * data:image/...;base64,...
- * ou data:video/...;base64,...
- *
- * @param {string} value
- * @returns {string}
- */
-function cleanBase64(
-    value
-) {
-
-    const text =
-        normalizeText(
-            value
-        );
-
-
-    if (
-        !text
-    ) {
-
-        return "";
-    }
-
-
-    const commaIndex =
-        text.indexOf(
-            ","
-        );
-
-
-    if (
-        text.startsWith(
-            "data:"
-        ) &&
-        commaIndex >= 0
-    ) {
-
-        return text.slice(
-            commaIndex + 1
-        );
-    }
-
-
-    return text;
-}
-
-
-/**
- * Retourne la catégorie du média.
+ * Retourne image ou video.
  *
  * @param {string} mimeType
  * @returns {"image"|"video"}
@@ -357,7 +284,7 @@ function getMediaType(
 
 
 /**
- * Retourne une taille lisible.
+ * Formate une taille en octets.
  *
  * @param {number} bytes
  * @returns {string}
@@ -434,7 +361,7 @@ export default async function handler(
 
 
     /* =====================================================
-       PROTECTION ADMIN
+       AUTH ADMIN
     ====================================================== */
 
     const admin =
@@ -517,10 +444,11 @@ export default async function handler(
                 .toLowerCase();
 
 
-        const fileBase64 =
-            cleanBase64(
-                body.fileBase64 ??
-                body.file_base64
+        const fileSize =
+            Number(
+                body.fileSize ??
+                body.file_size ??
+                0
             );
 
 
@@ -550,7 +478,7 @@ export default async function handler(
 
 
         /* =================================================
-           VALIDATION — NOM DU FICHIER
+           VALIDATION — NOM
         ================================================== */
 
         if (
@@ -623,11 +551,14 @@ export default async function handler(
 
 
         /* =================================================
-           VALIDATION — CONTENU
+           VALIDATION — TAILLE
         ================================================== */
 
         if (
-            !fileBase64
+            !Number.isFinite(
+                fileSize
+            ) ||
+            fileSize <= 0
         ) {
 
             response
@@ -638,7 +569,7 @@ export default async function handler(
                         false,
 
                     error:
-                        "Aucun fichier n'a été reçu."
+                        "La taille du fichier est invalide."
 
                 });
 
@@ -646,81 +577,9 @@ export default async function handler(
             return;
         }
 
-
-        /* =================================================
-           BASE64 -> BUFFER
-        ================================================== */
-
-        let fileBuffer;
-
-
-        try {
-
-            fileBuffer =
-                Buffer.from(
-                    fileBase64,
-                    "base64"
-                );
-
-        } catch (
-            error
-        ) {
-
-            console.error(
-                "[Gallery Upload] Base64 invalide :",
-                error
-            );
-
-
-            response
-                .status(400)
-                .json({
-
-                    success:
-                        false,
-
-                    error:
-                        "Le fichier envoyé est invalide."
-
-                });
-
-
-            return;
-        }
-
-
-        /* =================================================
-           FICHIER VIDE
-        ================================================== */
 
         if (
-            fileBuffer.length ===
-            0
-        ) {
-
-            response
-                .status(400)
-                .json({
-
-                    success:
-                        false,
-
-                    error:
-                        "Le fichier envoyé est vide."
-
-                });
-
-
-            return;
-        }
-
-
-        /* =================================================
-           TAILLE MAXIMALE
-        ================================================== */
-
-        if (
-            fileBuffer.length >
+            fileSize >
             MAX_FILE_SIZE
         ) {
 
@@ -743,11 +602,11 @@ export default async function handler(
                         ),
 
                     receivedSize:
-                        fileBuffer.length,
+                        fileSize,
 
                     receivedSizeFormatted:
                         formatFileSize(
-                            fileBuffer.length
+                            fileSize
                         )
 
                 });
@@ -801,92 +660,39 @@ export default async function handler(
             );
 
 
-        /*
-         * Exemple :
-         *
-         * 05/eilionfate-panels.png
-         *
-         * ou :
-         *
-         * 80/animated-couaxia.mp4
-         */
-
         const storagePath =
             `${safeArtId}/${safeFilename}`;
 
 
         /* =================================================
-           LOG UPLOAD
-        ================================================== */
-
-        console.info(
-            "[Gallery Upload] Upload demandé :",
-            {
-                artId,
-                filename,
-                safeFilename,
-                mimeType,
-                mediaType:
-                    getMediaType(
-                        mimeType
-                    ),
-                size:
-                    fileBuffer.length,
-                sizeFormatted:
-                    formatFileSize(
-                        fileBuffer.length
-                    ),
-                storagePath
-            }
-        );
-
-
-        /* =================================================
-           UPLOAD SUPABASE
+           SIGNED UPLOAD URL
         ================================================== */
 
         const {
-            data: uploadData,
-            error: uploadError
+            data: signedData,
+            error: signedError
         } =
             await supabaseAdmin
                 .storage
                 .from(
                     ARTWORKS_BUCKET
                 )
-                .upload(
+                .createSignedUploadUrl(
                     storagePath,
-                    fileBuffer,
                     {
-
-                        contentType:
-                            mimeType,
-
-                        cacheControl:
-                            "3600",
-
-                        /*
-                         * Si un fichier existe déjà au même
-                         * emplacement, il sera remplacé.
-                         */
                         upsert:
                             true
-
                     }
                 );
 
 
-        /* =================================================
-           ERREUR STORAGE
-        ================================================== */
-
         if (
-            uploadError
+            signedError
         ) {
 
             console.error(
-                "[Gallery Upload] Supabase Storage :",
-                uploadError
+                "[Gallery Upload] Signed URL :",
+                signedError
             );
 
 
@@ -898,8 +704,8 @@ export default async function handler(
                         false,
 
                     error:
-                        uploadError?.message ||
-                        "Impossible d'envoyer le fichier dans Supabase Storage."
+                        signedError?.message ||
+                        "Impossible de préparer l'envoi du fichier."
 
                 });
 
@@ -908,13 +714,31 @@ export default async function handler(
         }
 
 
-        /* =================================================
-           CHEMIN RETOURNÉ
-        ================================================== */
+        if (
+            !signedData?.token
+        ) {
 
-        const uploadedPath =
-            uploadData?.path ||
-            storagePath;
+            console.error(
+                "[Gallery Upload] Token absent :",
+                signedData
+            );
+
+
+            response
+                .status(500)
+                .json({
+
+                    success:
+                        false,
+
+                    error:
+                        "La signature d'upload n'a pas été retournée."
+
+                });
+
+
+            return;
+        }
 
 
         /* =================================================
@@ -930,73 +754,36 @@ export default async function handler(
                     ARTWORKS_BUCKET
                 )
                 .getPublicUrl(
-                    uploadedPath
+                    storagePath
                 );
 
 
         const publicUrl =
             publicUrlData
-                ?.publicUrl;
+                ?.publicUrl ||
+            "";
 
 
         /* =================================================
-           URL INTROUVABLE
-        ================================================== */
-
-        if (
-            !publicUrl
-        ) {
-
-            console.error(
-                "[Gallery Upload] URL publique introuvable.",
-                {
-                    uploadData,
-                    uploadedPath
-                }
-            );
-
-
-            response
-                .status(500)
-                .json({
-
-                    success:
-                        false,
-
-                    error:
-                        "Le fichier a été envoyé mais son URL publique est introuvable."
-
-                });
-
-
-            return;
-        }
-
-
-        /* =================================================
-           TYPE DE MÉDIA
-        ================================================== */
-
-        const mediaType =
-            getMediaType(
-                mimeType
-            );
-
-
-        /* =================================================
-           LOG SUCCÈS
+           LOG
         ================================================== */
 
         console.info(
-            "[Gallery Upload] Upload réussi :",
+            "[Gallery Upload] Signature créée :",
             {
                 artId,
-                path:
-                    uploadedPath,
+                filename,
+                storagePath,
                 mimeType,
-                mediaType,
-                size:
-                    fileBuffer.length
+                mediaType:
+                    getMediaType(
+                        mimeType
+                    ),
+                fileSize,
+                fileSizeFormatted:
+                    formatFileSize(
+                        fileSize
+                    )
             }
         );
 
@@ -1006,22 +793,28 @@ export default async function handler(
         ================================================== */
 
         response
-            .status(201)
+            .status(200)
             .json({
 
                 success:
                     true,
 
-                file: {
+                upload: {
 
                     bucket:
                         ARTWORKS_BUCKET,
 
                     path:
-                        uploadedPath,
+                        storagePath,
 
-                    url:
-                        publicUrl,
+                    token:
+                        signedData.token,
+
+                    signedUrl:
+                        signedData.signedUrl ??
+                        null,
+
+                    publicUrl,
 
                     filename:
                         safeFilename,
@@ -1031,14 +824,17 @@ export default async function handler(
 
                     mimeType,
 
-                    mediaType,
+                    mediaType:
+                        getMediaType(
+                            mimeType
+                        ),
 
                     size:
-                        fileBuffer.length,
+                        fileSize,
 
                     sizeFormatted:
                         formatFileSize(
-                            fileBuffer.length
+                            fileSize
                         )
 
                 }
@@ -1056,9 +852,6 @@ export default async function handler(
         );
 
 
-        /*
-         * Évite une seconde réponse Express.
-         */
         if (
             response.headersSent
         ) {
@@ -1076,7 +869,7 @@ export default async function handler(
 
                 error:
                     error?.message ||
-                    "Erreur interne pendant l'envoi du fichier."
+                    "Erreur interne pendant la préparation de l'upload."
 
             });
     }
