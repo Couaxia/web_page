@@ -78,7 +78,7 @@
    MODE NUIT
 ========================================================= */
 
-body.dark-mode {
+html[data-theme="dark"] {
     --admin-bg:
         rgba(24, 12, 34, 0.94);
 
@@ -908,7 +908,7 @@ video {
 }
 
 
-body.dark-mode .admin-primary-button {
+html[data-theme="dark"] .admin-primary-button {
     color:
         #24102F;
 }
@@ -2190,7 +2190,7 @@ body.dark-mode .admin-primary-button {
 }
 
 
-body.dark-mode .admin-artwork-badge.is-sensitive {
+html[data-theme="dark"] .admin-artwork-badge.is-sensitive {
     color:
         #FFD7E2;
 
@@ -2199,7 +2199,7 @@ body.dark-mode .admin-artwork-badge.is-sensitive {
 }
 
 
-body.dark-mode .admin-artwork-badge.is-hidden {
+html[data-theme="dark"] .admin-artwork-badge.is-hidden {
     color:
         #F0F0F0;
 
@@ -3312,7 +3312,7 @@ body.dark-mode .admin-artwork-badge.is-hidden {
    ADMIN — MODE NUIT
 ========================================================= */
 
-body.dark-mode {
+html[data-theme="dark"] {
     background:
         #0d0018;
 
@@ -3325,12 +3325,12 @@ body.dark-mode {
    PANNEAUX PRINCIPAUX
 ========================================================= */
 
-body.dark-mode .admin-sidebar,
-body.dark-mode .admin-section-header,
-body.dark-mode .admin-panel,
-body.dark-mode .admin-card,
-body.dark-mode .admin-form-panel,
-body.dark-mode .admin-list-panel {
+html[data-theme="dark"] .admin-sidebar,
+html[data-theme="dark"] .admin-section-header,
+html[data-theme="dark"] .admin-panel,
+html[data-theme="dark"] .admin-card,
+html[data-theme="dark"] .admin-form-panel,
+html[data-theme="dark"] .admin-list-panel {
     background:
         linear-gradient(
             145deg,
@@ -3353,21 +3353,21 @@ body.dark-mode .admin-list-panel {
    TITRES
 ========================================================= */
 
-body.dark-mode .admin-section-header h1,
-body.dark-mode .admin-section-header h2,
-body.dark-mode .admin-panel h2,
-body.dark-mode .admin-panel h3,
-body.dark-mode .admin-form-panel h2,
-body.dark-mode .admin-form-panel h3,
-body.dark-mode .admin-list-content h3,
-body.dark-mode .admin-artwork-main-info h3 {
+html[data-theme="dark"] .admin-section-header h1,
+html[data-theme="dark"] .admin-section-header h2,
+html[data-theme="dark"] .admin-panel h2,
+html[data-theme="dark"] .admin-panel h3,
+html[data-theme="dark"] .admin-form-panel h2,
+html[data-theme="dark"] .admin-form-panel h3,
+html[data-theme="dark"] .admin-list-content h3,
+html[data-theme="dark"] .admin-artwork-main-info h3 {
     color:
         #f6e8ff;
 }
 
 
-body.dark-mode .admin-kicker,
-body.dark-mode .admin-section-kicker {
+html[data-theme="dark"] .admin-kicker,
+html[data-theme="dark"] .admin-section-kicker {
     color:
         #d78cff;
 }
@@ -3377,12 +3377,12 @@ body.dark-mode .admin-section-kicker {
    TEXTES SECONDAIRES
 ========================================================= */
 
-body.dark-mode .admin-section-header p,
-body.dark-mode .admin-panel p,
-body.dark-mode .admin-form-panel p,
-body.dark-mode .admin-list-content p,
-body.dark-mode .admin-helper,
-body.dark-mode small {
+html[data-theme="dark"] .admin-section-header p,
+html[data-theme="dark"] .admin-panel p,
+html[data-theme="dark"] .admin-form-panel p,
+html[data-theme="dark"] .admin-list-content p,
+html[data-theme="dark"] .admin-helper,
+html[data-theme="dark"] small {
     color:
         #cbb9d9;
 }
@@ -3392,7 +3392,7 @@ body.dark-mode small {
    SIDEBAR
 ========================================================= */
 
-body.dark-mode .admin-sidebar {
+html[data-theme="dark"] .admin-sidebar {
     background:
         linear-gradient(
             180deg,
@@ -3402,7 +3402,7 @@ body.dark-mode .admin-sidebar {
 }
 
 
-body.dark-mode .admin-nav-button {
+html[data-theme="dark"] .admin-nav-button {
     color:
         #eee1f7;
 
@@ -3414,7 +3414,7 @@ body.dark-mode .admin-nav-button {
 }
 
 
-body.dark-mode .admin-nav-button:hover {
+html[data-theme="dark"] .admin-nav-button:hover {
     background:
         rgba(175, 73, 235, 0.12);
 
@@ -3423,7 +3423,7 @@ body.dark-mode .admin-nav-button:hover {
 }
 
 
-body.dark-mode .admin-nav-button.is-active {
+html[data-theme="dark"] .admin-nav-button.is-active {
     background:
         linear-gradient(
             135deg,
@@ -3446,7 +3446,7 @@ body.dark-mode .admin-nav-button.is-active {
    PROFIL ADMIN
 ========================================================= */
 
-body.dark-mode .admin-user-card {
+html[data-theme="dark"] .admin-user-card {
     background:
         rgba(255, 255, 255, 0.05);
 
@@ -3458,7 +3458,7 @@ body.dark-mode .admin-user-card {
 }
 
 
-body.dark-mode .admin-user-card p {
+html[data-theme="dark"] .admin-user-card p {
     color:
         #c9afd9;
 }
@@ -3468,8 +3468,8 @@ body.dark-mode .admin-user-card p {
    LABELS
 ========================================================= */
 
-body.dark-mode label,
-body.dark-mode .admin-label {
+html[data-theme="dark"] label,
+html[data-theme="dark"] .admin-label {
     color:
         #f3e6fb;
 }
@@ -3479,12 +3479,12 @@ body.dark-mode .admin-label {
    INPUTS / SELECT / TEXTAREA
 ========================================================= */
 
-body.dark-mode input,
-body.dark-mode select,
-body.dark-mode textarea,
-body.dark-mode .admin-input,
-body.dark-mode .admin-select,
-body.dark-mode .admin-textarea {
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] .admin-input,
+html[data-theme="dark"] .admin-select,
+html[data-theme="dark"] .admin-textarea {
     background:
         #160522;
 
@@ -3499,17 +3499,17 @@ body.dark-mode .admin-textarea {
 }
 
 
-body.dark-mode input::placeholder,
-body.dark-mode textarea::placeholder {
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
     color:
         #8e789c;
 }
 
 
-body.dark-mode input:focus,
-body.dark-mode select:focus,
-body.dark-mode textarea:focus,
-body.dark-mode .admin-input:focus {
+html[data-theme="dark"] input:focus,
+html[data-theme="dark"] select:focus,
+html[data-theme="dark"] textarea:focus,
+html[data-theme="dark"] .admin-input:focus {
     border-color:
         #d67cff;
 
@@ -3525,7 +3525,7 @@ body.dark-mode .admin-input:focus {
    SELECT
 ========================================================= */
 
-body.dark-mode select option {
+html[data-theme="dark"] select option {
     background:
         #160522;
 
@@ -3538,8 +3538,8 @@ body.dark-mode select option {
    DROPZONE ILLUSTRATION
 ========================================================= */
 
-body.dark-mode .admin-upload-zone,
-body.dark-mode .admin-dropzone {
+html[data-theme="dark"] .admin-upload-zone,
+html[data-theme="dark"] .admin-dropzone {
     background:
         linear-gradient(
             145deg,
@@ -3555,9 +3555,9 @@ body.dark-mode .admin-dropzone {
 }
 
 
-body.dark-mode .admin-upload-zone:hover,
-body.dark-mode .admin-dropzone:hover,
-body.dark-mode .admin-dropzone.is-dragover {
+html[data-theme="dark"] .admin-upload-zone:hover,
+html[data-theme="dark"] .admin-dropzone:hover,
+html[data-theme="dark"] .admin-dropzone.is-dragover {
     border-color:
         #ef7bdc;
 
@@ -3570,7 +3570,7 @@ body.dark-mode .admin-dropzone.is-dragover {
    APERÇU UPLOAD
 ========================================================= */
 
-body.dark-mode .admin-upload-preview {
+html[data-theme="dark"] .admin-upload-preview {
     background:
         #11021c;
 
@@ -3579,7 +3579,7 @@ body.dark-mode .admin-upload-preview {
 }
 
 
-body.dark-mode .admin-upload-preview-info {
+html[data-theme="dark"] .admin-upload-preview-info {
     color:
         #f6eaff;
 }
@@ -3589,7 +3589,7 @@ body.dark-mode .admin-upload-preview-info {
    LISTE DES ILLUSTRATIONS
 ========================================================= */
 
-body.dark-mode .admin-list-item {
+html[data-theme="dark"] .admin-list-item {
     background:
         linear-gradient(
             145deg,
@@ -3616,7 +3616,7 @@ body.dark-mode .admin-list-item {
 }
 
 
-body.dark-mode .admin-list-item:hover {
+html[data-theme="dark"] .admin-list-item:hover {
     transform:
         translateY(-4px);
 
@@ -3632,14 +3632,14 @@ body.dark-mode .admin-list-item:hover {
    IMAGE DES CARTES
 ========================================================= */
 
-body.dark-mode .admin-list-thumb {
+html[data-theme="dark"] .admin-list-thumb {
     background:
         #09010e;
 }
 
 
-body.dark-mode .admin-list-thumb img,
-body.dark-mode .admin-list-thumb video {
+html[data-theme="dark"] .admin-list-thumb img,
+html[data-theme="dark"] .admin-list-thumb video {
     display:
         block;
 
@@ -3655,19 +3655,19 @@ body.dark-mode .admin-list-thumb video {
    CONTENU DES CARTES
 ========================================================= */
 
-body.dark-mode .admin-list-content {
+html[data-theme="dark"] .admin-list-content {
     color:
         #f6ecfb;
 }
 
 
-body.dark-mode .admin-list-content h3 {
+html[data-theme="dark"] .admin-list-content h3 {
     color:
         #ffffff;
 }
 
 
-body.dark-mode .admin-artwork-role {
+html[data-theme="dark"] .admin-artwork-role {
     color:
         #d5bfdc;
 }
@@ -3677,13 +3677,13 @@ body.dark-mode .admin-artwork-role {
    STATUTS
 ========================================================= */
 
-body.dark-mode .admin-artwork-status {
+html[data-theme="dark"] .admin-artwork-status {
     color:
         #e8d7f0;
 }
 
 
-body.dark-mode .admin-artwork-status.is-sensitive {
+html[data-theme="dark"] .admin-artwork-status.is-sensitive {
     color:
         #ff88a8;
 }
@@ -3693,7 +3693,7 @@ body.dark-mode .admin-artwork-status.is-sensitive {
    TAGS
 ========================================================= */
 
-body.dark-mode .admin-artwork-tags {
+html[data-theme="dark"] .admin-artwork-tags {
     display:
         flex;
 
@@ -3714,7 +3714,7 @@ body.dark-mode .admin-artwork-tags {
 }
 
 
-body.dark-mode .admin-artwork-tag {
+html[data-theme="dark"] .admin-artwork-tag {
     background:
         linear-gradient(
             135deg,
@@ -3746,7 +3746,7 @@ body.dark-mode .admin-artwork-tag {
    BOUTON MODIFIER
 ========================================================= */
 
-body.dark-mode .admin-secondary-button {
+html[data-theme="dark"] .admin-secondary-button {
     background:
         rgba(128, 31, 170, 0.15);
 
@@ -3758,7 +3758,7 @@ body.dark-mode .admin-secondary-button {
 }
 
 
-body.dark-mode .admin-secondary-button:hover {
+html[data-theme="dark"] .admin-secondary-button:hover {
     background:
         rgba(170, 42, 222, 0.3);
 
@@ -3774,7 +3774,7 @@ body.dark-mode .admin-secondary-button:hover {
    BOUTON SUPPRIMER
 ========================================================= */
 
-body.dark-mode .admin-danger-button {
+html[data-theme="dark"] .admin-danger-button {
     background:
         rgba(198, 40, 40, 0.12);
 
@@ -3786,7 +3786,7 @@ body.dark-mode .admin-danger-button {
 }
 
 
-body.dark-mode .admin-danger-button:hover {
+html[data-theme="dark"] .admin-danger-button:hover {
     background:
         rgba(213, 43, 68, 0.28);
 
@@ -3799,7 +3799,7 @@ body.dark-mode .admin-danger-button:hover {
    BOUTON PRINCIPAL
 ========================================================= */
 
-body.dark-mode .admin-primary-button {
+html[data-theme="dark"] .admin-primary-button {
     background:
         linear-gradient(
             135deg,
@@ -3818,7 +3818,7 @@ body.dark-mode .admin-primary-button {
 }
 
 
-body.dark-mode .admin-primary-button:hover {
+html[data-theme="dark"] .admin-primary-button:hover {
     transform:
         translateY(-2px);
 
@@ -3831,8 +3831,8 @@ body.dark-mode .admin-primary-button:hover {
    RECHERCHE GALERIE
 ========================================================= */
 
-body.dark-mode #admin-artworks-search,
-body.dark-mode #admin-artworks-filter {
+html[data-theme="dark"] #admin-artworks-search,
+html[data-theme="dark"] #admin-artworks-filter {
     background:
         #160522;
 
@@ -3848,19 +3848,464 @@ body.dark-mode #admin-artworks-filter {
    SCROLLBAR
 ========================================================= */
 
-body.dark-mode ::-webkit-scrollbar-track {
+html[data-theme="dark"] ::-webkit-scrollbar-track {
     background:
         #0e0216;
 }
 
 
-body.dark-mode ::-webkit-scrollbar-thumb {
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background:        linear-gradient(            #8117ac,            #c23ab5        );
+    border-radius:        999px;
+    -webkit-border-radius:        999px;
+    -moz-border-radius:        999px;
+    -ms-border-radius:        999px;
+    -o-border-radius:        999px;
+}
+
+/* =========================================================
+   CORRECTIONS FINALES — ADMIN COUAXIA
+========================================================= */
+
+html[data-theme="dark"] {
+    --admin-bg: rgba(18, 5, 29, 0.96);
+    --admin-bg-soft: rgba(31, 9, 45, 0.92);
+    --admin-panel: rgba(38, 11, 54, 0.95);
+    --admin-panel-strong: rgba(45, 12, 64, 0.98);
+    --admin-border: rgba(205, 116, 255, 0.30);
+    --admin-border-strong: rgba(220, 132, 255, 0.62);
+    --admin-primary: #D17BFF;
+    --admin-primary-soft: rgba(196, 91, 255, 0.15);
+    --admin-secondary: #48F8F2;
+    --admin-text: #F9F0FF;
+    --admin-text-soft: #D0BDD9;
+    --admin-danger: #FF918A;
+    --admin-danger-soft: rgba(255, 105, 96, 0.13);
+    --admin-success: #79E7AD;
+    --admin-success-soft: rgba(121, 231, 173, 0.13);
+    --admin-warning: #FFD76A;
+    --admin-warning-soft: rgba(255, 215, 106, 0.13);
+    --admin-shadow: 0 18px 42px rgba(0, 0, 0, 0.42);
+    --admin-shadow-soft: 0 10px 28px rgba(0, 0, 0, 0.30);
+}
+
+html[data-theme="dark"] body.admin-page {
+    color: var(--admin-text);
+}
+
+html[data-theme="dark"] .admin-header,
+html[data-theme="dark"] .admin-sidebar,
+html[data-theme="dark"] .admin-section-header,
+html[data-theme="dark"] .admin-block,
+html[data-theme="dark"] .admin-form-panel,
+html[data-theme="dark"] .admin-stat-card,
+html[data-theme="dark"] .admin-modal-dialog,
+html[data-theme="dark"] .admin-toast {
+    color: var(--admin-text);
     background:
         linear-gradient(
-            #8117ac,
-            #c23ab5
+            145deg,
+            rgba(44, 12, 62, 0.98),
+            rgba(20, 4, 31, 0.98)
         );
+    border-color: var(--admin-border);
+    box-shadow: var(--admin-shadow-soft);
+}
 
-    border-radius:
-        999px;
+html[data-theme="dark"] .admin-sidebar {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(39, 10, 55, 0.99),
+            rgba(17, 3, 27, 0.99)
+        );
+}
+
+html[data-theme="dark"] .admin-nav-button {
+    color: var(--admin-text);
+}
+
+html[data-theme="dark"] .admin-nav-button:hover {
+    background: rgba(186, 80, 238, 0.13);
+    border-color: var(--admin-border);
+}
+
+html[data-theme="dark"] .admin-nav-button.is-active {
+    color: #F8E8FF;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(153, 38, 205, 0.32),
+            rgba(237, 74, 185, 0.17)
+        );
+    border-color: var(--admin-border-strong);
+    box-shadow: 0 10px 28px rgba(126, 25, 177, 0.22);
+}
+
+html[data-theme="dark"] .admin-nav-icon,
+html[data-theme="dark"] .admin-user {
+    background: rgba(255, 255, 255, 0.055);
+}
+
+html[data-theme="dark"] .admin-section-header h1,
+html[data-theme="dark"] .admin-section-header h2,
+html[data-theme="dark"] .admin-form-heading h2,
+html[data-theme="dark"] .admin-block-header h2,
+html[data-theme="dark"] .admin-artwork-card h3,
+html[data-theme="dark"] .admin-game-item-content h3 {
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .admin-section-header p,
+html[data-theme="dark"] .admin-field small,
+html[data-theme="dark"] .admin-field-help,
+html[data-theme="dark"] .admin-artwork-role,
+html[data-theme="dark"] .admin-artwork-status,
+html[data-theme="dark"] .admin-game-item-description,
+html[data-theme="dark"] .admin-user-info span {
+    color: var(--admin-text-soft);
+}
+
+html[data-theme="dark"] .admin-field input,
+html[data-theme="dark"] .admin-field textarea,
+html[data-theme="dark"] .admin-field select,
+html[data-theme="dark"] .admin-list-tools input,
+html[data-theme="dark"] .admin-gallery-filters select {
+    color: var(--admin-text);
+    background: #160522;
+    border-color: rgba(207, 110, 255, 0.48);
+}
+
+html[data-theme="dark"] .admin-field input::placeholder,
+html[data-theme="dark"] .admin-field textarea::placeholder,
+html[data-theme="dark"] .admin-list-tools input::placeholder {
+    color: #9B87A6;
+}
+
+html[data-theme="dark"] .admin-field input:focus,
+html[data-theme="dark"] .admin-field textarea:focus,
+html[data-theme="dark"] .admin-field select:focus,
+html[data-theme="dark"] .admin-list-tools input:focus,
+html[data-theme="dark"] .admin-gallery-filters select:focus {
+    border-color: #D77DFF;
+    box-shadow: 0 0 0 4px rgba(199, 103, 255, 0.16);
+}
+
+html[data-theme="dark"] select option {
+    color: #FFFFFF;
+    background: #160522;
+}
+
+html[data-theme="dark"] .admin-upload-dropzone {
+    color: var(--admin-text);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(90, 27, 118, 0.30),
+            rgba(27, 6, 39, 0.88)
+        );
+    border-color: rgba(215, 126, 255, 0.65);
+}
+
+html[data-theme="dark"] .admin-upload-dropzone:hover,
+html[data-theme="dark"] .admin-upload-dropzone:focus-visible {
+    border-color: #E58BFF;
+    background: rgba(123, 34, 158, 0.27);
+}
+
+html[data-theme="dark"] .admin-upload-preview {
+    background: #12031D;
+    border-color: var(--admin-border);
+}
+
+.admin-gallery-filters {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin: 0 0 22px;
+}
+
+.admin-gallery-filters select {
+    width: min(320px, 100%);
+}
+
+#admin-artworks-list,
+.admin-artworks-list {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+    align-items: start;
+    gap: 28px;
+    width: 100%;
+}
+
+.admin-list-item.admin-artwork-card,
+.admin-artwork-card {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+    overflow: hidden;
+    border: 1px solid var(--admin-border);
+    border-radius: 24px;
+    background: var(--admin-bg-soft);
+    box-shadow: var(--admin-shadow-soft);
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.admin-list-item.admin-artwork-card:hover,
+.admin-artwork-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--admin-border-strong);
+    box-shadow: var(--admin-shadow);
+}
+
+.admin-artwork-card-media {
+    width: 100%;
+    height: 330px;
+    min-height: 330px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 18px;
+    background: rgba(109, 0, 163, 0.055);
+}
+
+.admin-artwork-card-media img,
+.admin-artwork-card-media video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    border-radius: 16px;
+}
+
+.admin-artwork-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 22px 22px 26px;
+    color: var(--admin-text);
+    text-align: center;
+}
+
+.admin-artwork-card-content h3 {
+    margin: 0;
+    color: var(--admin-text);
+    font-size: 1.45rem;
+}
+
+.admin-artwork-role {
+    margin: 0;
+    color: var(--admin-text-soft);
+    font-weight: 700;
+}
+
+.admin-artwork-statuses {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    margin-top: 2px;
+}
+
+.admin-artwork-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--admin-text);
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.admin-artwork-status.is-sensitive {
+    color: var(--admin-danger);
+}
+
+.admin-artwork-status.is-favorite {
+    color: #E52F81;
+}
+
+.admin-artwork-card .admin-list-actions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 2px;
+}
+
+.admin-artwork-card .admin-list-actions button {
+    min-width: 150px;
+}
+
+.admin-artwork-tags {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    margin-top: 4px;
+}
+
+.admin-artwork-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    padding: 6px 13px;
+    color: #67009C;
+    font-size: 0.85rem;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+    border: 1px solid rgba(142, 0, 210, 0.35);
+    border-radius: 999px;
+    background: rgba(142, 0, 210, 0.08);
+}
+
+.admin-artwork-tag.is-empty {
+    opacity: 0.64;
+}
+
+html[data-theme="dark"] .admin-list-item.admin-artwork-card,
+html[data-theme="dark"] .admin-artwork-card {
+    color: #F9F0FF;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(48, 13, 66, 0.98),
+            rgba(21, 4, 31, 0.99)
+        );
+    border-color: rgba(211, 116, 255, 0.34);
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.38);
+}
+
+html[data-theme="dark"] .admin-list-item.admin-artwork-card:hover,
+html[data-theme="dark"] .admin-artwork-card:hover {
+    border-color: rgba(232, 140, 255, 0.72);
+    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.48);
+}
+
+html[data-theme="dark"] .admin-artwork-card-media {
+    background: rgba(8, 1, 13, 0.56);
+}
+
+html[data-theme="dark"] .admin-artwork-card-content h3 {
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .admin-artwork-role,
+html[data-theme="dark"] .admin-artwork-status {
+    color: #D8C4E1;
+}
+
+html[data-theme="dark"] .admin-artwork-status.is-sensitive {
+    color: #FF9BA5;
+}
+
+html[data-theme="dark"] .admin-artwork-status.is-favorite {
+    color: #FF80B5;
+}
+
+html[data-theme="dark"] .admin-artwork-tag {
+    color: #F1D1FF;
+    border-color: rgba(220, 128, 255, 0.48);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(151, 43, 206, 0.30),
+            rgba(233, 76, 184, 0.16)
+        );
+}
+
+html[data-theme="dark"] .admin-primary-button {
+    color: #FFFFFF;
+    background:
+        linear-gradient(
+            135deg,
+            #8800C5,
+            #B700C8
+        );
+    border-color: rgba(227, 135, 255, 0.40);
+    box-shadow: 0 8px 24px rgba(134, 0, 184, 0.28);
+}
+
+html[data-theme="dark"] .admin-secondary-button {
+    color: #E0A7FF;
+    background: rgba(143, 38, 184, 0.17);
+    border-color: rgba(207, 113, 255, 0.66);
+}
+
+html[data-theme="dark"] .admin-danger-button {
+    color: #FF9C97;
+    background: rgba(213, 50, 50, 0.13);
+    border-color: rgba(255, 108, 108, 0.58);
+}
+
+html[data-theme="dark"] #admin-artworks-search,
+html[data-theme="dark"] #admin-artworks-filter {
+    color: #FFFFFF;
+    background: #160522;
+    border-color: rgba(207, 110, 255, 0.55);
+}
+
+html[data-theme="dark"] #admin-artworks-filter option {
+    color: #FFFFFF;
+    background: #160522;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: #0E0216;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background:
+        linear-gradient(
+            #8117AC,
+            #C23AB5
+        );
+    border-radius: 999px;
+}
+
+@media (max-width: 1150px) {
+    #admin-artworks-list,
+    .admin-artworks-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+    .admin-artwork-card-media {
+        height: 250px;
+        min-height: 250px;
+        padding: 12px;
+    }
+
+    .admin-artwork-card-content {
+        padding: 18px 14px 22px;
+    }
+
+    .admin-artwork-card .admin-list-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .admin-artwork-card .admin-list-actions button {
+        width: 100%;
+        min-width: 0;
+    }
 }
