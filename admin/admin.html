@@ -8,7 +8,6 @@
     <link href="./admin.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="../images/logo/Logo Transparents 2.png">
 </head>
-</head>
 
 <body class="admin-page">
 
@@ -17,73 +16,86 @@
          EN-TÊTE ADMIN
     ====================================================== -->
 
-    <header class="admin-header">
+        <header class="admin-header">
 
-        <a>
+    <!-- =====================================================
+         IDENTITÉ ADMIN
+    ====================================================== -->
 
-            <video
-                autoplay
-                muted
-                loop
-                playsinline
-                aria-hidden="true"
+    <a
+        href="./admin.html"
+        class="admin-brand"
+        aria-label="Accueil administration Couaxia"
+    >
+
+        <video
+            class="admin-brand-logo"
+            autoplay
+            muted
+            loop
+            playsinline
+            aria-hidden="true"
+        >
+            <source
+                src="../images/logo/Transparents.webm"
+                type="video/webm"
             >
-                <source
-                    src="../images/logo/Transparents.webm"
-                    type="video/webm"
-                >
-            </video>
+        </video>
 
 
-            <div class="admin-brand-text">
+        <div class="admin-brand-text">
 
-                <span class="admin-brand-title">
-                    Couaxia
-                </span>
+            <span class="admin-brand-title">
+                Couaxia
+            </span>
 
-                <span class="admin-brand-subtitle">
-                    Administration
-                </span>
-
-            </div>
-
-        </a>
-
-
-        <div class="admin-header-actions">
-
-            <a
-                href="../accueil.html"
-                class="admin-site-link"
-            >
-                ↗ Voir le site
-            </a>
-
-
-            <button
-                id="theme-toggle"
-                class="theme-toggle"
-                type="button"
-                aria-label="Changer le thème"
-                title="Changer le thème"
-            >
-
-                <span
-                    class="theme-icon"
-                    aria-hidden="true"
-                >
-                    🌙
-                </span>
-
-                <span class="theme-text">
-                    Mode nuit
-                </span>
-
-            </button>
+            <span class="admin-brand-subtitle">
+                Administration
+            </span>
 
         </div>
 
-    </header>
+    </a>
+
+
+    <!-- =====================================================
+         ACTIONS
+    ====================================================== -->
+
+    <div class="admin-header-actions">
+
+        <a
+            href="../accueil.html"
+            class="admin-site-link"
+        >
+            ↗ Voir le site
+        </a>
+
+
+        <button
+            id="theme-toggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Changer le thème"
+            title="Changer le thème"
+        >
+
+            <span
+                class="theme-icon"
+                aria-hidden="true"
+            >
+                🌙
+            </span>
+
+            <span class="theme-text">
+                Mode nuit
+            </span>
+
+        </button>
+
+    </div>
+
+</header>
 
 
 
@@ -93,28 +105,23 @@
 
     <div class="admin-layout">
 
-
         <!-- =================================================
              SIDEBAR
         ================================================== -->
 
         <aside class="admin-sidebar">
-
-
             <!-- =============================================
                  NAVIGATION
             ============================================== -->
 
             <nav
                 class="admin-nav"
-                aria-label="Navigation administration"
-            >
+                aria-label="Navigation administration">
 
                 <button
                     type="button"
                     class="admin-nav-button is-active"
-                    data-admin-section="dashboard"
-                >
+                    data-admin-section="dashboard">
 
                     <span
                         class="admin-nav-icon"
@@ -1176,7 +1183,7 @@
 
 
                                 <small>
-                                    PNG, JPG, WEBP ou GIF — maximum 10 Mo
+                                    PNG, JPG, WEBP ou GIF — maximum 50 Mo
                                 </small>
 
                             </div>

@@ -70,7 +70,7 @@
         280px;
 
     --admin-header-height:
-        86px;
+        106px;
 }
 
 
@@ -271,10 +271,10 @@ video {
         space-between;
 
     gap:
-        20px;
+        24px;
 
     padding:
-        12px 24px;
+        10px 24px;
 
     background:
         var(--admin-panel-strong);
@@ -290,7 +290,22 @@ video {
 }
 
 
-.admin-brand {
+/*
+ * Compatible avec le HTML actuel :
+ *
+ * <header class="admin-header">
+ *     <a>...</a>
+ * </header>
+ *
+ * et avec la version recommandée :
+ *
+ * <a class="admin-brand">...</a>
+ */
+.admin-brand,
+.admin-header > a {
+    min-width:
+        0;
+
     display:
         inline-flex;
 
@@ -298,7 +313,7 @@ video {
         center;
 
     gap:
-        14px;
+        18px;
 
     color:
         var(--admin-text);
@@ -308,12 +323,25 @@ video {
 }
 
 
-.admin-brand video {
+/*
+ * Le sélecteur .admin-header > a > video est volontaire :
+ * il écrase les éventuelles règles générales venant de style.css
+ * qui rendaient le logo gigantesque sur la page admin.
+ */
+.admin-brand video,
+.admin-header > a > video,
+.admin-brand-logo {
     width:
-        58px;
+        clamp(170px, 14vw, 220px);
 
     height:
-        58px;
+        86px;
+
+    max-width:
+        220px;
+
+    display:
+        block;
 
     object-fit:
         contain;
@@ -324,6 +352,9 @@ video {
 
 
 .admin-brand-text {
+    min-width:
+        0;
+
     display:
         flex;
 
@@ -331,28 +362,34 @@ video {
         column;
 
     gap:
-        2px;
+        3px;
 }
 
 
 .admin-brand-title {
+    color:
+        var(--admin-primary);
+
     font-size:
-        1.25rem;
+        1.35rem;
 
     font-weight:
         900;
 
-    color:
-        var(--admin-primary);
+    line-height:
+        1.05;
 }
 
 
 .admin-brand-subtitle {
-    font-size:
-        0.82rem;
-
     color:
         var(--admin-text-soft);
+
+    font-size:
+        0.84rem;
+
+    line-height:
+        1.2;
 }
 
 
@@ -371,10 +408,16 @@ video {
 
     gap:
         10px;
+
+    margin-left:
+        auto;
 }
 
 
 .admin-site-link {
+    min-height:
+        44px;
+
     display:
         inline-flex;
 
@@ -383,9 +426,6 @@ video {
 
     justify-content:
         center;
-
-    min-height:
-        44px;
 
     padding:
         10px 16px;
@@ -3021,6 +3061,132 @@ body.dark-mode .admin-artwork-badge.is-hidden {
     .admin-modal-actions button {
         width:
             100%;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — LOGO / HEADER ADMIN
+========================================================= */
+
+@media (
+    max-width: 900px
+) {
+
+    .admin-header {
+        gap:
+            16px;
+
+        padding:
+            10px 16px;
+    }
+
+
+    .admin-brand,
+    .admin-header > a {
+        gap:
+            12px;
+    }
+
+
+    .admin-brand video,
+    .admin-header > a > video,
+    .admin-brand-logo {
+        width:
+            170px;
+
+        height:
+            74px;
+
+        max-width:
+            170px;
+    }
+}
+
+
+@media (
+    max-width: 650px
+) {
+
+    .admin-header {
+        align-items:
+            stretch;
+
+        flex-direction:
+            column;
+
+        gap:
+            12px;
+
+        padding:
+            12px 14px;
+    }
+
+
+    .admin-brand,
+    .admin-header > a {
+        width:
+            100%;
+
+        justify-content:
+            center;
+    }
+
+
+    .admin-brand video,
+    .admin-header > a > video,
+    .admin-brand-logo {
+        width:
+            155px;
+
+        height:
+            68px;
+
+        max-width:
+            155px;
+    }
+
+
+    .admin-header-actions {
+        width:
+            100%;
+
+        justify-content:
+            center;
+
+        margin-left:
+            0;
+    }
+}
+
+
+@media (
+    max-width: 390px
+) {
+
+    .admin-brand video,
+    .admin-header > a > video,
+    .admin-brand-logo {
+        width:
+            135px;
+
+        height:
+            60px;
+
+        max-width:
+            135px;
+    }
+
+
+    .admin-brand-title {
+        font-size:
+            1.15rem;
+    }
+
+
+    .admin-brand-subtitle {
+        font-size:
+            0.76rem;
     }
 }
 

@@ -25,7 +25,7 @@ document.addEventListener(
             "/api/game";
 
         const MAX_ARTWORK_FILE_SIZE =
-            10 * 1024 * 1024;
+            50 * 1024 * 1024;
 
         const ALLOWED_ARTWORK_TYPES =
             new Set([
@@ -2480,7 +2480,7 @@ document.addEventListener(
             ) {
 
                 showToast(
-                    "L'image dépasse 10 Mo.",
+                    "L'image dépasse 50 Mo.",
                     "error"
                 );
 
