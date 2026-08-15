@@ -8,14 +8,11 @@
 import express
     from "express";
 
-
 import path
     from "path";
 
-
 import crypto
     from "crypto";
-
 
 import {
     fileURLToPath
@@ -29,42 +26,32 @@ import {
 import galleryHandler
     from "./api/gallery.js";
 
-
 import gameHandler
     from "./api/game.js";
-
 
 import gamesHandler
     from "./api/games.js";
 
-
 import clipsHandler
     from "./api/clips.js";
-
 
 import videosHandler
     from "./api/videos.js";
 
-
 import followersHandler
     from "./api/followers.js";
-
 
 import streamHandler
     from "./api/stream.js";
 
-
 import userHandler
     from "./api/user.js";
-
 
 import twitchStatusHandler
     from "./api/twitch-status.js";
 
-
 import recommendedStreamersHandler
     from "./api/recommended-streamers.js";
-
 
 import pollHandler
     from "./api/poll.js";
@@ -91,26 +78,27 @@ import {
 import adminGalleryHandler
     from "./api/admin/gallery.js";
 
-
 import adminGalleryUploadHandler
     from "./api/admin/gallery-upload.js";
-
 
 import adminGamesHandler
     from "./api/admin/games.js";
 
+/*
+ * NOUVEAU :
+ * gestion du sondage depuis l'administration.
+ */
+import adminPollHandler
+    from "./api/admin/poll.js";
 
 import adminAuthLoginHandler
     from "./api/admin/auth-login.js";
 
-
 import adminAuthCallbackHandler
     from "./api/admin/auth-callback.js";
 
-
 import adminAuthMeHandler
     from "./api/admin/auth-me.js";
-
 
 import adminAuthLogoutHandler
     from "./api/admin/auth-logout.js";
@@ -132,7 +120,6 @@ const __filename =
     fileURLToPath(
         import.meta.url
     );
-
 
 const __dirname =
     path.dirname(
@@ -224,6 +211,13 @@ app.use(
    ADAPTATEUR HANDLER
 ========================================================= */
 
+/*
+ * Permet d'utiliser les fichiers :
+ *
+ * export default async function handler(req, res)
+ *
+ * directement dans Express.
+ */
 function useHandler(
     handler
 ) {
@@ -299,6 +293,10 @@ function getOrigin(
 }
 
 
+/* =========================================================
+   CALLBACK TWITCH PUBLIC
+========================================================= */
+
 function getPublicCallbackUrl(
     request
 ) {
@@ -312,6 +310,10 @@ function getPublicCallbackUrl(
 }
 
 
+/* =========================================================
+   OAUTH STATE
+========================================================= */
+
 function createOAuthState() {
 
     return crypto
@@ -323,6 +325,10 @@ function createOAuthState() {
         );
 }
 
+
+/* =========================================================
+   COMPARAISON SÉCURISÉE
+========================================================= */
 
 function safeStringEquals(
     valueA,
@@ -363,6 +369,10 @@ function safeStringEquals(
 }
 
 
+/* =========================================================
+   COOKIE OAUTH STATE
+========================================================= */
+
 function createOAuthStateCookie(
     state
 ) {
@@ -377,6 +387,10 @@ function createOAuthStateCookie(
     ].join("; ");
 }
 
+
+/* =========================================================
+   SUPPRESSION COOKIE OAUTH STATE
+========================================================= */
 
 function clearOAuthStateCookie() {
 
@@ -604,6 +618,7 @@ app.get(
                         "Configuration Twitch incomplète."
                     );
 
+
                 return;
             }
 
@@ -656,10 +671,6 @@ app.get(
                 );
 
 
-            /*
-             * Aucun scope particulier n'est nécessaire
-             * pour connaître l'identité du compte.
-             */
             authorizationUrl
                 .searchParams
                 .set(
@@ -724,6 +735,10 @@ app.get(
                 request.query;
 
 
+            /* =================================================
+               TWITCH REFUSÉ
+            ================================================= */
+
             if (
                 error
             ) {
@@ -739,9 +754,14 @@ app.get(
                     "/games.html?login=refused"
                 );
 
+
                 return;
             }
 
+
+            /* =================================================
+               PARAMÈTRES MANQUANTS
+            ================================================= */
 
             if (
                 !code ||
@@ -754,9 +774,14 @@ app.get(
                         "Callback Twitch invalide."
                     );
 
+
                 return;
             }
 
+
+            /* =================================================
+               VÉRIFICATION STATE
+            ================================================= */
 
             const savedState =
                 getCookie(
@@ -779,9 +804,14 @@ app.get(
                         "La vérification de sécurité OAuth a échoué."
                     );
 
+
                 return;
             }
 
+
+            /* =================================================
+               TOKEN
+            ================================================= */
 
             const redirectUri =
                 getPublicCallbackUrl(
@@ -796,11 +826,19 @@ app.get(
                 );
 
 
+            /* =================================================
+               UTILISATEUR TWITCH
+            ================================================= */
+
             const twitchUser =
                 await getTwitchUserFromToken(
                     tokenData.access_token
                 );
 
+
+            /* =================================================
+               SESSION
+            ================================================= */
 
             const sessionToken =
                 createPublicUserSession(
@@ -812,6 +850,7 @@ app.get(
                 "Set-Cookie",
                 [
                     clearOAuthStateCookie(),
+
                     createPublicSessionCookie(
                         sessionToken
                     )
@@ -843,7 +882,7 @@ app.get(
 
 
 /* =========================================================
-   AUTH TWITCH PUBLIQUE — MOI
+   AUTH TWITCH PUBLIQUE — UTILISATEUR ACTUEL
 ========================================================= */
 
 app.get(
@@ -1054,6 +1093,9 @@ app.get(
 
 /* =========================================================
    API PUBLIQUE — SONDAGE
+
+   GET  = récupérer le sondage
+   POST = voter
 ========================================================= */
 
 app.get(
@@ -1157,6 +1199,38 @@ app.delete(
 
 
 /* =========================================================
+   API ADMIN — SONDAGE
+
+   GET    = charger le sondage dans l'admin
+   PUT    = créer / modifier le sondage
+   DELETE = réinitialiser le sondage et ses votes
+========================================================= */
+
+app.get(
+    "/api/admin/poll",
+    useHandler(
+        adminPollHandler
+    )
+);
+
+
+app.put(
+    "/api/admin/poll",
+    useHandler(
+        adminPollHandler
+    )
+);
+
+
+app.delete(
+    "/api/admin/poll",
+    useHandler(
+        adminPollHandler
+    )
+);
+
+
+/* =========================================================
    API ADMIN — AUTH TWITCH
 ========================================================= */
 
@@ -1195,6 +1269,7 @@ app.post(
 /* =========================================================
    ROUTES HTML
 ========================================================= */
+
 
 /* =========================================================
    ACCUEIL
@@ -1526,6 +1601,10 @@ app.use(
         }
 
 
+        /* =================================================
+           FICHIER TROP GROS
+        ================================================= */
+
         if (
             error?.type ===
             "entity.too.large"
@@ -1547,6 +1626,10 @@ app.use(
             return;
         }
 
+
+        /* =================================================
+           ERREUR GÉNÉRALE
+        ================================================= */
 
         response
             .status(500)
@@ -1665,6 +1748,11 @@ app.listen(
 
         console.log(
             "🔐 Admin Games : /api/admin/games"
+        );
+
+
+        console.log(
+            "🗳️ Admin Poll : /api/admin/poll"
         );
 
 
