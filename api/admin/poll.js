@@ -6,20 +6,17 @@
 
    GET
    → récupérer le sondage
-   → récupérer automatiquement les jeux éligibles
+   → récupérer les jeux éligibles
+   → récupérer les jeux sélectionnés
 
    PUT
    → créer / modifier le sondage
-   → options générées automatiquement depuis games.poll_enabled
+   → sélectionner les jeux du sondage
+   → synchroniser proprement les votes
 
    DELETE
    → réinitialiser le sondage
-   → supprimer TOUS les votes associés
-
-   IMPORTANT :
-   1 JEU poll_enabled = true
-   =
-   1 OPTION AUTOMATIQUE DANS LE SONDAGE
+   → supprimer tous les votes
 ========================================================= */
 
 
@@ -139,6 +136,41 @@ function normalizeStatus(
 
 
 /* =========================================================
+   TABLEAU D'IDS
+========================================================= */
+
+function normalizeIdList(
+    value
+) {
+
+    if (
+        !Array.isArray(
+            value
+        )
+    ) {
+
+        return [];
+    }
+
+
+    return [
+        ...new Set(
+            value
+                .map(
+                    item =>
+                        normalizeText(
+                            item
+                        )
+                )
+                .filter(
+                    Boolean
+                )
+        )
+    ];
+}
+
+
+/* =========================================================
    ERREUR SUPABASE
 ========================================================= */
 
@@ -154,7 +186,7 @@ function getSupabaseErrorMessage(
 
 
 /* =========================================================
-   RÉCUPÉRER LE SONDAGE
+   SONDAGE
 ========================================================= */
 
 async function getPoll() {
@@ -196,7 +228,7 @@ async function getPoll() {
 
 
 /* =========================================================
-   JEUX ÉLIGIBLES AU SONDAGE
+   JEUX ÉLIGIBLES
 ========================================================= */
 
 async function getEligibleGames() {
@@ -223,7 +255,7 @@ async function getEligibleGames() {
                 true
             )
             .order(
-                "created_at",
+                "twitch_name",
                 {
                     ascending:
                         true
@@ -248,16 +280,71 @@ async function getEligibleGames() {
 
 
 /* =========================================================
-   TRANSFORMER JEUX → OPTIONS DU SONDAGE
+   FORMAT JEU
 ========================================================= */
 
-function gamesToPollOptions(
-    games
+function formatEligibleGame(
+    game
+) {
+
+    return {
+
+        id:
+            normalizeText(
+                game?.id
+            ),
+
+        gameId:
+            normalizeText(
+                game?.id
+            ),
+
+        twitchGameId:
+            normalizeText(
+                game?.twitch_game_id
+            ) ||
+            null,
+
+        label:
+            normalizeText(
+                game?.twitch_name
+            ),
+
+        name:
+            normalizeText(
+                game?.twitch_name
+            ),
+
+        boxArtUrl:
+            normalizeText(
+                game?.box_art_url
+            ),
+
+        status:
+            normalizeText(
+                game?.status
+            ),
+
+        pollEnabled:
+            Boolean(
+                game?.poll_enabled
+            )
+
+    };
+}
+
+
+/* =========================================================
+   FORMAT OPTIONS STOCKÉES
+========================================================= */
+
+function normalizeStoredOptions(
+    options
 ) {
 
     if (
         !Array.isArray(
-            games
+            options
         )
     ) {
 
@@ -265,23 +352,22 @@ function gamesToPollOptions(
     }
 
 
-    return games
-        .slice(
-            0,
-            MAX_OPTIONS
-        )
+    return options
         .map(
-            game => {
+            option => {
 
                 const id =
                     normalizeText(
-                        game?.id
+                        option?.id ??
+                        option?.gameId ??
+                        option?.game_id
                     );
 
 
                 const label =
                     normalizeText(
-                        game?.twitch_name
+                        option?.label ??
+                        option?.name
                     );
 
 
@@ -296,36 +382,17 @@ function gamesToPollOptions(
 
                 return {
 
-                    /*
-                     * Très important :
-                     *
-                     * L'ID de l'option correspond
-                     * directement à l'ID Supabase du jeu.
-                     */
                     id,
-
-                    label,
-
-                    votes:
-                        0,
 
                     gameId:
                         id,
 
-                    twitchGameId:
-                        normalizeText(
-                            game?.twitch_game_id
-                        ) ||
-                        null,
+                    label,
 
-                    boxArtUrl:
-                        normalizeText(
-                            game?.box_art_url
-                        ),
-
-                    gameStatus:
-                        normalizeText(
-                            game?.status
+                    votes:
+                        Number(
+                            option?.votes ||
+                            0
                         )
 
                 };
@@ -338,7 +405,87 @@ function gamesToPollOptions(
 
 
 /* =========================================================
-   VOTES DU SONDAGE
+   JEUX SÉLECTIONNÉS
+========================================================= */
+
+function getSelectedGameIdsFromPoll(
+    poll
+) {
+
+    return normalizeStoredOptions(
+        poll?.options
+    )
+        .map(
+            option =>
+                String(
+                    option.id
+                )
+        );
+}
+
+
+/* =========================================================
+   CRÉER OPTIONS DEPUIS IDS
+========================================================= */
+
+function buildOptionsFromSelectedGames(
+    eligibleGames,
+    selectedGameIds
+) {
+
+    const selectedIds =
+        new Set(
+            normalizeIdList(
+                selectedGameIds
+            )
+        );
+
+
+    return eligibleGames
+        .filter(
+            game =>
+                selectedIds.has(
+                    String(
+                        game.id
+                    )
+                )
+        )
+        .slice(
+            0,
+            MAX_OPTIONS
+        )
+        .map(
+            game => ({
+
+                id:
+                    String(
+                        game.id
+                    ),
+
+                gameId:
+                    String(
+                        game.id
+                    ),
+
+                label:
+                    game.label,
+
+                boxArtUrl:
+                    game.boxArtUrl,
+
+                gameStatus:
+                    game.status,
+
+                votes:
+                    0
+
+            })
+        );
+}
+
+
+/* =========================================================
+   VOTES
 ========================================================= */
 
 async function getPollVotes(
@@ -362,7 +509,6 @@ async function getPollVotes(
                 VOTES_TABLE
             )
             .select(`
-                id,
                 poll_id,
                 twitch_user_id,
                 option_id,
@@ -370,9 +516,7 @@ async function getPollVotes(
             `)
             .eq(
                 "poll_id",
-                String(
-                    pollId
-                )
+                pollId
             );
 
 
@@ -402,16 +546,6 @@ function getVoteCounts(
 
     const counts =
         new Map();
-
-
-    if (
-        !Array.isArray(
-            votes
-        )
-    ) {
-
-        return counts;
-    }
 
 
     votes.forEach(
@@ -450,7 +584,7 @@ function getVoteCounts(
 
 
 /* =========================================================
-   AJOUTER LES COMPTEURS AUX OPTIONS
+   APPLIQUER LES VOTES
 ========================================================= */
 
 function applyVoteCounts(
@@ -458,7 +592,7 @@ function applyVoteCounts(
     votes
 ) {
 
-    const voteCounts =
+    const counts =
         getVoteCounts(
             votes
         );
@@ -470,7 +604,7 @@ function applyVoteCounts(
             ...option,
 
             votes:
-                voteCounts.get(
+                counts.get(
                     String(
                         option.id
                     )
@@ -483,7 +617,7 @@ function applyVoteCounts(
 
 
 /* =========================================================
-   TOTAL DES VOTES
+   TOTAL VOTES
 ========================================================= */
 
 function getTotalVotes(
@@ -494,151 +628,24 @@ function getTotalVotes(
         (
             total,
             option
-        ) => {
-
-            return (
-                total +
-                Number(
-                    option?.votes ||
-                    0
-                )
-            );
-
-        },
+        ) =>
+            total +
+            Number(
+                option?.votes ||
+                0
+            ),
         0
     );
 }
 
 
 /* =========================================================
-   FORMAT SONDAGE
+   SUPPRIMER LES VOTES DES OPTIONS RETIRÉES
 ========================================================= */
 
-function formatPoll(
-    poll,
-    options = [],
-    votes = []
-) {
-
-    const finalOptions =
-        applyVoteCounts(
-            options,
-            votes
-        );
-
-
-    const totalVotes =
-        getTotalVotes(
-            finalOptions
-        );
-
-
-    if (
-        !poll
-    ) {
-
-        return {
-
-            id:
-                null,
-
-            slug:
-                POLL_SLUG,
-
-            question:
-                DEFAULT_QUESTION,
-
-            status:
-                "closed",
-
-            options:
-                finalOptions,
-
-            totalVotes,
-
-            eligibleGamesCount:
-                finalOptions.length,
-
-            canOpen:
-                finalOptions.length >=
-                2,
-
-            createdAt:
-                null,
-
-            updatedAt:
-                null,
-
-            created_at:
-                null,
-
-            updated_at:
-                null
-
-        };
-    }
-
-
-    return {
-
-        id:
-            poll.id ??
-            null,
-
-        slug:
-            poll.slug ??
-            POLL_SLUG,
-
-        question:
-            normalizeText(
-                poll.question
-            ) ||
-            DEFAULT_QUESTION,
-
-        status:
-            normalizeStatus(
-                poll.status
-            ),
-
-        options:
-            finalOptions,
-
-        totalVotes,
-
-        eligibleGamesCount:
-            finalOptions.length,
-
-        canOpen:
-            finalOptions.length >=
-            2,
-
-        createdAt:
-            poll.created_at ??
-            null,
-
-        updatedAt:
-            poll.updated_at ??
-            null,
-
-        created_at:
-            poll.created_at ??
-            null,
-
-        updated_at:
-            poll.updated_at ??
-            null
-
-    };
-}
-
-
-/* =========================================================
-   SUPPRIMER LES VOTES D'OPTIONS QUI N'EXISTENT PLUS
-========================================================= */
-
-async function removeInvalidVotes(
+async function cleanupRemovedOptionVotes(
     pollId,
-    validOptions
+    selectedGameIds
 ) {
 
     if (
@@ -649,60 +656,54 @@ async function removeInvalidVotes(
     }
 
 
-    const votes =
-        await getPollVotes(
-            pollId
+    const selectedIds =
+        normalizeIdList(
+            selectedGameIds
         );
 
 
+    /*
+     * Aucun jeu sélectionné :
+     * on supprime tous les votes du sondage.
+     */
     if (
-        votes.length ===
+        selectedIds.length ===
         0
     ) {
+
+        const {
+            error
+        } =
+            await supabaseAdmin
+                .from(
+                    VOTES_TABLE
+                )
+                .delete()
+                .eq(
+                    "poll_id",
+                    pollId
+                );
+
+
+        if (
+            error
+        ) {
+
+            throw error;
+        }
+
 
         return;
     }
 
 
-    const validOptionIds =
-        new Set(
-            validOptions.map(
-                option =>
-                    String(
-                        option.id
-                    )
-            )
-        );
-
-
-    const invalidVoteIds =
-        votes
-            .filter(
-                vote =>
-                    !validOptionIds.has(
-                        String(
-                            vote.option_id
-                        )
-                    )
-            )
-            .map(
-                vote =>
-                    vote.id
-            )
-            .filter(
-                Boolean
-            );
-
-
-    if (
-        invalidVoteIds.length ===
-        0
-    ) {
-
-        return;
-    }
-
-
+    /*
+     * Supprime uniquement les votes dont
+     * option_id n'existe plus dans le sondage.
+     *
+     * Plus besoin d'une colonne "id"
+     * dans poll_votes.
+     */
     const {
         error
     } =
@@ -711,9 +712,22 @@ async function removeInvalidVotes(
                 VOTES_TABLE
             )
             .delete()
-            .in(
-                "id",
-                invalidVoteIds
+            .eq(
+                "poll_id",
+                pollId
+            )
+            .not(
+                "option_id",
+                "in",
+                `(${selectedIds
+                    .map(
+                        id =>
+                            `"${id.replace(
+                                /"/g,
+                                ""
+                            )}"`
+                    )
+                    .join(",")})`
             );
 
 
@@ -727,7 +741,7 @@ async function removeInvalidVotes(
 
 
 /* =========================================================
-   OPTIONS À STOCKER DANS POLLS
+   OPTIONS À ENREGISTRER
 ========================================================= */
 
 function getStoredOptions(
@@ -737,10 +751,6 @@ function getStoredOptions(
     return options.map(
         option => ({
 
-            /*
-             * Seules les informations nécessaires
-             * au sondage sont enregistrées.
-             */
             id:
                 String(
                     option.id
@@ -758,117 +768,199 @@ function getStoredOptions(
 
 
 /* =========================================================
-   GET — RÉCUPÉRER LE SONDAGE ADMIN
+   FORMAT RÉPONSE
+========================================================= */
+
+function formatPoll(
+    poll,
+    options,
+    votes,
+    eligibleGames
+) {
+
+    const optionsWithVotes =
+        applyVoteCounts(
+            options,
+            votes
+        );
+
+
+    return {
+
+        id:
+            poll?.id ??
+            null,
+
+        slug:
+            poll?.slug ??
+            POLL_SLUG,
+
+        question:
+            normalizeText(
+                poll?.question
+            ) ||
+            DEFAULT_QUESTION,
+
+        status:
+            normalizeStatus(
+                poll?.status
+            ),
+
+        options:
+            optionsWithVotes,
+
+        selectedGameIds:
+            optionsWithVotes.map(
+                option =>
+                    String(
+                        option.id
+                    )
+            ),
+
+        eligibleGames,
+
+        eligibleGamesCount:
+            eligibleGames.length,
+
+        selectedGamesCount:
+            optionsWithVotes.length,
+
+        totalVotes:
+            getTotalVotes(
+                optionsWithVotes
+            ),
+
+        canOpen:
+            optionsWithVotes.length >=
+            2,
+
+        createdAt:
+            poll?.created_at ??
+            null,
+
+        updatedAt:
+            poll?.updated_at ??
+            null,
+
+        created_at:
+            poll?.created_at ??
+            null,
+
+        updated_at:
+            poll?.updated_at ??
+            null
+
+    };
+}
+
+
+/* =========================================================
+   GET
 ========================================================= */
 
 async function handleGet(
     response
 ) {
 
-    /* =====================================================
-       JEUX ÉLIGIBLES
-    ====================================================== */
-
-    let eligibleGames;
-
-
     try {
 
-        eligibleGames =
+        const rawEligibleGames =
             await getEligibleGames();
 
-    } catch (
-        error
-    ) {
 
-        console.error(
-            "[Admin Poll GET] Jeux éligibles :",
-            error
-        );
-
-
-        response
-            .status(500)
-            .json({
-
-                success:
-                    false,
-
-                poll:
-                    null,
-
-                error:
-                    "Impossible de récupérer les jeux éligibles au sondage.",
-
-                details:
-                    getSupabaseErrorMessage(
-                        error
-                    )
-
-            });
+        const eligibleGames =
+            rawEligibleGames
+                .map(
+                    formatEligibleGame
+                )
+                .filter(
+                    game =>
+                        game.id &&
+                        game.label
+                );
 
 
-        return;
-    }
-
-
-    const generatedOptions =
-        gamesToPollOptions(
-            eligibleGames
-        );
-
-
-    /* =====================================================
-       SONDAGE
-    ====================================================== */
-
-    let poll;
-
-
-    try {
-
-        poll =
+        const poll =
             await getPoll();
 
-    } catch (
-        error
-    ) {
 
-        console.error(
-            "[Admin Poll GET] Sondage :",
-            error
-        );
+        /*
+         * Aucun sondage existant.
+         */
+        if (
+            !poll
+        ) {
+
+            response
+                .status(200)
+                .json({
+
+                    success:
+                        true,
+
+                    poll: {
+
+                        id:
+                            null,
+
+                        slug:
+                            POLL_SLUG,
+
+                        question:
+                            DEFAULT_QUESTION,
+
+                        status:
+                            "closed",
+
+                        options:
+                            [],
+
+                        selectedGameIds:
+                            [],
+
+                        eligibleGames,
+
+                        eligibleGamesCount:
+                            eligibleGames.length,
+
+                        selectedGamesCount:
+                            0,
+
+                        totalVotes:
+                            0,
+
+                        canOpen:
+                            false
+
+                    },
+
+                    eligibleGames
+
+                });
 
 
-        response
-            .status(500)
-            .json({
-
-                success:
-                    false,
-
-                poll:
-                    null,
-
-                error:
-                    getSupabaseErrorMessage(
-                        error
-                    )
-
-            });
+            return;
+        }
 
 
-        return;
-    }
+        const selectedGameIds =
+            getSelectedGameIdsFromPoll(
+                poll
+            );
 
 
-    /* =====================================================
-       PAS ENCORE DE SONDAGE
-    ====================================================== */
+        const selectedOptions =
+            buildOptionsFromSelectedGames(
+                eligibleGames,
+                selectedGameIds
+            );
 
-    if (
-        !poll
-    ) {
+
+        const votes =
+            await getPollVotes(
+                poll.id
+            );
+
 
         response
             .status(200)
@@ -879,38 +971,23 @@ async function handleGet(
 
                 poll:
                     formatPoll(
-                        null,
-                        generatedOptions,
-                        []
+                        poll,
+                        selectedOptions,
+                        votes,
+                        eligibleGames
                     ),
 
-                eligibleGames:
-                    generatedOptions
+                eligibleGames
 
             });
 
-
-        return;
-    }
-
-
-    /* =====================================================
-       NETTOYAGE DES ANCIENS VOTES
-    ====================================================== */
-
-    try {
-
-        await removeInvalidVotes(
-            poll.id,
-            generatedOptions
-        );
 
     } catch (
         error
     ) {
 
         console.error(
-            "[Admin Poll GET] Nettoyage votes :",
+            "[Admin Poll GET]",
             error
         );
 
@@ -926,7 +1003,7 @@ async function handleGet(
                     null,
 
                 error:
-                    "Impossible de synchroniser les votes du sondage.",
+                    "Impossible de charger le sondage.",
 
                 details:
                     getSupabaseErrorMessage(
@@ -934,88 +1011,12 @@ async function handleGet(
                     )
 
             });
-
-
-        return;
     }
-
-
-    /* =====================================================
-       VOTES
-    ====================================================== */
-
-    let votes;
-
-
-    try {
-
-        votes =
-            await getPollVotes(
-                poll.id
-            );
-
-    } catch (
-        error
-    ) {
-
-        console.error(
-            "[Admin Poll GET] Votes :",
-            error
-        );
-
-
-        response
-            .status(500)
-            .json({
-
-                success:
-                    false,
-
-                poll:
-                    null,
-
-                error:
-                    "Impossible de récupérer les votes du sondage.",
-
-                details:
-                    getSupabaseErrorMessage(
-                        error
-                    )
-
-            });
-
-
-        return;
-    }
-
-
-    /* =====================================================
-       RÉPONSE
-    ====================================================== */
-
-    response
-        .status(200)
-        .json({
-
-            success:
-                true,
-
-            poll:
-                formatPoll(
-                    poll,
-                    generatedOptions,
-                    votes
-                ),
-
-            eligibleGames:
-                generatedOptions
-
-        });
 }
 
 
 /* =========================================================
-   PUT — CRÉER / MODIFIER / OUVRIR LE SONDAGE
+   PUT
 ========================================================= */
 
 async function handlePut(
@@ -1029,10 +1030,6 @@ async function handlePut(
         );
 
 
-    /* =====================================================
-       QUESTION
-    ====================================================== */
-
     const question =
         normalizeText(
             body.question
@@ -1044,34 +1041,283 @@ async function handlePut(
         DEFAULT_QUESTION;
 
 
-    /* =====================================================
-       STATUT
-    ====================================================== */
-
     let status =
         normalizeStatus(
             body.status
         );
 
 
-    /* =====================================================
-       JEUX ÉLIGIBLES
-    ====================================================== */
-
-    let eligibleGames;
+    const requestedSelectedIds =
+        normalizeIdList(
+            body.selectedGameIds ??
+            body.selected_game_ids
+        );
 
 
     try {
 
-        eligibleGames =
+        /* =====================================================
+           JEUX ÉLIGIBLES
+        ====================================================== */
+
+        const rawEligibleGames =
             await getEligibleGames();
+
+
+        const eligibleGames =
+            rawEligibleGames
+                .map(
+                    formatEligibleGame
+                )
+                .filter(
+                    game =>
+                        game.id &&
+                        game.label
+                );
+
+
+        const eligibleIds =
+            new Set(
+                eligibleGames.map(
+                    game =>
+                        String(
+                            game.id
+                        )
+                )
+            );
+
+
+        /*
+         * Sécurité :
+         * on ignore un ID envoyé par le navigateur
+         * s'il n'est pas réellement éligible.
+         */
+        const selectedGameIds =
+            requestedSelectedIds.filter(
+                id =>
+                    eligibleIds.has(
+                        String(
+                            id
+                        )
+                    )
+            );
+
+
+        const selectedOptions =
+            buildOptionsFromSelectedGames(
+                eligibleGames,
+                selectedGameIds
+            );
+
+
+        /* =====================================================
+           VALIDATION
+        ====================================================== */
+
+        if (
+            status ===
+                "open" &&
+            selectedOptions.length <
+                2
+        ) {
+
+            response
+                .status(400)
+                .json({
+
+                    success:
+                        false,
+
+                    error:
+                        "Sélectionne au moins deux jeux avant d'ouvrir le sondage.",
+
+                    selectedGamesCount:
+                        selectedOptions.length
+
+                });
+
+
+            return;
+        }
+
+
+        if (
+            selectedOptions.length <
+            2
+        ) {
+
+            status =
+                "closed";
+        }
+
+
+        /* =====================================================
+           SONDAGE EXISTANT
+        ====================================================== */
+
+        const existingPoll =
+            await getPoll();
+
+
+        /* =====================================================
+           NETTOYAGE VOTES
+        ====================================================== */
+
+        if (
+            existingPoll?.id
+        ) {
+
+            try {
+
+                await cleanupRemovedOptionVotes(
+                    existingPoll.id,
+                    selectedGameIds
+                );
+
+
+            } catch (
+                cleanupError
+            ) {
+
+                /*
+                 * On log l'erreur mais on ne bloque
+                 * plus l'enregistrement du sondage.
+                 *
+                 * Cela évite que le sondage entier
+                 * devienne inutilisable pour un souci
+                 * de nettoyage secondaire.
+                 */
+                console.error(
+                    "[Admin Poll PUT] Nettoyage votes :",
+                    cleanupError
+                );
+            }
+        }
+
+
+        /* =====================================================
+           ENREGISTREMENT
+        ====================================================== */
+
+        const payload = {
+
+            slug:
+                POLL_SLUG,
+
+            question,
+
+            status,
+
+            options:
+                getStoredOptions(
+                    selectedOptions
+                ),
+
+            updated_at:
+                new Date()
+                    .toISOString()
+
+        };
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseAdmin
+                .from(
+                    POLLS_TABLE
+                )
+                .upsert(
+                    payload,
+                    {
+                        onConflict:
+                            "slug"
+                    }
+                )
+                .select(`
+                    id,
+                    slug,
+                    question,
+                    status,
+                    options,
+                    created_at,
+                    updated_at
+                `)
+                .single();
+
+
+        if (
+            error
+        ) {
+
+            throw error;
+        }
+
+
+        /* =====================================================
+           VOTES
+        ====================================================== */
+
+        let votes =
+            [];
+
+
+        try {
+
+            votes =
+                await getPollVotes(
+                    data.id
+                );
+
+
+        } catch (
+            voteError
+        ) {
+
+            console.error(
+                "[Admin Poll PUT] Relecture votes :",
+                voteError
+            );
+        }
+
+
+        /* =====================================================
+           RÉPONSE
+        ====================================================== */
+
+        response
+            .status(200)
+            .json({
+
+                success:
+                    true,
+
+                message:
+                    status ===
+                        "open"
+                        ? "Le sondage est ouvert."
+                        : "Le sondage a bien été enregistré.",
+
+                poll:
+                    formatPoll(
+                        data,
+                        selectedOptions,
+                        votes,
+                        eligibleGames
+                    ),
+
+                eligibleGames
+
+            });
+
 
     } catch (
         error
     ) {
 
         console.error(
-            "[Admin Poll PUT] Jeux éligibles :",
+            "[Admin Poll PUT]",
             error
         );
 
@@ -1084,7 +1330,7 @@ async function handlePut(
                     false,
 
                 error:
-                    "Impossible de récupérer les jeux du sondage.",
+                    "Impossible d'enregistrer le sondage.",
 
                 details:
                     getSupabaseErrorMessage(
@@ -1092,374 +1338,181 @@ async function handlePut(
                     )
 
             });
-
-
-        return;
     }
-
-
-    const generatedOptions =
-        gamesToPollOptions(
-            eligibleGames
-        );
-
-
-    /* =====================================================
-       AU MOINS 2 JEUX POUR OUVRIR
-    ====================================================== */
-
-    if (
-        status ===
-            "open" &&
-        generatedOptions.length <
-            2
-    ) {
-
-        response
-            .status(400)
-            .json({
-
-                success:
-                    false,
-
-                error:
-                    "Il faut au moins deux jeux avec l'option « Participer au sondage » activée pour ouvrir le sondage.",
-
-                eligibleGamesCount:
-                    generatedOptions.length
-
-            });
-
-
-        return;
-    }
-
-
-    /*
-     * Un sondage vide ou avec un seul jeu
-     * reste automatiquement fermé.
-     */
-    if (
-        generatedOptions.length <
-        2
-    ) {
-
-        status =
-            "closed";
-    }
-
-
-    /* =====================================================
-       ANCIEN SONDAGE
-    ====================================================== */
-
-    let existingPoll;
-
-
-    try {
-
-        existingPoll =
-            await getPoll();
-
-    } catch (
-        error
-    ) {
-
-        console.error(
-            "[Admin Poll PUT] Ancien sondage :",
-            error
-        );
-
-
-        response
-            .status(500)
-            .json({
-
-                success:
-                    false,
-
-                error:
-                    "Impossible de lire le sondage actuel."
-
-            });
-
-
-        return;
-    }
-
-
-    /* =====================================================
-       SUPPRIMER VOTES DE JEUX RETIRÉS DU SONDAGE
-    ====================================================== */
-
-    if (
-        existingPoll?.id
-    ) {
-
-        try {
-
-            await removeInvalidVotes(
-                existingPoll.id,
-                generatedOptions
-            );
-
-        } catch (
-            error
-        ) {
-
-            console.error(
-                "[Admin Poll PUT] Nettoyage votes :",
-                error
-            );
-
-
-            response
-                .status(500)
-                .json({
-
-                    success:
-                        false,
-
-                    error:
-                        "Impossible de nettoyer les votes des jeux retirés du sondage.",
-
-                    details:
-                        getSupabaseErrorMessage(
-                            error
-                        )
-
-                });
-
-
-            return;
-        }
-    }
-
-
-    /* =====================================================
-       OPTIONS STOCKÉES
-    ====================================================== */
-
-    const storedOptions =
-        getStoredOptions(
-            generatedOptions
-        );
-
-
-    /* =====================================================
-       PAYLOAD
-    ====================================================== */
-
-    const now =
-        new Date()
-            .toISOString();
-
-
-    const payload = {
-
-        slug:
-            POLL_SLUG,
-
-        question,
-
-        status,
-
-        options:
-            storedOptions,
-
-        updated_at:
-            now
-
-    };
-
-
-    /* =====================================================
-       UPSERT
-    ====================================================== */
-
-    const {
-        data,
-        error
-    } =
-        await supabaseAdmin
-            .from(
-                POLLS_TABLE
-            )
-            .upsert(
-                payload,
-                {
-                    onConflict:
-                        "slug"
-                }
-            )
-            .select(`
-                id,
-                slug,
-                question,
-                status,
-                options,
-                created_at,
-                updated_at
-            `)
-            .single();
-
-
-    /* =====================================================
-       ERREUR
-    ====================================================== */
-
-    if (
-        error
-    ) {
-
-        console.error(
-            "[Admin Poll PUT] Supabase :",
-            error
-        );
-
-
-        response
-            .status(500)
-            .json({
-
-                success:
-                    false,
-
-                error:
-                    getSupabaseErrorMessage(
-                        error
-                    )
-
-            });
-
-
-        return;
-    }
-
-
-    /* =====================================================
-       VOTES
-    ====================================================== */
-
-    let votes =
-        [];
-
-
-    try {
-
-        votes =
-            await getPollVotes(
-                data.id
-            );
-
-    } catch (
-        error
-    ) {
-
-        console.error(
-            "[Admin Poll PUT] Relecture votes :",
-            error
-        );
-    }
-
-
-    /* =====================================================
-       RÉPONSE
-    ====================================================== */
-
-    response
-        .status(200)
-        .json({
-
-            success:
-                true,
-
-            message:
-                status ===
-                    "open"
-                    ? "Le sondage est ouvert."
-                    : "Le sondage a bien été enregistré.",
-
-            poll:
-                formatPoll(
-                    data,
-                    generatedOptions,
-                    votes
-                ),
-
-            eligibleGames:
-                generatedOptions
-
-        });
 }
 
 
 /* =========================================================
-   DELETE — RÉINITIALISER COMPLÈTEMENT
+   DELETE
 ========================================================= */
 
 async function handleDelete(
     response
 ) {
 
-    /* =====================================================
-       SONDAGE
-    ====================================================== */
-
-    let poll;
-
-
     try {
 
-        poll =
+        const poll =
             await getPoll();
 
-    } catch (
-        error
-    ) {
 
-        console.error(
-            "[Admin Poll DELETE] Lecture :",
-            error
-        );
+        const rawEligibleGames =
+            await getEligibleGames();
 
-
-        response
-            .status(500)
-            .json({
-
-                success:
-                    false,
-
-                error:
-                    "Impossible de récupérer le sondage."
-
-            });
-
-
-        return;
-    }
-
-
-    /* =====================================================
-       AUCUN SONDAGE
-    ====================================================== */
-
-    if (
-        !poll
-    ) {
 
         const eligibleGames =
-            await getEligibleGames()
-                .catch(
-                    () => []
+            rawEligibleGames
+                .map(
+                    formatEligibleGame
+                )
+                .filter(
+                    game =>
+                        game.id &&
+                        game.label
                 );
 
 
-        const generatedOptions =
-            gamesToPollOptions(
-                eligibleGames
+        if (
+            !poll
+        ) {
+
+            response
+                .status(200)
+                .json({
+
+                    success:
+                        true,
+
+                    message:
+                        "Le sondage est déjà réinitialisé.",
+
+                    poll: {
+
+                        id:
+                            null,
+
+                        slug:
+                            POLL_SLUG,
+
+                        question:
+                            DEFAULT_QUESTION,
+
+                        status:
+                            "closed",
+
+                        options:
+                            [],
+
+                        selectedGameIds:
+                            [],
+
+                        eligibleGames,
+
+                        eligibleGamesCount:
+                            eligibleGames.length,
+
+                        selectedGamesCount:
+                            0,
+
+                        totalVotes:
+                            0,
+
+                        canOpen:
+                            false
+
+                    }
+
+                });
+
+
+            return;
+        }
+
+
+        /* =====================================================
+           SUPPRIMER TOUS LES VOTES
+        ====================================================== */
+
+        const {
+            error:
+                voteDeleteError
+        } =
+            await supabaseAdmin
+                .from(
+                    VOTES_TABLE
+                )
+                .delete()
+                .eq(
+                    "poll_id",
+                    poll.id
+                );
+
+
+        if (
+            voteDeleteError
+        ) {
+
+            console.error(
+                "[Admin Poll DELETE] Votes :",
+                voteDeleteError
             );
+        }
+
+
+        /* =====================================================
+           RESET
+        ====================================================== */
+
+        const {
+            data,
+            error
+        } =
+            await supabaseAdmin
+                .from(
+                    POLLS_TABLE
+                )
+                .update({
+
+                    question:
+                        DEFAULT_QUESTION,
+
+                    status:
+                        "closed",
+
+                    options:
+                        [],
+
+                    updated_at:
+                        new Date()
+                            .toISOString()
+
+                })
+                .eq(
+                    "id",
+                    poll.id
+                )
+                .eq(
+                    "slug",
+                    POLL_SLUG
+                )
+                .select(`
+                    id,
+                    slug,
+                    question,
+                    status,
+                    options,
+                    created_at,
+                    updated_at
+                `)
+                .single();
+
+
+        if (
+            error
+        ) {
+
+            throw error;
+        }
 
 
         response
@@ -1470,176 +1523,27 @@ async function handleDelete(
                     true,
 
                 message:
-                    "Le sondage est déjà réinitialisé.",
+                    "Le sondage a été réinitialisé.",
 
                 poll:
                     formatPoll(
-                        null,
-                        generatedOptions,
-                        []
-                    )
+                        data,
+                        [],
+                        [],
+                        eligibleGames
+                    ),
+
+                eligibleGames
 
             });
 
-
-        return;
-    }
-
-
-    /* =====================================================
-       SUPPRIMER TOUS LES VOTES
-    ====================================================== */
-
-    const {
-        error:
-            votesDeleteError
-    } =
-        await supabaseAdmin
-            .from(
-                VOTES_TABLE
-            )
-            .delete()
-            .eq(
-                "poll_id",
-                String(
-                    poll.id
-                )
-            );
-
-
-    if (
-        votesDeleteError
-    ) {
-
-        console.error(
-            "[Admin Poll DELETE] Votes :",
-            votesDeleteError
-        );
-
-
-        response
-            .status(500)
-            .json({
-
-                success:
-                    false,
-
-                error:
-                    "Impossible de supprimer les votes du sondage.",
-
-                details:
-                    getSupabaseErrorMessage(
-                        votesDeleteError
-                    )
-
-            });
-
-
-        return;
-    }
-
-
-    /* =====================================================
-       JEUX TOUJOURS ÉLIGIBLES
-    ====================================================== */
-
-    let eligibleGames =
-        [];
-
-
-    try {
-
-        eligibleGames =
-            await getEligibleGames();
 
     } catch (
         error
     ) {
 
         console.error(
-            "[Admin Poll DELETE] Jeux :",
-            error
-        );
-    }
-
-
-    const generatedOptions =
-        gamesToPollOptions(
-            eligibleGames
-        );
-
-
-    /* =====================================================
-       REMETTRE LE SONDAGE À ZÉRO
-    ====================================================== */
-
-    const payload = {
-
-        question:
-            DEFAULT_QUESTION,
-
-        status:
-            "closed",
-
-        /*
-         * On conserve les jeux éligibles.
-         *
-         * Réinitialiser supprime les votes,
-         * mais ne décoche pas les jeux.
-         */
-        options:
-            getStoredOptions(
-                generatedOptions
-            ),
-
-        updated_at:
-            new Date()
-                .toISOString()
-
-    };
-
-
-    const {
-        data,
-        error
-    } =
-        await supabaseAdmin
-            .from(
-                POLLS_TABLE
-            )
-            .update(
-                payload
-            )
-            .eq(
-                "id",
-                poll.id
-            )
-            .eq(
-                "slug",
-                POLL_SLUG
-            )
-            .select(`
-                id,
-                slug,
-                question,
-                status,
-                options,
-                created_at,
-                updated_at
-            `)
-            .maybeSingle();
-
-
-    /* =====================================================
-       ERREUR
-    ====================================================== */
-
-    if (
-        error
-    ) {
-
-        console.error(
-            "[Admin Poll DELETE] Sondage :",
+            "[Admin Poll DELETE]",
             error
         );
 
@@ -1652,39 +1556,15 @@ async function handleDelete(
                     false,
 
                 error:
+                    "Impossible de réinitialiser le sondage.",
+
+                details:
                     getSupabaseErrorMessage(
                         error
                     )
 
             });
-
-
-        return;
     }
-
-
-    /* =====================================================
-       RÉPONSE
-    ====================================================== */
-
-    response
-        .status(200)
-        .json({
-
-            success:
-                true,
-
-            message:
-                "Le sondage et tous ses votes ont été réinitialisés.",
-
-            poll:
-                formatPoll(
-                    data,
-                    generatedOptions,
-                    []
-                )
-
-        });
 }
 
 
@@ -1720,7 +1600,7 @@ export default async function handler(
 
 
     /* =====================================================
-       AUTHENTIFICATION ADMIN
+       AUTH
     ====================================================== */
 
     const admin =
@@ -1742,110 +1622,59 @@ export default async function handler(
        ROUTAGE
     ====================================================== */
 
-    try {
-
-        switch (
-            request.method
-        ) {
-
-            /* =================================================
-               GET
-            ================================================= */
-
-            case "GET":
-
-                await handleGet(
-                    response
-                );
-
-                return;
-
-
-            /* =================================================
-               PUT
-            ================================================= */
-
-            case "PUT":
-
-                await handlePut(
-                    request,
-                    response
-                );
-
-                return;
-
-
-            /* =================================================
-               DELETE
-            ================================================= */
-
-            case "DELETE":
-
-                await handleDelete(
-                    response
-                );
-
-                return;
-
-
-            /* =================================================
-               AUTRE
-            ================================================= */
-
-            default:
-
-                response.setHeader(
-                    "Allow",
-                    "GET, PUT, DELETE"
-                );
-
-
-                response
-                    .status(405)
-                    .json({
-
-                        success:
-                            false,
-
-                        error:
-                            "Méthode non autorisée."
-
-                    });
-
-
-                return;
-        }
-
-
-    } catch (
-        error
+    switch (
+        request.method
     ) {
 
-        console.error(
-            "[Admin Poll] Erreur inattendue :",
-            error
-        );
+        case "GET":
 
-
-        if (
-            response.headersSent
-        ) {
+            await handleGet(
+                response
+            );
 
             return;
-        }
 
 
-        response
-            .status(500)
-            .json({
+        case "PUT":
 
-                success:
-                    false,
+            await handlePut(
+                request,
+                response
+            );
 
-                error:
-                    error?.message ||
-                    "Erreur interne de l'API sondage."
+            return;
 
-            });
+
+        case "DELETE":
+
+            await handleDelete(
+                response
+            );
+
+            return;
+
+
+        default:
+
+            response.setHeader(
+                "Allow",
+                "GET, PUT, DELETE"
+            );
+
+
+            response
+                .status(405)
+                .json({
+
+                    success:
+                        false,
+
+                    error:
+                        "Méthode non autorisée."
+
+                });
+
+
+            return;
     }
 }

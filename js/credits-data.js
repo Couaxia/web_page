@@ -67,20 +67,6 @@ document.addEventListener(
            NORMALISATION
         ====================================================== */
 
-        /**
-         * Transforme une valeur en tableau.
-         *
-         * Accepte :
-         *
-         * ["couaxia", "fanart"]
-         *
-         * "couaxia, fanart"
-         *
-         * "couaxia|fanart"
-         *
-         * @param {unknown} value
-         * @returns {string[]}
-         */
         function normalizeArray(
             value
         ) {
@@ -154,12 +140,6 @@ document.addEventListener(
         }
 
 
-        /**
-         * Normalise les tags.
-         *
-         * @param {unknown} value
-         * @returns {string[]}
-         */
         function normalizeTags(
             value
         ) {
@@ -174,12 +154,6 @@ document.addEventListener(
         }
 
 
-        /**
-         * Normalise les messages mascotte.
-         *
-         * @param {unknown} value
-         * @returns {string[]}
-         */
         function normalizeMessages(
             value
         ) {
@@ -190,13 +164,6 @@ document.addEventListener(
         }
 
 
-        /**
-         * Transforme une liste de messages
-         * en attribut data-messages.
-         *
-         * @param {unknown} messages
-         * @returns {string}
-         */
         function messagesToDataset(
             messages
         ) {
@@ -210,13 +177,6 @@ document.addEventListener(
         }
 
 
-        /**
-         * Normalise un booléen.
-         *
-         * @param {unknown} value
-         * @param {boolean} defaultValue
-         * @returns {boolean}
-         */
         function normalizeBoolean(
             value,
             defaultValue = false
@@ -289,13 +249,6 @@ document.addEventListener(
            FORMAT DES DONNÉES
         ====================================================== */
 
-        /**
-         * Transforme une ligne Supabase
-         * en objet utilisable par le frontend.
-         *
-         * @param {object} artwork
-         * @returns {object}
-         */
         function normalizeArtwork(
             artwork
         ) {
@@ -431,12 +384,6 @@ document.addEventListener(
            MÉDIA
         ====================================================== */
 
-        /**
-         * Crée une balise image.
-         *
-         * @param {object} artwork
-         * @returns {HTMLImageElement}
-         */
         function createImageMedia(
             artwork
         ) {
@@ -475,12 +422,6 @@ document.addEventListener(
         }
 
 
-        /**
-         * Crée une vidéo.
-         *
-         * @param {object} artwork
-         * @returns {HTMLVideoElement}
-         */
         function createVideoMedia(
             artwork
         ) {
@@ -491,10 +432,17 @@ document.addEventListener(
                 );
 
 
-            video.autoplay =
-                true;
+            /* =============================================
+               AUTOPLAY EN SILENCIEUX
+            ============================================== */
 
             video.muted =
+                true;
+
+            video.defaultMuted =
+                true;
+
+            video.autoplay =
                 true;
 
             video.loop =
@@ -503,15 +451,54 @@ document.addEventListener(
             video.playsInline =
                 true;
 
+            video.controls =
+                true;
+
             video.preload =
                 "metadata";
 
+
+            /*
+             * Attributs HTML explicites.
+             * Certains navigateurs sont plus fiables
+             * lorsque les attributs existent également
+             * dans le DOM.
+             */
+
+            video.setAttribute(
+                "muted",
+                ""
+            );
+
+            video.setAttribute(
+                "autoplay",
+                ""
+            );
+
+            video.setAttribute(
+                "loop",
+                ""
+            );
+
+            video.setAttribute(
+                "playsinline",
+                ""
+            );
+
+            video.setAttribute(
+                "controls",
+                ""
+            );
 
             video.setAttribute(
                 "draggable",
                 "false"
             );
 
+
+            /* =============================================
+               SOURCE
+            ============================================== */
 
             const videoSource =
                 document.createElement(
@@ -523,8 +510,140 @@ document.addEventListener(
                 artwork.imageUrl;
 
 
+            const normalizedUrl =
+                String(
+                    artwork.imageUrl ||
+                    ""
+                )
+                    .toLowerCase();
+
+
+            if (
+                normalizedUrl.includes(
+                    ".webm"
+                )
+            ) {
+
+                videoSource.type =
+                    "video/webm";
+
+            } else if (
+                normalizedUrl.includes(
+                    ".mp4"
+                )
+            ) {
+
+                videoSource.type =
+                    "video/mp4";
+
+            } else if (
+                normalizedUrl.includes(
+                    ".ogg"
+                ) ||
+                normalizedUrl.includes(
+                    ".ogv"
+                )
+            ) {
+
+                videoSource.type =
+                    "video/ogg";
+            }
+
+
             video.appendChild(
                 videoSource
+            );
+
+
+            /* =============================================
+               SÉCURITÉ SON AU DÉMARRAGE
+            ============================================== */
+
+            /*
+             * La vidéo peut être en autoplay,
+             * mais elle reste forcément muette
+             * lors de son premier lancement.
+             */
+
+            video.dataset.userUnmuted =
+                "false";
+
+
+            video.addEventListener(
+                "play",
+                () => {
+
+                    if (
+                        video.dataset.userUnmuted !==
+                        "true"
+                    ) {
+
+                        video.muted =
+                            true;
+                    }
+                }
+            );
+
+
+            /* =============================================
+               DÉTECTION D'UNE ACTION UTILISATEUR
+            ============================================== */
+
+            /*
+             * Si la personne utilise les contrôles
+             * et active volontairement le son,
+             * on ne le recoupe plus ensuite.
+             */
+
+            video.addEventListener(
+                "volumechange",
+                () => {
+
+                    if (
+                        !video.muted &&
+                        video.volume >
+                            0
+                    ) {
+
+                        video.dataset.userUnmuted =
+                            "true";
+                    }
+                }
+            );
+
+
+            /* =============================================
+               TENTATIVE AUTOPLAY
+            ============================================== */
+
+            /*
+             * Normalement muted + autoplay est accepté
+             * par les navigateurs modernes.
+             *
+             * En cas de refus, la vidéo reste simplement
+             * disponible avec ses contrôles.
+             */
+
+            video.addEventListener(
+                "loadedmetadata",
+                () => {
+
+                    video
+                        .play()
+                        .catch(
+                            () => {
+
+                                /*
+                                 * Autoplay refusé :
+                                 * les contrôles restent disponibles.
+                                 */
+                            }
+                        );
+                },
+                {
+                    once:
+                        true
+                }
             );
 
 
@@ -532,14 +651,6 @@ document.addEventListener(
         }
 
 
-        /**
-         * Choisit le média adapté.
-         *
-         * GIF utilise naturellement <img>.
-         *
-         * @param {object} artwork
-         * @returns {HTMLElement}
-         */
         function createMedia(
             artwork
         ) {
@@ -763,14 +874,6 @@ document.addEventListener(
            CARTE
         ====================================================== */
 
-        /**
-         * Crée une .artist-card identique
-         * à celles que tu avais autrefois
-         * directement dans credits.html.
-         *
-         * @param {object} rawArtwork
-         * @returns {HTMLElement|null}
-         */
         function createArtworkCard(
             rawArtwork
         ) {
@@ -780,10 +883,6 @@ document.addEventListener(
                     rawArtwork
                 );
 
-
-            /*
-             * Une œuvre incomplète n'est pas affichée.
-             */
 
             if (
                 !artwork.artId ||
@@ -963,15 +1062,6 @@ document.addEventListener(
            ÉVÉNEMENT — GALERIE CHARGÉE
         ====================================================== */
 
-        /**
-         * Informe les autres scripts que
-         * les cartes existent maintenant dans le DOM.
-         *
-         * Très important puisque les œuvres
-         * viennent désormais de Supabase.
-         *
-         * @param {object[]} artworks
-         */
         function dispatchCreditsLoaded(
             artworks
         ) {
@@ -1188,10 +1278,7 @@ document.addEventListener(
 
                     /*
                      * Sécurité supplémentaire :
-                     *
-                     * même si /api/gallery filtre déjà
-                     * visible=true, on refait la vérification
-                     * côté navigateur.
+                     * invisible = pas affiché.
                      */
 
                     if (
@@ -1257,13 +1344,6 @@ document.addEventListener(
                 );
 
 
-                /*
-                 * IMPORTANT :
-                 *
-                 * les autres scripts peuvent maintenant
-                 * distribuer / filtrer / animer les cartes.
-                 */
-
                 dispatchCreditsLoaded(
                     loadedArtworks
                 );
@@ -1287,11 +1367,6 @@ document.addEventListener(
                     "Impossible de charger les illustrations."
                 );
 
-
-                /*
-                 * On informe quand même les autres scripts
-                 * que le chargement est terminé.
-                 */
 
                 dispatchCreditsLoaded(
                     []
@@ -1317,12 +1392,6 @@ document.addEventListener(
         /* =====================================================
            API PUBLIQUE JS
         ====================================================== */
-
-        /*
-         * Un autre script peut utiliser :
-         *
-         * window.CouaxiaCreditsData.reload();
-         */
 
         window.CouaxiaCreditsData = {
 

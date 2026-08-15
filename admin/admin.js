@@ -436,18 +436,26 @@ document.addEventListener(
                 "admin-poll-status"
             );
 
+        const pollSearchInput =
+            document.getElementById(
+                "admin-poll-search"
+            );
+
+        const pollGamesList =
+            document.getElementById(
+                "admin-poll-games-list"
+            );
+
+        const pollSelectedCount =
+            document.getElementById(
+                "admin-poll-selected-count"
+            );
+
         const pollOptionsList =
             document.getElementById(
                 "admin-poll-options-list"
             );
 
-        /*
-         * Ancien bouton d'ajout manuel d'option.
-         *
-         * Il n'est plus utilisé : les options sont
-         * générées automatiquement depuis les jeux
-         * avec pollEnabled = true.
-         */
         const pollAddOptionButton =
             document.getElementById(
                 "admin-poll-add-option"
@@ -458,9 +466,19 @@ document.addEventListener(
                 "admin-poll-reset"
             );
 
+        const pollSubmitButton =
+            document.getElementById(
+                "admin-poll-submit"
+            );
+
         const pollPreview =
             document.getElementById(
                 "admin-poll-preview"
+            );
+
+        const pollPreviewStatus =
+            document.getElementById(
+                "admin-poll-preview-status"
             );
 
         const pollPreviewQuestion =
@@ -496,6 +514,18 @@ document.addEventListener(
 
         let poll =
             null;
+
+        /*
+         * IDs Supabase des jeux sélectionnés
+         * pour le sondage ACTUEL.
+         *
+         * Cela est différent de pollEnabled :
+         *
+         * pollEnabled = jeu éligible
+         * selectedPollGameIds = jeu choisi pour ce sondage
+         */
+        let selectedPollGameIds =
+            new Set();
 
         let currentAdminUser =
             null;
@@ -1482,9 +1512,7 @@ document.addEventListener(
                 "—"
             );
         }
-
-
-        /* =====================================================
+                /* =====================================================
            JEUX — AFFICHAGE
         ====================================================== */
 
@@ -1558,8 +1586,8 @@ document.addEventListener(
                         </h3>
 
                         <p>
-                            Ajoute ton premier jeu depuis
-                            l'administration.
+                            Aucun jeu ne correspond
+                            à ta recherche.
                         </p>
 
                     </div>
@@ -1625,7 +1653,9 @@ document.addEventListener(
                                     ? `
                                         <div class="admin-game-playlist">
 
-                                            <span class="admin-game-playlist-label">
+                                            <span
+                                                class="admin-game-playlist-label"
+                                            >
                                                 ▶️ Playlist YouTube
                                             </span>
 
@@ -1643,13 +1673,19 @@ document.addEventListener(
                                         </div>
                                     `
                                     : `
-                                        <div class="admin-game-playlist is-empty">
+                                        <div
+                                            class="admin-game-playlist is-empty"
+                                        >
 
-                                            <span class="admin-game-playlist-label">
+                                            <span
+                                                class="admin-game-playlist-label"
+                                            >
                                                 ▶️ Playlist YouTube
                                             </span>
 
-                                            <span class="admin-game-playlist-empty">
+                                            <span
+                                                class="admin-game-playlist-empty"
+                                            >
                                                 Non renseignée
                                             </span>
 
@@ -1657,11 +1693,23 @@ document.addEventListener(
                                     `;
 
 
+                            /*
+                             * pollEnabled signifie uniquement :
+                             *
+                             * le jeu PEUT être choisi
+                             * dans un sondage.
+                             *
+                             * Il ne signifie plus que le jeu
+                             * participe automatiquement
+                             * au sondage actuel.
+                             */
                             const pollBadge =
                                 game.pollEnabled
                                     ? `
-                                        <span class="admin-game-poll-badge">
-                                            🗳️ Participe au sondage
+                                        <span
+                                            class="admin-game-poll-badge"
+                                        >
+                                            🗳️ Éligible au sondage
                                         </span>
                                     `
                                     : "";
@@ -1678,6 +1726,7 @@ document.addEventListener(
                                     <div class="admin-list-thumb">
                                         ${cover}
                                     </div>
+
 
                                     <div class="admin-list-content">
 
@@ -1704,6 +1753,7 @@ document.addEventListener(
 
                                             </div>
 
+
                                             <div class="admin-list-actions">
 
                                                 <button
@@ -1715,6 +1765,7 @@ document.addEventListener(
                                                 >
                                                     ✏️ Modifier
                                                 </button>
+
 
                                                 <button
                                                     type="button"
@@ -1730,9 +1781,11 @@ document.addEventListener(
 
                                         </div>
 
+
                                         <div class="admin-item-tags">
                                             ${tags}
                                         </div>
+
 
                                         ${playlist}
 
@@ -1746,6 +1799,10 @@ document.addEventListener(
                         ""
                     );
 
+
+            /* =================================================
+               MODIFICATION D'UN JEU
+            ================================================= */
 
             gamesList
                 .querySelectorAll(
@@ -1781,6 +1838,10 @@ document.addEventListener(
                 );
 
 
+            /* =================================================
+               SUPPRESSION D'UN JEU
+            ================================================= */
+
             gamesList
                 .querySelectorAll(
                     "[data-delete-game]"
@@ -1802,6 +1863,10 @@ document.addEventListener(
                 );
         }
 
+
+        /* =====================================================
+           JEUX — RECHERCHE
+        ====================================================== */
 
         if (
             gamesSearch
@@ -1912,8 +1977,10 @@ document.addEventListener(
                                 "no-store",
 
                             headers: {
+
                                 Accept:
                                     "application/json"
+
                             }
                         }
                     );
@@ -1966,7 +2033,10 @@ document.addEventListener(
                             game.boxArtUrl;
 
                         twitchPreviewCover.alt =
-                            `Jaquette de ${game.name || gameName}`;
+                            `Jaquette de ${
+                                game.name ||
+                                gameName
+                            }`;
 
                     } else {
 
@@ -2010,7 +2080,10 @@ document.addEventListener(
 
 
                 showToast(
-                    `Jeu trouvé : ${game.name || gameName}`,
+                    `Jeu trouvé : ${
+                        game.name ||
+                        gameName
+                    }`,
                     "success"
                 );
 
@@ -2118,10 +2191,37 @@ document.addEventListener(
 
 
             if (
+                tagsInput
+            ) {
+
+                tagsInput.value =
+                    "";
+            }
+
+
+            if (
+                descriptionInput
+            ) {
+
+                descriptionInput.value =
+                    "";
+            }
+
+
+            if (
                 ratingInput
             ) {
 
                 ratingInput.value =
+                    "";
+            }
+
+
+            if (
+                youtubeInput
+            ) {
+
+                youtubeInput.value =
                     "";
             }
 
@@ -2308,6 +2408,10 @@ document.addEventListener(
             }
 
 
+            /* =================================================
+               APERÇU TWITCH EXISTANT
+            ================================================= */
+
             if (
                 twitchPreviewCover
             ) {
@@ -2327,6 +2431,9 @@ document.addEventListener(
                     twitchPreviewCover.removeAttribute(
                         "src"
                     );
+
+                    twitchPreviewCover.alt =
+                        "";
                 }
             }
 
@@ -2365,6 +2472,10 @@ document.addEventListener(
         }
 
 
+        /* =====================================================
+           JEUX — OUVRIR LE FORMULAIRE
+        ====================================================== */
+
         if (
             newGameButton
         ) {
@@ -2380,6 +2491,10 @@ document.addEventListener(
             );
         }
 
+
+        /* =====================================================
+           JEUX — ANNULER
+        ====================================================== */
 
         if (
             cancelGameButton
@@ -2467,6 +2582,13 @@ document.addEventListener(
                                 youtubeInput?.value
                             ),
 
+                        /*
+                         * Rend le jeu disponible
+                         * dans la liste du sondage.
+                         *
+                         * Cela ne le sélectionne PAS
+                         * automatiquement.
+                         */
                         pollEnabled:
                             Boolean(
                                 pollInput?.checked
@@ -2490,6 +2612,10 @@ document.addEventListener(
 
                     try {
 
+                        /* =========================================
+                           MODIFICATION
+                        ========================================== */
+
                         if (
                             existingId
                         ) {
@@ -2501,10 +2627,12 @@ document.addEventListener(
                                         "PUT",
 
                                     body: {
+
                                         id:
                                             existingId,
 
                                         ...payload
+
                                     }
                                 }
                             );
@@ -2514,6 +2642,11 @@ document.addEventListener(
                                 `"${gameName}" a bien été modifié.`,
                                 "success"
                             );
+
+
+                        /* =========================================
+                           AJOUT
+                        ========================================== */
 
                         } else {
 
@@ -2538,13 +2671,14 @@ document.addEventListener(
 
                         closeGameForm();
 
+
                         /*
-                         * IMPORTANT :
-                         * on recharge les jeux ET le sondage.
+                         * Recharge les jeux.
                          *
-                         * Ainsi si pollEnabled vient d'être
-                         * coché ou décoché, la liste du sondage
-                         * se met immédiatement à jour.
+                         * Si "Peut participer au sondage"
+                         * a été modifié, le sondage doit également
+                         * être rechargé afin de mettre à jour
+                         * la liste des jeux disponibles.
                          */
                         await loadGames();
 
@@ -2655,10 +2789,24 @@ document.addEventListener(
                             "DELETE",
 
                         body: {
+
                             id:
                                 normalizedId
+
                         }
                     }
+                );
+
+
+                /*
+                 * Si ce jeu faisait partie
+                 * de la sélection locale du sondage,
+                 * on le retire également.
+                 */
+                selectedPollGameIds.delete(
+                    String(
+                        normalizedId
+                    )
                 );
 
 
@@ -2670,11 +2818,6 @@ document.addEventListener(
 
                 await loadGames();
 
-                /*
-                 * Si le jeu participait au sondage,
-                 * sa suppression doit aussi actualiser
-                 * les options du sondage.
-                 */
                 await loadPoll();
 
 
@@ -2987,6 +3130,10 @@ document.addEventListener(
         }
 
 
+        /* =====================================================
+           ARTWORKS — AFFICHAGE
+        ====================================================== */
+
         function renderArtworks() {
 
             if (
@@ -3257,6 +3404,7 @@ document.addEventListener(
                                                 )}
                                             </span>
 
+
                                             <span
                                                 class="admin-artwork-status"
                                             >
@@ -3264,6 +3412,7 @@ document.addEventListener(
                                                     visibilityLabel
                                                 )}
                                             </span>
+
 
                                             ${sensitiveLabel}
 
@@ -3421,6 +3570,10 @@ document.addEventListener(
         }
 
 
+        /* =====================================================
+           ARTWORKS — RECHERCHE
+        ====================================================== */
+
         if (
             artworksSearch
         ) {
@@ -3431,6 +3584,10 @@ document.addEventListener(
             );
         }
 
+
+        /* =====================================================
+           ARTWORKS — FILTRE
+        ====================================================== */
 
         if (
             artworksFilter
@@ -3547,12 +3704,14 @@ document.addEventListener(
                     artworkPreviewVideo.hidden =
                         false;
 
-                    artworkPreviewVideo.play()
+
+                    artworkPreviewVideo
+                        .play()
                         .catch(
                             () => {
 
                                 /*
-                                 * autoplay non disponible
+                                 * Autoplay non disponible.
                                  */
                             }
                         );
@@ -3646,6 +3805,10 @@ document.addEventListener(
         }
 
 
+        /* =====================================================
+           ARTWORKS — VALIDATION FICHIER
+        ====================================================== */
+
         function validateArtworkFile(
             file
         ) {
@@ -3690,6 +3853,10 @@ document.addEventListener(
             return true;
         }
 
+
+        /* =====================================================
+           ARTWORKS — SÉLECTION FICHIER
+        ====================================================== */
 
         function selectArtworkFile(
             file
@@ -3781,7 +3948,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           INPUT FICHIER
+           ARTWORKS — INPUT FICHIER
         ====================================================== */
 
         if (
@@ -3811,7 +3978,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           DROPZONE
+           ARTWORKS — DROPZONE
         ====================================================== */
 
         if (
@@ -3833,6 +4000,25 @@ document.addEventListener(
 
 
                     artworkFileInput?.click();
+                }
+            );
+
+
+            artworkDropzone.addEventListener(
+                "keydown",
+                event => {
+
+                    if (
+                        event.key ===
+                            "Enter" ||
+                        event.key ===
+                            " "
+                    ) {
+
+                        event.preventDefault();
+
+                        artworkFileInput?.click();
+                    }
                 }
             );
 
@@ -3893,7 +4079,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           RETIRER MÉDIA
+           ARTWORKS — RETIRER MÉDIA
         ====================================================== */
 
         if (
@@ -4093,6 +4279,42 @@ document.addEventListener(
 
 
             if (
+                artworkArtistInput
+            ) {
+
+                artworkArtistInput.value =
+                    "";
+            }
+
+
+            if (
+                artworkRoleInput
+            ) {
+
+                artworkRoleInput.value =
+                    "";
+            }
+
+
+            if (
+                artworkImageUrlInput
+            ) {
+
+                artworkImageUrlInput.value =
+                    "";
+            }
+
+
+            if (
+                artworkImageAltInput
+            ) {
+
+                artworkImageAltInput.value =
+                    "";
+            }
+
+
+            if (
                 artworkMediaTypeInput
             ) {
 
@@ -4102,11 +4324,56 @@ document.addEventListener(
 
 
             if (
+                artworkTagsInput
+            ) {
+
+                artworkTagsInput.value =
+                    "";
+            }
+
+
+            if (
+                artworkDescriptionInput
+            ) {
+
+                artworkDescriptionInput.value =
+                    "";
+            }
+
+
+            if (
+                artworkImageMessagesInput
+            ) {
+
+                artworkImageMessagesInput.value =
+                    "";
+            }
+
+
+            if (
+                artworkArtistUrlInput
+            ) {
+
+                artworkArtistUrlInput.value =
+                    "";
+            }
+
+
+            if (
                 artworkButtonTextInput
             ) {
 
                 artworkButtonTextInput.value =
                     "Voir son profil";
+            }
+
+
+            if (
+                artworkButtonMessagesInput
+            ) {
+
+                artworkButtonMessagesInput.value =
+                    "";
             }
 
 
@@ -4198,6 +4465,10 @@ document.addEventListener(
             }
         }
 
+
+        /* =====================================================
+           ARTWORKS — REMPLIR FORMULAIRE
+        ====================================================== */
 
         function fillArtworkForm(
             artwork
@@ -4413,9 +4684,31 @@ document.addEventListener(
                     artwork.imageUrl,
                     artwork.mediaType
                 );
+
+
+                if (
+                    artworkFileName
+                ) {
+
+                    artworkFileName.textContent =
+                        "Média actuel";
+                }
+
+
+                if (
+                    artworkFileSize
+                ) {
+
+                    artworkFileSize.textContent =
+                        "Déjà enregistré";
+                }
             }
         }
 
+
+        /* =====================================================
+           ARTWORKS — NOUVELLE ILLUSTRATION
+        ====================================================== */
 
         if (
             newArtworkButton
@@ -4432,6 +4725,10 @@ document.addEventListener(
             );
         }
 
+
+        /* =====================================================
+           ARTWORKS — ANNULER
+        ====================================================== */
 
         if (
             artworkCancelButton
@@ -4456,6 +4753,10 @@ document.addEventListener(
                 "input",
                 () => {
 
+                    /*
+                     * Si un fichier local vient
+                     * d'être sélectionné, il reste prioritaire.
+                     */
                     if (
                         selectedArtworkFile
                     ) {
@@ -4485,6 +4786,10 @@ document.addEventListener(
             );
         }
 
+
+        /* =====================================================
+           ARTWORKS — TYPE MÉDIA
+        ====================================================== */
 
         if (
             artworkMediaTypeInput
@@ -4570,6 +4875,10 @@ document.addEventListener(
 
                     try {
 
+                        /* =========================================
+                           MÉDIA
+                        ========================================== */
+
                         let imageUrl =
                             normalizeText(
                                 artworkImageUrlInput?.value
@@ -4584,8 +4893,8 @@ document.addEventListener(
 
 
                         /*
-                         * Si un nouveau fichier a été sélectionné,
-                         * on commence par l'envoyer au serveur.
+                         * Nouveau fichier sélectionné :
+                         * upload avant l'enregistrement.
                          */
                         if (
                             selectedArtworkFile
@@ -4602,6 +4911,24 @@ document.addEventListener(
                                 upload.mediaType;
                         }
 
+
+                        /* =========================================
+                           VALIDATION MÉDIA
+                        ========================================== */
+
+                        if (
+                            !imageUrl
+                        ) {
+
+                            throw new Error(
+                                "Ajoute une image, un GIF ou une vidéo."
+                            );
+                        }
+
+
+                        /* =========================================
+                           PAYLOAD
+                        ========================================== */
 
                         const payload = {
 
@@ -4681,6 +5008,10 @@ document.addEventListener(
                         };
 
 
+                        /* =========================================
+                           MODIFICATION
+                        ========================================== */
+
                         if (
                             existingId
                         ) {
@@ -4692,10 +5023,12 @@ document.addEventListener(
                                         "PUT",
 
                                     body: {
+
                                         id:
                                             existingId,
 
                                         ...payload
+
                                     }
                                 }
                             );
@@ -4705,6 +5038,11 @@ document.addEventListener(
                                 `Illustration de "${artist}" modifiée.`,
                                 "success"
                             );
+
+
+                        /* =========================================
+                           AJOUT
+                        ========================================== */
 
                         } else {
 
@@ -4836,8 +5174,10 @@ document.addEventListener(
                             "DELETE",
 
                         body: {
+
                             id:
                                 normalizedId
+
                         }
                     }
                 );
@@ -4869,9 +5209,7 @@ document.addEventListener(
                 );
             }
         }
-
-
-        /* =====================================================
+                /* =====================================================
            SONDAGE — JEUX ÉLIGIBLES
         ====================================================== */
 
@@ -4908,7 +5246,7 @@ document.addEventListener(
 
 
         /* =====================================================
-           SONDAGE — NORMALISATION
+           SONDAGE — NORMALISATION OPTION
         ====================================================== */
 
         function normalizePollOption(
@@ -4941,11 +5279,27 @@ document.addEventListener(
                     Number(
                         option?.votes ||
                         0
+                    ),
+
+                boxArtUrl:
+                    normalizeText(
+                        option?.boxArtUrl ??
+                        option?.box_art_url
+                    ),
+
+                gameStatus:
+                    normalizeText(
+                        option?.gameStatus ??
+                        option?.game_status
                     )
 
             };
         }
 
+
+        /* =====================================================
+           SONDAGE — NORMALISATION
+        ====================================================== */
 
         function normalizePoll(
             value
@@ -4959,7 +5313,49 @@ document.addEventListener(
             }
 
 
+            const options =
+                Array.isArray(
+                    value?.options
+                )
+                    ? value.options.map(
+                        normalizePollOption
+                    )
+                    : [];
+
+
+            const selectedGameIds =
+                Array.isArray(
+                    value?.selectedGameIds
+                )
+                    ? value.selectedGameIds
+                        .map(
+                            id =>
+                                normalizeText(
+                                    id
+                                )
+                        )
+                        .filter(
+                            Boolean
+                        )
+                    : options
+                        .map(
+                            option =>
+                                normalizeText(
+                                    option.gameId ||
+                                    option.id
+                                )
+                        )
+                        .filter(
+                            Boolean
+                        );
+
+
             return {
+
+                id:
+                    normalizeText(
+                        value?.id
+                    ),
 
                 question:
                     normalizeText(
@@ -4973,23 +5369,65 @@ document.addEventListener(
                     ) ||
                     "closed",
 
-                options:
-                    Array.isArray(
-                        value?.options
-                    )
-                        ? value.options.map(
-                            normalizePollOption
-                        )
-                        : [],
+                options,
+
+                selectedGameIds,
 
                 totalVotes:
                     Number(
                         value?.totalVotes ??
                         value?.total_votes ??
                         0
+                    ),
+
+                eligibleGamesCount:
+                    Number(
+                        value?.eligibleGamesCount ??
+                        value?.eligible_games_count ??
+                        0
+                    ),
+
+                selectedGamesCount:
+                    Number(
+                        value?.selectedGamesCount ??
+                        value?.selected_games_count ??
+                        selectedGameIds.length
                     )
 
             };
+        }
+
+
+        /* =====================================================
+           SONDAGE — RÉCUPÉRER VOTES D'UN JEU
+        ====================================================== */
+
+        function getPollVotesForGame(
+            gameId
+        ) {
+
+            const normalizedId =
+                String(
+                    gameId ||
+                    ""
+                );
+
+
+            const option =
+                poll?.options?.find(
+                    currentOption =>
+                        String(
+                            currentOption.gameId ||
+                            currentOption.id
+                        ) ===
+                        normalizedId
+                );
+
+
+            return Number(
+                option?.votes ||
+                0
+            );
         }
 
 
@@ -5018,6 +5456,50 @@ document.addEventListener(
                     );
 
 
+                /*
+                 * IMPORTANT :
+                 *
+                 * La sélection renvoyée par Supabase
+                 * devient la sélection locale actuelle.
+                 */
+                selectedPollGameIds =
+                    new Set(
+                        (
+                            poll?.selectedGameIds ||
+                            []
+                        )
+                            .map(
+                                id =>
+                                    String(
+                                        id
+                                    )
+                            )
+                            .filter(
+                                Boolean
+                            )
+                    );
+
+
+                if (
+                    pollQuestionInput
+                ) {
+
+                    pollQuestionInput.value =
+                        poll?.question ||
+                        "Quel jeu voulez-vous voir en stream ?";
+                }
+
+
+                if (
+                    pollStatusInput
+                ) {
+
+                    pollStatusInput.value =
+                        poll?.status ||
+                        "closed";
+                }
+
+
                 renderPoll();
 
                 updateDashboardStats();
@@ -5037,6 +5519,10 @@ document.addEventListener(
                     null;
 
 
+                selectedPollGameIds =
+                    new Set();
+
+
                 renderPoll();
 
                 updateDashboardStats();
@@ -5052,68 +5538,588 @@ document.addEventListener(
 
 
         /* =====================================================
-           SONDAGE — CONSTRUCTION AUTOMATIQUE DES OPTIONS
+           SONDAGE — JEUX SÉLECTIONNÉS
         ====================================================== */
 
-        function buildAutomaticPollOptions() {
+        function getSelectedPollGames() {
 
             const eligibleGames =
                 getPollEligibleGames();
 
 
-            return eligibleGames.map(
+            return eligibleGames.filter(
+                game =>
+                    selectedPollGameIds.has(
+                        String(
+                            game.id
+                        )
+                    )
+            );
+        }
+
+
+        /* =====================================================
+           SONDAGE — COMPTEUR
+        ====================================================== */
+
+        function updatePollSelectedCount() {
+
+            if (
+                !pollSelectedCount
+            ) {
+
+                return;
+            }
+
+
+            pollSelectedCount.textContent =
+                String(
+                    getSelectedPollGames()
+                        .length
+                );
+        }
+
+
+        /* =====================================================
+           SONDAGE — RECHERCHE
+        ====================================================== */
+
+        function getFilteredPollGames() {
+
+            const query =
+                normalizeText(
+                    pollSearchInput?.value
+                )
+                    .toLowerCase();
+
+
+            const eligibleGames =
+                getPollEligibleGames();
+
+
+            if (
+                !query
+            ) {
+
+                return eligibleGames;
+            }
+
+
+            return eligibleGames.filter(
                 game => {
 
-                    const existingOption =
-                        poll?.options?.find(
-                            option =>
-                                String(
-                                    option.gameId
-                                ) ===
-                                String(
-                                    game.id
-                                ) ||
-                                String(
-                                    option.id
-                                ) ===
-                                String(
-                                    game.id
-                                )
-                        );
-
-
-                    return {
-
-                        id:
-                            game.id,
-
-                        gameId:
-                            game.id,
-
-                        label:
+                    const haystack =
+                        [
                             game.name,
+                            game.status,
+                            ...(
+                                game.tags ||
+                                []
+                            )
+                        ]
+                            .join(
+                                " "
+                            )
+                            .toLowerCase();
 
-                        votes:
-                            Number(
-                                existingOption?.votes ||
-                                0
-                            ),
 
-                        boxArtUrl:
-                            game.boxArtUrl ||
-                            ""
-
-                    };
+                    return haystack.includes(
+                        query
+                    );
                 }
             );
         }
 
 
         /* =====================================================
-           SONDAGE — AFFICHAGE
+           SONDAGE — CARTE JEU DISPONIBLE
         ====================================================== */
 
-        function renderPoll() {
+        function createPollGameCard(
+            game
+        ) {
+
+            const gameId =
+                String(
+                    game.id
+                );
+
+
+            const isSelected =
+                selectedPollGameIds.has(
+                    gameId
+                );
+
+
+            const votes =
+                getPollVotesForGame(
+                    gameId
+                );
+
+
+            const coverHtml =
+                game.boxArtUrl
+                    ? `
+                        <img
+                            class="admin-poll-game-cover"
+                            src="${escapeHtml(
+                                game.boxArtUrl
+                            )}"
+                            alt=""
+                            loading="lazy"
+                            draggable="false"
+                        >
+                    `
+                    : `
+                        <span
+                            class="admin-poll-game-cover-placeholder"
+                            aria-hidden="true"
+                        >
+                            🎮
+                        </span>
+                    `;
+
+
+            return `
+                <label
+                    class="
+                        admin-poll-game-card
+                        ${isSelected
+                            ? "is-selected"
+                            : ""}
+                    "
+                    data-poll-game-card="${escapeHtml(
+                        gameId
+                    )}"
+                >
+
+                    <input
+                        class="admin-poll-game-checkbox"
+                        type="checkbox"
+                        value="${escapeHtml(
+                            gameId
+                        )}"
+                        ${isSelected
+                            ? "checked"
+                            : ""}
+                    >
+
+
+                    <span
+                        class="admin-poll-checkmark"
+                        aria-hidden="true"
+                    >
+                        ✓
+                    </span>
+
+
+                    ${coverHtml}
+
+
+                    <span class="admin-poll-game-info">
+
+                        <strong>
+                            ${escapeHtml(
+                                game.name ||
+                                "Jeu sans nom"
+                            )}
+                        </strong>
+
+
+                        <small>
+                            ${escapeHtml(
+                                getGameStatusLabel(
+                                    game.status
+                                )
+                            )}
+                        </small>
+
+                    </span>
+
+
+                    <span class="admin-poll-game-votes">
+
+                        ${votes}
+                        vote${
+                            votes ===
+                            1
+                                ? ""
+                                : "s"
+                        }
+
+                    </span>
+
+                </label>
+            `;
+        }
+
+
+        /* =====================================================
+           SONDAGE — LISTE DES JEUX DISPONIBLES
+        ====================================================== */
+
+        function renderPollGamesList() {
+
+            if (
+                !pollGamesList
+            ) {
+
+                return;
+            }
+
+
+            const eligibleGames =
+                getPollEligibleGames();
+
+
+            const filteredGames =
+                getFilteredPollGames();
+
+
+            /* =================================================
+               AUCUN JEU ÉLIGIBLE
+            ================================================= */
+
+            if (
+                eligibleGames.length ===
+                0
+            ) {
+
+                pollGamesList.innerHTML = `
+                    <div class="admin-empty-state">
+
+                        <span
+                            class="admin-empty-icon"
+                            aria-hidden="true"
+                        >
+                            🎮
+                        </span>
+
+                        <h3>
+                            Aucun jeu disponible
+                        </h3>
+
+                        <p>
+                            Active « Peut participer au sondage »
+                            sur au moins deux jeux.
+                        </p>
+
+                    </div>
+                `;
+
+
+                updatePollSelectedCount();
+
+                return;
+            }
+
+
+            /* =================================================
+               RECHERCHE SANS RÉSULTAT
+            ================================================= */
+
+            if (
+                filteredGames.length ===
+                0
+            ) {
+
+                pollGamesList.innerHTML = `
+                    <div class="admin-empty-state">
+
+                        <span
+                            class="admin-empty-icon"
+                            aria-hidden="true"
+                        >
+                            🔎
+                        </span>
+
+                        <h3>
+                            Aucun résultat
+                        </h3>
+
+                        <p>
+                            Aucun jeu ne correspond à ta recherche.
+                        </p>
+
+                    </div>
+                `;
+
+
+                updatePollSelectedCount();
+
+                return;
+            }
+
+
+            /* =================================================
+               CARTES
+            ================================================= */
+
+            pollGamesList.innerHTML =
+                filteredGames
+                    .map(
+                        createPollGameCard
+                    )
+                    .join(
+                        ""
+                    );
+
+
+            /* =================================================
+               CHECKBOXES
+            ================================================= */
+
+            pollGamesList
+                .querySelectorAll(
+                    ".admin-poll-game-checkbox"
+                )
+                .forEach(
+                    checkbox => {
+
+                        checkbox.addEventListener(
+                            "change",
+                            () => {
+
+                                const gameId =
+                                    String(
+                                        checkbox.value
+                                    );
+
+
+                                if (
+                                    checkbox.checked
+                                ) {
+
+                                    selectedPollGameIds.add(
+                                        gameId
+                                    );
+
+                                } else {
+
+                                    selectedPollGameIds.delete(
+                                        gameId
+                                    );
+                                }
+
+
+                                /*
+                                 * On réaffiche tout :
+                                 *
+                                 * - les cartes disponibles
+                                 * - les jeux sélectionnés
+                                 * - l'aperçu
+                                 * - le compteur
+                                 */
+                                renderPoll();
+
+                            }
+                        );
+                    }
+                );
+
+
+            updatePollSelectedCount();
+        }
+
+
+        /* =====================================================
+           SONDAGE — LISTE DES JEUX SÉLECTIONNÉS
+        ====================================================== */
+
+        function renderSelectedPollGames() {
+
+            if (
+                !pollOptionsList
+            ) {
+
+                return;
+            }
+
+
+            const selectedGames =
+                getSelectedPollGames();
+
+
+            if (
+                selectedGames.length ===
+                0
+            ) {
+
+                pollOptionsList.innerHTML = `
+                    <div class="admin-empty-state">
+
+                        <span
+                            class="admin-empty-icon"
+                            aria-hidden="true"
+                        >
+                            🗳️
+                        </span>
+
+                        <h3>
+                            Aucun jeu sélectionné
+                        </h3>
+
+                        <p>
+                            Coche au moins deux jeux
+                            dans la liste ci-dessus.
+                        </p>
+
+                    </div>
+                `;
+
+
+                return;
+            }
+
+
+            pollOptionsList.innerHTML =
+                selectedGames
+                    .map(
+                        game => {
+
+                            const gameId =
+                                String(
+                                    game.id
+                                );
+
+
+                            const votes =
+                                getPollVotesForGame(
+                                    gameId
+                                );
+
+
+                            const coverHtml =
+                                game.boxArtUrl
+                                    ? `
+                                        <img
+                                            class="admin-poll-selected-cover"
+                                            src="${escapeHtml(
+                                                game.boxArtUrl
+                                            )}"
+                                            alt=""
+                                            loading="lazy"
+                                            draggable="false"
+                                        >
+                                    `
+                                    : `
+                                        <span
+                                            class="admin-poll-selected-cover-placeholder"
+                                            aria-hidden="true"
+                                        >
+                                            🎮
+                                        </span>
+                                    `;
+
+
+                            return `
+                                <article
+                                    class="admin-poll-selected-game"
+                                    data-selected-poll-game="${escapeHtml(
+                                        gameId
+                                    )}"
+                                >
+
+                                    ${coverHtml}
+
+
+                                    <div
+                                        class="admin-poll-selected-game-info"
+                                    >
+
+                                        <strong>
+                                            ${escapeHtml(
+                                                game.name
+                                            )}
+                                        </strong>
+
+
+                                        <span>
+                                            ${escapeHtml(
+                                                getGameStatusLabel(
+                                                    game.status
+                                                )
+                                            )}
+                                        </span>
+
+
+                                        <small>
+                                            ${votes}
+                                            vote${
+                                                votes ===
+                                                1
+                                                    ? ""
+                                                    : "s"
+                                            }
+                                        </small>
+
+                                    </div>
+
+
+                                    <button
+                                        type="button"
+                                        class="admin-poll-remove-game"
+                                        data-remove-poll-game="${escapeHtml(
+                                            gameId
+                                        )}"
+                                        aria-label="Retirer ${escapeHtml(
+                                            game.name
+                                        )} du sondage"
+                                        title="Retirer du sondage"
+                                    >
+                                        ✕
+                                    </button>
+
+                                </article>
+                            `;
+                        }
+                    )
+                    .join(
+                        ""
+                    );
+
+
+            /* =================================================
+               BOUTONS RETIRER
+            ================================================= */
+
+            pollOptionsList
+                .querySelectorAll(
+                    "[data-remove-poll-game]"
+                )
+                .forEach(
+                    button => {
+
+                        button.addEventListener(
+                            "click",
+                            () => {
+
+                                const gameId =
+                                    String(
+                                        button.dataset
+                                            .removePollGame
+                                    );
+
+
+                                selectedPollGameIds.delete(
+                                    gameId
+                                );
+
+
+                                renderPoll();
+
+                            }
+                        );
+                    }
+                );
+        }
+
+
+        /* =====================================================
+           SONDAGE — APERÇU
+        ====================================================== */
+
+        function renderPollPreview() {
 
             const question =
                 normalizeText(
@@ -5129,144 +6135,17 @@ document.addEventListener(
                 normalizeText(
                     pollStatusInput?.value
                 ) ||
-                normalizeText(
-                    poll?.status
-                ) ||
                 "closed";
 
 
-            const automaticOptions =
-                buildAutomaticPollOptions();
+            const selectedGames =
+                getSelectedPollGames();
 
 
-            if (
-                pollQuestionInput &&
-                document.activeElement !==
-                    pollQuestionInput
-            ) {
+            /* =================================================
+               BLOC
+            ================================================= */
 
-                pollQuestionInput.value =
-                    question;
-            }
-
-
-            if (
-                pollStatusInput
-            ) {
-
-                pollStatusInput.value =
-                    status;
-            }
-
-
-            /*
-             * Liste dans le formulaire administrateur.
-             */
-            if (
-                pollOptionsList
-            ) {
-
-                if (
-                    automaticOptions.length ===
-                    0
-                ) {
-
-                    pollOptionsList.innerHTML = `
-                        <div class="admin-empty-state">
-
-                            <span
-                                class="admin-empty-icon"
-                                aria-hidden="true"
-                            >
-                                🗳️
-                            </span>
-
-                            <h3>
-                                Aucun jeu sélectionné
-                            </h3>
-
-                            <p>
-                                Coche « Participer au sondage »
-                                sur les jeux que tu souhaites
-                                proposer au vote.
-                            </p>
-
-                        </div>
-                    `;
-
-                } else {
-
-                    pollOptionsList.innerHTML =
-                        automaticOptions
-                            .map(
-                                option => `
-                                    <article
-                                        class="admin-poll-option"
-                                        data-poll-game-id="${escapeHtml(
-                                            option.gameId
-                                        )}"
-                                    >
-
-                                        ${
-                                            option.boxArtUrl
-                                                ? `
-                                                    <img
-                                                        src="${escapeHtml(
-                                                            option.boxArtUrl
-                                                        )}"
-                                                        alt=""
-                                                        loading="lazy"
-                                                        draggable="false"
-                                                    >
-                                                `
-                                                : `
-                                                    <span
-                                                        class="admin-poll-option-placeholder"
-                                                        aria-hidden="true"
-                                                    >
-                                                        🎮
-                                                    </span>
-                                                `
-                                        }
-
-                                        <div>
-
-                                            <strong>
-                                                ${escapeHtml(
-                                                    option.label
-                                                )}
-                                            </strong>
-
-                                            <span>
-                                                ${Number(
-                                                    option.votes ||
-                                                    0
-                                                )} vote${
-                                                    Number(
-                                                        option.votes ||
-                                                        0
-                                                    ) ===
-                                                    1
-                                                        ? ""
-                                                        : "s"
-                                                }
-                                            </span>
-
-                                        </div>
-
-                                    </article>
-                                `
-                            )
-                            .join(
-                                ""
-                            );
-                }
-            }
-
-
-            /*
-             * Aperçu du sondage.
-             */
             if (
                 pollPreview
             ) {
@@ -5275,6 +6154,40 @@ document.addEventListener(
                     false;
             }
 
+
+            /* =================================================
+               STATUT
+            ================================================= */
+
+            if (
+                pollPreviewStatus
+            ) {
+
+                pollPreviewStatus.textContent =
+                    status ===
+                        "open"
+                        ? "🟢 Ouvert"
+                        : "🔒 Fermé";
+
+
+                pollPreviewStatus.classList.toggle(
+                    "is-open",
+                    status ===
+                        "open"
+                );
+
+
+                pollPreviewStatus.classList.toggle(
+                    "is-closed",
+                    status !==
+                        "open"
+                );
+            }
+
+
+            /* =================================================
+               QUESTION
+            ================================================= */
 
             if (
                 pollPreviewQuestion
@@ -5286,115 +6199,192 @@ document.addEventListener(
 
 
             if (
-                pollPreviewOptions
+                !pollPreviewOptions
             ) {
 
-                if (
-                    automaticOptions.length ===
-                    0
-                ) {
-
-                    pollPreviewOptions.innerHTML = `
-                        <p class="admin-poll-preview-empty">
-                            Aucun jeu disponible pour le sondage.
-                        </p>
-                    `;
-
-                } else {
-
-                    const totalVotes =
-                        automaticOptions.reduce(
-                            (
-                                total,
-                                option
-                            ) =>
-                                total +
-                                Number(
-                                    option.votes ||
-                                    0
-                                ),
-                            0
-                        );
-
-
-                    pollPreviewOptions.innerHTML =
-                        automaticOptions
-                            .map(
-                                option => {
-
-                                    const votes =
-                                        Number(
-                                            option.votes ||
-                                            0
-                                        );
-
-
-                                    const percentage =
-                                        totalVotes >
-                                            0
-                                            ? Math.round(
-                                                (
-                                                    votes /
-                                                    totalVotes
-                                                ) *
-                                                100
-                                            )
-                                            : 0;
-
-
-                                    return `
-                                        <div
-                                            class="admin-poll-preview-option"
-                                        >
-
-                                            <div
-                                                class="admin-poll-preview-option-heading"
-                                            >
-
-                                                <strong>
-                                                    ${escapeHtml(
-                                                        option.label
-                                                    )}
-                                                </strong>
-
-                                                <span>
-                                                    ${votes} vote${
-                                                        votes ===
-                                                        1
-                                                            ? ""
-                                                            : "s"
-                                                    }
-                                                    ·
-                                                    ${percentage} %
-                                                </span>
-
-                                            </div>
-
-                                            <div
-                                                class="admin-poll-preview-bar"
-                                            >
-                                                <span
-                                                    style="width:${percentage}%"
-                                                ></span>
-                                            </div>
-
-                                        </div>
-                                    `;
-                                }
-                            )
-                            .join(
-                                ""
-                            );
-                }
+                return;
             }
 
+
+            /* =================================================
+               VIDE
+            ================================================= */
+
+            if (
+                selectedGames.length ===
+                0
+            ) {
+
+                pollPreviewOptions.innerHTML = `
+                    <div class="admin-empty-state">
+
+                        <span
+                            class="admin-empty-icon"
+                            aria-hidden="true"
+                        >
+                            🎮
+                        </span>
+
+                        <h3>
+                            Aucun jeu sélectionné
+                        </h3>
+
+                        <p>
+                            Les jeux du sondage apparaîtront ici.
+                        </p>
+
+                    </div>
+                `;
+
+
+                return;
+            }
+
+
+            /* =================================================
+               TOTAL VOTES
+            ================================================= */
+
+            const totalVotes =
+                selectedGames.reduce(
+                    (
+                        total,
+                        game
+                    ) =>
+                        total +
+                        getPollVotesForGame(
+                            game.id
+                        ),
+                    0
+                );
+
+
+            /* =================================================
+               OPTIONS
+            ================================================= */
+
+            pollPreviewOptions.innerHTML =
+                selectedGames
+                    .map(
+                        game => {
+
+                            const votes =
+                                getPollVotesForGame(
+                                    game.id
+                                );
+
+
+                            const percentage =
+                                totalVotes >
+                                    0
+                                    ? Math.round(
+                                        (
+                                            votes /
+                                            totalVotes
+                                        ) *
+                                        100
+                                    )
+                                    : 0;
+
+
+                            return `
+                                <div
+                                    class="admin-poll-preview-option"
+                                >
+
+                                    <div
+                                        class="admin-poll-preview-option-heading"
+                                    >
+
+                                        <strong>
+                                            ${escapeHtml(
+                                                game.name
+                                            )}
+                                        </strong>
+
+
+                                        <span>
+
+                                            ${votes}
+                                            vote${
+                                                votes ===
+                                                1
+                                                    ? ""
+                                                    : "s"
+                                            }
+
+                                            ·
+
+                                            ${percentage} %
+
+                                        </span>
+
+                                    </div>
+
+
+                                    <div
+                                        class="admin-poll-preview-bar"
+                                    >
+
+                                        <span
+                                            style="width:${percentage}%"
+                                        ></span>
+
+                                    </div>
+
+                                </div>
+                            `;
+                        }
+                    )
+                    .join(
+                        ""
+                    );
+        }
+
+
+        /* =====================================================
+           SONDAGE — AFFICHAGE GLOBAL
+        ====================================================== */
+
+        function renderPoll() {
+
+            renderPollGamesList();
+
+            renderSelectedPollGames();
+
+            renderPollPreview();
+
+            updatePollSelectedCount();
 
             updateDashboardStats();
         }
 
 
         /* =====================================================
-           SONDAGE — MISE À JOUR APERÇU
+           SONDAGE — RECHERCHE
+        ====================================================== */
+
+        if (
+            pollSearchInput
+        ) {
+
+            pollSearchInput.addEventListener(
+                "input",
+                () => {
+
+                    /*
+                     * La recherche ne change
+                     * jamais la sélection.
+                     */
+                    renderPollGamesList();
+
+                }
+            );
+        }
+
+
+        /* =====================================================
+           SONDAGE — QUESTION
         ====================================================== */
 
         if (
@@ -5403,10 +6393,18 @@ document.addEventListener(
 
             pollQuestionInput.addEventListener(
                 "input",
-                renderPoll
+                () => {
+
+                    renderPollPreview();
+
+                }
             );
         }
 
+
+        /* =====================================================
+           SONDAGE — STATUT
+        ====================================================== */
 
         if (
             pollStatusInput
@@ -5414,15 +6412,19 @@ document.addEventListener(
 
             pollStatusInput.addEventListener(
                 "change",
-                renderPoll
+                () => {
+
+                    renderPollPreview();
+
+                }
             );
         }
 
 
-        /*
-         * Le bouton manuel d'ajout d'option n'est plus utilisé.
-         * On le masque si l'ancien HTML est encore présent.
-         */
+        /* =====================================================
+           ANCIEN BOUTON AJOUT OPTION
+        ====================================================== */
+
         if (
             pollAddOptionButton
         ) {
@@ -5430,11 +6432,14 @@ document.addEventListener(
             pollAddOptionButton.hidden =
                 true;
         }
-                /* =====================================================
+                
+
+
+        /* =====================================================
            SONDAGE — ENREGISTREMENT
         ====================================================== */
 
-        if (
+         if (
             pollForm
         ) {
 
@@ -5445,20 +6450,11 @@ document.addEventListener(
                     event.preventDefault();
 
 
-                    /* =================================================
-                       QUESTION
-                    ================================================= */
-
                     const question =
                         normalizeText(
                             pollQuestionInput?.value
-                        ) ||
-                        "Quel jeu voulez-vous voir en stream ?";
+                        );
 
-
-                    /* =================================================
-                       STATUT
-                    ================================================= */
 
                     const status =
                         normalizeText(
@@ -5467,77 +6463,91 @@ document.addEventListener(
                         "closed";
 
 
+                    const selectedGames =
+                        getSelectedPollGames();
+
+
                     /* =================================================
-                       JEUX ÉLIGIBLES
+                       VALIDATION — QUESTION
                     ================================================= */
 
-                    const eligibleGames =
-                        getPollEligibleGames();
-
-
-                    /*
-                     * Un sondage ouvert doit forcément
-                     * avoir au moins deux jeux proposés.
-                     */
                     if (
-                        status ===
-                            "open" &&
-                        eligibleGames.length <
-                            2
+                        !question
                     ) {
 
                         showToast(
-                            "Il faut au moins deux jeux avec « Participer au sondage » activé pour ouvrir le sondage.",
+                            "La question du sondage est obligatoire.",
                             "error"
                         );
 
+
+                        pollQuestionInput?.focus();
 
                         return;
                     }
 
 
                     /* =================================================
-                       BOUTON SUBMIT
+                       VALIDATION — NOMBRE DE JEUX
                     ================================================= */
 
-                    const submitButton =
-                        pollForm.querySelector(
-                            'button[type="submit"]'
-                        );
-
-
-                    const previousText =
-                        submitButton
-                            ?.textContent ||
-                        "💾 Enregistrer le sondage";
-
-
                     if (
-                        submitButton
+                        selectedGames.length <
+                        2
                     ) {
 
-                        submitButton.disabled =
+                        showToast(
+                            "Sélectionne au moins deux jeux pour le sondage.",
+                            "error"
+                        );
+
+                        return;
+                    }
+
+
+                    /* =================================================
+                       PAYLOAD
+                    ================================================= */
+
+                    const payload = {
+
+                        question,
+
+                        status,
+
+                        /*
+                         * On envoie uniquement les IDs
+                         * des jeux réellement sélectionnés.
+                         *
+                         * pollEnabled sert seulement à savoir
+                         * quels jeux sont éligibles.
+                         */
+                        selectedGameIds:
+                            Array.from(
+                                selectedPollGameIds
+                            )
+
+                    };
+
+
+                    /* =================================================
+                       BOUTON ENREGISTREMENT
+                    ================================================= */
+
+                    if (
+                        pollSubmitButton
+                    ) {
+
+                        pollSubmitButton.disabled =
                             true;
 
-
-                        submitButton.textContent =
+                        pollSubmitButton.textContent =
                             "Enregistrement...";
                     }
 
 
                     try {
 
-                        /*
-                         * Les options ne sont volontairement
-                         * PAS envoyées ici.
-                         *
-                         * api/admin/poll.js récupère directement
-                         * les jeux avec :
-                         *
-                         * poll_enabled = true
-                         *
-                         * et génère lui-même les options.
-                         */
                         const data =
                             await adminApiRequest(
                                 ADMIN_POLL_API,
@@ -5545,17 +6555,16 @@ document.addEventListener(
                                     method:
                                         "PUT",
 
-                                    body: {
-
-                                        question,
-
-                                        status
-
-                                    }
+                                    body:
+                                        payload
                                 }
                             );
 
 
+                        /*
+                         * On récupère immédiatement
+                         * le sondage renvoyé par l'API.
+                         */
                         poll =
                             normalizePoll(
                                 data?.poll ??
@@ -5563,18 +6572,40 @@ document.addEventListener(
                             );
 
 
-                        renderPoll();
-
-                        updateDashboardStats();
+                        /*
+                         * On resynchronise également
+                         * la sélection locale.
+                         */
+                        selectedPollGameIds =
+                            new Set(
+                                (
+                                    poll?.selectedGameIds ||
+                                    payload.selectedGameIds
+                                )
+                                    .map(
+                                        id =>
+                                            String(
+                                                id
+                                            )
+                                    )
+                                    .filter(
+                                        Boolean
+                                    )
+                            );
 
 
                         showToast(
                             status ===
                                 "open"
-                                ? "Le sondage est ouvert et visible publiquement."
-                                : "Le sondage a bien été enregistré.",
+                                ? "Sondage enregistré et ouvert."
+                                : "Sondage enregistré.",
                             "success"
                         );
+
+
+                        renderPoll();
+
+                        updateDashboardStats();
 
 
                     } catch (
@@ -5597,15 +6628,14 @@ document.addEventListener(
                     } finally {
 
                         if (
-                            submitButton
+                            pollSubmitButton
                         ) {
 
-                            submitButton.disabled =
+                            pollSubmitButton.disabled =
                                 false;
 
-
-                            submitButton.textContent =
-                                previousText;
+                            pollSubmitButton.textContent =
+                                "💾 Enregistrer le sondage";
                         }
                     }
                 }
@@ -5617,140 +6647,103 @@ document.addEventListener(
            SONDAGE — RÉINITIALISATION
         ====================================================== */
 
-        if (
-            pollResetButton
-        ) {
+        async function resetPoll() {
 
-            pollResetButton.addEventListener(
-                "click",
-                async () => {
-
-                    const confirmed =
-                        window.confirm(
-                            "Réinitialiser le sondage ? Tous les votes actuels seront supprimés."
-                        );
+            const confirmed =
+                window.confirm(
+                    "Réinitialiser le sondage et supprimer tous les votes ?"
+                );
 
 
-                    if (
-                        !confirmed
-                    ) {
+            if (
+                !confirmed
+            ) {
 
-                        return;
-                    }
-
-
-                    const previousText =
-                        pollResetButton.textContent;
+                return;
+            }
 
 
-                    pollResetButton.disabled =
-                        true;
+            if (
+                pollResetButton
+            ) {
 
+                pollResetButton.disabled =
+                    true;
 
-                    pollResetButton.textContent =
-                        "Réinitialisation...";
+                pollResetButton.textContent =
+                    "Réinitialisation...";
+            }
 
-
-                    try {
-
-                        const data =
-                            await adminApiRequest(
-                                ADMIN_POLL_API,
-                                {
-                                    method:
-                                        "DELETE"
-                                }
-                            );
-
-
-                        poll =
-                            normalizePoll(
-                                data?.poll ??
-                                data
-                            );
-
-
-                        /*
-                         * On remet le formulaire
-                         * sur la version renvoyée
-                         * par l'API.
-                         */
-                        if (
-                            pollQuestionInput
-                        ) {
-
-                            pollQuestionInput.value =
-                                poll?.question ||
-                                "Quel jeu voulez-vous voir en stream ?";
-                        }
-
-
-                        if (
-                            pollStatusInput
-                        ) {
-
-                            pollStatusInput.value =
-                                poll?.status ||
-                                "closed";
-                        }
-
-
-                        renderPoll();
-
-                        updateDashboardStats();
-
-
-                        showToast(
-                            "Le sondage et tous ses votes ont été réinitialisés.",
-                            "success"
-                        );
-
-
-                    } catch (
-                        error
-                    ) {
-
-                        console.error(
-                            "[Admin Poll Reset]",
-                            error
-                        );
-
-
-                        showToast(
-                            error?.message ||
-                            "Impossible de réinitialiser le sondage.",
-                            "error"
-                        );
-
-
-                    } finally {
-
-                        pollResetButton.disabled =
-                            false;
-
-
-                        pollResetButton.textContent =
-                            previousText;
-                    }
-                }
-            );
-        }
-
-
-        /* =====================================================
-           SYNCHRONISATION SONDAGE
-        ====================================================== */
-
-        /*
-         * Cette fonction permet de rafraîchir
-         * rapidement le sondage lorsque les jeux
-         * changent.
-         */
-        async function refreshPollFromGames() {
 
             try {
 
-                await loadPoll();
+                /*
+                 * La route DELETE réinitialise
+                 * le sondage côté serveur.
+                 */
+                const data =
+                    await adminApiRequest(
+                        ADMIN_POLL_API,
+                        {
+                            method:
+                                "DELETE"
+                        }
+                    );
+
+
+                poll =
+                    normalizePoll(
+                        data?.poll ??
+                        data
+                    );
+
+
+                /*
+                 * Après réinitialisation,
+                 * aucun jeu n'est sélectionné.
+                 */
+                selectedPollGameIds =
+                    new Set();
+
+
+                if (
+                    pollQuestionInput
+                ) {
+
+                    pollQuestionInput.value =
+                        poll?.question ||
+                        "Quel jeu voulez-vous voir en stream ?";
+                }
+
+
+                if (
+                    pollStatusInput
+                ) {
+
+                    pollStatusInput.value =
+                        poll?.status ||
+                        "closed";
+                }
+
+
+                if (
+                    pollSearchInput
+                ) {
+
+                    pollSearchInput.value =
+                        "";
+                }
+
+
+                showToast(
+                    "Le sondage a été réinitialisé.",
+                    "success"
+                );
+
+
+                renderPoll();
+
+                updateDashboardStats();
 
 
             } catch (
@@ -5758,57 +6751,190 @@ document.addEventListener(
             ) {
 
                 console.error(
-                    "[Admin Poll Refresh]",
+                    "[Admin Poll Reset]",
                     error
                 );
+
+
+                showToast(
+                    error?.message ||
+                    "Impossible de réinitialiser le sondage.",
+                    "error"
+                );
+
+
+            } finally {
+
+                if (
+                    pollResetButton
+                ) {
+
+                    pollResetButton.disabled =
+                        false;
+
+                    pollResetButton.textContent =
+                        "♻️ Réinitialiser les votes";
+                }
             }
         }
 
 
         /* =====================================================
-           RACCOURCI CLAVIER — ÉCHAP
+           SONDAGE — BOUTON RÉINITIALISER
         ====================================================== */
 
-        document.addEventListener(
-            "keydown",
-            event => {
+        if (
+            pollResetButton
+        ) {
 
-                if (
-                    event.key !==
-                    "Escape"
-                ) {
-
-                    return;
-                }
-
-
-                if (
-                    gameFormPanel &&
-                    !gameFormPanel.hidden
-                ) {
-
-                    closeGameForm();
-                }
-
-
-                if (
-                    artworkFormPanel &&
-                    !artworkFormPanel.hidden
-                ) {
-
-                    closeArtworkForm();
-                }
-            }
-        );
+            pollResetButton.addEventListener(
+                "click",
+                resetPoll
+            );
+        }
 
 
         /* =====================================================
-           INITIALISATION — SECTION
+           SYNCHRONISATION APRÈS MODIFICATION DES JEUX
         ====================================================== */
 
-        function getInitialSection() {
+        function cleanupPollSelection() {
 
-            const hash =
+            const eligibleIds =
+                new Set(
+                    getPollEligibleGames()
+                        .map(
+                            game =>
+                                String(
+                                    game.id
+                                )
+                        )
+                );
+
+
+            /*
+             * Si un jeu n'est plus éligible,
+             * on le retire automatiquement
+             * de la sélection locale.
+             */
+            Array.from(
+                selectedPollGameIds
+            )
+                .forEach(
+                    gameId => {
+
+                        if (
+                            !eligibleIds.has(
+                                String(
+                                    gameId
+                                )
+                            )
+                        ) {
+
+                            selectedPollGameIds.delete(
+                                String(
+                                    gameId
+                                )
+                            );
+                        }
+                    }
+                );
+        }
+
+
+        /* =====================================================
+           CHARGEMENT GLOBAL
+        ====================================================== */
+
+        async function initializeAdmin() {
+
+            /*
+             * 1 — Vérification Twitch / Admin
+             */
+            const user =
+                await checkAdminAuthentication();
+
+
+            if (
+                !user
+            ) {
+
+                return;
+            }
+
+
+            currentAdminUser =
+                user;
+
+
+            /*
+             * 2 — Informations administratrice
+             */
+            applyAdminUser(
+                currentAdminUser
+            );
+
+
+            /*
+             * 3 — Bouton déconnexion
+             */
+            createLogoutButton();
+
+
+            /*
+             * 4 — Chargement des jeux
+             *
+             * Important :
+             * les jeux doivent être chargés AVANT
+             * le sondage, car le sondage utilise
+             * les données des jeux.
+             */
+            await loadGames();
+
+
+            /*
+             * 5 — Chargement galerie
+             */
+            await loadArtworks();
+
+
+            /*
+             * 6 — Chargement sondage
+             */
+            await loadPoll();
+
+
+            /*
+             * 7 — Nettoyage de la sélection
+             *
+             * Empêche un ancien jeu devenu
+             * non éligible de rester sélectionné.
+             */
+            cleanupPollSelection();
+
+
+            /*
+             * 8 — Affichage final
+             */
+            renderGames();
+
+            renderArtworks();
+
+            renderPoll();
+
+            updateDashboardStats();
+
+
+            /*
+             * 9 — Section à ouvrir
+             *
+             * Exemple :
+             *
+             * admin.html#games
+             * admin.html#gallery
+             * admin.html#poll
+             */
+            const requestedSection =
                 normalizeText(
                     window.location.hash
                         .replace(
@@ -5818,127 +6944,47 @@ document.addEventListener(
                 );
 
 
-            const allowedSections =
-                new Set([
-                    "dashboard",
-                    "games",
-                    "gallery",
-                    "poll"
-                ]);
+            const validSections =
+                new Set(
+                    sections
+                        .map(
+                            section =>
+                                normalizeText(
+                                    section.dataset
+                                        .adminPanel
+                                )
+                        )
+                        .filter(
+                            Boolean
+                        )
+                );
 
 
-            if (
-                allowedSections.has(
-                    hash
+            openSection(
+                validSections.has(
+                    requestedSection
                 )
-            ) {
+                    ? requestedSection
+                    : "dashboard"
+            );
 
-                return hash;
-            }
 
-
-            return "dashboard";
+            /*
+             * 10 — Administration prête
+             */
+            document.body.classList.add(
+                "admin-ready"
+            );
         }
 
 
         /* =====================================================
-           INITIALISATION — AUTH
-        ====================================================== */
-
-        currentAdminUser =
-            await checkAdminAuthentication();
-
-
-        /*
-         * Si aucune session valide,
-         * checkAdminAuthentication a déjà
-         * redirigé ou affiché une erreur.
-         */
-        if (
-            !currentAdminUser
-        ) {
-
-            return;
-        }
-
-
-        /* =====================================================
-           UTILISATEUR ADMIN
-        ====================================================== */
-
-        applyAdminUser(
-            currentAdminUser
-        );
-
-
-        createLogoutButton();
-
-
-        /* =====================================================
-           FORMULAIRES
-        ====================================================== */
-
-        resetGameForm();
-
-        resetArtworkForm();
-
-
-        if (
-            gameFormPanel
-        ) {
-
-            gameFormPanel.hidden =
-                true;
-        }
-
-
-        if (
-            artworkFormPanel
-        ) {
-
-            artworkFormPanel.hidden =
-                true;
-        }
-
-
-        /* =====================================================
-           SECTION INITIALE
-        ====================================================== */
-
-        openSection(
-            getInitialSection()
-        );
-
-
-        /* =====================================================
-           CHARGEMENT INITIAL
+           INITIALISATION
         ====================================================== */
 
         try {
 
-            /*
-             * On charge d'abord les jeux.
-             *
-             * C'est important car renderPoll()
-             * utilise games pour savoir quels jeux
-             * ont pollEnabled = true.
-             */
-            await loadGames();
-
-
-            /*
-             * Galerie indépendante.
-             */
-            await loadArtworks();
-
-
-            /*
-             * Puis seulement le sondage.
-             *
-             * Ainsi les options automatiques
-             * peuvent être construites immédiatement.
-             */
-            await loadPoll();
+            await initializeAdmin();
 
 
         } catch (
@@ -5946,147 +6992,17 @@ document.addEventListener(
         ) {
 
             console.error(
-                "[Admin Init]",
+                "[Admin Initialization]",
                 error
             );
 
 
             showToast(
-                "Une partie de l'administration n'a pas pu être chargée.",
+                error?.message ||
+                "Une erreur est survenue pendant le chargement de l'administration.",
                 "error"
             );
         }
-
-
-        /* =====================================================
-           STATISTIQUES FINALES
-        ====================================================== */
-
-        updateDashboardStats();
-
-
-        /* =====================================================
-           HASH — NAVIGATION NAVIGATEUR
-        ====================================================== */
-
-        window.addEventListener(
-            "hashchange",
-            () => {
-
-                const section =
-                    getInitialSection();
-
-
-                const activeButton =
-                    navButtons.find(
-                        button =>
-                            button.dataset
-                                .adminSection ===
-                            section
-                    );
-
-
-                if (
-                    activeButton &&
-                    !activeButton.classList.contains(
-                        "is-active"
-                    )
-                ) {
-
-                    openSection(
-                        section
-                    );
-                }
-            }
-        );
-
-
-        /* =====================================================
-           EXPOSITION DEBUG
-        ====================================================== */
-
-        /*
-         * Pratique dans la console navigateur :
-         *
-         * CouaxiaAdmin.reloadGames()
-         * CouaxiaAdmin.reloadGallery()
-         * CouaxiaAdmin.reloadPoll()
-         */
-        window.CouaxiaAdmin = {
-
-            reloadGames:
-                loadGames,
-
-            reloadGallery:
-                loadArtworks,
-
-            reloadPoll:
-                loadPoll,
-
-            refreshPollFromGames,
-
-            getGames() {
-
-                return [
-                    ...games
-                ];
-            },
-
-            getArtworks() {
-
-                return [
-                    ...artworks
-                ];
-            },
-
-            getPoll() {
-
-                return poll
-                    ? {
-                        ...poll,
-
-                        options:
-                            Array.isArray(
-                                poll.options
-                            )
-                                ? poll.options.map(
-                                    option => ({
-                                        ...option
-                                    })
-                                )
-                                : []
-                    }
-                    : null;
-            }
-
-        };
-
-
-        /* =====================================================
-           FIN INITIALISATION
-        ====================================================== */
-
-        console.info(
-            "[Couaxia Admin] Administration chargée."
-        );
-
-
-        console.info(
-            `[Couaxia Admin] ${games.length} jeu(x).`
-        );
-
-
-        console.info(
-            `[Couaxia Admin] ${artworks.length} illustration(s).`
-        );
-
-
-        console.info(
-            `[Couaxia Admin] Sondage : ${
-                poll?.status ||
-                "closed"
-            }.`
-        );
 
     }
 );

@@ -1,13 +1,37 @@
 <!DOCTYPE html>
 <HTML lang="fr">
+
 <head>
+
     <meta charset="utf-8" />
-    <title>Couaxia</title>
-    <link href="../css/style.css" rel="stylesheet">
-    <link href="../css/scroll-page.css" rel="stylesheet">
-    <link href="./admin.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="../images/logo/Logo Transparents 2.png">
+
+    <title>
+        Couaxia
+    </title>
+
+    <link
+        href="../css/style.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="../css/scroll-page.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="./admin.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="../images/logo/Logo Transparents 2.png"
+    >
+
 </head>
+
 
 <body class="admin-page">
 
@@ -16,86 +40,89 @@
          EN-TÊTE ADMIN
     ====================================================== -->
 
-        <header class="admin-header">
-
-    <!-- =====================================================
-         IDENTITÉ ADMIN
-    ====================================================== -->
-
-    <a
-        href="./admin.html"
-        class="admin-brand"
-        aria-label="Accueil administration Couaxia"
-    >
-
-        <video
-            class="admin-brand-logo"
-            autoplay
-            muted
-            loop
-            playsinline
-            aria-hidden="true"
-        >
-            <source
-                src="../images/logo/Transparents.webm"
-                type="video/webm"
-            >
-        </video>
+    <header class="admin-header">
 
 
-        <div class="admin-brand-text">
-
-            <span class="admin-brand-title">
-                Couaxia
-            </span>
-
-            <span class="admin-brand-subtitle">
-                Administration
-            </span>
-
-        </div>
-
-    </a>
-
-
-    <!-- =====================================================
-         ACTIONS
-    ====================================================== -->
-
-    <div class="admin-header-actions">
+        <!-- =====================================================
+             IDENTITÉ ADMIN
+        ====================================================== -->
 
         <a
-            href="../accueil.html"
-            class="admin-site-link"
+            href="./admin.html"
+            class="admin-brand"
+            aria-label="Accueil administration Couaxia"
         >
-            ↗ Voir le site
+
+            <video
+                class="admin-brand-logo"
+                autoplay
+                muted
+                loop
+                playsinline
+                aria-hidden="true"
+            >
+
+                <source
+                    src="../images/logo/Transparents.webm"
+                    type="video/webm"
+                >
+
+            </video>
+
+
+            <div class="admin-brand-text">
+
+                <span class="admin-brand-title">
+                    Couaxia
+                </span>
+
+                <span class="admin-brand-subtitle">
+                    Administration
+                </span>
+
+            </div>
+
         </a>
 
 
-        <button
-            id="theme-toggle"
-            class="theme-toggle"
-            type="button"
-            aria-label="Changer le thème"
-            title="Changer le thème"
-        >
+        <!-- =====================================================
+             ACTIONS
+        ====================================================== -->
 
-            <span
-                class="theme-icon"
-                aria-hidden="true"
+        <div class="admin-header-actions">
+
+            <a
+                href="../accueil.html"
+                class="admin-site-link"
             >
-                🌙
-            </span>
+                ↗ Voir le site
+            </a>
 
-            <span class="theme-text">
-                Mode nuit
-            </span>
 
-        </button>
+            <button
+                id="theme-toggle"
+                class="theme-toggle"
+                type="button"
+                aria-label="Changer le thème"
+                title="Changer le thème"
+            >
 
-    </div>
+                <span
+                    class="theme-icon"
+                    aria-hidden="true"
+                >
+                    🌙
+                </span>
 
-</header>
+                <span class="theme-text">
+                    Mode nuit
+                </span>
+
+            </button>
+
+        </div>
+
+    </header>
 
 
 
@@ -105,23 +132,28 @@
 
     <div class="admin-layout">
 
+
         <!-- =================================================
              SIDEBAR
         ================================================== -->
 
         <aside class="admin-sidebar">
+
+
             <!-- =============================================
                  NAVIGATION
             ============================================== -->
 
             <nav
                 class="admin-nav"
-                aria-label="Navigation administration">
+                aria-label="Navigation administration"
+            >
 
                 <button
                     type="button"
                     class="admin-nav-button is-active"
-                    data-admin-section="dashboard">
+                    data-admin-section="dashboard"
+                >
 
                     <span
                         class="admin-nav-icon"
@@ -408,10 +440,13 @@
                             type="button"
                             class="admin-quick-action"
                             data-open-section="games"
-                            data-admin-action="new-game">
+                            data-admin-action="new-game"
+                        >
 
-                            <span class="admin-quick-action-icon"
-                                aria-hidden="true">
+                            <span
+                                class="admin-quick-action-icon"
+                                aria-hidden="true"
+                            >
                                 ➕
                             </span>
 
@@ -561,8 +596,9 @@
                             name="gameId"
                         >
 
+
                         <!-- =====================================
-                            TWITCH — RECHERCHE PAR NOM
+                             TWITCH — RECHERCHE PAR NOM
                         ====================================== -->
 
                         <div class="admin-field admin-field-wide">
@@ -580,7 +616,8 @@
                                     name="gameName"
                                     autocomplete="off"
                                     placeholder="Ex : Minecraft"
-                                    required>
+                                    required
+                                >
 
 
                                 <button
@@ -641,7 +678,8 @@
                                 <span
                                     id="admin-game-preview-id"
                                     class="admin-twitch-id"
-                                ></span>
+                                >
+                                </span>
 
                             </div>
 
@@ -1014,6 +1052,7 @@
                         class="admin-form"
                     >
 
+
                         <!-- ID SUPABASE -->
 
                         <input
@@ -1131,8 +1170,10 @@
 
                         </div>
 
+
+
                         <!-- =====================================
-                            MÉDIA — DROPZONE
+                             MÉDIA — DROPZONE
                         ====================================== -->
 
                         <div class="admin-field admin-field-wide">
@@ -1186,7 +1227,7 @@
 
 
                             <!-- =====================================
-                                APERÇU DU MÉDIA
+                                 APERÇU DU MÉDIA
                             ====================================== -->
 
                             <div
@@ -1703,7 +1744,6 @@
                     </div>
 
 
-
                     <div
                         id="admin-artworks-list"
                         class="admin-artworks-list"
@@ -1748,14 +1788,13 @@
                         </h1>
 
                         <p>
-                            Crée et prépare le sondage affiché
-                            à ta communauté.
+                            Choisis les jeux proposés à ta communauté
+                            et prépare le prochain vote.
                         </p>
 
                     </div>
 
                 </header>
-
 
 
                 <!-- =============================================
@@ -1813,7 +1852,6 @@
                         </div>
 
 
-
                         <!-- =====================================
                              STATUT
                         ====================================== -->
@@ -1840,16 +1878,142 @@
                             </select>
 
                             <small>
-                                Un sondage fermé reste enregistré,
-                                mais n'est pas actif.
+                                Le sondage doit contenir au minimum
+                                deux jeux pour pouvoir être ouvert.
                             </small>
 
                         </div>
 
 
+                        <!-- =====================================
+                             SÉLECTION DES JEUX
+                        ====================================== -->
+
+                        <div
+                            class="admin-field admin-field-wide admin-poll-games-field"
+                        >
+
+                            <div class="admin-poll-games-header">
+
+                                <div>
+
+                                    <label>
+                                        🎮 Jeux proposés
+                                    </label>
+
+                                    <small>
+                                        Choisis les jeux qui participeront
+                                        au sondage actuel.
+                                    </small>
+
+                                </div>
+
+
+                                <div
+                                    class="admin-poll-selected-counter"
+                                    aria-live="polite"
+                                >
+
+                                    <strong
+                                        id="admin-poll-selected-count"
+                                    >
+                                        0
+                                    </strong>
+
+                                    <span>
+                                        jeu(x) sélectionné(s)
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 BARRE DE RECHERCHE
+                            ================================== -->
+
+                            <div class="admin-poll-search-wrapper">
+
+                                <label
+                                    class="sr-only"
+                                    for="admin-poll-search"
+                                >
+                                    Rechercher un jeu pour le sondage
+                                </label>
+
+                                <span
+                                    class="admin-poll-search-icon"
+                                    aria-hidden="true"
+                                >
+                                    🔎
+                                </span>
+
+                                <input
+                                    type="search"
+                                    id="admin-poll-search"
+                                    class="admin-poll-search"
+                                    placeholder="Rechercher un jeu..."
+                                    autocomplete="off"
+                                >
+
+                            </div>
+
+
+                            <!-- =================================
+                                 AIDE
+                            ================================== -->
+
+                            <div class="admin-poll-games-info">
+
+                                <span>
+                                    Seuls les jeux ayant
+                                    <strong>
+                                        « Peut participer au sondage »
+                                    </strong>
+                                    activé sont affichés ici.
+                                </span>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 LISTE DES JEUX ÉLIGIBLES
+                            ================================== -->
+
+                            <div
+                                id="admin-poll-games-list"
+                                class="admin-poll-games-list"
+                                aria-live="polite"
+                            >
+
+                                <div class="admin-empty-state">
+
+                                    <span
+                                        class="admin-empty-icon"
+                                        aria-hidden="true"
+                                    >
+                                        🎮
+                                    </span>
+
+                                    <h3>
+                                        Chargement des jeux...
+                                    </h3>
+
+                                    <p>
+                                        Les jeux disponibles pour le sondage
+                                        vont apparaître ici.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
 
                         <!-- =====================================
-                             OPTIONS
+                             JEUX SÉLECTIONNÉS
                         ====================================== -->
 
                         <div class="admin-field admin-field-wide">
@@ -1859,23 +2023,15 @@
                                 <div>
 
                                     <label>
-                                        Options du sondage
+                                        🗳️ Jeux sélectionnés
                                     </label>
 
                                     <small>
-                                        Minimum 2 options, maximum 10.
+                                        Ces jeux seront proposés
+                                        publiquement au vote.
                                     </small>
 
                                 </div>
-
-
-                                <button
-                                    id="admin-poll-add-option"
-                                    class="admin-secondary-button"
-                                    type="button"
-                                >
-                                    ➕ Ajouter une option
-                                </button>
 
                             </div>
 
@@ -1883,12 +2039,48 @@
                             <div
                                 id="admin-poll-options-list"
                                 class="admin-poll-options-list"
+                                aria-live="polite"
                             >
-                                <!-- Les champs sont créés automatiquement par admin.js -->
+
+                                <div class="admin-empty-state">
+
+                                    <span
+                                        class="admin-empty-icon"
+                                        aria-hidden="true"
+                                    >
+                                        🗳️
+                                    </span>
+
+                                    <h3>
+                                        Aucun jeu sélectionné
+                                    </h3>
+
+                                    <p>
+                                        Coche au moins deux jeux
+                                        dans la liste ci-dessus.
+                                    </p>
+
+                                </div>
+
                             </div>
 
                         </div>
 
+
+                        <!-- =====================================
+                             ANCIEN BOUTON
+                             Conservé caché pour compatibilité.
+                        ====================================== -->
+
+                        <button
+                            id="admin-poll-add-option"
+                            type="button"
+                            hidden
+                            aria-hidden="true"
+                            tabindex="-1"
+                        >
+                            Ajouter une option
+                        </button>
 
 
                         <!-- =====================================
@@ -1907,6 +2099,7 @@
 
 
                             <button
+                                id="admin-poll-submit"
                                 class="admin-primary-button"
                                 type="submit"
                             >
@@ -1918,7 +2111,6 @@
                     </form>
 
                 </section>
-
 
 
                 <!-- =============================================
@@ -1944,6 +2136,14 @@
 
                         </div>
 
+
+                        <div
+                            id="admin-poll-preview-status"
+                            class="admin-poll-preview-status"
+                        >
+                            🔒 Fermé
+                        </div>
+
                     </div>
 
 
@@ -1962,9 +2162,24 @@
                             class="admin-poll-preview-options"
                         >
 
-                            <p class="admin-empty-text">
-                                Aucune option définie.
-                            </p>
+                            <div class="admin-empty-state">
+
+                                <span
+                                    class="admin-empty-icon"
+                                    aria-hidden="true"
+                                >
+                                    🎮
+                                </span>
+
+                                <h3>
+                                    Aucun jeu sélectionné
+                                </h3>
+
+                                <p>
+                                    Les jeux du sondage apparaîtront ici.
+                                </p>
+
+                            </div>
 
                         </div>
 
@@ -2056,27 +2271,58 @@
          NOTIFICATIONS
     ====================================================== -->
 
-    <div id="admin-toast-container"
+    <div
+        id="admin-toast-container"
         class="admin-toast-container"
         aria-live="polite"
-        aria-atomic="true"></div>
+        aria-atomic="true"
+    ></div>
 
-        
-            <div class="scroll-page-controls" aria-label="Navigation verticale de la page">
-                    <button id="scrollTopButton" class="scroll-page-button" type="button" aria-label="Retourner en haut de la page" title="Retour en haut">
-                             ↑
-                    </button>
-                    <button id="scrollBottomButton" class="scroll-page-button" type="button" aria-label="Aller en bas de la page" title="Aller en bas">
-                        ↓
-                    </button>
-            </div>
 
-                    <!-- =====================================================
-                        JAVASCRIPT
-                    ====================================================== -->
-                    <script src="../js/scroll-page.js"></script>
-                    <script src="../js/theme.js"></script>
-                    <script type="module" src="./admin.js"></script>
 
-    </body>
+    <!-- =====================================================
+         NAVIGATION VERTICALE
+    ====================================================== -->
+
+    <div
+        class="scroll-page-controls"
+        aria-label="Navigation verticale de la page"
+    >
+
+        <button
+            id="scrollTopButton"
+            class="scroll-page-button"
+            type="button"
+            aria-label="Retourner en haut de la page"
+            title="Retour en haut"
+        >
+            ↑
+        </button>
+
+
+        <button
+            id="scrollBottomButton"
+            class="scroll-page-button"
+            type="button"
+            aria-label="Aller en bas de la page"
+            title="Aller en bas"
+        >
+            ↓
+        </button>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="../js/scroll-page.js"></script>
+    <script src="../js/theme.js"></script>
+    <script type="module"src="./admin.js"></script>
+
+
+</body>
+
 </html>

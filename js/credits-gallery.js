@@ -464,6 +464,254 @@ document.addEventListener(
 
 
         /* =====================================================
+           VIDÉOS
+        ====================================================== */
+
+        /**
+         * Configure une vidéo clonée.
+         *
+         * Comportement voulu :
+         *
+         * - démarre automatiquement ;
+         * - démarre toujours sans son ;
+         * - tourne en boucle ;
+         * - reste intégrée dans la page ;
+         * - affiche les contrôles ;
+         * - l'utilisateur peut activer le son.
+         *
+         * @param {HTMLVideoElement} video
+         */
+        function prepareVideo(
+            video
+        ) {
+
+            if (
+                !video
+            ) {
+
+                return;
+            }
+
+
+            /* =============================================
+               SON COUPÉ PAR DÉFAUT
+            ============================================== */
+
+            video.muted =
+                true;
+
+            video.defaultMuted =
+                true;
+
+
+            video.setAttribute(
+                "muted",
+                ""
+            );
+
+
+            /*
+             * Permet de savoir si l'utilisateur
+             * a volontairement activé le son.
+             */
+
+            video.dataset.userUnmuted =
+                "false";
+
+
+            /* =============================================
+               AUTOPLAY
+            ============================================== */
+
+            video.autoplay =
+                true;
+
+
+            video.setAttribute(
+                "autoplay",
+                ""
+            );
+
+
+            /* =============================================
+               BOUCLE
+            ============================================== */
+
+            video.loop =
+                true;
+
+
+            video.setAttribute(
+                "loop",
+                ""
+            );
+
+
+            /* =============================================
+               MOBILE
+            ============================================== */
+
+            video.playsInline =
+                true;
+
+
+            video.setAttribute(
+                "playsinline",
+                ""
+            );
+
+
+            /* =============================================
+               CONTRÔLES
+            ============================================== */
+
+            video.controls =
+                true;
+
+
+            video.setAttribute(
+                "controls",
+                ""
+            );
+
+
+            /* =============================================
+               PRÉCHARGEMENT
+            ============================================== */
+
+            video.preload =
+                "metadata";
+
+
+            /* =============================================
+               DRAG
+            ============================================== */
+
+            video.setAttribute(
+                "draggable",
+                "false"
+            );
+
+
+            /* =============================================
+               UTILISATEUR ACTIVE LE SON
+            ============================================== */
+
+            video.addEventListener(
+                "volumechange",
+                () => {
+
+                    if (
+                        !video.muted &&
+                        video.volume >
+                            0
+                    ) {
+
+                        video.dataset.userUnmuted =
+                            "true";
+                    }
+                }
+            );
+
+
+            /* =============================================
+               SÉCURITÉ AU DÉMARRAGE
+            ============================================== */
+
+            video.addEventListener(
+                "play",
+                () => {
+
+                    /*
+                     * Tant que le visiteur
+                     * n'a pas lui-même activé le son,
+                     * on garde le mute.
+                     */
+
+                    if (
+                        video.dataset.userUnmuted !==
+                        "true"
+                    ) {
+
+                        video.muted =
+                            true;
+                    }
+                }
+            );
+
+
+            /* =============================================
+               TENTATIVE DE LECTURE
+            ============================================== */
+
+            /*
+             * Les navigateurs autorisent normalement
+             * autoplay lorsque muted = true.
+             *
+             * Si le navigateur refuse malgré tout,
+             * les contrôles restent disponibles.
+             */
+
+            const tryPlay =
+                () => {
+
+                    video.muted =
+                        true;
+
+
+                    const playPromise =
+                        video.play();
+
+
+                    if (
+                        playPromise &&
+                        typeof playPromise.catch ===
+                            "function"
+                    ) {
+
+                        playPromise.catch(
+                            () => {
+
+                                /*
+                                 * Autoplay refusé.
+                                 *
+                                 * Aucun problème :
+                                 * les contrôles permettent
+                                 * de lancer la vidéo.
+                                 */
+                            }
+                        );
+                    }
+                };
+
+
+            /*
+             * Si les métadonnées sont déjà chargées,
+             * on essaie immédiatement.
+             */
+
+            if (
+                video.readyState >=
+                1
+            ) {
+
+                tryPlay();
+
+            } else {
+
+                video.addEventListener(
+                    "loadedmetadata",
+                    tryPlay,
+                    {
+                        once:
+                            true
+                    }
+                );
+            }
+        }
+
+
+        /* =====================================================
            CLONAGE DES CARTES
         ====================================================== */
 
@@ -533,6 +781,33 @@ document.addEventListener(
                     button => {
 
                         button.remove();
+                    }
+                );
+
+
+            /* =============================================
+               VIDÉOS CLONÉES
+            ============================================== */
+
+            /*
+             * cloneNode(true) recopie le <video>,
+             * mais l'état de lecture du média
+             * n'est pas forcément repris.
+             *
+             * On configure donc chaque vidéo clonée
+             * explicitement.
+             */
+
+            clone
+                .querySelectorAll(
+                    "video"
+                )
+                .forEach(
+                    video => {
+
+                        prepareVideo(
+                            video
+                        );
                     }
                 );
 
