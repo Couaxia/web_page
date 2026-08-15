@@ -1611,7 +1611,41 @@ document.addEventListener(
                                             Aucun tag
                                         </span>
                                     `;
+                            const playlist =
+                                game.youtubePlaylist
+                                    ? `
+                                        <div class="admin-game-playlist">
 
+                                            <span class="admin-game-playlist-label">
+                                                ▶️ Playlist YouTube
+                                            </span>
+
+                                            <a
+                                                href="${escapeHtml(
+                                                    game.youtubePlaylist
+                                                )}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="admin-game-playlist-link"
+                                            >
+                                                Voir la playlist
+                                            </a>
+
+                                        </div>
+                                    `
+                                    : `
+                                        <div class="admin-game-playlist is-empty">
+
+                                            <span class="admin-game-playlist-label">
+                                                ▶️ Playlist YouTube
+                                            </span>
+
+                                            <span class="admin-game-playlist-empty">
+                                                Non renseignée
+                                            </span>
+
+                                        </div>
+                                    `;             
 
                             return `
                                 <article
@@ -1677,7 +1711,7 @@ document.addEventListener(
                                         <div class="admin-item-tags">
                                             ${tags}
                                         </div>
-
+                                            ${playlist}
                                     </div>
 
                                 </article>

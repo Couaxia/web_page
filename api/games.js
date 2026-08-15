@@ -11,169 +11,129 @@ import {
 
 
 /* =========================================================
-   CONFIGURATION
-========================================================= */
-
-const TABLE_NAME =
-    "games";
-
-
-/* =========================================================
    OUTILS
 ========================================================= */
 
-/**
- * Transforme une valeur en texte propre.
- *
- * @param {unknown} value
- * @returns {string}
- */
 function normalizeText(
     value
 ) {
 
     return String(
-        value ?? ""
+        value ??
+        ""
     ).trim();
 }
 
 
-/**
- * Transforme une valeur en booléen.
- *
- * @param {unknown} value
- * @param {boolean} defaultValue
- * @returns {boolean}
- */
-function normalizeBoolean(
-    value,
-    defaultValue = true
+function normalizeTags(
+    value
 ) {
 
     if (
-        value === undefined ||
-        value === null ||
-        value === ""
+        Array.isArray(
+            value
+        )
     ) {
 
-        return defaultValue;
+        return value
+            .map(
+                tag =>
+                    normalizeText(
+                        tag
+                    )
+            )
+            .filter(
+                Boolean
+            );
     }
 
 
     if (
         typeof value ===
-        "boolean"
+        "string"
     ) {
 
-        return value;
+        return value
+            .split(
+                /[,;]+/
+            )
+            .map(
+                tag =>
+                    normalizeText(
+                        tag
+                    )
+            )
+            .filter(
+                Boolean
+            );
     }
 
 
-    const normalizedValue =
-        String(
-            value
-        )
-            .trim()
-            .toLowerCase();
-
-
-    if (
-        [
-            "true",
-            "1",
-            "yes",
-            "oui",
-            "on"
-        ].includes(
-            normalizedValue
-        )
-    ) {
-
-        return true;
-    }
-
-
-    if (
-        [
-            "false",
-            "0",
-            "no",
-            "non",
-            "off"
-        ].includes(
-            normalizedValue
-        )
-    ) {
-
-        return false;
-    }
-
-
-    return defaultValue;
-}
-
-
-/**
- * Retourne un message d'erreur Supabase lisible.
- *
- * @param {object} error
- * @returns {string}
- */
-function getSupabaseErrorMessage(
-    error
-) {
-
-    return (
-        error?.message ||
-        "Impossible de récupérer les jeux."
-    );
+    return [];
 }
 
 
 /* =========================================================
-   FORMATAGE
+   FORMAT JEU
 ========================================================= */
 
-/**
- * Transforme une ligne Supabase
- * en objet propre pour le frontend.
- *
- * @param {object} game
- * @returns {object}
- */
 function formatGame(
     game
 ) {
 
-    const sortOrder =
-        Number(
-            game?.sort_order ??
-            0
-        );
-
-
     return {
+
+        /* =================================================
+           ID BASE
+        ================================================= */
 
         id:
             game?.id ??
             null,
 
-        twitch_game_id:
+
+        /* =================================================
+           TWITCH
+        ================================================= */
+
+        twitchGameId:
             normalizeText(
-                game?.twitch_game_id
+                game?.twitch_game_id ??
+                game?.twitchGameId
             ) ||
             null,
 
+
+        twitchName:
+            normalizeText(
+                game?.twitch_name ??
+                game?.twitchName ??
+                game?.name
+            ),
+
+
+        /*
+         * On renvoie également "name"
+         * pour simplifier games.js.
+         */
         name:
             normalizeText(
+                game?.twitch_name ??
+                game?.twitchName ??
                 game?.name
-            ) ||
-            null,
-
-        description:
-            normalizeText(
-                game?.description
             ),
+
+
+        boxArtUrl:
+            normalizeText(
+                game?.box_art_url ??
+                game?.boxArtUrl
+            ),
+
+
+        /* =================================================
+           INFORMATIONS DU JEU
+        ================================================= */
 
         status:
             normalizeText(
@@ -182,25 +142,59 @@ function formatGame(
                 .toLowerCase() ||
             "backlog",
 
-        visible:
-            normalizeBoolean(
-                game?.visible,
-                true
+
+        tags:
+            normalizeTags(
+                game?.tags
             ),
 
-        sort_order:
-            Number.isFinite(
-                sortOrder
-            )
-                ? sortOrder
-                : 0,
 
-        created_at:
-            game?.created_at ??
+        description:
+            normalizeText(
+                game?.description
+            ),
+
+
+        rating:
+            game?.rating ??
             null,
 
-        updated_at:
+
+        /* =================================================
+           YOUTUBE
+        ================================================= */
+
+        youtubePlaylist:
+            normalizeText(
+                game?.youtube_playlist ??
+                game?.youtubePlaylist
+            ),
+
+
+        /* =================================================
+           SONDAGE
+        ================================================= */
+
+        pollEnabled:
+            Boolean(
+                game?.poll_enabled ??
+                game?.pollEnabled
+            ),
+
+
+        /* =================================================
+           DATES
+        ================================================= */
+
+        createdAt:
+            game?.created_at ??
+            game?.createdAt ??
+            null,
+
+
+        updatedAt:
             game?.updated_at ??
+            game?.updatedAt ??
             null
 
     };
@@ -208,136 +202,9 @@ function formatGame(
 
 
 /* =========================================================
-   GET — JEUX PUBLICS
+   HANDLER
 ========================================================= */
 
-async function handleGet(
-    request,
-    response
-) {
-
-    /* =====================================================
-       REQUÊTE SUPABASE
-    ====================================================== */
-
-    const {
-        data,
-        error
-    } =
-        await supabaseAdmin
-            .from(
-                TABLE_NAME
-            )
-            .select(`
-                id,
-                twitch_game_id,
-                name,
-                description,
-                status,
-                visible,
-                sort_order,
-                created_at,
-                updated_at
-            `)
-            .eq(
-                "visible",
-                true
-            )
-            .order(
-                "sort_order",
-                {
-                    ascending:
-                        true
-                }
-            )
-            .order(
-                "created_at",
-                {
-                    ascending:
-                        true
-                }
-            );
-
-
-    /* =====================================================
-       ERREUR SUPABASE
-    ====================================================== */
-
-    if (
-        error
-    ) {
-
-        console.error(
-            "[Public Games] Erreur Supabase :",
-            error
-        );
-
-
-        response
-            .status(500)
-            .json({
-
-                success:
-                    false,
-
-                games:
-                    [],
-
-                error:
-                    getSupabaseErrorMessage(
-                        error
-                    )
-
-            });
-
-
-        return;
-    }
-
-
-    /* =====================================================
-       FORMATAGE
-    ====================================================== */
-
-    const games =
-        Array.isArray(
-            data
-        )
-            ? data.map(
-                formatGame
-            )
-            : [];
-
-
-    /* =====================================================
-       RÉPONSE
-    ====================================================== */
-
-    response
-        .status(200)
-        .json({
-
-            success:
-                true,
-
-            returned:
-                games.length,
-
-            games
-
-        });
-}
-
-
-/* =========================================================
-   HANDLER PRINCIPAL
-========================================================= */
-
-/**
- * Route :
- *
- * GET /api/games
- */
 export default async function handler(
     request,
     response
@@ -349,7 +216,19 @@ export default async function handler(
 
     response.setHeader(
         "Cache-Control",
-        "no-store, max-age=0"
+        "no-store, no-cache, must-revalidate, max-age=0"
+    );
+
+
+    response.setHeader(
+        "Pragma",
+        "no-cache"
+    );
+
+
+    response.setHeader(
+        "Expires",
+        "0"
     );
 
 
@@ -375,9 +254,6 @@ export default async function handler(
                 success:
                     false,
 
-                games:
-                    [],
-
                 error:
                     "Méthode non autorisée."
 
@@ -389,15 +265,141 @@ export default async function handler(
 
 
     /* =====================================================
-       GET
+       CHARGEMENT SUPABASE
     ====================================================== */
 
     try {
 
-        await handleGet(
-            request,
-            response
+        console.info(
+            "[Public Games] Chargement depuis Supabase..."
         );
+
+
+        /*
+         * IMPORTANT :
+         *
+         * On utilise select("*") afin qu'une colonne optionnelle
+         * absente ne fasse pas planter toute l'API.
+         */
+        const {
+            data,
+            error
+        } =
+            await supabaseAdmin
+                .from(
+                    "games"
+                )
+                .select(
+                    "*"
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending:
+                            false
+                    }
+                );
+
+
+        /* =================================================
+           ERREUR SUPABASE
+        ================================================= */
+
+        if (
+            error
+        ) {
+
+            console.error(
+                "[Public Games] Erreur Supabase :",
+                error
+            );
+
+
+            response
+                .status(500)
+                .json({
+
+                    success:
+                        false,
+
+                    error:
+                        "Impossible de récupérer les jeux.",
+
+                    /*
+                     * Je te laisse volontairement les détails
+                     * pour le moment afin de pouvoir déboguer.
+                     */
+                    details:
+                        error?.message ??
+                        null,
+
+                    code:
+                        error?.code ??
+                        null
+
+                });
+
+
+            return;
+        }
+
+
+        /* =================================================
+           DONNÉES
+        ================================================= */
+
+        const rawGames =
+            Array.isArray(
+                data
+            )
+                ? data
+                : [];
+
+
+        const games =
+            rawGames
+                .map(
+                    formatGame
+                )
+                .filter(
+                    game =>
+                        Boolean(
+                            game.id ||
+                            game.twitchGameId ||
+                            game.name
+                        )
+                );
+
+
+        console.info(
+            "[Public Games] Jeux Supabase :",
+            rawGames.length
+        );
+
+
+        console.info(
+            "[Public Games] Jeux formatés :",
+            games.length
+        );
+
+
+        /* =================================================
+           RÉPONSE
+        ================================================= */
+
+        response
+            .status(200)
+            .json({
+
+                success:
+                    true,
+
+                count:
+                    games.length,
+
+                games
+
+            });
 
 
     } catch (
@@ -425,12 +427,12 @@ export default async function handler(
                 success:
                     false,
 
-                games:
-                    [],
-
                 error:
-                    error?.message ||
-                    "Erreur interne de l'API jeux."
+                    "Erreur interne lors du chargement des jeux.",
+
+                details:
+                    error?.message ??
+                    null
 
             });
     }

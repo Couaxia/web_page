@@ -4680,3 +4680,149 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb {
         text-align: left;
     }
 }
+/* =========================================================
+   CORRECTION — TAGS DES JEUX ADMIN
+========================================================= */
+
+.admin-item-tags {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-top: 16px;
+
+    padding: 0 12px 14px;
+}
+
+
+.admin-item-tags span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 30px;
+
+    padding: 6px 12px;
+
+    border: 1px solid
+        rgba(201, 122, 255, 0.45);
+
+    border-radius: 999px;
+
+    background:
+        rgba(201, 122, 255, 0.12);
+
+    color: #F1D7FF;
+
+    font-size: 0.78rem;
+    font-weight: 800;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.admin-item-tags span:hover {
+    transform: translateY(-2px);
+
+    background:
+        rgba(201, 122, 255, 0.22);
+
+    border-color:
+        rgba(201, 122, 255, 0.8);
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 650px) {
+
+    .admin-item-tags {
+        justify-content: flex-start;
+    }
+
+}
+/* =========================================================
+   PLAYLIST YOUTUBE — CARTE JEU ADMIN
+========================================================= */
+
+.admin-game-playlist {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 10px;
+    padding: 0 12px 18px;
+}
+
+
+.admin-game-playlist-label {
+    color: var(--admin-text-soft);
+
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+
+.admin-game-playlist-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 7px 13px;
+
+    border: 1px solid
+        rgba(255, 70, 90, 0.5);
+
+    border-radius: 999px;
+
+    background:
+        rgba(255, 70, 90, 0.10);
+
+    color: #FF9EAA;
+
+    font-size: 0.8rem;
+    font-weight: 800;
+
+    text-decoration: none;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.admin-game-playlist-link:hover {
+    transform: translateY(-2px);
+
+    background:
+        rgba(255, 70, 90, 0.20);
+}
+
+
+.admin-game-playlist-empty {
+    color: var(--admin-text-soft);
+
+    font-size: 0.8rem;
+    font-style: italic;
+
+    opacity: 0.75;
+}
