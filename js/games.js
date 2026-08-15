@@ -2,6 +2,7 @@
 
 /* =========================================================
    PAGE JEUX — COUAXIA
+   CHARGEMENT DEPUIS SUPABASE VIA /api/games
 ========================================================= */
 
 document.addEventListener(
@@ -15,16 +16,6 @@ document.addEventListener(
         const GAMES_API =
             "/api/games";
 
-        const VOTE_STORAGE_KEY =
-            "couaxia-game-vote";
-
-        /*
-         * Seuls les jeux "À faire"
-         * participent au vote.
-         */
-        const VOTE_STATUS =
-            "backlog";
-
 
         /* =====================================================
            ÉLÉMENTS
@@ -35,35 +26,42 @@ document.addEventListener(
                 "games-grid"
             );
 
+
         const statusFilter =
             document.getElementById(
                 "games-status-filter"
             );
+
 
         const results =
             document.getElementById(
                 "games-results"
             );
 
-        const voteButton =
+
+        const emptyState =
             document.getElementById(
-                "games-vote-button"
+                "games-empty-state"
             );
+
 
         const statCurrent =
             document.getElementById(
                 "games-stat-current"
             );
 
+
         const statRegular =
             document.getElementById(
                 "games-stat-regular"
             );
 
+
         const statBacklog =
             document.getElementById(
                 "games-stat-backlog"
             );
+
 
         const statFinished =
             document.getElementById(
@@ -71,54 +69,25 @@ document.addEventListener(
             );
 
 
-        if (
-            !gamesGrid ||
-            !statusFilter
-        ) {
-
-            console.error(
-                "[Games] Impossible d'initialiser la page."
-            );
-
-            return;
-        }
-
-
         /* =====================================================
            ÉTAT
         ====================================================== */
 
-        let gameCards = [];
-
-        let gamesData = [];
-
-        let loading =
-            false;
+        let games =
+            [];
 
 
         /* =====================================================
            OUTILS
         ====================================================== */
 
-        function normalizeString(
+        function normalizeText(
             value
         ) {
 
             return String(
                 value ?? ""
-            )
-                .trim();
-        }
-
-
-        function normalizeStatus(
-            value
-        ) {
-
-            return normalizeString(
-                value
-            )
-                .toLowerCase();
+            ).trim();
         }
 
 
@@ -129,654 +98,696 @@ document.addEventListener(
             return String(
                 value ?? ""
             )
-                .replaceAll(
-                    "&",
+                .replace(
+                    /&/g,
                     "&amp;"
                 )
-                .replaceAll(
-                    "<",
+                .replace(
+                    /</g,
                     "&lt;"
                 )
-                .replaceAll(
-                    ">",
+                .replace(
+                    />/g,
                     "&gt;"
                 )
-                .replaceAll(
-                    '"',
+                .replace(
+                    /"/g,
                     "&quot;"
                 )
-                .replaceAll(
-                    "'",
+                .replace(
+                    /'/g,
                     "&#039;"
                 );
         }
 
 
-        /* =====================================================
-           INFORMATIONS D'UNE CARTE
-        ====================================================== */
-
-        function getStatus(
-            card
+        function normalizeTags(
+            value
         ) {
-
-            return normalizeStatus(
-                card?.dataset
-                    ?.status
-            );
-        }
-
-
-        function getGameId(
-            card
-        ) {
-
-            return normalizeString(
-                card?.dataset
-                    ?.gameId
-            );
-        }
-
-
-        function getTwitchGameId(
-            card
-        ) {
-
-            return normalizeString(
-                card?.dataset
-                    ?.twitchGameId
-            );
-        }
-
-
-        function getGameName(
-            card
-        ) {
-
-            const heading =
-                card?.querySelector(
-                    ".game-content h2"
-                ) ||
-                card?.querySelector(
-                    ".game-title"
-                );
-
-
-            return (
-                heading
-                    ?.textContent
-                    ?.trim() ||
-                "Jeu inconnu"
-            );
-        }
-
-
-        function getGameCover(
-            card
-        ) {
-
-            return (
-                card?.querySelector(
-                    ".game-cover-image"
-                ) ||
-                card?.querySelector(
-                    ".game-cover img"
-                ) ||
-                null
-            );
-        }
-
-
-        /* =====================================================
-           LABELS DES STATUTS
-        ====================================================== */
-
-        function getStatusLabel(
-            status
-        ) {
-
-            switch (
-                normalizeStatus(
-                    status
-                )
-            ) {
-
-                case "current":
-
-                    return "En cours";
-
-
-                case "regular":
-
-                    return "Régulier";
-
-
-                case "backlog":
-
-                    return "À faire";
-
-
-                case "finished":
-
-                    return "Terminé";
-
-
-                default:
-
-                    return "Jeu";
-            }
-        }
-
-
-        /* =====================================================
-           API
-        ====================================================== */
-
-        async function fetchGames() {
-
-            const response =
-                await fetch(
-                    GAMES_API,
-                    {
-                        method:
-                            "GET",
-
-                        cache:
-                            "no-store",
-
-                        headers: {
-
-                            Accept:
-                                "application/json"
-
-                        }
-                    }
-                );
-
-
-            const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
-
-
-            if (
-                !response.ok
-            ) {
-
-                throw new Error(
-                    data?.error ||
-                    `Erreur HTTP ${response.status}`
-                );
-            }
-
-
-            /*
-             * On accepte :
-             *
-             * {
-             *     success: true,
-             *     games: [...]
-             * }
-             *
-             * ainsi qu'un tableau direct
-             * pour garder le script robuste.
-             */
 
             if (
                 Array.isArray(
-                    data
+                    value
                 )
             ) {
 
-                return data;
+                return value
+                    .map(
+                        normalizeText
+                    )
+                    .filter(
+                        Boolean
+                    );
             }
 
 
-            return Array.isArray(
-                data?.games
-            )
-                ? data.games
-                : [];
+            if (
+                typeof value ===
+                "string"
+            ) {
+
+                return value
+                    .split(
+                        /[,;]+/
+                    )
+                    .map(
+                        normalizeText
+                    )
+                    .filter(
+                        Boolean
+                    );
+            }
+
+
+            return [];
         }
 
 
-        /* =====================================================
-           NORMALISATION SUPABASE
-        ====================================================== */
-
         function normalizeGame(
-            game,
-            index
+            game
         ) {
 
-            const id =
-                normalizeString(
-                    game?.id ||
-                    game?.game_id ||
-                    `game-${index + 1}`
-                );
+            if (
+                !game ||
+                typeof game !==
+                    "object"
+            ) {
 
-
-            const twitchGameId =
-                normalizeString(
-                    game?.twitch_game_id ||
-                    game?.twitchGameId ||
-                    game?.twitch_id
-                );
-
-
-            const status =
-                normalizeStatus(
-                    game?.status ||
-                    "backlog"
-                );
-
-
-            const name =
-                normalizeString(
-                    game?.name ||
-                    game?.title ||
-                    "Chargement..."
-                );
-
-
-            const description =
-                normalizeString(
-                    game?.description
-                );
+                return null;
+            }
 
 
             return {
 
-                id,
+                id:
+                    normalizeText(
+                        game.id
+                    ),
 
-                twitchGameId,
+                twitchGameId:
+                    normalizeText(
+                        game.twitchGameId ??
+                        game.twitch_game_id
+                    ),
 
-                status,
+                name:
+                    normalizeText(
+                        game.twitchName ??
+                        game.twitch_name ??
+                        game.name
+                    ) ||
+                    "Jeu",
 
-                name,
+                boxArtUrl:
+                    normalizeText(
+                        game.boxArtUrl ??
+                        game.box_art_url ??
+                        game.image
+                    ),
 
-                description,
-
-                visible:
-                    game?.visible !==
-                    false,
-
-                sortOrder:
-                    Number.isFinite(
-                        Number(
-                            game?.sort_order
-                        )
+                status:
+                    normalizeText(
+                        game.status
                     )
-                        ? Number(
-                            game.sort_order
-                        )
-                        : 0
+                        .toLowerCase() ||
+                    "backlog",
+
+                tags:
+                    normalizeTags(
+                        game.tags
+                    ),
+
+                description:
+                    normalizeText(
+                        game.description
+                    ),
+
+                rating:
+                    game.rating ??
+                    null,
+
+                youtubePlaylist:
+                    normalizeText(
+                        game.youtubePlaylist ??
+                        game.youtube_playlist
+                    ),
+
+                pollEnabled:
+                    Boolean(
+                        game.pollEnabled ??
+                        game.poll_enabled
+                    )
 
             };
         }
 
 
         /* =====================================================
-           CRÉATION D'UNE CARTE
+           STATUTS
         ====================================================== */
 
-        function createGameCard(
-            game
+        function getStatusInfo(
+            status
         ) {
 
-            const article =
-                document.createElement(
-                    "article"
-                );
-
-
-            article.className =
-                "game-card";
-
-
-            article.dataset.gameId =
-                game.id;
-
-
-            article.dataset.status =
-                game.status;
-
-
-            if (
-                game.twitchGameId
+            switch (
+                status
             ) {
 
-                article.dataset
-                    .twitchGameId =
-                    game.twitchGameId;
+                case "current":
+
+                    return {
+                        icon: "🔥",
+                        label: "En cours",
+                        className:
+                            "game-status-current"
+                    };
+
+
+                case "regular":
+
+                    return {
+                        icon: "🔁",
+                        label: "Régulier",
+                        className:
+                            "game-status-regular"
+                    };
+
+
+                case "backlog":
+
+                    return {
+                        icon: "📚",
+                        label: "À faire",
+                        className:
+                            "game-status-backlog"
+                    };
+
+
+                case "paused":
+
+                    return {
+                        icon: "⏸️",
+                        label: "En pause",
+                        className:
+                            "game-status-paused"
+                    };
+
+
+                case "finished":
+
+                    return {
+                        icon: "🏆",
+                        label: "Terminé",
+                        className:
+                            "game-status-finished"
+                    };
+
+
+                default:
+
+                    return {
+                        icon: "🎮",
+                        label: "Jeu",
+                        className:
+                            ""
+                    };
+            }
+        }
+
+
+        /* =====================================================
+           STATISTIQUES
+        ====================================================== */
+
+        function countStatus(
+            status
+        ) {
+
+            return games.filter(
+                game =>
+                    game.status ===
+                    status
+            ).length;
+        }
+
+
+        function updateStats() {
+
+            if (
+                statCurrent
+            ) {
+
+                statCurrent.textContent =
+                    countStatus(
+                        "current"
+                    );
             }
 
 
-            /* =================================================
-               COUVERTURE
-            ================================================= */
+            if (
+                statRegular
+            ) {
 
-            const cover =
-                document.createElement(
-                    "div"
+                statRegular.textContent =
+                    countStatus(
+                        "regular"
+                    );
+            }
+
+
+            if (
+                statBacklog
+            ) {
+
+                statBacklog.textContent =
+                    countStatus(
+                        "backlog"
+                    );
+            }
+
+
+            if (
+                statFinished
+            ) {
+
+                statFinished.textContent =
+                    countStatus(
+                        "finished"
+                    );
+            }
+        }
+
+
+        /* =====================================================
+           TAGS
+        ====================================================== */
+
+        function renderTags(
+            tags
+        ) {
+
+            if (
+                !Array.isArray(
+                    tags
+                ) ||
+                tags.length ===
+                    0
+            ) {
+
+                return "";
+            }
+
+
+            return `
+                <div class="game-tags">
+
+                    ${tags
+                        .map(
+                            tag => `
+                                <span>
+                                    ${escapeHtml(
+                                        tag
+                                    )}
+                                </span>
+                            `
+                        )
+                        .join("")}
+
+                </div>
+            `;
+        }
+
+
+        /* =====================================================
+           NOTE
+        ====================================================== */
+
+        function renderRating(
+            rating
+        ) {
+
+            if (
+                rating ===
+                    null ||
+                rating ===
+                    undefined ||
+                rating ===
+                    ""
+            ) {
+
+                return "";
+            }
+
+
+            const value =
+                Number(
+                    rating
                 );
 
 
-            cover.className =
-                "game-cover";
+            if (
+                !Number.isFinite(
+                    value
+                )
+            ) {
+
+                return "";
+            }
 
 
-            const image =
-                document.createElement(
-                    "img"
-                );
+            return `
+                <div class="game-rating">
+
+                    <span>
+                        Ma note
+                    </span>
+
+                    <strong>
+                        💜 ${escapeHtml(
+                            value
+                        )}/10
+                    </strong>
+
+                </div>
+            `;
+        }
 
 
-            image.className =
-                "game-cover-image";
+        /* =====================================================
+           CARTE
+        ====================================================== */
 
-
-            /*
-             * games-twitch.js remplacera
-             * automatiquement cette image
-             * par la jaquette Twitch.
-             */
-
-            image.alt =
-                game.name
-                    ? `Jaquette de ${game.name}`
-                    : "Jaquette du jeu";
-
-
-            image.loading =
-                "lazy";
-
-
-            image.decoding =
-                "async";
-
-
-            image.draggable =
-                false;
-
-
-            cover.appendChild(
-                image
-            );
-
-
-            /* =================================================
-               BADGE TWITCH
-            ================================================= */
-
-            const twitchBadge =
-                document.createElement(
-                    "span"
-                );
-
-
-            twitchBadge.className =
-                "game-twitch-source";
-
-
-            twitchBadge.textContent =
-                game.twitchGameId
-                    ? "Twitch"
-                    : "Manuel";
-
-
-            twitchBadge.title =
-                game.twitchGameId
-                    ? "Informations récupérées depuis Twitch"
-                    : "Aucun identifiant Twitch";
-
-
-            cover.appendChild(
-                twitchBadge
-            );
-
-
-            /* =================================================
-               CONTENU
-            ================================================= */
-
-            const content =
-                document.createElement(
-                    "div"
-                );
-
-
-            content.className =
-                "game-content";
-
-
-            const title =
-                document.createElement(
-                    "h2"
-                );
-
-
-            title.className =
-                "game-title";
-
-
-            title.textContent =
-                game.name ||
-                "Chargement...";
-
-
-            content.appendChild(
-                title
-            );
-
-
-            /* =================================================
-               STATUT
-            ================================================= */
+        function renderGameCard(
+            game
+        ) {
 
             const status =
-                document.createElement(
-                    "span"
-                );
-
-
-            status.className =
-                [
-                    "game-status",
-                    `game-status-${game.status}`
-                ].join(
-                    " "
-                );
-
-
-            status.textContent =
-                getStatusLabel(
+                getStatusInfo(
                     game.status
                 );
 
 
-            content.appendChild(
-                status
-            );
+            const cover =
+                game.boxArtUrl
+                    ? `
+                        <img
+                            class="game-cover-image"
+                            src="${escapeHtml(
+                                game.boxArtUrl
+                            )}"
+                            alt="Jaquette de ${escapeHtml(
+                                game.name
+                            )}"
+                            loading="lazy"
+                            draggable="false"
+                        >
+                    `
+                    : `
+                        <div
+                            class="game-cover-placeholder"
+                            aria-hidden="true"
+                        >
+                            🎮
+                        </div>
+                    `;
 
 
-            /* =================================================
-               DESCRIPTION
-            ================================================= */
-
-            if (
+            const description =
                 game.description
-            ) {
-
-                const description =
-                    document.createElement(
-                        "p"
-                    );
-
-
-                description.className =
-                    "game-description";
+                    ? `
+                        <p class="game-description">
+                            ${escapeHtml(
+                                game.description
+                            )}
+                        </p>
+                    `
+                    : "";
 
 
-                description.textContent =
-                    game.description;
+            const youtube =
+                game.youtubePlaylist
+                    ? `
+                        <a
+                            class="game-vods-button"
+                            href="${escapeHtml(
+                                game.youtubePlaylist
+                            )}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <span aria-hidden="true">
+                                ▶
+                            </span>
+
+                            Voir les VOD
+                        </a>
+                    `
+                    : "";
 
 
-                content.appendChild(
-                    description
-                );
-            }
+            return `
+                <article
+                    class="game-card"
+                    data-game-id="${escapeHtml(
+                        game.id
+                    )}"
+                    data-status="${escapeHtml(
+                        game.status
+                    )}"
+                    data-tags="${escapeHtml(
+                        game.tags.join(
+                            " "
+                        )
+                    )}"
+                    data-poll="${
+                        game.pollEnabled
+                            ? "true"
+                            : "false"
+                    }"
+                >
+
+                    <div class="game-cover">
+
+                        ${cover}
+
+                        <span
+                            class="
+                                game-status
+                                ${escapeHtml(
+                                    status.className
+                                )}
+                            "
+                        >
+                            ${status.icon}
+                            ${escapeHtml(
+                                status.label
+                            )}
+                        </span>
+
+                    </div>
 
 
-            /* =================================================
-               ASSEMBLAGE
-            ================================================= */
+                    <div class="game-content">
 
-            article.appendChild(
-                cover
-            );
+                        <h2 class="game-title">
+                            ${escapeHtml(
+                                game.name
+                            )}
+                        </h2>
 
+                        ${renderTags(
+                            game.tags
+                        )}
 
-            article.appendChild(
-                content
-            );
+                        ${renderRating(
+                            game.rating
+                        )}
 
+                        ${description}
 
-            return article;
+                        ${youtube}
+
+                    </div>
+
+                </article>
+            `;
         }
 
 
         /* =====================================================
-           RENDU
+           FILTRAGE
+        ====================================================== */
+
+        function getFilteredGames() {
+
+            const selectedStatus =
+                normalizeText(
+                    statusFilter?.value
+                )
+                    .toLowerCase() ||
+                "all";
+
+
+            if (
+                selectedStatus ===
+                "all"
+            ) {
+
+                return games;
+            }
+
+
+            return games.filter(
+                game =>
+                    game.status ===
+                    selectedStatus
+            );
+        }
+
+
+        /* =====================================================
+           AFFICHAGE
         ====================================================== */
 
         function renderGames() {
 
+            if (
+                !gamesGrid
+            ) {
+
+                return;
+            }
+
+
+            const filteredGames =
+                getFilteredGames();
+
+
+            if (
+                games.length ===
+                0
+            ) {
+
+                gamesGrid.innerHTML =
+                    "";
+
+
+                if (
+                    emptyState
+                ) {
+
+                    emptyState.hidden =
+                        false;
+                }
+
+
+                if (
+                    results
+                ) {
+
+                    results.textContent =
+                        "Aucun jeu enregistré.";
+                }
+
+
+                return;
+            }
+
+
+            if (
+                emptyState
+            ) {
+
+                emptyState.hidden =
+                    true;
+            }
+
+
+            if (
+                filteredGames.length ===
+                0
+            ) {
+
+                gamesGrid.innerHTML = `
+                    <div class="games-empty-filter">
+                        Aucun jeu ne correspond à ce filtre.
+                    </div>
+                `;
+
+
+                if (
+                    results
+                ) {
+
+                    results.textContent =
+                        "Aucun résultat.";
+                }
+
+
+                return;
+            }
+
+
             gamesGrid.innerHTML =
-                "";
-
-
-            const fragment =
-                document.createDocumentFragment();
-
-
-            gamesData
-                .filter(
-                    game =>
-                        game.visible
-                )
-                .sort(
-                    (
-                        first,
-                        second
-                    ) => {
-
-                        return (
-                            first.sortOrder -
-                            second.sortOrder
-                        );
-                    }
-                )
-                .forEach(
-                    game => {
-
-                        fragment.appendChild(
-                            createGameCard(
-                                game
-                            )
-                        );
-                    }
-                );
-
-
-            gamesGrid.appendChild(
-                fragment
-            );
-
-
-            /* =================================================
-               NOUVELLE LISTE DE CARTES
-            ================================================= */
-
-            gameCards =
-                Array.from(
-                    gamesGrid.querySelectorAll(
-                        ".game-card"
+                filteredGames
+                    .map(
+                        renderGameCard
                     )
-                );
+                    .join(
+                        ""
+                    );
 
 
-            /* =================================================
-               STATISTIQUES
-            ================================================= */
+            if (
+                results
+            ) {
 
-            updateStats();
+                results.textContent =
+                    `${filteredGames.length} jeu${
+                        filteredGames.length >
+                        1
+                            ? "x"
+                            : ""
+                    } affiché${
+                        filteredGames.length >
+                        1
+                            ? "s"
+                            : ""
+                    }.`;
+            }
 
 
-            /* =================================================
-               FILTRE
-            ================================================= */
-
-            applyFilter();
-
-
-            /* =================================================
-               INFORMER games-twitch.js
-            ================================================= */
-
+            /*
+             * Informe les autres scripts,
+             * notamment le système de sondage.
+             */
             document.dispatchEvent(
                 new CustomEvent(
-                    "couaxia:games-rendered",
+                    "couaxia:games-updated",
                     {
                         detail: {
-
                             games:
-                                [
-                                    ...gamesData
-                                ],
-
-                            cards:
-                                [
-                                    ...gameCards
-                                ]
-
+                                [...games]
                         }
                     }
                 )
-            );
-
-
-            console.info(
-                `[Games] ${gameCards.length} carte(s) générée(s).`
             );
         }
 
 
         /* =====================================================
-           CHARGEMENT
+           CHARGEMENT API
         ====================================================== */
 
         async function loadGames() {
 
             if (
-                loading
+                !gamesGrid
             ) {
 
-                return gamesData;
+                return;
             }
-
-
-            loading =
-                true;
-
-
-            gamesGrid.classList.add(
-                "is-loading"
-            );
 
 
             if (
@@ -790,42 +801,80 @@ document.addEventListener(
 
             try {
 
+                const response =
+                    await fetch(
+                        GAMES_API,
+                        {
+
+                            method:
+                                "GET",
+
+                            cache:
+                                "no-store",
+
+                            credentials:
+                                "same-origin",
+
+                            headers: {
+
+                                Accept:
+                                    "application/json"
+
+                            }
+
+                        }
+                    );
+
+
+                const data =
+                    await response
+                        .json()
+                        .catch(
+                            () => ({})
+                        );
+
+
+                if (
+                    !response.ok
+                ) {
+
+                    throw new Error(
+                        data?.error ||
+                        `Erreur HTTP ${response.status}`
+                    );
+                }
+
+
                 const rawGames =
-                    await fetchGames();
+                    Array.isArray(
+                        data
+                    )
+                        ? data
+                        : Array.isArray(
+                            data?.games
+                        )
+                            ? data.games
+                            : [];
 
 
-                gamesData =
+                games =
                     rawGames
                         .map(
                             normalizeGame
                         )
                         .filter(
-                            game =>
-                                game.id
+                            Boolean
                         );
 
 
-                renderGames();
-
-
-                document.dispatchEvent(
-                    new CustomEvent(
-                        "couaxia:games-loaded",
-                        {
-                            detail: {
-
-                                games:
-                                    [
-                                        ...gamesData
-                                    ]
-
-                            }
-                        }
-                    )
+                console.info(
+                    `[Games] ${games.length} jeu(x) chargé(s).`
                 );
 
 
-                return gamesData;
+                updateStats();
+
+                renderGames();
 
 
             } catch (
@@ -833,25 +882,29 @@ document.addEventListener(
             ) {
 
                 console.error(
-                    "[Games] Impossible de charger les jeux :",
+                    "[Games] Erreur API :",
                     error
                 );
 
 
-                gamesData =
+                games =
                     [];
 
 
-                gameCards =
-                    [];
+                updateStats();
 
 
                 gamesGrid.innerHTML =
-                    `
-                        <p class="games-load-error">
-                            Impossible de charger les jeux pour le moment.
-                        </p>
-                    `;
+                    "";
+
+
+                if (
+                    emptyState
+                ) {
+
+                    emptyState.hidden =
+                        false;
+                }
 
 
                 if (
@@ -863,1172 +916,77 @@ document.addEventListener(
                 }
 
 
-                document.dispatchEvent(
-                    new CustomEvent(
-                        "couaxia:games-error",
-                        {
-                            detail: {
-
-                                error
-
-                            }
-                        }
-                    )
-                );
-
-
-                return [];
-
-
-            } finally {
-
-                loading =
-                    false;
-
-
-                gamesGrid.classList.remove(
-                    "is-loading"
-                );
-            }
-        }
-
-
-        /* =====================================================
-           COMPTEURS
-        ====================================================== */
-
-        function countStatus(
-            status
-        ) {
-
-            return gameCards.filter(
-                card =>
-                    getStatus(
-                        card
-                    ) ===
-                    status
-            ).length;
-        }
-
-
-        function updateStats() {
-
-            if (
-                statCurrent
-            ) {
-
-                statCurrent.textContent =
-                    String(
-                        countStatus(
-                            "current"
-                        )
-                    );
-            }
-
-
-            if (
-                statRegular
-            ) {
-
-                statRegular.textContent =
-                    String(
-                        countStatus(
-                            "regular"
-                        )
-                    );
-            }
-
-
-            if (
-                statBacklog
-            ) {
-
-                statBacklog.textContent =
-                    String(
-                        countStatus(
-                            "backlog"
-                        )
-                    );
-            }
-
-
-            if (
-                statFinished
-            ) {
-
-                statFinished.textContent =
-                    String(
-                        countStatus(
-                            "finished"
-                        )
-                    );
-            }
-        }
-
-
-        /* =====================================================
-           FILTRAGE
-        ====================================================== */
-
-        function cardMatchesFilter(
-            card,
-            selectedStatus
-        ) {
-
-            if (
-                selectedStatus ===
-                "all"
-            ) {
-
-                return true;
-            }
-
-
-            return (
-                getStatus(
-                    card
-                ) ===
-                selectedStatus
-            );
-        }
-
-
-        function applyFilter() {
-
-            const selectedStatus =
-                normalizeStatus(
-                    statusFilter.value ||
-                    "all"
-                );
-
-
-            let visibleCount =
-                0;
-
-
-            gameCards.forEach(
-                card => {
-
-                    const visible =
-                        cardMatchesFilter(
-                            card,
-                            selectedStatus
-                        );
-
-
-                    card.hidden =
-                        !visible;
-
-
-                    card.classList.toggle(
-                        "is-game-visible",
-                        visible
-                    );
-
-
-                    if (
-                        visible
-                    ) {
-
-                        visibleCount +=
-                            1;
-                    }
-                }
-            );
-
-
-            updateResults(
-                visibleCount,
-                selectedStatus
-            );
-        }
-
-
-        function updateResults(
-            visibleCount,
-            selectedStatus
-        ) {
-
-            if (
-                !results
-            ) {
-
-                return;
-            }
-
-
-            if (
-                visibleCount ===
-                0
-            ) {
-
-                results.textContent =
-                    "Aucun jeu ne correspond à ce filtre.";
-
-                return;
-            }
-
-
-            if (
-                selectedStatus ===
-                "all"
-            ) {
-
-                results.textContent =
-                    `${visibleCount} jeu${
-                        visibleCount > 1
-                            ? "x"
-                            : ""
-                    } dans la bibliothèque.`;
-
-                return;
-            }
-
-
-            results.textContent =
-                `${visibleCount} jeu${
-                    visibleCount > 1
-                        ? "x"
-                        : ""
-                } affiché${
-                    visibleCount > 1
-                        ? "s"
-                        : ""
-                }.`;
-        }
-
-
-        /* =====================================================
-           VOTE — STOCKAGE
-        ====================================================== */
-
-        function getStoredVote() {
-
-            try {
-
-                return (
-                    localStorage.getItem(
-                        VOTE_STORAGE_KEY
-                    ) ||
-                    ""
-                );
-
-
-            } catch (
-                error
-            ) {
-
-                console.error(
-                    "[Games] Impossible de lire le vote.",
-                    error
-                );
-
-
-                return "";
-            }
-        }
-
-
-        function saveVote(
-            gameId
-        ) {
-
-            try {
-
-                localStorage.setItem(
-                    VOTE_STORAGE_KEY,
-                    gameId
-                );
-
-
-            } catch (
-                error
-            ) {
-
-                console.error(
-                    "[Games] Impossible d'enregistrer le vote.",
-                    error
-                );
-            }
-        }
-
-
-        /* =====================================================
-           JEUX ÉLIGIBLES AU VOTE
-        ====================================================== */
-
-        function getVoteCandidates() {
-
-            return gameCards.filter(
-                card =>
-                    getStatus(
-                        card
-                    ) ===
-                    VOTE_STATUS
-            );
-        }
-
-
-        /* =====================================================
-           MODAL DE VOTE
-        ====================================================== */
-
-        function createVoteModal() {
-
-            const modal =
-                document.createElement(
-                    "div"
-                );
-
-
-            modal.className =
-                "games-vote-modal";
-
-
-            modal.innerHTML = `
-                <div
-                    class="games-vote-dialog"
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="games-vote-title"
-                >
-
-                    <button
-                        type="button"
-                        class="games-vote-close"
-                        aria-label="Fermer"
-                    >
-                        ✕
-                    </button>
-
-
-                    <div
-                        class="games-vote-header"
-                    >
-
-                        <span
-                            class="games-vote-eyebrow"
-                        >
-                            🗳️ Communauté
-                        </span>
-
-
-                        <h2
-                            id="games-vote-title"
-                        >
-                            Vote pour le prochain jeu !
-                        </h2>
-
-
-                        <p>
-                            Quel jeu aimerais-tu voir
-                            prochainement en stream ?
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="games-vote-list"
-                    ></div>
-
-
-                    <p
-                        class="games-vote-message"
-                        aria-live="polite"
-                    ></p>
-
-                </div>
-            `;
-
-
-            document.body.appendChild(
-                modal
-            );
-
-
-            return modal;
-        }
-
-
-        /* =====================================================
-           OPTION DE VOTE
-        ====================================================== */
-
-        function createVoteOption(
-            card
-        ) {
-
-            const gameId =
-                getGameId(
-                    card
-                );
-
-
-            const gameName =
-                getGameName(
-                    card
-                );
-
-
-            const cover =
-                getGameCover(
-                    card
-                );
-
-
-            const button =
-                document.createElement(
-                    "button"
-                );
-
-
-            button.type =
-                "button";
-
-
-            button.className =
-                "games-vote-option";
-
-
-            button.dataset.gameId =
-                gameId;
-
-
-            const coverWrapper =
-                document.createElement(
-                    "span"
-                );
-
-
-            coverWrapper.className =
-                "games-vote-cover";
-
-
-            if (
-                cover?.src
-            ) {
-
-                const image =
-                    document.createElement(
-                        "img"
-                    );
-
-
-                image.src =
-                    cover.src;
-
-
-                image.alt =
-                    "";
-
-
-                image.draggable =
-                    false;
-
-
-                coverWrapper.appendChild(
-                    image
-                );
-            }
-
-
-            const name =
-                document.createElement(
-                    "span"
-                );
-
-
-            name.className =
-                "games-vote-name";
-
-
-            name.textContent =
-                gameName;
-
-
-            const check =
-                document.createElement(
-                    "span"
-                );
-
-
-            check.className =
-                "games-vote-check";
-
-
-            check.setAttribute(
-                "aria-hidden",
-                "true"
-            );
-
-
-            check.textContent =
-                "○";
-
-
-            button.append(
-                coverWrapper,
-                name,
-                check
-            );
-
-
-            return button;
-        }
-
-
-        /* =====================================================
-           SYNCHRONISATION DU VOTE
-        ====================================================== */
-
-        function updateVoteModal(
-            modal
-        ) {
-
-            const storedVote =
-                getStoredVote();
-
-
-            modal
-                .querySelectorAll(
-                    ".games-vote-option"
-                )
-                .forEach(
-                    button => {
-
-                        const selected =
-                            button.dataset
-                                .gameId ===
-                            storedVote;
-
-
-                        button.classList.toggle(
-                            "is-selected",
-                            selected
-                        );
-
-
-                        button.setAttribute(
-                            "aria-pressed",
-                            String(
-                                selected
-                            )
-                        );
-
-
-                        const check =
-                            button.querySelector(
-                                ".games-vote-check"
-                            );
-
-
-                        if (
-                            check
-                        ) {
-
-                            check.textContent =
-                                selected
-                                    ? "♥"
-                                    : "○";
-                        }
-                    }
-                );
-
-
-            const message =
-                modal.querySelector(
-                    ".games-vote-message"
-                );
-
-
-            if (
-                !message
-            ) {
-
-                return;
-            }
-
-
-            if (
-                !storedVote
-            ) {
-
-                message.textContent =
-                    "Tu n'as pas encore voté.";
-
-                return;
-            }
-
-
-            const selectedCard =
-                gameCards.find(
-                    card =>
-                        getGameId(
-                            card
-                        ) ===
-                        storedVote
-                );
-
-
-            /*
-             * Le jeu peut avoir été supprimé
-             * de Supabase depuis le dernier vote.
-             */
-
-            if (
-                !selectedCard
-            ) {
-
-                message.textContent =
-                    "Ton ancien vote n'est plus disponible.";
-
-                return;
-            }
-
-
-            message.textContent =
-                `Ton vote actuel : ${getGameName(
-                    selectedCard
-                )} 💜`;
-        }
-
-
-        /* =====================================================
-           OUVRIR LE VOTE
-        ====================================================== */
-
-        function openVoteModal() {
-
-            const candidates =
-                getVoteCandidates();
-
-
-            if (
-                candidates.length ===
-                0
-            ) {
-
-                if (
-                    typeof window
-                        .showMascotteMessage ===
-                    "function"
-                ) {
-
-                    window.showMascotteMessage(
-                        "Il n'y a aucun jeu à départager pour le moment ! 👀",
-                        3500
-                    );
-                }
-
-
-                return;
-            }
-
-
-            let modal =
-                document.querySelector(
-                    ".games-vote-modal"
-                );
-
-
-            if (
-                !modal
-            ) {
-
-                modal =
-                    createVoteModal();
-            }
-
-
-            const list =
-                modal.querySelector(
-                    ".games-vote-list"
-                );
-
-
-            if (
-                !list
-            ) {
-
-                return;
-            }
-
-
-            list.innerHTML =
-                "";
-
-
-            candidates.forEach(
-                card => {
-
-                    list.appendChild(
-                        createVoteOption(
-                            card
-                        )
-                    );
-                }
-            );
-
-
-            updateVoteModal(
-                modal
-            );
-
-
-            modal.classList.add(
-                "is-open"
-            );
-
-
-            document.body.classList.add(
-                "games-vote-open"
-            );
-
-
-            modal
-                .querySelector(
-                    ".games-vote-close"
-                )
-                ?.focus();
-
-
-            if (
-                typeof window
-                    .showMascotteMessage ===
-                "function"
-            ) {
-
-                window.showMascotteMessage(
-                    "À toi de choisir ce que je devrais jouer ! 🗳️💜",
-                    3500
-                );
-            }
-        }
-
-
-        /* =====================================================
-           FERMER LE VOTE
-        ====================================================== */
-
-        function closeVoteModal(
-            modal
-        ) {
-
-            if (
-                !modal
-            ) {
-
-                return;
-            }
-
-
-            modal.classList.remove(
-                "is-open"
-            );
-
-
-            document.body.classList.remove(
-                "games-vote-open"
-            );
-        }
-
-
-        /* =====================================================
-           ENREGISTRER UN VOTE
-        ====================================================== */
-
-        function voteForGame(
-            modal,
-            gameId
-        ) {
-
-            if (
-                !gameId
-            ) {
-
-                return;
-            }
-
-
-            saveVote(
-                gameId
-            );
-
-
-            updateVoteModal(
-                modal
-            );
-
-
-            const selectedCard =
-                gameCards.find(
-                    card =>
-                        getGameId(
-                            card
-                        ) ===
-                        gameId
-                );
-
-
-            const gameName =
-                selectedCard
-                    ? getGameName(
-                        selectedCard
-                    )
-                    : "ce jeu";
-
-
-            if (
-                typeof window
-                    .showMascotteMessage ===
-                "function"
-            ) {
-
-                const messages = [
-
-                    `Vote enregistré pour ${gameName} ! 💜`,
-
-                    `${gameName} ? Bon choix ! 👀`,
-
-                    `Je note ton vote pour ${gameName} 🗳️`,
-
-                    `On verra si ${gameName} gagne ! 😏`
-
-                ];
-
-
-                const message =
-                    messages[
-                        Math.floor(
-                            Math.random() *
-                            messages.length
-                        )
-                    ];
-
-
-                window.showMascotteMessage(
-                    message,
-                    3500
-                );
-            }
-
-
-            document.dispatchEvent(
-                new CustomEvent(
-                    "couaxia:game-vote-changed",
-                    {
-                        detail: {
-
-                            gameId,
-
-                            gameName
-
-                        }
-                    }
-                )
-            );
-        }
-
-
-        /* =====================================================
-           ÉVÉNEMENTS — FILTRE
-        ====================================================== */
-
-        statusFilter.addEventListener(
-            "change",
-            applyFilter
-        );
-
-
-        /* =====================================================
-           ÉVÉNEMENTS — VOTE
-        ====================================================== */
-
-        if (
-            voteButton
-        ) {
-
-            voteButton.addEventListener(
-                "click",
-                openVoteModal
-            );
-        }
-
-
-        /* =====================================================
-           ÉVÉNEMENTS — MODAL
-        ====================================================== */
-
-        document.addEventListener(
-            "click",
-            event => {
-
-                if (
-                    !(
-                        event.target instanceof
-                        Element
-                    )
-                ) {
-
-                    return;
-                }
-
-
-                const modal =
-                    event.target.closest(
-                        ".games-vote-modal"
+                const emptyParagraph =
+                    emptyState?.querySelector(
+                        "p"
                     );
 
 
                 if (
-                    !modal
+                    emptyParagraph
                 ) {
 
-                    return;
-                }
-
-
-                /* =========================================
-                   FERMER
-                ========================================== */
-
-                if (
-                    event.target.closest(
-                        ".games-vote-close"
-                    )
-                ) {
-
-                    closeVoteModal(
-                        modal
-                    );
-
-                    return;
-                }
-
-
-                /* =========================================
-                   VOTER
-                ========================================== */
-
-                const voteOption =
-                    event.target.closest(
-                        ".games-vote-option"
-                    );
-
-
-                if (
-                    voteOption
-                ) {
-
-                    voteForGame(
-                        modal,
-                        normalizeString(
-                            voteOption.dataset
-                                .gameId
-                        )
-                    );
-
-                    return;
-                }
-
-
-                /* =========================================
-                   CLIC SUR LE FOND
-                ========================================== */
-
-                if (
-                    event.target ===
-                    modal
-                ) {
-
-                    closeVoteModal(
-                        modal
-                    );
+                    emptyParagraph.textContent =
+                        "Impossible de charger les jeux pour le moment.";
                 }
             }
-        );
+        }
 
 
         /* =====================================================
-           ÉCHAP
+           FILTRE
         ====================================================== */
 
-        document.addEventListener(
-            "keydown",
-            event => {
+        statusFilter
+            ?.addEventListener(
+                "change",
+                () => {
 
-                if (
-                    event.key !==
-                    "Escape"
-                ) {
+                    renderGames();
 
-                    return;
                 }
-
-
-                const modal =
-                    document.querySelector(
-                        ".games-vote-modal.is-open"
-                    );
-
-
-                if (
-                    !modal
-                ) {
-
-                    return;
-                }
-
-
-                closeVoteModal(
-                    modal
-                );
-            }
-        );
+            );
 
 
         /* =====================================================
-           MISE À JOUR TWITCH
-        ====================================================== */
-
-        /*
-         * games-twitch.js déclenche cet événement
-         * une fois les noms et jaquettes chargés.
-         *
-         * Si le modal de vote est ouvert,
-         * on le reconstruit afin d'utiliser les
-         * vraies jaquettes Twitch.
-         */
-
-        document.addEventListener(
-            "couaxia:games-updated",
-            event => {
-
-                if (
-                    event?.detail?.source !==
-                    "twitch"
-                ) {
-
-                    return;
-                }
-
-
-                const modal =
-                    document.querySelector(
-                        ".games-vote-modal.is-open"
-                    );
-
-
-                if (
-                    !modal
-                ) {
-
-                    return;
-                }
-
-
-                const list =
-                    modal.querySelector(
-                        ".games-vote-list"
-                    );
-
-
-                if (
-                    !list
-                ) {
-
-                    return;
-                }
-
-
-                list.innerHTML =
-                    "";
-
-
-                getVoteCandidates()
-                    .forEach(
-                        card => {
-
-                            list.appendChild(
-                                createVoteOption(
-                                    card
-                                )
-                            );
-                        }
-                    );
-
-
-                updateVoteModal(
-                    modal
-                );
-            }
-        );
-
-
-        /* =====================================================
-           API PUBLIQUE
+           API PUBLIQUE JS
         ====================================================== */
 
         window.CouaxiaGames = {
 
-            /**
-             * Retourne les cartes actuellement
-             * présentes dans la page.
-             */
-            getCards() {
-
-                return [
-                    ...gameCards
-                ];
-            },
-
-
-            /**
-             * Retourne les données provenant
-             * de Supabase.
-             */
             getGames() {
 
                 return [
-                    ...gamesData
+                    ...games
                 ];
             },
 
 
-            /**
-             * Recharge complètement les jeux.
-             */
+            getCards() {
+
+                return Array.from(
+                    gamesGrid
+                        ?.querySelectorAll(
+                            ".game-card"
+                        ) ||
+                    []
+                );
+            },
+
+
             reload() {
 
                 return loadGames();
-            },
-
-
-            /**
-             * Réapplique le filtre actuel.
-             */
-            applyFilter() {
-
-                applyFilter();
-            },
-
-
-            /**
-             * Retourne le vote local.
-             */
-            getVote() {
-
-                return getStoredVote();
             }
 
         };
 
 
         /* =====================================================
-           PREMIER CHARGEMENT
+           INITIALISATION
         ====================================================== */
 
         loadGames();
+
     }
 );

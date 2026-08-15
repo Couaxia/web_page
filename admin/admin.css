@@ -1649,58 +1649,118 @@ html[data-theme="dark"] .admin-primary-button {
 
 .admin-list-tools {
     width:
-        min(320px, 100%);
+        min(420px, 100%);
 }
 
+
+/* =========================================================
+   CONTENEUR DES JEUX
+========================================================= */
 
 .admin-games-list {
     display:
         grid;
 
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
     gap:
-        14px;
+        20px;
+
+    width:
+        100%;
 }
 
 
+/* =========================================================
+   CARTE JEU
+========================================================= */
+
 .admin-game-item {
+    min-width:
+        0;
+
     display:
-        grid;
+        flex;
 
-    grid-template-columns:
-        110px minmax(0, 1fr);
+    flex-direction:
+        column;
 
-    gap:
-        16px;
-
-    padding:
-        14px;
+    overflow:
+        hidden;
 
     border:
-        1px solid var(--admin-border);
+        1px solid
+        var(--admin-border);
 
     border-radius:
-        18px;
+        24px;
 
     background:
         var(--admin-bg-soft);
+
+    box-shadow:
+        var(--admin-shadow-soft);
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 
+.admin-game-item:hover {
+    transform:
+        translateY(-3px);
+
+    border-color:
+        var(--admin-border-strong);
+
+    box-shadow:
+        var(--admin-shadow);
+}
+
+
+/* =========================================================
+   IMAGE DU JEU
+========================================================= */
+
 .admin-game-item-cover {
+    position:
+        relative;
+
+    width:
+        100%;
+
+    height:
+        230px;
+
     min-height:
-        145px;
+        230px;
+
+    max-height:
+        230px;
 
     display:
-        grid;
+        flex;
 
-    place-items:
+    align-items:
         center;
+
+    justify-content:
+        center;
+
+    flex:
+        0 0 230px;
 
     overflow:
         hidden;
 
     border-radius:
-        14px;
+        0;
 
     background:
         var(--admin-primary-soft);
@@ -1712,37 +1772,198 @@ html[data-theme="dark"] .admin-primary-button {
 
 .admin-game-item-cover img {
     width:
-        100%;
+        100% !important;
 
     height:
+        100% !important;
+
+    min-width:
         100%;
+
+    min-height:
+        100%;
+
+    max-width:
+        none;
+
+    max-height:
+        none;
+
+    display:
+        block;
 
     object-fit:
         cover;
+
+    object-position:
+        center;
+
+    flex:
+        0 0 auto;
 }
 
+
+/* =========================================================
+   CONTENU
+========================================================= */
 
 .admin-game-item-content {
     min-width:
         0;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    flex:
+        1;
+
+    padding:
+        20px;
+
+    text-align:
+        center;
 }
 
 
+/* =========================================================
+   TITRE
+========================================================= */
+
 .admin-game-item-content h3 {
     margin:
-        0 0 9px;
+        0 0 10px;
 
     color:
         var(--admin-primary);
 
     font-size:
-        1.15rem;
+        1.3rem;
+
+    font-weight:
+        900;
+
+    line-height:
+        1.25;
+
+    overflow-wrap:
+        anywhere;
 }
 
+
+/* =========================================================
+   MÉTADONNÉES
+========================================================= */
 
 .admin-game-item-meta {
     display:
         flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        8px;
+
+    width:
+        100%;
+
+    margin:
+        8px 0 4px;
+}
+
+
+.admin-game-item-meta span {
+    min-height:
+        32px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        5px;
+
+    padding:
+        6px 11px;
+
+    color:
+        var(--admin-text);
+
+    font-size:
+        0.8rem;
+
+    font-weight:
+        800;
+
+    line-height:
+        1;
+
+    border:
+        1px solid
+        var(--admin-border);
+
+    border-radius:
+        999px;
+
+    background:
+        var(--admin-primary-soft);
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.admin-game-item-description {
+    width:
+        100%;
+
+    margin:
+        10px 0 0;
+
+    color:
+        var(--admin-text-soft);
+
+    line-height:
+        1.55;
+
+    overflow-wrap:
+        anywhere;
+}
+
+
+/* =========================================================
+   TAGS
+========================================================= */
+
+.admin-game-tags,
+.admin-game-item-tags,
+[data-game-tags] {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
 
     flex-wrap:
         wrap;
@@ -1750,68 +1971,140 @@ html[data-theme="dark"] .admin-primary-button {
     gap:
         7px;
 
+    width:
+        100%;
+
     margin:
-        8px 0;
+        14px 0 0;
 }
 
 
-.admin-game-item-meta span {
+.admin-game-tags span,
+.admin-game-item-tags span,
+[data-game-tags] span {
+    min-height:
+        30px;
+
     display:
         inline-flex;
 
     align-items:
         center;
 
-    min-height:
-        30px;
+    justify-content:
+        center;
 
     padding:
-        5px 10px;
-
-    border:
-        1px solid var(--admin-border);
-
-    border-radius:
-        999px;
-
-    background:
-        var(--admin-primary-soft);
+        6px 11px;
 
     color:
-        var(--admin-text);
+        var(--admin-primary);
 
     font-size:
         0.78rem;
 
     font-weight:
         800;
-}
-
-
-.admin-game-item-description {
-    margin:
-        10px 0;
-
-    color:
-        var(--admin-text-soft);
 
     line-height:
-        1.5;
+        1;
+
+    white-space:
+        nowrap;
+
+    border:
+        1px solid
+        var(--admin-border-strong);
+
+    border-radius:
+        999px;
+
+    background:
+        var(--admin-primary-soft);
 }
 
+
+/* =========================================================
+   ACTIONS
+========================================================= */
 
 .admin-game-item-actions {
     display:
         flex;
 
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
     flex-wrap:
         wrap;
 
     gap:
-        9px;
+        10px;
+
+    width:
+        100%;
 
     margin-top:
-        13px;
+        18px;
+}
+
+
+.admin-game-item-actions button {
+    min-width:
+        135px;
+}
+
+
+/* =========================================================
+   MODE NUIT — JEUX
+========================================================= */
+
+html[data-theme="dark"]
+.admin-game-item {
+    background:
+        rgba(
+            35,
+            13,
+            48,
+            0.96
+        );
+}
+
+
+html[data-theme="dark"]
+.admin-game-item-content h3 {
+    color:
+        #FFFFFF;
+}
+
+
+html[data-theme="dark"]
+.admin-game-tags span,
+html[data-theme="dark"]
+.admin-game-item-tags span,
+html[data-theme="dark"]
+[data-game-tags] span {
+    color:
+        #F1D7FF;
+
+    background:
+        rgba(
+            201,
+            122,
+            255,
+            0.12
+        );
+
+    border-color:
+        rgba(
+            201,
+            122,
+            255,
+            0.40
+        );
 }
 
 
@@ -4307,5 +4600,83 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb {
     .admin-artwork-card .admin-list-actions button {
         width: 100%;
         min-width: 0;
+    }
+}
+
+/* =========================================================
+   CORRECTIONS FINALES — CARTES JEUX
+   Ces règles sont volontairement placées en fin de fichier
+   afin d'écraser les anciennes règles responsive.
+========================================================= */
+
+@media (max-width: 1150px) {
+    .admin-games-list {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-game-item-cover {
+        height: 260px;
+        min-height: 260px;
+        max-height: 260px;
+        flex-basis: 260px;
+    }
+}
+
+@media (max-width: 650px) {
+    .admin-games-list {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .admin-game-item {
+        grid-template-columns: none;
+        display: flex;
+        flex-direction: column;
+        border-radius: 19px;
+    }
+
+    .admin-game-item-cover {
+        height: 210px;
+        min-height: 210px;
+        max-height: 210px;
+        flex-basis: 210px;
+    }
+
+    .admin-game-item-content {
+        padding: 16px;
+    }
+
+    .admin-game-item-content h3 {
+        font-size: 1.15rem;
+    }
+
+    .admin-game-item-actions {
+        flex-direction: column;
+    }
+
+    .admin-game-item-actions button {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 390px) {
+    .admin-game-item-cover {
+        height: 180px;
+        min-height: 180px;
+        max-height: 180px;
+        flex-basis: 180px;
+    }
+
+    .admin-game-item-meta,
+    .admin-game-tags,
+    .admin-game-item-tags,
+    [data-game-tags] {
+        justify-content: flex-start;
+    }
+
+    .admin-game-item-content {
+        align-items: stretch;
+        text-align: left;
     }
 }
