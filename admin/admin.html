@@ -561,16 +561,14 @@
                             name="gameId"
                         >
 
-
-
                         <!-- =====================================
-                             TWITCH
+                            TWITCH — RECHERCHE PAR NOM
                         ====================================== -->
 
                         <div class="admin-field admin-field-wide">
 
-                            <label for="admin-game-twitch-id">
-                                ID du jeu Twitch
+                            <label for="admin-game-name">
+                                Nom du jeu
                             </label>
 
 
@@ -578,13 +576,11 @@
 
                                 <input
                                     type="text"
-                                    id="admin-game-twitch-id"
-                                    name="twitchGameId"
-                                    inputmode="numeric"
+                                    id="admin-game-name"
+                                    name="gameName"
                                     autocomplete="off"
-                                    placeholder="Ex : 509658"
-                                    required
-                                >
+                                    placeholder="Ex : Minecraft"
+                                    required>
 
 
                                 <button
@@ -599,8 +595,9 @@
 
 
                             <small>
-                                Le nom et la jaquette seront
-                                récupérés automatiquement depuis Twitch.
+                                Entre simplement le nom du jeu.
+                                L'ID Twitch et la jaquette seront
+                                récupérés automatiquement.
                             </small>
 
                         </div>
@@ -1134,16 +1131,14 @@
 
                         </div>
 
-
-
                         <!-- =====================================
-                             IMAGE — DROPZONE
+                            MÉDIA — DROPZONE
                         ====================================== -->
 
                         <div class="admin-field admin-field-wide">
 
                             <label>
-                                Illustration
+                                Illustration / média
                             </label>
 
 
@@ -1152,14 +1147,14 @@
                                 class="admin-upload-dropzone"
                                 tabindex="0"
                                 role="button"
-                                aria-label="Déposer ou sélectionner une illustration"
+                                aria-label="Déposer ou sélectionner une illustration ou une vidéo"
                             >
 
                                 <input
                                     type="file"
                                     id="admin-artwork-file"
                                     name="artworkFile"
-                                    accept="image/png,image/jpeg,image/webp,image/gif"
+                                    accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm"
                                     hidden
                                 >
 
@@ -1173,7 +1168,7 @@
 
 
                                 <strong>
-                                    Dépose ton image ici
+                                    Dépose ton fichier ici
                                 </strong>
 
 
@@ -1183,14 +1178,16 @@
 
 
                                 <small>
-                                    PNG, JPG, WEBP ou GIF — maximum 50 Mo
+                                    PNG, JPG, WEBP, GIF, MP4 ou WEBM — maximum 50 Mo
                                 </small>
 
                             </div>
 
 
 
-                            <!-- APERÇU IMAGE -->
+                            <!-- =====================================
+                                APERÇU DU MÉDIA
+                            ====================================== -->
 
                             <div
                                 id="admin-artwork-upload-preview"
@@ -1200,12 +1197,29 @@
 
                                 <div class="admin-upload-preview-image">
 
+
+                                    <!-- IMAGE / GIF -->
+
                                     <img
                                         id="admin-artwork-preview-image"
                                         src=""
                                         alt=""
                                         draggable="false"
+                                        hidden
                                     >
+
+
+                                    <!-- VIDÉO -->
+
+                                    <video
+                                        id="admin-artwork-preview-video"
+                                        muted
+                                        loop
+                                        playsinline
+                                        controls
+                                        hidden
+                                    ></video>
+
 
                                 </div>
 
@@ -1217,6 +1231,7 @@
                                     >
                                         —
                                     </strong>
+
 
                                     <span
                                         id="admin-artwork-file-size"
@@ -1230,7 +1245,7 @@
                                         class="admin-danger-button"
                                         type="button"
                                     >
-                                        🗑️ Retirer l'image
+                                        🗑️ Retirer le fichier
                                     </button>
 
                                 </div>
@@ -1716,6 +1731,10 @@
                 hidden
             >
 
+                <!-- =============================================
+                     EN-TÊTE
+                ============================================== -->
+
                 <header class="admin-section-header">
 
                     <div>
@@ -1729,9 +1748,8 @@
                         </h1>
 
                         <p>
-                            Prépare et suis les votes
-                            qui pourront influencer
-                            les prochains streams.
+                            Crée et prépare le sondage affiché
+                            à ta communauté.
                         </p>
 
                     </div>
@@ -1741,84 +1759,7 @@
 
 
                 <!-- =============================================
-                     ÉTAT
-                ============================================== -->
-
-                <section class="admin-block">
-
-                    <div class="admin-block-header">
-
-                        <div>
-
-                            <span class="admin-block-eyebrow">
-                                📡 État
-                            </span>
-
-                            <h2>
-                                Sondage actuel
-                            </h2>
-
-                        </div>
-
-
-                        <span
-                            id="admin-poll-status"
-                            class="admin-poll-status is-inactive"
-                        >
-                            Inactif
-                        </span>
-
-                    </div>
-
-
-                    <div class="admin-poll-overview">
-
-                        <div>
-
-                            <span>
-                                Votes
-                            </span>
-
-                            <strong id="admin-poll-vote-count">
-                                0
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                            <span>
-                                Jeux proposés
-                            </span>
-
-                            <strong id="admin-poll-game-count">
-                                0
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                            <span>
-                                Fin du vote
-                            </span>
-
-                            <strong id="admin-poll-end-date">
-                                —
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-
-                <!-- =============================================
-                     CONFIGURATION
+                     FORMULAIRE DU SONDAGE
                 ============================================== -->
 
                 <section class="admin-block">
@@ -1832,7 +1773,7 @@
                             </span>
 
                             <h2>
-                                Préparer le vote
+                                Préparer le sondage
                             </h2>
 
                         </div>
@@ -1845,90 +1786,131 @@
                         class="admin-form"
                     >
 
-                        <div class="admin-field">
-
-                            <label for="admin-poll-end-date-input">
-                                Date de fin
-                            </label>
-
-                            <input
-                                type="date"
-                                id="admin-poll-end-date-input"
-                                name="pollEndDate"
-                            >
-
-                        </div>
-
-
-                        <div class="admin-field">
-
-                            <label for="admin-poll-end-time-input">
-                                Heure de fin
-                            </label>
-
-                            <input
-                                type="time"
-                                id="admin-poll-end-time-input"
-                                name="pollEndTime"
-                            >
-
-                        </div>
-
-
+                        <!-- =====================================
+                             QUESTION
+                        ====================================== -->
 
                         <div class="admin-field admin-field-wide">
 
-                            <label>
-                                Jeux proposés
+                            <label for="admin-poll-question">
+                                Question du sondage
                             </label>
 
-                            <p class="admin-field-help">
-                                Les jeux marqués comme éligibles
-                                au sondage apparaîtront automatiquement ici.
-                            </p>
+                            <input
+                                type="text"
+                                id="admin-poll-question"
+                                name="question"
+                                maxlength="250"
+                                autocomplete="off"
+                                placeholder="Ex : Quel jeu voulez-vous voir au prochain stream ?"
+                                required
+                            >
+
+                            <small>
+                                Maximum 250 caractères.
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             STATUT
+                        ====================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-poll-status">
+                                Statut
+                            </label>
+
+                            <select
+                                id="admin-poll-status"
+                                name="status"
+                            >
+
+                                <option value="closed">
+                                    🔒 Fermé
+                                </option>
+
+                                <option value="open">
+                                    🟢 Ouvert
+                                </option>
+
+                            </select>
+
+                            <small>
+                                Un sondage fermé reste enregistré,
+                                mais n'est pas actif.
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- =====================================
+                             OPTIONS
+                        ====================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <div class="admin-poll-options-header">
+
+                                <div>
+
+                                    <label>
+                                        Options du sondage
+                                    </label>
+
+                                    <small>
+                                        Minimum 2 options, maximum 10.
+                                    </small>
+
+                                </div>
+
+
+                                <button
+                                    id="admin-poll-add-option"
+                                    class="admin-secondary-button"
+                                    type="button"
+                                >
+                                    ➕ Ajouter une option
+                                </button>
+
+                            </div>
 
 
                             <div
-                                id="admin-poll-games-list"
-                                class="admin-poll-games-list"
+                                id="admin-poll-options-list"
+                                class="admin-poll-options-list"
                             >
-
-                                <p class="admin-empty-state">
-                                    Aucun jeu disponible pour le moment.
-                                </p>
-
+                                <!-- Les champs sont créés automatiquement par admin.js -->
                             </div>
 
                         </div>
 
 
 
+                        <!-- =====================================
+                             ACTIONS
+                        ====================================== -->
+
                         <div class="admin-form-actions">
 
                             <button
-                                id="admin-poll-close"
+                                id="admin-poll-reset"
                                 class="admin-danger-button"
                                 type="button"
                             >
-                                Fermer le sondage
+                                🗑️ Réinitialiser
                             </button>
 
 
                             <button
-                                id="admin-poll-save"
-                                class="admin-secondary-button"
+                                class="admin-primary-button"
                                 type="submit"
                             >
-                                💾 Enregistrer
-                            </button>
-
-
-                            <button
-                                id="admin-poll-open"
-                                class="admin-primary-button"
-                                type="button"
-                            >
-                                🗳️ Ouvrir le sondage
+                                💾 Enregistrer le sondage
                             </button>
 
                         </div>
@@ -1940,21 +1922,24 @@
 
 
                 <!-- =============================================
-                     RÉSULTATS
+                     APERÇU DU SONDAGE
                 ============================================== -->
 
-                <section class="admin-block">
+                <section
+                    id="admin-poll-preview"
+                    class="admin-block admin-poll-preview"
+                >
 
                     <div class="admin-block-header">
 
                         <div>
 
                             <span class="admin-block-eyebrow">
-                                📊 Résultats
+                                👁️ Aperçu
                             </span>
 
                             <h2>
-                                Votes de la communauté
+                                Aperçu du sondage
                             </h2>
 
                         </div>
@@ -1962,14 +1947,26 @@
                     </div>
 
 
-                    <div
-                        id="admin-poll-results"
-                        class="admin-poll-results"
-                    >
+                    <div class="admin-poll-preview-content">
 
-                        <p class="admin-empty-state">
-                            Aucun résultat pour le moment.
-                        </p>
+                        <h3
+                            id="admin-poll-preview-question"
+                            class="admin-poll-preview-question"
+                        >
+                            Aucune question définie
+                        </h3>
+
+
+                        <div
+                            id="admin-poll-preview-options"
+                            class="admin-poll-preview-options"
+                        >
+
+                            <p class="admin-empty-text">
+                                Aucune option définie.
+                            </p>
+
+                        </div>
 
                     </div>
 

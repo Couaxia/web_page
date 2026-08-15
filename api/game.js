@@ -170,18 +170,65 @@ function formatBoxArt(
 
 
 /* =========================================================
+   FORMATAGE
+========================================================= */
+
+/**
+ * Formate un jeu Twitch.
+ *
+ * @param {object} game
+ * @returns {object}
+ */
+function formatGame(
+    game
+) {
+
+    return {
+
+        found:
+            true,
+
+        id:
+            String(
+                game?.id ??
+                ""
+            ),
+
+        name:
+            String(
+                game?.name ??
+                ""
+            ),
+
+        boxArtUrl:
+            formatBoxArt(
+                game?.box_art_url
+            )
+
+    };
+}
+
+
+/* =========================================================
    REQUÊTE TWITCH
 ========================================================= */
 
 /**
- * Exécute la requête Twitch.
+ * Exécute une requête Twitch Games.
  *
- * @param {string} gameId
+ * On peut rechercher :
+ *
+ * - par ID
+ * - par nom
+ *
+ * @param {"id"|"name"} type
+ * @param {string} value
  * @param {boolean} forceRefresh
  * @returns {Promise<Response>}
  */
 async function requestGame(
-    gameId,
+    type,
+    value,
     forceRefresh = false
 ) {
 
@@ -191,10 +238,35 @@ async function requestGame(
         );
 
 
-    url.searchParams.set(
-        "id",
-        gameId
-    );
+    /* =====================================================
+       RECHERCHE PAR NOM
+    ====================================================== */
+
+    if (
+        type ===
+        "name"
+    ) {
+
+        url.searchParams.set(
+            "name",
+            value
+        );
+
+    }
+
+
+    /* =====================================================
+       RECHERCHE PAR ID
+    ====================================================== */
+
+    else {
+
+        url.searchParams.set(
+            "id",
+            value
+        );
+
+    }
 
 
     const headers =
@@ -221,55 +293,66 @@ async function requestGame(
 /**
  * Récupère les données Twitch brutes.
  *
- * @param {string} gameId
+ * @param {"id"|"name"} type
+ * @param {string} value
  * @returns {Promise<object>}
  */
 async function fetchGame(
-    gameId
+    type,
+    value
 ) {
 
-    let response =
+    let twitchResponse =
         await requestGame(
-            gameId
+            type,
+            value
         );
 
 
-    /*
-     * Si le token Twitch a expiré,
-     * on le renouvelle automatiquement.
-     */
+    /* =====================================================
+       TOKEN TWITCH EXPIRÉ
+    ====================================================== */
 
     if (
-        response.status ===
+        twitchResponse.status ===
         401
     ) {
 
         clearTwitchAccessToken();
 
 
-        response =
+        twitchResponse =
             await requestGame(
-                gameId,
+                type,
+                value,
                 true
             );
     }
 
 
+    /* =====================================================
+       LECTURE
+    ====================================================== */
+
     const data =
         await readTwitchResponse(
-            response
+            twitchResponse
         );
 
 
+    /* =====================================================
+       ERREUR TWITCH
+    ====================================================== */
+
     if (
-        !response.ok
+        !twitchResponse.ok
     ) {
 
         throw new Error(
-            `Erreur Twitch Games (${response.status}) : ` +
+            `Erreur Twitch Games (${twitchResponse.status}) : ` +
             getTwitchErrorMessage(
                 data,
-                response.status
+                twitchResponse.status
             )
         );
     }
@@ -280,49 +363,11 @@ async function fetchGame(
 
 
 /* =========================================================
-   FORMATAGE
+   RECHERCHE PAR ID
 ========================================================= */
 
 /**
- * Formate un jeu Twitch.
- *
- * @param {object} game
- * @returns {object}
- */
-function formatGame(
-    game
-) {
-
-    return {
-
-        found:
-            true,
-
-        id:
-            String(
-                game?.id ?? ""
-            ),
-
-        name:
-            String(
-                game?.name ?? ""
-            ),
-
-        boxArtUrl:
-            formatBoxArt(
-                game?.box_art_url
-            )
-
-    };
-}
-
-
-/* =========================================================
-   GET GAME
-========================================================= */
-
-/**
- * Retourne un jeu Twitch.
+ * Recherche un jeu avec son ID Twitch.
  *
  * @param {string|number} gameId
  * @returns {Promise<object|null>}
@@ -347,6 +392,7 @@ export async function getGame(
 
     const data =
         await fetchGame(
+            "id",
             normalizedGameId
         );
 
@@ -388,13 +434,96 @@ export async function getGame(
 
 
 /* =========================================================
+   RECHERCHE PAR NOM
+========================================================= */
+
+/**
+ * Recherche un jeu avec son nom Twitch.
+ *
+ * Exemple :
+ *
+ * getGameByName("Minecraft")
+ *
+ * @param {string} gameName
+ * @returns {Promise<object|null>}
+ */
+export async function getGameByName(
+    gameName
+) {
+
+    const normalizedGameName =
+        normalizeText(
+            gameName
+        );
+
+
+    if (
+        !normalizedGameName
+    ) {
+
+        return null;
+    }
+
+
+    const data =
+        await fetchGame(
+            "name",
+            normalizedGameName
+        );
+
+
+    const game =
+        Array.isArray(
+            data?.data
+        )
+            ? data.data[0]
+            : null;
+
+
+    /* =====================================================
+       INTROUVABLE
+    ====================================================== */
+
+    if (
+        !game
+    ) {
+
+        return {
+
+            found:
+                false,
+
+            id:
+                null,
+
+            name:
+                normalizedGameName,
+
+            boxArtUrl:
+                null
+
+        };
+    }
+
+
+    return formatGame(
+        game
+    );
+}
+
+
+/* =========================================================
    API HTTP
 ========================================================= */
 
 /**
- * Route publique :
+ * Routes publiques :
  *
  * GET /api/game?id=509658
+ *
+ * OU
+ *
+ * GET /api/game?name=Minecraft
  */
 export default async function handler(
     request,
@@ -429,11 +558,13 @@ export default async function handler(
         response
             .status(405)
             .json({
+
                 success:
                     false,
 
                 error:
                     "Méthode non autorisée."
+
             });
 
 
@@ -442,7 +573,7 @@ export default async function handler(
 
 
     /* =====================================================
-       ID
+       PARAMÈTRES
     ====================================================== */
 
     const gameId =
@@ -451,18 +582,31 @@ export default async function handler(
         );
 
 
+    const gameName =
+        normalizeText(
+            request.query?.name
+        );
+
+
+    /* =====================================================
+       PARAMÈTRE MANQUANT
+    ====================================================== */
+
     if (
-        !gameId
+        !gameId &&
+        !gameName
     ) {
 
         response
             .status(400)
             .json({
+
                 success:
                     false,
 
                 error:
-                    "L'ID Twitch du jeu est obligatoire."
+                    "L'ID Twitch ou le nom du jeu est obligatoire."
+
             });
 
 
@@ -476,11 +620,42 @@ export default async function handler(
 
     try {
 
-        const game =
-            await getGame(
-                gameId
-            );
+        let game;
 
+
+        /* =================================================
+           PRIORITÉ À L'ID
+        ================================================= */
+
+        if (
+            gameId
+        ) {
+
+            game =
+                await getGame(
+                    gameId
+                );
+
+        }
+
+
+        /* =================================================
+           SINON RECHERCHE PAR NOM
+        ================================================= */
+
+        else {
+
+            game =
+                await getGameByName(
+                    gameName
+                );
+
+        }
+
+
+        /* =================================================
+           INTROUVABLE
+        ================================================= */
 
         if (
             !game ||
@@ -491,20 +666,29 @@ export default async function handler(
             response
                 .status(404)
                 .json({
+
                     success:
                         false,
 
                     game:
-                        game ?? null,
+                        game ??
+                        null,
 
                     error:
-                        "Jeu Twitch introuvable."
+                        gameName
+                            ? `Le jeu "${gameName}" est introuvable sur Twitch.`
+                            : "Jeu Twitch introuvable."
+
                 });
 
 
             return;
         }
 
+
+        /* =================================================
+           SUCCÈS
+        ================================================= */
 
         response
             .status(200)
@@ -539,12 +723,14 @@ export default async function handler(
         response
             .status(500)
             .json({
+
                 success:
                     false,
 
                 error:
                     error?.message ||
                     "Impossible de récupérer le jeu Twitch."
+
             });
     }
 }

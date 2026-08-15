@@ -5,8 +5,17 @@
    RENDER
 ========================================================= */
 
-import express from "express";
-import path from "path";
+import express
+    from "express";
+
+
+import path
+    from "path";
+
+
+import crypto
+    from "crypto";
+
 
 import {
     fileURLToPath
@@ -20,32 +29,59 @@ import {
 import galleryHandler
     from "./api/gallery.js";
 
+
 import gameHandler
     from "./api/game.js";
+
 
 import gamesHandler
     from "./api/games.js";
 
+
 import clipsHandler
     from "./api/clips.js";
+
 
 import videosHandler
     from "./api/videos.js";
 
+
 import followersHandler
     from "./api/followers.js";
+
 
 import streamHandler
     from "./api/stream.js";
 
+
 import userHandler
     from "./api/user.js";
+
 
 import twitchStatusHandler
     from "./api/twitch-status.js";
 
+
 import recommendedStreamersHandler
     from "./api/recommended-streamers.js";
+
+
+import pollHandler
+    from "./api/poll.js";
+
+
+/* =========================================================
+   AUTH PUBLIQUE
+========================================================= */
+
+import {
+    createPublicUserSession,
+    createPublicSessionCookie,
+    createPublicLogoutCookie,
+    getPublicUserSession,
+    getPublicUser,
+    getCookie
+} from "./api/_lib/public-auth.js";
 
 
 /* =========================================================
@@ -55,20 +91,26 @@ import recommendedStreamersHandler
 import adminGalleryHandler
     from "./api/admin/gallery.js";
 
+
 import adminGalleryUploadHandler
     from "./api/admin/gallery-upload.js";
+
 
 import adminGamesHandler
     from "./api/admin/games.js";
 
+
 import adminAuthLoginHandler
     from "./api/admin/auth-login.js";
+
 
 import adminAuthCallbackHandler
     from "./api/admin/auth-callback.js";
 
+
 import adminAuthMeHandler
     from "./api/admin/auth-me.js";
+
 
 import adminAuthLogoutHandler
     from "./api/admin/auth-logout.js";
@@ -91,6 +133,7 @@ const __filename =
         import.meta.url
     );
 
+
 const __dirname =
     path.dirname(
         __filename
@@ -107,8 +150,39 @@ const PORT =
     ) ||
     10000;
 
+
 const HOST =
     "0.0.0.0";
+
+
+const TWITCH_CLIENT_ID =
+    String(
+        process.env.TWITCH_CLIENT_ID ||
+        ""
+    ).trim();
+
+
+const TWITCH_CLIENT_SECRET =
+    String(
+        process.env.TWITCH_CLIENT_SECRET ||
+        ""
+    ).trim();
+
+
+const TWITCH_AUTHORIZE_URL =
+    "https://id.twitch.tv/oauth2/authorize";
+
+
+const TWITCH_TOKEN_URL =
+    "https://id.twitch.tv/oauth2/token";
+
+
+const TWITCH_USERS_URL =
+    "https://api.twitch.tv/helix/users";
+
+
+const PUBLIC_OAUTH_STATE_COOKIE =
+    "couaxia_public_oauth_state";
 
 
 /* =========================================================
@@ -132,13 +206,16 @@ app.use(
     })
 );
 
+
 app.use(
     express.urlencoded({
+
         extended:
             true,
 
         limit:
             "20mb"
+
     })
 );
 
@@ -164,12 +241,14 @@ function useHandler(
                 response
             );
 
+
             if (
                 !response.headersSent
             ) {
 
                 next();
             }
+
 
         } catch (
             error
@@ -180,6 +259,295 @@ function useHandler(
             );
         }
     };
+}
+
+
+/* =========================================================
+   OUTILS AUTH PUBLIQUE
+========================================================= */
+
+function getOrigin(
+    request
+) {
+
+    const forwardedProto =
+        String(
+            request.headers[
+                "x-forwarded-proto"
+            ] ||
+            ""
+        )
+            .split(",")[0]
+            .trim();
+
+
+    const protocol =
+        forwardedProto ||
+        request.protocol ||
+        "https";
+
+
+    const host =
+        request.get(
+            "host"
+        );
+
+
+    return (
+        `${protocol}://${host}`
+    );
+}
+
+
+function getPublicCallbackUrl(
+    request
+) {
+
+    return (
+        getOrigin(
+            request
+        ) +
+        "/api/auth/callback"
+    );
+}
+
+
+function createOAuthState() {
+
+    return crypto
+        .randomBytes(
+            32
+        )
+        .toString(
+            "hex"
+        );
+}
+
+
+function safeStringEquals(
+    valueA,
+    valueB
+) {
+
+    const bufferA =
+        Buffer.from(
+            String(
+                valueA ||
+                ""
+            )
+        );
+
+
+    const bufferB =
+        Buffer.from(
+            String(
+                valueB ||
+                ""
+            )
+        );
+
+
+    if (
+        bufferA.length !==
+        bufferB.length
+    ) {
+
+        return false;
+    }
+
+
+    return crypto.timingSafeEqual(
+        bufferA,
+        bufferB
+    );
+}
+
+
+function createOAuthStateCookie(
+    state
+) {
+
+    return [
+        `${PUBLIC_OAUTH_STATE_COOKIE}=${encodeURIComponent(state)}`,
+        "Path=/",
+        "HttpOnly",
+        "Secure",
+        "SameSite=Lax",
+        "Max-Age=600"
+    ].join("; ");
+}
+
+
+function clearOAuthStateCookie() {
+
+    return [
+        `${PUBLIC_OAUTH_STATE_COOKIE}=`,
+        "Path=/",
+        "HttpOnly",
+        "Secure",
+        "SameSite=Lax",
+        "Max-Age=0"
+    ].join("; ");
+}
+
+
+/* =========================================================
+   TWITCH — ÉCHANGE DU CODE
+========================================================= */
+
+async function exchangeTwitchCode(
+    code,
+    redirectUri
+) {
+
+    if (
+        !TWITCH_CLIENT_ID ||
+        !TWITCH_CLIENT_SECRET
+    ) {
+
+        throw new Error(
+            "Configuration Twitch incomplète."
+        );
+    }
+
+
+    const parameters =
+        new URLSearchParams({
+
+            client_id:
+                TWITCH_CLIENT_ID,
+
+            client_secret:
+                TWITCH_CLIENT_SECRET,
+
+            code:
+                String(
+                    code
+                ),
+
+            grant_type:
+                "authorization_code",
+
+            redirect_uri:
+                redirectUri
+
+        });
+
+
+    const response =
+        await fetch(
+            TWITCH_TOKEN_URL,
+            {
+
+                method:
+                    "POST",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/x-www-form-urlencoded"
+
+                },
+
+                body:
+                    parameters.toString()
+
+            }
+        );
+
+
+    const data =
+        await response
+            .json()
+            .catch(
+                () => ({})
+            );
+
+
+    if (
+        !response.ok ||
+        !data?.access_token
+    ) {
+
+        throw new Error(
+            data?.message ||
+            "Impossible d'obtenir le token Twitch."
+        );
+    }
+
+
+    return data;
+}
+
+
+/* =========================================================
+   TWITCH — UTILISATEUR CONNECTÉ
+========================================================= */
+
+async function getTwitchUserFromToken(
+    accessToken
+) {
+
+    const response =
+        await fetch(
+            TWITCH_USERS_URL,
+            {
+
+                method:
+                    "GET",
+
+                headers: {
+
+                    Authorization:
+                        `Bearer ${accessToken}`,
+
+                    "Client-Id":
+                        TWITCH_CLIENT_ID
+
+                }
+
+            }
+        );
+
+
+    const data =
+        await response
+            .json()
+            .catch(
+                () => ({})
+            );
+
+
+    if (
+        !response.ok
+    ) {
+
+        throw new Error(
+            data?.message ||
+            "Impossible de récupérer le compte Twitch."
+        );
+    }
+
+
+    const user =
+        Array.isArray(
+            data?.data
+        )
+            ? data.data[0]
+            : null;
+
+
+    if (
+        !user?.id
+    ) {
+
+        throw new Error(
+            "Le compte Twitch est introuvable."
+        );
+    }
+
+
+    return user;
 }
 
 
@@ -206,6 +574,358 @@ app.get(
 
                 service:
                     "couaxia-web"
+
+            });
+    }
+);
+
+
+/* =========================================================
+   AUTH TWITCH PUBLIQUE — LOGIN
+========================================================= */
+
+app.get(
+    "/api/auth/login",
+    (
+        request,
+        response
+    ) => {
+
+        try {
+
+            if (
+                !TWITCH_CLIENT_ID ||
+                !TWITCH_CLIENT_SECRET
+            ) {
+
+                response
+                    .status(500)
+                    .send(
+                        "Configuration Twitch incomplète."
+                    );
+
+                return;
+            }
+
+
+            const state =
+                createOAuthState();
+
+
+            const redirectUri =
+                getPublicCallbackUrl(
+                    request
+                );
+
+
+            const authorizationUrl =
+                new URL(
+                    TWITCH_AUTHORIZE_URL
+                );
+
+
+            authorizationUrl
+                .searchParams
+                .set(
+                    "client_id",
+                    TWITCH_CLIENT_ID
+                );
+
+
+            authorizationUrl
+                .searchParams
+                .set(
+                    "redirect_uri",
+                    redirectUri
+                );
+
+
+            authorizationUrl
+                .searchParams
+                .set(
+                    "response_type",
+                    "code"
+                );
+
+
+            authorizationUrl
+                .searchParams
+                .set(
+                    "state",
+                    state
+                );
+
+
+            /*
+             * Aucun scope particulier n'est nécessaire
+             * pour connaître l'identité du compte.
+             */
+            authorizationUrl
+                .searchParams
+                .set(
+                    "scope",
+                    ""
+                );
+
+
+            response.setHeader(
+                "Set-Cookie",
+                createOAuthStateCookie(
+                    state
+                )
+            );
+
+
+            response.redirect(
+                authorizationUrl.toString()
+            );
+
+
+        } catch (
+            error
+        ) {
+
+            console.error(
+                "[Public Auth Login]",
+                error
+            );
+
+
+            response
+                .status(500)
+                .send(
+                    "Impossible de démarrer la connexion Twitch."
+                );
+        }
+    }
+);
+
+
+/* =========================================================
+   AUTH TWITCH PUBLIQUE — CALLBACK
+========================================================= */
+
+app.get(
+    "/api/auth/callback",
+    async (
+        request,
+        response
+    ) => {
+
+        try {
+
+            const {
+                code,
+                state,
+                error,
+                error_description:
+                    errorDescription
+            } =
+                request.query;
+
+
+            if (
+                error
+            ) {
+
+                console.error(
+                    "[Public Auth Twitch]",
+                    error,
+                    errorDescription
+                );
+
+
+                response.redirect(
+                    "/games.html?login=refused"
+                );
+
+                return;
+            }
+
+
+            if (
+                !code ||
+                !state
+            ) {
+
+                response
+                    .status(400)
+                    .send(
+                        "Callback Twitch invalide."
+                    );
+
+                return;
+            }
+
+
+            const savedState =
+                getCookie(
+                    request,
+                    PUBLIC_OAUTH_STATE_COOKIE
+                );
+
+
+            if (
+                !savedState ||
+                !safeStringEquals(
+                    state,
+                    savedState
+                )
+            ) {
+
+                response
+                    .status(400)
+                    .send(
+                        "La vérification de sécurité OAuth a échoué."
+                    );
+
+                return;
+            }
+
+
+            const redirectUri =
+                getPublicCallbackUrl(
+                    request
+                );
+
+
+            const tokenData =
+                await exchangeTwitchCode(
+                    code,
+                    redirectUri
+                );
+
+
+            const twitchUser =
+                await getTwitchUserFromToken(
+                    tokenData.access_token
+                );
+
+
+            const sessionToken =
+                createPublicUserSession(
+                    twitchUser
+                );
+
+
+            response.setHeader(
+                "Set-Cookie",
+                [
+                    clearOAuthStateCookie(),
+                    createPublicSessionCookie(
+                        sessionToken
+                    )
+                ]
+            );
+
+
+            response.redirect(
+                "/games.html?login=success"
+            );
+
+
+        } catch (
+            error
+        ) {
+
+            console.error(
+                "[Public Auth Callback]",
+                error
+            );
+
+
+            response.redirect(
+                "/games.html?login=error"
+            );
+        }
+    }
+);
+
+
+/* =========================================================
+   AUTH TWITCH PUBLIQUE — MOI
+========================================================= */
+
+app.get(
+    "/api/auth/me",
+    (
+        request,
+        response
+    ) => {
+
+        const session =
+            getPublicUserSession(
+                request
+            );
+
+
+        if (
+            !session
+        ) {
+
+            response
+                .status(200)
+                .json({
+
+                    authenticated:
+                        false,
+
+                    user:
+                        null,
+
+                    loginUrl:
+                        "/api/auth/login"
+
+                });
+
+
+            return;
+        }
+
+
+        response
+            .status(200)
+            .json({
+
+                authenticated:
+                    true,
+
+                user:
+                    getPublicUser(
+                        session
+                    )
+
+            });
+    }
+);
+
+
+/* =========================================================
+   AUTH TWITCH PUBLIQUE — LOGOUT
+========================================================= */
+
+app.post(
+    "/api/auth/logout",
+    (
+        request,
+        response
+    ) => {
+
+        response.setHeader(
+            "Set-Cookie",
+            createPublicLogoutCookie()
+        );
+
+
+        response
+            .status(200)
+            .json({
+
+                success:
+                    true,
+
+                message:
+                    "Déconnexion réussie."
 
             });
     }
@@ -333,6 +1053,26 @@ app.get(
 
 
 /* =========================================================
+   API PUBLIQUE — SONDAGE
+========================================================= */
+
+app.get(
+    "/api/poll",
+    useHandler(
+        pollHandler
+    )
+);
+
+
+app.post(
+    "/api/poll",
+    useHandler(
+        pollHandler
+    )
+);
+
+
+/* =========================================================
    API ADMIN — GALERIE
 ========================================================= */
 
@@ -343,6 +1083,7 @@ app.get(
     )
 );
 
+
 app.post(
     "/api/admin/gallery",
     useHandler(
@@ -350,12 +1091,14 @@ app.post(
     )
 );
 
+
 app.put(
     "/api/admin/gallery",
     useHandler(
         adminGalleryHandler
     )
 );
+
 
 app.delete(
     "/api/admin/gallery",
@@ -388,6 +1131,7 @@ app.get(
     )
 );
 
+
 app.post(
     "/api/admin/games",
     useHandler(
@@ -395,12 +1139,14 @@ app.post(
     )
 );
 
+
 app.put(
     "/api/admin/games",
     useHandler(
         adminGamesHandler
     )
 );
+
 
 app.delete(
     "/api/admin/games",
@@ -421,6 +1167,7 @@ app.get(
     )
 );
 
+
 app.get(
     "/api/admin/auth-callback",
     useHandler(
@@ -428,12 +1175,14 @@ app.get(
     )
 );
 
+
 app.get(
     "/api/admin/auth-me",
     useHandler(
         adminAuthMeHandler
     )
 );
+
 
 app.post(
     "/api/admin/auth-logout",
@@ -467,6 +1216,7 @@ app.get(
     }
 );
 
+
 app.get(
     "/accueil",
     (
@@ -482,6 +1232,7 @@ app.get(
         );
     }
 );
+
 
 app.get(
     "/accueil.html",
@@ -520,6 +1271,7 @@ app.get(
     }
 );
 
+
 app.get(
     "/credits.html",
     (
@@ -557,6 +1309,7 @@ app.get(
     }
 );
 
+
 app.get(
     "/games.html",
     (
@@ -593,6 +1346,7 @@ app.get(
         );
     }
 );
+
 
 app.get(
     "/a-propos.html",
@@ -644,12 +1398,14 @@ app.use(
     express.static(
         __dirname,
         {
+
             extensions: [
                 "html"
             ],
 
             redirect:
                 false
+
         }
     )
 );
@@ -787,6 +1543,7 @@ app.use(
 
                 });
 
+
             return;
         }
 
@@ -803,7 +1560,7 @@ app.use(
 
                 details:
                     process.env.NODE_ENV ===
-                        "development"
+                    "development"
                         ? error?.message
                         : undefined
 
@@ -825,69 +1582,101 @@ app.listen(
             "========================================="
         );
 
+
         console.log(
             "🐙 Couaxia Web démarré"
         );
+
 
         console.log(
             `🌐 Port : ${PORT}`
         );
 
+
         console.log(
             "💚 Health : /health"
         );
+
 
         console.log(
             "🎨 Gallery : /api/gallery"
         );
 
+
         console.log(
             "🎮 Games : /api/games"
         );
+
 
         console.log(
             "🎮 Twitch Game : /api/game"
         );
 
+
         console.log(
             "📺 Twitch Status : /api/twitch-status"
         );
+
 
         console.log(
             "🎬 Clips : /api/clips"
         );
 
+
         console.log(
             "📼 Videos : /api/videos"
         );
+
 
         console.log(
             "👥 Followers : /api/followers"
         );
 
+
         console.log(
             "🔴 Stream : /api/stream"
         );
+
 
         console.log(
             "👤 Twitch User : /api/user"
         );
 
+
         console.log(
             "💜 Recommended : /api/recommended-streamers"
         );
+
+
+        console.log(
+            "🗳️ Poll : /api/poll"
+        );
+
+
+        console.log(
+            "🔑 Public Twitch Login : /api/auth/login"
+        );
+
+
+        console.log(
+            "👤 Public Twitch Me : /api/auth/me"
+        );
+
 
         console.log(
             "🔐 Admin Games : /api/admin/games"
         );
 
+
         console.log(
             "🔐 Admin Gallery : /api/admin/gallery"
         );
 
+
         console.log(
             "🖼️ Upload : /api/admin/gallery-upload"
         );
+
 
         console.log(
             "========================================="

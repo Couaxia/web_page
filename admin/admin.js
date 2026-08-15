@@ -133,9 +133,9 @@ document.addEventListener(
                 "admin-game-id"
             );
 
-        const twitchGameIdInput =
+        const gameNameInput =
             document.getElementById(
-                "admin-game-twitch-id"
+                "admin-game-name"
             );
 
         const statusInput =
@@ -1756,213 +1756,270 @@ document.addEventListener(
         }
 
 
-        /* =====================================================
-           JEUX — APERÇU TWITCH
-        ====================================================== */
+/* =====================================================
+   JEUX — APERÇU TWITCH PAR NOM
+====================================================== */
 
-        function hideTwitchPreview() {
+function hideTwitchPreview() {
+
+    if (
+        twitchResult
+    ) {
+
+        twitchResult.hidden =
+            true;
+    }
+
+
+    if (
+        twitchPreviewCover
+    ) {
+
+        twitchPreviewCover.removeAttribute(
+            "src"
+        );
+
+        twitchPreviewCover.alt =
+            "";
+    }
+
+
+    if (
+        twitchPreviewName
+    ) {
+
+        twitchPreviewName.textContent =
+            "—";
+    }
+
+
+    if (
+        twitchPreviewId
+    ) {
+
+        twitchPreviewId.textContent =
+            "—";
+    }
+}
+
+
+/* =====================================================
+   CHARGER L'APERÇU
+====================================================== */
+
+async function loadTwitchGamePreview() {
+
+    const gameName =
+        normalizeText(
+            gameNameInput?.value
+        );
+
+
+    if (
+        !gameName
+    ) {
+
+        showToast(
+            "Entre d'abord le nom du jeu.",
+            "error"
+        );
+
+
+        gameNameInput?.focus();
+
+        return;
+    }
+
+
+    if (
+        twitchPreviewButton
+    ) {
+
+        twitchPreviewButton.disabled =
+            true;
+
+        twitchPreviewButton.textContent =
+            "Recherche...";
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${TWITCH_GAME_API}?name=${encodeURIComponent(
+                    gameName
+                )}`,
+                {
+                    method:
+                        "GET",
+
+                    cache:
+                        "no-store",
+
+                    headers: {
+                        Accept:
+                            "application/json"
+                    }
+                }
+            );
+
+
+        const data =
+            await response
+                .json()
+                .catch(
+                    () => ({})
+                );
+
+
+        if (
+            !response.ok ||
+            !data?.success ||
+            !data?.game
+        ) {
+
+            throw new Error(
+                data?.error ||
+                `Le jeu "${gameName}" est introuvable sur Twitch.`
+            );
+        }
+
+
+        const game =
+            data.game;
+
+
+        /* =================================================
+           NOM OFFICIEL TWITCH
+        ================================================= */
+
+        if (
+            gameNameInput &&
+            game.name
+        ) {
+
+            gameNameInput.value =
+                game.name;
+        }
+
+
+        /* =================================================
+           JAQUETTE
+        ================================================= */
+
+        if (
+            twitchPreviewCover
+        ) {
 
             if (
-                twitchResult
+                game.boxArtUrl
             ) {
 
-                twitchResult.hidden =
-                    true;
-            }
+                twitchPreviewCover.src =
+                    game.boxArtUrl;
 
+                twitchPreviewCover.alt =
+                    `Jaquette de ${game.name || gameName}`;
 
-            if (
-                twitchPreviewCover
-            ) {
+            } else {
 
                 twitchPreviewCover.removeAttribute(
                     "src"
                 );
-            }
 
-
-            if (
-                twitchPreviewName
-            ) {
-
-                twitchPreviewName.textContent =
-                    "—";
-            }
-
-
-            if (
-                twitchPreviewId
-            ) {
-
-                twitchPreviewId.textContent =
-                    "—";
+                twitchPreviewCover.alt =
+                    "";
             }
         }
 
 
-        async function loadTwitchGamePreview() {
+        /* =================================================
+           NOM
+        ================================================= */
 
-            const gameId =
-                normalizeText(
-                    twitchGameIdInput?.value
-                );
+        if (
+            twitchPreviewName
+        ) {
+
+            twitchPreviewName.textContent =
+                game.name ||
+                gameName;
+        }
 
 
-            if (
-                !gameId
-            ) {
+        /* =================================================
+           ID TWITCH — INFORMATION UNIQUEMENT
+        ================================================= */
 
-                showToast(
-                    "Entre d'abord l'ID Twitch du jeu.",
-                    "error"
-                );
+        if (
+            twitchPreviewId
+        ) {
 
-                return;
-            }
+            twitchPreviewId.textContent =
+                game.id ||
+                "—";
+        }
 
+
+        /* =================================================
+           AFFICHER
+        ================================================= */
+
+        if (
+            twitchResult
+        ) {
+
+            twitchResult.hidden =
+                false;
+        }
+
+
+        showToast(
+            `Jeu trouvé : ${game.name || gameName}`,
+            "success"
+        );
+
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "[Twitch Game Preview]",
+            error
+        );
+
+
+        hideTwitchPreview();
+
+
+        showToast(
+            error?.message ||
+            "Impossible de récupérer le jeu Twitch.",
+            "error"
+        );
+
+
+        } finally {
 
             if (
                 twitchPreviewButton
             ) {
 
                 twitchPreviewButton.disabled =
-                    true;
+                    false;
 
                 twitchPreviewButton.textContent =
-                    "Chargement...";
-            }
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        `${TWITCH_GAME_API}?id=${encodeURIComponent(
-                            gameId
-                        )}`,
-                        {
-                            method:
-                                "GET",
-
-                            cache:
-                                "no-store",
-
-                            headers: {
-                                Accept:
-                                    "application/json"
-                            }
-                        }
-                    );
-
-
-                const data =
-                    await response
-                        .json()
-                        .catch(
-                            () => ({})
-                        );
-
-
-                if (
-                    !response.ok ||
-                    !data?.success ||
-                    !data?.game
-                ) {
-
-                    throw new Error(
-                        data?.error ||
-                        "Jeu Twitch introuvable."
-                    );
-                }
-
-
-                const game =
-                    data.game;
-
-
-                if (
-                    twitchPreviewCover
-                ) {
-
-                    twitchPreviewCover.src =
-                        game.boxArtUrl ||
-                        "";
-
-                    twitchPreviewCover.alt =
-                        game.name
-                            ? `Jaquette de ${game.name}`
-                            : "";
-                }
-
-
-                if (
-                    twitchPreviewName
-                ) {
-
-                    twitchPreviewName.textContent =
-                        game.name ||
-                        "—";
-                }
-
-
-                if (
-                    twitchPreviewId
-                ) {
-
-                    twitchPreviewId.textContent =
-                        game.id ||
-                        gameId;
-                }
-
-
-                if (
-                    twitchResult
-                ) {
-
-                    twitchResult.hidden =
-                        false;
-                }
-
-
-                showToast(
-                    "Jeu Twitch trouvé.",
-                    "success"
-                );
-
-            } catch (
-                error
-            ) {
-
-                console.error(
-                    "[Twitch Game Preview]",
-                    error
-                );
-
-
-                hideTwitchPreview();
-
-
-                showToast(
-                    error.message ||
-                    "Impossible de récupérer le jeu Twitch.",
-                    "error"
-                );
-
-            } finally {
-
-                if (
-                    twitchPreviewButton
-                ) {
-
-                    twitchPreviewButton.disabled =
-                        false;
-
-                    twitchPreviewButton.textContent =
-                        "🔎 Vérifier";
-                }
+                    "🔎 Vérifier";
             }
         }
+    }
 
+
+        /* =====================================================
+        BOUTON APERÇU
+        ====================================================== */
 
         if (
             twitchPreviewButton
@@ -1971,6 +2028,24 @@ document.addEventListener(
             twitchPreviewButton.addEventListener(
                 "click",
                 loadTwitchGamePreview
+            );
+        }
+
+
+        /* =====================================================
+        ENTRÉE — NOM MODIFIÉ
+        ====================================================== */
+
+        if (
+            gameNameInput
+        ) {
+
+            gameNameInput.addEventListener(
+                "input",
+                () => {
+
+                    hideTwitchPreview();
+                }
             );
         }
 
@@ -1994,6 +2069,15 @@ document.addEventListener(
             ) {
 
                 gameIdInput.value =
+                    "";
+            }
+
+
+            if (
+                gameNameInput
+            ) {
+
+                gameNameInput.value =
                     "";
             }
 
@@ -2038,17 +2122,18 @@ document.addEventListener(
                 submitGameButton
             ) {
 
+                submitGameButton.disabled =
+                    false;
+
                 submitGameButton.textContent =
                     "💾 Enregistrer le jeu";
             }
-
 
             hideTwitchPreview();
         }
 
 
         function openGameForm() {
-
             if (
                 gameFormPanel
             ) {
@@ -2061,7 +2146,7 @@ document.addEventListener(
             window.setTimeout(
                 () => {
 
-                    twitchGameIdInput?.focus();
+                    gameNameInput?.focus();
 
                 },
                 50
@@ -2085,153 +2170,216 @@ document.addEventListener(
 
 
         function fillGameForm(
-            game
+    game
+) {
+
+    resetGameForm();
+
+    openGameForm();
+
+
+    /* =====================================================
+       ID SUPABASE
+    ====================================================== */
+
+    if (
+        gameIdInput
+    ) {
+
+        gameIdInput.value =
+            game.id;
+    }
+
+
+    /* =====================================================
+       NOM DU JEU
+    ====================================================== */
+
+    if (
+        gameNameInput
+    ) {
+
+        gameNameInput.value =
+            game.name;
+    }
+
+
+    /* =====================================================
+       STATUT
+    ====================================================== */
+
+    if (
+        statusInput
+    ) {
+
+        statusInput.value =
+            game.status ||
+            "backlog";
+    }
+
+
+    /* =====================================================
+       TAGS
+    ====================================================== */
+
+    if (
+        tagsInput
+    ) {
+
+        tagsInput.value =
+            (
+                game.tags ||
+                []
+            )
+                .join(
+                    ", "
+                );
+    }
+
+
+    /* =====================================================
+       DESCRIPTION
+    ====================================================== */
+
+    if (
+        descriptionInput
+    ) {
+
+        descriptionInput.value =
+            game.description ||
+            "";
+    }
+
+
+    /* =====================================================
+       NOTE
+    ====================================================== */
+
+    if (
+        ratingInput
+    ) {
+
+        ratingInput.value =
+            game.rating ??
+            "";
+    }
+
+
+    /* =====================================================
+       YOUTUBE
+    ====================================================== */
+
+    if (
+        youtubeInput
+    ) {
+
+        youtubeInput.value =
+            game.youtubePlaylist ||
+            "";
+    }
+
+
+    /* =====================================================
+       SONDAGE
+    ====================================================== */
+
+    if (
+        pollInput
+    ) {
+
+        pollInput.checked =
+            Boolean(
+                game.pollEnabled
+            );
+    }
+
+
+    /* =====================================================
+       TITRE
+    ====================================================== */
+
+    if (
+        gameFormTitle
+    ) {
+
+        gameFormTitle.textContent =
+            "Modifier le jeu";
+    }
+
+
+    if (
+        submitGameButton
+    ) {
+
+        submitGameButton.textContent =
+            "💾 Enregistrer les modifications";
+    }
+
+
+    /* =====================================================
+       APERÇU EXISTANT
+    ====================================================== */
+
+    if (
+        twitchPreviewCover
+    ) {
+
+        if (
+            game.boxArtUrl
         ) {
 
-            openGameForm();
+            twitchPreviewCover.src =
+                game.boxArtUrl;
 
+            twitchPreviewCover.alt =
+                `Jaquette de ${game.name}`;
 
-            if (
-                gameIdInput
-            ) {
+        } else {
 
-                gameIdInput.value =
-                    game.id;
-            }
-
-
-            if (
-                twitchGameIdInput
-            ) {
-
-                twitchGameIdInput.value =
-                    game.twitchGameId;
-            }
-
-
-            if (
-                statusInput
-            ) {
-
-                statusInput.value =
-                    game.status ||
-                    "backlog";
-            }
-
-
-            if (
-                tagsInput
-            ) {
-
-                tagsInput.value =
-                    game.tags.join(
-                        ", "
-                    );
-            }
-
-
-            if (
-                descriptionInput
-            ) {
-
-                descriptionInput.value =
-                    game.description;
-            }
-
-
-            if (
-                ratingInput
-            ) {
-
-                ratingInput.value =
-                    game.rating ||
-                    "";
-            }
-
-
-            if (
-                youtubeInput
-            ) {
-
-                youtubeInput.value =
-                    game.youtubePlaylist;
-            }
-
-
-            if (
-                pollInput
-            ) {
-
-                pollInput.checked =
-                    game.pollEnabled;
-            }
-
-
-            if (
-                gameFormTitle
-            ) {
-
-                gameFormTitle.textContent =
-                    "Modifier le jeu";
-            }
-
-
-            if (
-                submitGameButton
-            ) {
-
-                submitGameButton.textContent =
-                    "💾 Enregistrer les modifications";
-            }
-
-
-            if (
-                twitchPreviewCover
-            ) {
-
-                twitchPreviewCover.src =
-                    game.boxArtUrl ||
-                    "";
-
-                twitchPreviewCover.alt =
-                    game.name
-                        ? `Jaquette de ${game.name}`
-                        : "";
-            }
-
-
-            if (
-                twitchPreviewName
-            ) {
-
-                twitchPreviewName.textContent =
-                    game.name ||
-                    "—";
-            }
-
-
-            if (
-                twitchPreviewId
-            ) {
-
-                twitchPreviewId.textContent =
-                    game.twitchGameId ||
-                    "—";
-            }
-
-
-            if (
-                twitchResult &&
-                (
-                    game.name ||
-                    game.boxArtUrl
-                )
-            ) {
-
-                twitchResult.hidden =
-                    false;
-            }
+            twitchPreviewCover.removeAttribute(
+                "src"
+            );
         }
+    }
+
+
+    if (
+        twitchPreviewName
+    ) {
+
+        twitchPreviewName.textContent =
+            game.name ||
+            "—";
+    }
+
+
+    /*
+     * L'ID Twitch reste visible dans l'aperçu,
+     * mais l'administratrice n'a jamais besoin
+     * de le saisir.
+     */
+    if (
+        twitchPreviewId
+    ) {
+
+        twitchPreviewId.textContent =
+            game.twitchGameId ||
+            "—";
+    }
+
+
+    if (
+        twitchResult &&
+        (
+            game.name ||
+            game.boxArtUrl
+        )
+    ) {
+
+        twitchResult.hidden =
+            false;
+    }
+}
 
 
         if (
@@ -2259,149 +2407,185 @@ document.addEventListener(
                 closeGameForm
             );
         }
-                /* =====================================================
-           JEUX — ENREGISTREMENT
-        ====================================================== */
+       /* =====================================================
+   JEUX — ENREGISTREMENT
+====================================================== */
 
-        if (
-            gameForm
-        ) {
+if (
+    gameForm
+) {
 
-            gameForm.addEventListener(
-                "submit",
-                async event => {
+    gameForm.addEventListener(
+        "submit",
+        async event => {
 
-                    event.preventDefault();
-
-
-                    const existingId =
-                        normalizeText(
-                            gameIdInput?.value
-                        );
-
-                    const twitchGameId =
-                        normalizeText(
-                            twitchGameIdInput?.value
-                        );
+            event.preventDefault();
 
 
-                    if (
-                        !twitchGameId
-                    ) {
+            /* =================================================
+               ID SUPABASE EN MODE MODIFICATION
+            ================================================= */
 
-                        showToast(
-                            "L'ID Twitch du jeu est obligatoire.",
-                            "error"
-                        );
-
-                        twitchGameIdInput?.focus();
-
-                        return;
-                    }
+            const existingId =
+                normalizeText(
+                    gameIdInput?.value
+                );
 
 
-                    const payload = {
+            /* =================================================
+               NOM DU JEU
+            ================================================= */
 
-                        twitchGameId,
-
-                        status:
-                            normalizeText(
-                                statusInput?.value
-                            ) ||
-                            "backlog",
-
-                        tags:
-                            normalizeTags(
-                                tagsInput?.value
-                            ),
-
-                        description:
-                            normalizeText(
-                                descriptionInput?.value
-                            ),
-
-                        rating:
-                            Number(
-                                ratingInput?.value ||
-                                0
-                            ),
-
-                        youtubePlaylist:
-                            normalizeText(
-                                youtubeInput?.value
-                            ),
-
-                        pollEnabled:
-                            Boolean(
-                                pollInput?.checked
-                            )
-
-                    };
+            const gameName =
+                normalizeText(
+                    gameNameInput?.value
+                );
 
 
-                    if (
-                        submitGameButton
-                    ) {
+            if (
+                !gameName
+            ) {
 
-                        submitGameButton.disabled =
-                            true;
+                showToast(
+                    "Le nom du jeu est obligatoire.",
+                    "error"
+                );
 
-                        submitGameButton.textContent =
-                            existingId
-                                ? "Enregistrement..."
-                                : "Ajout...";
-                    }
+                gameNameInput?.focus();
 
-
-                    try {
-
-                        if (
-                            existingId
-                        ) {
-
-                            await adminApiRequest(
-                                `${ADMIN_GAMES_API}?id=${encodeURIComponent(
-                                    existingId
-                                )}`,
-                                {
-                                    method:
-                                        "PUT",
-
-                                    body:
-                                        payload
-                                }
-                            );
+                return;
+            }
 
 
-                            showToast(
-                                "Le jeu a bien été modifié.",
-                                "success"
-                            );
+            /* =================================================
+               PAYLOAD
+            ================================================= */
 
-                        } else {
+            const payload = {
 
-                            await adminApiRequest(
-                                ADMIN_GAMES_API,
-                                {
-                                    method:
-                                        "POST",
+                gameName,
 
-                                    body:
-                                        payload
-                                }
-                            );
+                status:
+                    normalizeText(
+                        statusInput?.value
+                    ) ||
+                    "backlog",
+
+                tags:
+                    normalizeTags(
+                        tagsInput?.value
+                    ),
+
+                description:
+                    normalizeText(
+                        descriptionInput?.value
+                    ),
+
+                rating:
+                    ratingInput?.value ===
+                        ""
+                        ? null
+                        : Number(
+                            ratingInput?.value
+                        ),
+
+                youtubePlaylist:
+                    normalizeText(
+                        youtubeInput?.value
+                    ),
+
+                pollEnabled:
+                    Boolean(
+                        pollInput?.checked
+                    )
+
+            };
 
 
-                            showToast(
-                                "Le jeu a bien été ajouté.",
-                                "success"
-                            );
+            /* =================================================
+               BOUTON
+            ================================================= */
+
+            if (
+                submitGameButton
+            ) {
+
+                submitGameButton.disabled =
+                    true;
+
+                submitGameButton.textContent =
+                    existingId
+                        ? "Enregistrement..."
+                        : "Ajout...";
+            }
+
+
+            try {
+
+                /* =================================================
+                   MODIFICATION
+                ================================================= */
+
+                if (
+                    existingId
+                ) {
+
+                    await adminApiRequest(
+                        ADMIN_GAMES_API,
+                        {
+                            method:
+                                "PUT",
+
+                            body: {
+                                id:
+                                    existingId,
+
+                                ...payload
+                            }
                         }
+                    );
 
 
-                        closeGameForm();
+                    showToast(
+                        `"${gameName}" a bien été modifié.`,
+                        "success"
+                    );
 
-                        await loadGames();
+                }
+
+
+                /* =================================================
+                   AJOUT
+                ================================================= */
+
+                else {
+
+                    await adminApiRequest(
+                        ADMIN_GAMES_API,
+                        {
+                            method:
+                                "POST",
+
+                            body:
+                                payload
+                        }
+                    );
+
+
+                    showToast(
+                        `"${gameName}" a bien été ajouté.`,
+                        "success"
+                    );
+                }
+
+
+                    /* =================================================
+                    RAFRAÎCHISSEMENT
+                    ================================================= */
+
+                    closeGameForm();
+
+                    await loadGames();
 
 
                     } catch (
@@ -2415,7 +2599,7 @@ document.addEventListener(
 
 
                         showToast(
-                            error.message ||
+                            error?.message ||
                             "Impossible d'enregistrer le jeu.",
                             "error"
                         );
@@ -2446,75 +2630,101 @@ document.addEventListener(
         ====================================================== */
 
         async function deleteGame(
+    gameId
+) {
+
+    const normalizedId =
+        normalizeText(
             gameId
-        ) {
-
-            const game =
-                games.find(
-                    item =>
-                        item.id ===
-                        gameId
-                );
+        );
 
 
-            const gameName =
-                game?.name ||
-                "ce jeu";
+    if (
+        !normalizedId
+    ) {
+
+        showToast(
+            "Impossible de déterminer le jeu à supprimer.",
+            "error"
+        );
+
+        return;
+    }
 
 
-            const confirmed =
-                window.confirm(
-                    `Supprimer définitivement "${gameName}" ?`
-                );
+    const game =
+        games.find(
+            item =>
+                String(
+                    item.id
+                ) ===
+                String(
+                    normalizedId
+                )
+        );
 
 
-            if (
-                !confirmed
-            ) {
+    const gameName =
+        game?.name ||
+        "ce jeu";
 
-                return;
+
+    const confirmed =
+        window.confirm(
+            `Supprimer définitivement "${gameName}" ?`
+        );
+
+
+    if (
+        !confirmed
+    ) {
+
+        return;
+    }
+
+
+    try {
+
+        await adminApiRequest(
+            ADMIN_GAMES_API,
+            {
+                method:
+                    "DELETE",
+
+                body: {
+                    id:
+                        normalizedId
+                }
             }
+        );
 
 
-            try {
-
-                await adminApiRequest(
-                    `${ADMIN_GAMES_API}?id=${encodeURIComponent(
-                        gameId
-                    )}`,
-                    {
-                        method:
-                            "DELETE"
-                    }
-                );
+        showToast(
+            `"${gameName}" a été supprimé.`,
+            "success"
+        );
 
 
-                showToast(
-                    `"${gameName}" a été supprimé.`,
-                    "success"
-                );
+        await loadGames();
 
 
-                await loadGames();
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "[Admin Game Delete]",
+            error
+        );
 
 
-            } catch (
-                error
-            ) {
-
-                console.error(
-                    "[Admin Game Delete]",
-                    error
-                );
-
-
-                showToast(
-                    error.message ||
-                    "Impossible de supprimer le jeu.",
-                    "error"
-                );
-            }
-        }
+        showToast(
+            error?.message ||
+            "Impossible de supprimer le jeu.",
+            "error"
+        );
+    }
+}
 
 
         /* =====================================================
@@ -4522,7 +4732,8 @@ function renderArtworks() {
                                         "PUT",
 
                                     body:
-                                        payload
+                                        existingId,
+                                        ...payload
                                 }
                             );
 
@@ -4544,7 +4755,6 @@ function renderArtworks() {
                                         payload
                                 }
                             );
-
 
                             showToast(
                                 "L'illustration a bien été ajoutée.",
@@ -4635,12 +4845,15 @@ function renderArtworks() {
             try {
 
                 await adminApiRequest(
-                    `${ADMIN_GALLERY_API}?id=${encodeURIComponent(
-                        artworkId
-                    )}`,
+                    ADMIN_GALLERY_API,
                     {
                         method:
-                            "DELETE"
+                            "DELETE",
+
+                        body: {
+                            id:
+                                artworkId
+                        }
                     }
                 );
 

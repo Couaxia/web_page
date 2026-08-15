@@ -40,12 +40,6 @@ const ALLOWED_STATUSES =
    OUTILS
 ========================================================= */
 
-/**
- * Transforme une valeur en texte propre.
- *
- * @param {unknown} value
- * @returns {string}
- */
 function normalizeText(
     value
 ) {
@@ -56,12 +50,6 @@ function normalizeText(
 }
 
 
-/**
- * Retourne null lorsque le texte est vide.
- *
- * @param {unknown} value
- * @returns {string|null}
- */
 function normalizeNullableText(
     value
 ) {
@@ -71,6 +59,7 @@ function normalizeNullableText(
             value
         );
 
+
     return (
         text ||
         null
@@ -78,20 +67,6 @@ function normalizeNullableText(
 }
 
 
-/**
- * Normalise les tags.
- *
- * Accepte :
- *
- * ["horreur", "coop"]
- *
- * ou
- *
- * "horreur, coop"
- *
- * @param {unknown} value
- * @returns {string[]}
- */
 function normalizeTags(
     value
 ) {
@@ -128,18 +103,14 @@ function normalizeTags(
                         )
                             .toLowerCase()
                 )
-                .filter(Boolean)
+                .filter(
+                    Boolean
+                )
         )
     ];
 }
 
 
-/**
- * Normalise une note entre 0 et 10.
- *
- * @param {unknown} value
- * @returns {number|null}
- */
 function normalizeRating(
     value
 ) {
@@ -178,40 +149,19 @@ function normalizeRating(
 }
 
 
-/**
- * Normalise un booléen.
- *
- * @param {unknown} value
- * @returns {boolean}
- */
 function normalizeBoolean(
     value
 ) {
 
-    if (
+    return (
         value === true ||
         value === "true" ||
         value === 1 ||
         value === "1"
-    ) {
-
-        return true;
-    }
-
-
-    return false;
+    );
 }
 
 
-/**
- * Retourne le body de la requête.
- *
- * Fonctionne aussi bien avec Express
- * qu'avec une fonction serverless.
- *
- * @param {object} request
- * @returns {object}
- */
 function getRequestBody(
     request
 ) {
@@ -219,7 +169,7 @@ function getRequestBody(
     if (
         request?.body &&
         typeof request.body ===
-        "object"
+            "object"
     ) {
 
         return request.body;
@@ -231,16 +181,9 @@ function getRequestBody(
 
 
 /* =========================================================
-   FORMAT BASE DE DONNÉES -> FRONT
+   FORMAT SUPABASE → FRONT
 ========================================================= */
 
-/**
- * Transforme une ligne Supabase
- * au format attendu par admin.js.
- *
- * @param {object} game
- * @returns {object}
- */
 function formatGame(
     game
 ) {
@@ -248,19 +191,32 @@ function formatGame(
     return {
 
         id:
-            game?.id ?? null,
+            game?.id ??
+            null,
 
         twitchGameId:
-            game?.twitch_game_id ?? null,
+            game?.twitch_game_id ??
+            null,
+
+        /*
+         * On expose aussi "name"
+         * pour simplifier admin.js.
+         */
+        name:
+            game?.twitch_name ??
+            "",
 
         twitchName:
-            game?.twitch_name ?? "",
+            game?.twitch_name ??
+            "",
 
         boxArtUrl:
-            game?.box_art_url ?? null,
+            game?.box_art_url ??
+            null,
 
         status:
-            game?.status ?? "backlog",
+            game?.status ??
+            "backlog",
 
         tags:
             Array.isArray(
@@ -270,13 +226,16 @@ function formatGame(
                 : [],
 
         description:
-            game?.description ?? null,
+            game?.description ??
+            null,
 
         rating:
-            game?.rating ?? null,
+            game?.rating ??
+            null,
 
         youtubePlaylist:
-            game?.youtube_playlist ?? null,
+            game?.youtube_playlist ??
+            null,
 
         pollEnabled:
             Boolean(
@@ -284,50 +243,88 @@ function formatGame(
             ),
 
         createdAt:
-            game?.created_at ?? null,
+            game?.created_at ??
+            null,
 
         updatedAt:
-            game?.updated_at ?? null
+            game?.updated_at ??
+            null
 
     };
 }
 
 
 /* =========================================================
-   TWITCH — RÉCUPÉRER UN JEU
+   TWITCH — JAQUETTE
 ========================================================= */
 
-/**
- * Récupère un jeu Twitch depuis son ID.
- *
- * @param {string} twitchGameId
- * @returns {Promise<object|null>}
- */
-async function getTwitchGame(
-    twitchGameId
+function formatBoxArt(
+    value
 ) {
 
-    const id =
+    if (
+        !value
+    ) {
+
+        return null;
+    }
+
+
+    return String(
+        value
+    )
+        .replaceAll(
+            "{width}",
+            "600"
+        )
+        .replaceAll(
+            "{height}",
+            "800"
+        )
+        .replaceAll(
+            "%{width}",
+            "600"
+        )
+        .replaceAll(
+            "%{height}",
+            "800"
+        );
+}
+
+
+/* =========================================================
+   TWITCH — RECHERCHE PAR NOM
+========================================================= */
+
+async function getTwitchGameByName(
+    gameName
+) {
+
+    const name =
         normalizeText(
-            twitchGameId
+            gameName
         );
 
 
-    if (!id) {
+    if (
+        !name
+    ) {
 
         throw new Error(
-            "L'ID Twitch est obligatoire."
+            "Le nom du jeu est obligatoire."
         );
     }
 
 
     const data =
         await twitchFetch(
-            `/games?id=${encodeURIComponent(id)}`
+            `/games?name=${encodeURIComponent(
+                name
+            )}`
         );
 
 
-    const game =
+    const twitchGame =
         Array.isArray(
             data?.data
         )
@@ -335,42 +332,11 @@ async function getTwitchGame(
             : null;
 
 
-    if (!game) {
-
-        return null;
-    }
-
-
-    let boxArtUrl =
-        game.box_art_url
-            ? String(
-                game.box_art_url
-            )
-            : null;
-
-
     if (
-        boxArtUrl
+        !twitchGame
     ) {
 
-        boxArtUrl =
-            boxArtUrl
-                .replaceAll(
-                    "{width}",
-                    "600"
-                )
-                .replaceAll(
-                    "{height}",
-                    "800"
-                )
-                .replaceAll(
-                    "%{width}",
-                    "600"
-                )
-                .replaceAll(
-                    "%{height}",
-                    "800"
-                );
+        return null;
     }
 
 
@@ -378,15 +344,19 @@ async function getTwitchGame(
 
         id:
             String(
-                game.id
+                twitchGame.id
             ),
 
         name:
             String(
-                game.name ?? ""
+                twitchGame.name ??
+                ""
             ),
 
-        boxArtUrl
+        boxArtUrl:
+            formatBoxArt(
+                twitchGame.box_art_url
+            )
 
     };
 }
@@ -431,11 +401,17 @@ async function handleGet(
         response
             .status(500)
             .json({
+
                 success:
                     false,
 
+                games:
+                    [],
+
                 error:
+                    error?.message ||
                     "Impossible de récupérer les jeux."
+
             });
 
 
@@ -479,27 +455,31 @@ async function handlePost(
 
 
     /* =====================================================
-       ID TWITCH
+       NOM DU JEU
     ====================================================== */
 
-    const twitchGameId =
+    const gameName =
         normalizeText(
-            body.twitchGameId
+            body.gameName ??
+            body.name ??
+            body.twitchName
         );
 
 
     if (
-        !twitchGameId
+        !gameName
     ) {
 
         response
             .status(400)
             .json({
+
                 success:
                     false,
 
                 error:
-                    "L'ID Twitch est obligatoire."
+                    "Le nom du jeu est obligatoire."
+
             });
 
 
@@ -508,13 +488,46 @@ async function handlePost(
 
 
     /* =====================================================
-       TWITCH
+       RECHERCHE TWITCH
     ====================================================== */
 
-    const twitchGame =
-        await getTwitchGame(
-            twitchGameId
+    let twitchGame;
+
+
+    try {
+
+        twitchGame =
+            await getTwitchGameByName(
+                gameName
+            );
+
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "[Admin Games POST] Twitch :",
+            error
         );
+
+
+        response
+            .status(502)
+            .json({
+
+                success:
+                    false,
+
+                error:
+                    error?.message ||
+                    "Impossible de contacter Twitch."
+
+            });
+
+
+        return;
+    }
 
 
     if (
@@ -524,11 +537,13 @@ async function handlePost(
         response
             .status(404)
             .json({
+
                 success:
                     false,
 
                 error:
-                    "Aucun jeu Twitch trouvé avec cet ID."
+                    `Le jeu "${gameName}" est introuvable sur Twitch.`
+
             });
 
 
@@ -556,11 +571,13 @@ async function handlePost(
         response
             .status(400)
             .json({
+
                 success:
                     false,
 
                 error:
                     "Statut invalide."
+
             });
 
 
@@ -582,6 +599,7 @@ async function handlePost(
                 body.rating
             );
 
+
     } catch (
         error
     ) {
@@ -589,11 +607,13 @@ async function handlePost(
         response
             .status(400)
             .json({
+
                 success:
                     false,
 
                 error:
                     error.message
+
             });
 
 
@@ -602,12 +622,15 @@ async function handlePost(
 
 
     /* =====================================================
-       VÉRIFIER SI LE JEU EXISTE DÉJÀ
+       DOUBLON
     ====================================================== */
 
     const {
-        data: existingGame,
-        error: existingError
+        data:
+            existingGame,
+
+        error:
+            existingError
     } =
         await supabaseAdmin
             .from(
@@ -636,11 +659,14 @@ async function handlePost(
         response
             .status(500)
             .json({
+
                 success:
                     false,
 
                 error:
+                    existingError?.message ||
                     "Impossible de vérifier si le jeu existe déjà."
+
             });
 
 
@@ -655,11 +681,13 @@ async function handlePost(
         response
             .status(409)
             .json({
+
                 success:
                     false,
 
                 error:
-                    "Ce jeu est déjà enregistré."
+                    `"${twitchGame.name}" est déjà enregistré.`
+
             });
 
 
@@ -742,34 +770,27 @@ async function handlePost(
         );
 
 
-        if (
-            error.code ===
-            "23505"
-        ) {
-
-            response
-                .status(409)
-                .json({
-                    success:
-                        false,
-
-                    error:
-                        "Ce jeu est déjà enregistré."
-                });
-
-
-            return;
-        }
-
-
         response
-            .status(500)
+            .status(
+                error.code ===
+                    "23505"
+                    ? 409
+                    : 500
+            )
             .json({
+
                 success:
                     false,
 
                 error:
-                    "Impossible d'enregistrer le jeu."
+                    error.code ===
+                        "23505"
+                        ? "Ce jeu est déjà enregistré."
+                        : (
+                            error?.message ||
+                            "Impossible d'enregistrer le jeu."
+                        )
+
             });
 
 
@@ -809,12 +830,13 @@ async function handlePut(
 
 
     /* =====================================================
-       ID INTERNE
+       ID SUPABASE INTERNE
     ====================================================== */
 
     const id =
         normalizeText(
-            body.id
+            body.id ??
+            request.query?.id
         );
 
 
@@ -825,11 +847,85 @@ async function handlePut(
         response
             .status(400)
             .json({
+
                 success:
                     false,
 
                 error:
-                    "L'ID interne du jeu est obligatoire."
+                    "L'identifiant Supabase du jeu est obligatoire."
+
+            });
+
+
+        return;
+    }
+
+
+    /* =====================================================
+       VÉRIFIER LE JEU ACTUEL
+    ====================================================== */
+
+    const {
+        data:
+            previousGame,
+
+        error:
+            previousError
+    } =
+        await supabaseAdmin
+            .from(
+                TABLE_NAME
+            )
+            .select("*")
+            .eq(
+                "id",
+                id
+            )
+            .maybeSingle();
+
+
+    if (
+        previousError
+    ) {
+
+        console.error(
+            "[Admin Games PUT] Lecture :",
+            previousError
+        );
+
+
+        response
+            .status(500)
+            .json({
+
+                success:
+                    false,
+
+                error:
+                    previousError?.message ||
+                    "Impossible de récupérer le jeu."
+
+            });
+
+
+        return;
+    }
+
+
+    if (
+        !previousGame
+    ) {
+
+        response
+            .status(404)
+            .json({
+
+                success:
+                    false,
+
+                error:
+                    "Jeu introuvable."
+
             });
 
 
@@ -845,6 +941,7 @@ async function handlePut(
         normalizeText(
             body.status
         ) ||
+        previousGame.status ||
         "backlog";
 
 
@@ -857,11 +954,13 @@ async function handlePut(
         response
             .status(400)
             .json({
+
                 success:
                     false,
 
                 error:
                     "Statut invalide."
+
             });
 
 
@@ -883,6 +982,7 @@ async function handlePut(
                 body.rating
             );
 
+
     } catch (
         error
     ) {
@@ -890,11 +990,13 @@ async function handlePut(
         response
             .status(400)
             .json({
+
                 success:
                     false,
 
                 error:
                     error.message
+
             });
 
 
@@ -903,10 +1005,172 @@ async function handlePut(
 
 
     /* =====================================================
-       MODIFICATION
+       DONNÉES TWITCH ACTUELLES
+    ====================================================== */
+
+    let twitchGameId =
+        previousGame.twitch_game_id;
+
+    let twitchName =
+        previousGame.twitch_name;
+
+    let boxArtUrl =
+        previousGame.box_art_url;
+
+
+    /* =====================================================
+       CHANGEMENT DU NOM DU JEU
+    ====================================================== */
+
+    const requestedGameName =
+        normalizeText(
+            body.gameName ??
+            body.name ??
+            body.twitchName
+        );
+
+
+    /*
+     * Si un nom est envoyé et qu'il est différent,
+     * on recherche à nouveau le jeu sur Twitch.
+     */
+    if (
+        requestedGameName &&
+        requestedGameName.toLowerCase() !==
+            normalizeText(
+                previousGame.twitch_name
+            ).toLowerCase()
+    ) {
+
+        const twitchGame =
+            await getTwitchGameByName(
+                requestedGameName
+            );
+
+
+        if (
+            !twitchGame
+        ) {
+
+            response
+                .status(404)
+                .json({
+
+                    success:
+                        false,
+
+                    error:
+                        `Le jeu "${requestedGameName}" est introuvable sur Twitch.`
+
+                });
+
+
+            return;
+        }
+
+
+        /* =================================================
+           ÉVITER UN DOUBLON
+        ================================================= */
+
+        const {
+            data:
+                duplicateGame,
+
+            error:
+                duplicateError
+        } =
+            await supabaseAdmin
+                .from(
+                    TABLE_NAME
+                )
+                .select(
+                    "id"
+                )
+                .eq(
+                    "twitch_game_id",
+                    twitchGame.id
+                )
+                .neq(
+                    "id",
+                    id
+                )
+                .maybeSingle();
+
+
+        if (
+            duplicateError
+        ) {
+
+            console.error(
+                "[Admin Games PUT] Doublon :",
+                duplicateError
+            );
+
+
+            response
+                .status(500)
+                .json({
+
+                    success:
+                        false,
+
+                    error:
+                        "Impossible de vérifier le nouveau jeu."
+
+                });
+
+
+            return;
+        }
+
+
+        if (
+            duplicateGame
+        ) {
+
+            response
+                .status(409)
+                .json({
+
+                    success:
+                        false,
+
+                    error:
+                        `"${twitchGame.name}" est déjà enregistré.`
+
+                });
+
+
+            return;
+        }
+
+
+        twitchGameId =
+            twitchGame.id;
+
+        twitchName =
+            twitchGame.name;
+
+        boxArtUrl =
+            twitchGame.boxArtUrl;
+    }
+
+
+    /* =====================================================
+       UPDATE
     ====================================================== */
 
     const updateData = {
+
+        twitch_game_id:
+            twitchGameId,
+
+        twitch_name:
+            twitchName,
+
+        box_art_url:
+            boxArtUrl,
 
         status,
 
@@ -971,11 +1235,14 @@ async function handlePut(
         response
             .status(500)
             .json({
+
                 success:
                     false,
 
                 error:
+                    error?.message ||
                     "Impossible de modifier le jeu."
+
             });
 
 
@@ -990,11 +1257,13 @@ async function handlePut(
         response
             .status(404)
             .json({
+
                 success:
                     false,
 
                 error:
                     "Jeu introuvable."
+
             });
 
 
@@ -1035,7 +1304,8 @@ async function handleDelete(
 
     const id =
         normalizeText(
-            body.id
+            body.id ??
+            request.query?.id
         );
 
 
@@ -1046,11 +1316,13 @@ async function handleDelete(
         response
             .status(400)
             .json({
+
                 success:
                     false,
 
                 error:
-                    "L'ID du jeu est obligatoire."
+                    "L'identifiant Supabase du jeu est obligatoire."
+
             });
 
 
@@ -1059,19 +1331,22 @@ async function handleDelete(
 
 
     /* =====================================================
-       VÉRIFIER QUE LE JEU EXISTE
+       VÉRIFICATION
     ====================================================== */
 
     const {
-        data: existingGame,
-        error: existingError
+        data:
+            existingGame,
+
+        error:
+            existingError
     } =
         await supabaseAdmin
             .from(
                 TABLE_NAME
             )
             .select(
-                "id"
+                "id,twitch_name"
             )
             .eq(
                 "id",
@@ -1093,11 +1368,14 @@ async function handleDelete(
         response
             .status(500)
             .json({
+
                 success:
                     false,
 
                 error:
+                    existingError?.message ||
                     "Impossible de vérifier le jeu."
+
             });
 
 
@@ -1112,11 +1390,13 @@ async function handleDelete(
         response
             .status(404)
             .json({
+
                 success:
                     false,
 
                 error:
                     "Jeu introuvable."
+
             });
 
 
@@ -1155,11 +1435,14 @@ async function handleDelete(
         response
             .status(500)
             .json({
+
                 success:
                     false,
 
                 error:
+                    error?.message ||
                     "Impossible de supprimer le jeu."
+
             });
 
 
@@ -1174,7 +1457,10 @@ async function handleDelete(
             success:
                 true,
 
-            id
+            id,
+
+            name:
+                existingGame.twitch_name
 
         });
 }
@@ -1188,10 +1474,6 @@ export default async function handler(
     request,
     response
 ) {
-
-    /* =====================================================
-       CACHE
-    ====================================================== */
 
     response.setHeader(
         "Cache-Control",
@@ -1228,10 +1510,6 @@ export default async function handler(
             request.method
         ) {
 
-            /* =============================================
-               GET
-            ============================================== */
-
             case "GET":
 
                 await handleGet(
@@ -1240,10 +1518,6 @@ export default async function handler(
 
                 return;
 
-
-            /* =============================================
-               POST
-            ============================================== */
 
             case "POST":
 
@@ -1255,10 +1529,6 @@ export default async function handler(
                 return;
 
 
-            /* =============================================
-               PUT
-            ============================================== */
-
             case "PUT":
 
                 await handlePut(
@@ -1269,10 +1539,6 @@ export default async function handler(
                 return;
 
 
-            /* =============================================
-               DELETE
-            ============================================== */
-
             case "DELETE":
 
                 await handleDelete(
@@ -1282,10 +1548,6 @@ export default async function handler(
 
                 return;
 
-
-            /* =============================================
-               AUTRE
-            ============================================== */
 
             default:
 
@@ -1298,11 +1560,13 @@ export default async function handler(
                 response
                     .status(405)
                     .json({
+
                         success:
                             false,
 
                         error:
                             "Méthode non autorisée."
+
                     });
 
 
@@ -1331,12 +1595,14 @@ export default async function handler(
         response
             .status(500)
             .json({
+
                 success:
                     false,
 
                 error:
                     error?.message ||
                     "Erreur interne de l'API jeux."
+
             });
     }
 }
