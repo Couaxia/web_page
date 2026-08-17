@@ -1,8 +1,13 @@
 "use strict";
 
 /* =========================================================
-   API PUBLIQUE — SONDAGE
+   API PUBLIQUE — SONDAGES
    COUAXIA
+
+   MULTI-SONDAGES
+
+   GET  /api/polls
+   POST /api/polls
 
    1 COMPTE TWITCH = 1 VOTE PAR SONDAGE
 ========================================================= */
@@ -21,7 +26,7 @@ import {
    CONFIGURATION
 ========================================================= */
 
-const TABLE_NAME =
+const POLLS_TABLE_NAME =
     "polls";
 
 
@@ -29,16 +34,12 @@ const VOTES_TABLE_NAME =
     "poll_votes";
 
 
-const POLL_SLUG =
-    "main";
-
-
 const MAX_OPTIONS =
-    10;
+    20;
 
 
 /* =========================================================
-   OUTILS
+   OUTILS GÉNÉRAUX
 ========================================================= */
 
 function normalizeText(
@@ -52,6 +53,12 @@ function normalizeText(
 }
 
 
+/**
+ * Retourne le body de la requête.
+ *
+ * @param {object} request
+ * @returns {object}
+ */
 function getRequestBody(
     request
 ) {
@@ -70,23 +77,98 @@ function getRequestBody(
 }
 
 
-function normalizeStatus(
+/**
+ * Convertit une valeur en booléen.
+ *
+ * @param {*} value
+ * @param {boolean} fallback
+ * @returns {boolean}
+ */
+function normalizeBoolean(
+    value,
+    fallback = false
+) {
+
+    if (
+        typeof value ===
+        "boolean"
+    ) {
+
+        return value;
+    }
+
+
+    if (
+        value ===
+            1 ||
+        value ===
+            "1" ||
+        value ===
+            "true"
+    ) {
+
+        return true;
+    }
+
+
+    if (
+        value ===
+            0 ||
+        value ===
+            "0" ||
+        value ===
+            "false"
+    ) {
+
+        return false;
+    }
+
+
+    return fallback;
+}
+
+
+/**
+ * Convertit une valeur en Date.
+ *
+ * @param {*} value
+ * @returns {Date|null}
+ */
+function normalizeDate(
     value
 ) {
 
-    const status =
+    const text =
         normalizeText(
             value
+        );
+
+
+    if (
+        !text
+    ) {
+
+        return null;
+    }
+
+
+    const date =
+        new Date(
+            text
+        );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
         )
-            .toLowerCase();
+    ) {
+
+        return null;
+    }
 
 
-    return (
-        status ===
-        "open"
-            ? "open"
-            : "closed"
-    );
+    return date;
 }
 
 
@@ -94,6 +176,13 @@ function normalizeStatus(
    OPTIONS
 ========================================================= */
 
+/**
+ * Normalise une option de sondage.
+ *
+ * @param {*} option
+ * @param {number} index
+ * @returns {object|null}
+ */
 function normalizeOption(
     option,
     index
@@ -127,7 +216,13 @@ function normalizeOption(
 
             label,
 
+            imageUrl:
+                "",
+
             votes:
+                0,
+
+            percentage:
                 0
 
         };
@@ -148,7 +243,8 @@ function normalizeOption(
         normalizeText(
             option.label ??
             option.name ??
-            option.text
+            option.text ??
+            option.title
         );
 
 
@@ -164,7 +260,9 @@ function normalizeOption(
 
         id:
             normalizeText(
-                option.id
+                option.id ??
+                option.optionId ??
+                option.option_id
             ) ||
             String(
                 index + 1
@@ -172,13 +270,30 @@ function normalizeOption(
 
         label,
 
+        imageUrl:
+            normalizeText(
+                option.imageUrl ??
+                option.image_url ??
+                option.cover ??
+                option.image
+            ),
+
         votes:
+            0,
+
+        percentage:
             0
 
     };
 }
 
 
+/**
+ * Normalise toutes les options.
+ *
+ * @param {*} value
+ * @returns {object[]}
+ */
 function normalizeOptions(
     value
 ) {
@@ -208,7 +323,144 @@ function normalizeOptions(
 
 
 /* =========================================================
-   SUPABASE
+   STATUT PUBLIC
+========================================================= */
+
+/**
+ * Retourne :
+ *
+ * active
+ * upcoming
+ * finished
+ *
+ * Compatible avec les anciens :
+ *
+ * open
+ * closed
+ *
+ * @param {object} poll
+ * @returns {string}
+ */
+function getPublicPollStatus(
+    poll
+) {
+
+    const rawStatus =
+        normalizeText(
+            poll?.status
+        )
+            .toLowerCase();
+
+
+    const now =
+        new Date();
+
+
+    const startsAt =
+        normalizeDate(
+            poll?.starts_at ??
+            poll?.startsAt
+        );
+
+
+    const endsAt =
+        normalizeDate(
+            poll?.ends_at ??
+            poll?.endsAt
+        );
+
+
+    /* =====================================================
+       DATE DE DÉBUT FUTURE
+    ====================================================== */
+
+    if (
+        startsAt &&
+        now <
+        startsAt
+    ) {
+
+        return "upcoming";
+    }
+
+
+    /* =====================================================
+       DATE DE FIN PASSÉE
+    ====================================================== */
+
+    if (
+        endsAt &&
+        now >=
+        endsAt
+    ) {
+
+        return "finished";
+    }
+
+
+    /* =====================================================
+       NOUVEAUX STATUTS
+    ====================================================== */
+
+    if (
+        rawStatus ===
+        "active"
+    ) {
+
+        return "active";
+    }
+
+
+    if (
+        rawStatus ===
+        "upcoming"
+    ) {
+
+        return "upcoming";
+    }
+
+
+    if (
+        rawStatus ===
+        "finished"
+    ) {
+
+        return "finished";
+    }
+
+
+    /* =====================================================
+       ANCIENS STATUTS
+    ====================================================== */
+
+    if (
+        rawStatus ===
+        "open"
+    ) {
+
+        return "active";
+    }
+
+
+    if (
+        rawStatus ===
+        "closed"
+    ) {
+
+        return "finished";
+    }
+
+
+    /* =====================================================
+       PAR DÉFAUT
+    ====================================================== */
+
+    return "finished";
+}
+
+
+/* =========================================================
+   SUPABASE — ERREURS
 ========================================================= */
 
 function getSupabaseErrorMessage(
@@ -223,10 +475,19 @@ function getSupabaseErrorMessage(
 
 
 /* =========================================================
-   SONDAGE ACTUEL
+   RÉCUPÉRATION DES SONDAGES
 ========================================================= */
 
-async function getCurrentPoll() {
+/**
+ * Récupère tous les sondages.
+ *
+ * select("*") permet de rester compatible avec
+ * l'ancien schéma pendant qu'on ajoute progressivement
+ * les nouvelles colonnes.
+ *
+ * @returns {Promise<object[]>}
+ */
+async function getAllPolls() {
 
     const {
         data,
@@ -234,20 +495,74 @@ async function getCurrentPoll() {
     } =
         await supabaseAdmin
             .from(
-                TABLE_NAME
+                POLLS_TABLE_NAME
             )
-            .select(`
-                id,
-                slug,
-                question,
-                status,
-                options,
-                created_at,
-                updated_at
-            `)
+            .select(
+                "*"
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:
+                        false
+                }
+            );
+
+
+    if (
+        error
+    ) {
+
+        throw error;
+    }
+
+
+    return Array.isArray(
+        data
+    )
+        ? data
+        : [];
+}
+
+
+/**
+ * Récupère un sondage par ID.
+ *
+ * @param {string} pollId
+ * @returns {Promise<object|null>}
+ */
+async function getPollById(
+    pollId
+) {
+
+    const normalizedPollId =
+        normalizeText(
+            pollId
+        );
+
+
+    if (
+        !normalizedPollId
+    ) {
+
+        return null;
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseAdmin
+            .from(
+                POLLS_TABLE_NAME
+            )
+            .select(
+                "*"
+            )
             .eq(
-                "slug",
-                POLL_SLUG
+                "id",
+                normalizedPollId
             )
             .maybeSingle();
 
@@ -265,9 +580,58 @@ async function getCurrentPoll() {
 
 
 /* =========================================================
-   VOTES DU SONDAGE
+   VOTES
 ========================================================= */
 
+/**
+ * Récupère tous les votes.
+ *
+ * Utilisé par GET pour éviter une requête
+ * Supabase par sondage.
+ *
+ * @returns {Promise<object[]>}
+ */
+async function getAllVotes() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseAdmin
+            .from(
+                VOTES_TABLE_NAME
+            )
+            .select(`
+                id,
+                poll_id,
+                twitch_user_id,
+                option_id,
+                created_at
+            `);
+
+
+    if (
+        error
+    ) {
+
+        throw error;
+    }
+
+
+    return Array.isArray(
+        data
+    )
+        ? data
+        : [];
+}
+
+
+/**
+ * Récupère les votes d'un sondage.
+ *
+ * @param {string} pollId
+ * @returns {Promise<object[]>}
+ */
 async function getPollVotes(
     pollId
 ) {
@@ -315,6 +679,14 @@ async function getPollVotes(
    VOTE UTILISATEUR
 ========================================================= */
 
+/**
+ * Retourne le vote d'un utilisateur
+ * pour un sondage donné.
+ *
+ * @param {string} pollId
+ * @param {string} twitchUserId
+ * @returns {Promise<object|null>}
+ */
 async function getUserVote(
     pollId,
     twitchUserId
@@ -372,9 +744,150 @@ async function getUserVote(
 
 
 /* =========================================================
-   FORMATAGE DU SONDAGE
+   REGROUPEMENT DES VOTES
 ========================================================= */
 
+/**
+ * Regroupe les votes par sondage.
+ *
+ * @param {object[]} votes
+ * @returns {Map<string, object[]>}
+ */
+function groupVotesByPoll(
+    votes
+) {
+
+    const map =
+        new Map();
+
+
+    votes.forEach(
+        vote => {
+
+            const pollId =
+                normalizeText(
+                    vote?.poll_id
+                );
+
+
+            if (
+                !pollId
+            ) {
+
+                return;
+            }
+
+
+            if (
+                !map.has(
+                    pollId
+                )
+            ) {
+
+                map.set(
+                    pollId,
+                    []
+                );
+            }
+
+
+            map
+                .get(
+                    pollId
+                )
+                .push(
+                    vote
+                );
+        }
+    );
+
+
+    return map;
+}
+
+
+/* =========================================================
+   GAGNANT
+========================================================= */
+
+/**
+ * Retourne l'option gagnante.
+ *
+ * Si plusieurs options sont à égalité,
+ * la première est utilisée.
+ *
+ * @param {object[]} options
+ * @returns {object|null}
+ */
+function getWinningOption(
+    options
+) {
+
+    if (
+        !Array.isArray(
+            options
+        ) ||
+        options.length ===
+        0
+    ) {
+
+        return null;
+    }
+
+
+    let winner =
+        null;
+
+
+    options.forEach(
+        option => {
+
+            if (
+                !winner ||
+                Number(
+                    option.votes
+                ) >
+                Number(
+                    winner.votes
+                )
+            ) {
+
+                winner =
+                    option;
+            }
+        }
+    );
+
+
+    if (
+        !winner ||
+        Number(
+            winner.votes
+        ) <=
+        0
+    ) {
+
+        return null;
+    }
+
+
+    return winner;
+}
+
+
+/* =========================================================
+   FORMATAGE D'UN SONDAGE
+========================================================= */
+
+/**
+ * Convertit une ligne Supabase au format
+ * utilisé par polls.js.
+ *
+ * @param {object} poll
+ * @param {object[]} votes
+ * @param {object|null} myVote
+ * @returns {object|null}
+ */
 function formatPoll(
     poll,
     votes = [],
@@ -394,6 +907,10 @@ function formatPoll(
             poll.options
         );
 
+
+    /* =====================================================
+       COMPTE DES VOTES
+    ====================================================== */
 
     const voteCounts =
         new Map();
@@ -430,6 +947,10 @@ function formatPoll(
     );
 
 
+    /* =====================================================
+       OPTIONS AVEC VOTES
+    ====================================================== */
+
     const formattedOptions =
         options.map(
             option => ({
@@ -448,6 +969,10 @@ function formatPoll(
         );
 
 
+    /* =====================================================
+       TOTAL
+    ====================================================== */
+
     const totalVotes =
         formattedOptions.reduce(
             (
@@ -463,31 +988,211 @@ function formatPoll(
         );
 
 
+    /* =====================================================
+       POURCENTAGES
+    ====================================================== */
+
+    formattedOptions.forEach(
+        option => {
+
+            option.percentage =
+                totalVotes >
+                0
+                    ? (
+                        Number(
+                            option.votes
+                        ) /
+                        totalVotes
+                    ) *
+                    100
+                    : 0;
+        }
+    );
+
+
+    /* =====================================================
+       STATUT
+    ====================================================== */
+
+    const status =
+        getPublicPollStatus(
+            poll
+        );
+
+
+    /* =====================================================
+       CATÉGORIE
+    ====================================================== */
+
+    let category =
+        normalizeText(
+            poll.category
+        )
+            .toLowerCase();
+
+
+    /*
+     * Compatibilité avec ton ancien sondage
+     * de jeux portant le slug "main".
+     */
+    if (
+        !category
+    ) {
+
+        category =
+            normalizeText(
+                poll.slug
+            ) ===
+            "main"
+                ? "games"
+                : "community";
+    }
+
+
+    /* =====================================================
+       TITRE
+    ====================================================== */
+
+    const question =
+        normalizeText(
+            poll.question
+        );
+
+
+    const title =
+        normalizeText(
+            poll.title
+        ) ||
+        question ||
+        "Sondage";
+
+
+    /* =====================================================
+       VOTE DU VIEWER
+    ====================================================== */
+
+    const selectedOptionId =
+        normalizeText(
+            myVote?.option_id ??
+            myVote
+        );
+
+
+    /* =====================================================
+       GAGNANT
+    ====================================================== */
+
+    const winningOption =
+        getWinningOption(
+            formattedOptions
+        );
+
+
+    const storedWinner =
+        normalizeText(
+            poll.winner ??
+            poll.winner_label
+        );
+
+
+    const winner =
+        storedWinner ||
+        (
+            status ===
+                "finished"
+                ? winningOption
+                    ?.label ||
+                    ""
+                : ""
+        );
+
+
+    /* =====================================================
+       VISIBILITÉ DES RÉSULTATS
+    ====================================================== */
+
+    const resultsVisible =
+        normalizeBoolean(
+            poll.results_visible ??
+            poll.resultsVisible,
+            true
+        );
+
+
+    /* =====================================================
+       PROPOSITIONS
+    ====================================================== */
+
+    const allowSuggestions =
+        normalizeBoolean(
+            poll.allow_suggestions ??
+            poll.allowSuggestions,
+            false
+        );
+
+
+    /* =====================================================
+       RETOUR
+    ====================================================== */
+
     return {
 
         id:
             poll.id ??
             null,
 
-        question:
+        slug:
             normalizeText(
-                poll.question
+                poll.slug
             ),
 
-        status:
-            normalizeStatus(
-                poll.status
+        title,
+
+        question,
+
+        description:
+            normalizeText(
+                poll.description
             ),
+
+        category,
+
+        status,
 
         options:
             formattedOptions,
 
         totalVotes,
 
+        hasVoted:
+            Boolean(
+                selectedOptionId
+            ),
+
+        selectedOptionId:
+            selectedOptionId ||
+            null,
+
         myVote:
-            normalizeText(
-                myVote
-            ) ||
+            selectedOptionId ||
+            null,
+
+        startsAt:
+            poll.starts_at ??
+            poll.startsAt ??
+            null,
+
+        endsAt:
+            poll.ends_at ??
+            poll.endsAt ??
+            null,
+
+        resultsVisible,
+
+        allowSuggestions,
+
+        winner:
+            winner ||
             null,
 
         createdAt:
@@ -506,48 +1211,19 @@ function formatPoll(
    GET
 ========================================================= */
 
+/**
+ * GET /api/polls
+ *
+ * Retourne tous les sondages.
+ */
 async function handleGet(
     request,
     response
 ) {
 
-    const poll =
-        await getCurrentPoll();
-
-
-    if (
-        !poll
-    ) {
-
-        response
-            .status(200)
-            .json({
-
-                success:
-                    true,
-
-                open:
-                    false,
-
-                authenticated:
-                    Boolean(
-                        getPublicUserSession(
-                            request
-                        )
-                    ),
-
-                myVote:
-                    null,
-
-                poll:
-                    null
-
-            });
-
-
-        return;
-    }
-
+    /* =====================================================
+       SESSION TWITCH FACULTATIVE
+    ====================================================== */
 
     const session =
         getPublicUserSession(
@@ -555,41 +1231,166 @@ async function handleGet(
         );
 
 
-    const votes =
-        await getPollVotes(
-            poll.id
+    /* =====================================================
+       DONNÉES
+    ====================================================== */
+
+    const [
+        polls,
+        votes
+    ] =
+        await Promise.all([
+
+            getAllPolls(),
+
+            getAllVotes()
+
+        ]);
+
+
+    /* =====================================================
+       REGROUPEMENT DES VOTES
+    ====================================================== */
+
+    const votesByPoll =
+        groupVotesByPoll(
+            votes
         );
 
 
-    let myVote =
-        null;
+    /* =====================================================
+       FORMATAGE
+    ====================================================== */
+
+    const formattedPolls =
+        polls
+            .map(
+                poll => {
+
+                    const pollId =
+                        String(
+                            poll.id
+                        );
 
 
-    if (
-        session
-    ) {
+                    const pollVotes =
+                        votesByPoll.get(
+                            pollId
+                        ) ||
+                        [];
 
-        const userVote =
-            await getUserVote(
-                poll.id,
-                session.twitchUserId
+
+                    let myVote =
+                        null;
+
+
+                    if (
+                        session
+                    ) {
+
+                        myVote =
+                            pollVotes.find(
+                                vote =>
+                                    String(
+                                        vote.twitch_user_id
+                                    ) ===
+                                    String(
+                                        session.twitchUserId
+                                    )
+                            ) ||
+                            null;
+                    }
+
+
+                    return formatPoll(
+                        poll,
+                        pollVotes,
+                        myVote
+                    );
+                }
+            )
+            .filter(
+                Boolean
             );
 
 
-        myVote =
-            userVote
-                ?.option_id ??
-            null;
-    }
+    /* =====================================================
+       TRI
+    ====================================================== */
+
+    const statusOrder = {
+
+        active:
+            0,
+
+        upcoming:
+            1,
+
+        finished:
+            2
+
+    };
 
 
-    const formattedPoll =
-        formatPoll(
-            poll,
-            votes,
-            myVote
-        );
+    formattedPolls.sort(
+        (
+            a,
+            b
+        ) => {
 
+            const statusDifference =
+                (
+                    statusOrder[
+                        a.status
+                    ] ??
+                    99
+                ) -
+                (
+                    statusOrder[
+                        b.status
+                    ] ??
+                    99
+                );
+
+
+            if (
+                statusDifference !==
+                0
+            ) {
+
+                return statusDifference;
+            }
+
+
+            const dateA =
+                normalizeDate(
+                    a.startsAt ??
+                    a.createdAt
+                )
+                    ?.getTime() ||
+                0;
+
+
+            const dateB =
+                normalizeDate(
+                    b.startsAt ??
+                    b.createdAt
+                )
+                    ?.getTime() ||
+                0;
+
+
+            return (
+                dateB -
+                dateA
+            );
+        }
+    );
+
+
+    /* =====================================================
+       RÉPONSE
+    ====================================================== */
 
     response
         .status(200)
@@ -603,34 +1404,34 @@ async function handleGet(
                     session
                 ),
 
-            open:
-                formattedPoll.status ===
-                "open",
-
-            myVote:
-                normalizeText(
-                    myVote
-                ) ||
-                null,
-
-            poll:
-                formattedPoll
+            polls:
+                formattedPolls
 
         });
 }
 
 
 /* =========================================================
-   POST
+   POST — VOTE
 ========================================================= */
 
+/**
+ * POST /api/polls
+ *
+ * Body :
+ *
+ * {
+ *     pollId: "...",
+ *     optionId: "..."
+ * }
+ */
 async function handlePost(
     request,
     response
 ) {
 
     /* =====================================================
-       AUTHENTIFICATION
+       AUTHENTIFICATION TWITCH
     ====================================================== */
 
     const session =
@@ -679,6 +1480,13 @@ async function handlePost(
         );
 
 
+    const pollId =
+        normalizeText(
+            body.pollId ??
+            body.poll_id
+        );
+
+
     const optionId =
         normalizeText(
             body.optionId ??
@@ -686,6 +1494,35 @@ async function handlePost(
             body.id
         );
 
+
+    /* =====================================================
+       POLL ID
+    ====================================================== */
+
+    if (
+        !pollId
+    ) {
+
+        response
+            .status(400)
+            .json({
+
+                success:
+                    false,
+
+                error:
+                    "L'identifiant du sondage est obligatoire."
+
+            });
+
+
+        return;
+    }
+
+
+    /* =====================================================
+       OPTION ID
+    ====================================================== */
 
     if (
         !optionId
@@ -713,7 +1550,9 @@ async function handlePost(
     ====================================================== */
 
     const poll =
-        await getCurrentPoll();
+        await getPollById(
+            pollId
+        );
 
 
     if (
@@ -728,7 +1567,7 @@ async function handlePost(
                     false,
 
                 error:
-                    "Aucun sondage n'est disponible."
+                    "Ce sondage n'existe pas."
 
             });
 
@@ -737,43 +1576,19 @@ async function handlePost(
     }
 
 
-    const requestedPollId =
-        normalizeText(
-            body.pollId ??
-            body.poll_id
+    /* =====================================================
+       STATUT
+    ====================================================== */
+
+    const publicStatus =
+        getPublicPollStatus(
+            poll
         );
 
 
     if (
-        requestedPollId &&
-        requestedPollId !==
-        String(
-            poll.id
-        )
-    ) {
-
-        response
-            .status(409)
-            .json({
-
-                success:
-                    false,
-
-                error:
-                    "Ce sondage n'est plus le sondage actuel."
-
-            });
-
-
-        return;
-    }
-
-
-    if (
-        normalizeStatus(
-            poll.status
-        ) !==
-        "open"
+        publicStatus ===
+        "upcoming"
     ) {
 
         response
@@ -784,7 +1599,29 @@ async function handlePost(
                     false,
 
                 error:
-                    "Le sondage est actuellement fermé."
+                    "Ce sondage n'est pas encore ouvert."
+
+            });
+
+
+        return;
+    }
+
+
+    if (
+        publicStatus ===
+        "finished"
+    ) {
+
+        response
+            .status(403)
+            .json({
+
+                success:
+                    false,
+
+                error:
+                    "Ce sondage est terminé."
 
             });
 
@@ -896,7 +1733,7 @@ async function handlePost(
                     formatPoll(
                         poll,
                         votes,
-                        existingVote.option_id
+                        existingVote
                     ),
 
                 error:
@@ -941,16 +1778,22 @@ async function handlePost(
             });
 
 
+    /* =====================================================
+       ERREUR INSERTION
+    ====================================================== */
+
     if (
         insertError
     ) {
 
         /*
-         * 23505 =
+         * 23505 :
+         *
          * contrainte UNIQUE PostgreSQL.
          *
-         * Même si deux requêtes arrivent
-         * au même instant, la seconde est refusée.
+         * Même si deux requêtes de vote
+         * arrivent simultanément, une seule
+         * pourra être enregistrée.
          */
         if (
             String(
@@ -992,8 +1835,6 @@ async function handlePost(
                             poll,
                             votes,
                             existing
-                                ?.option_id ??
-                            null
                         ),
 
                     error:
@@ -1041,25 +1882,40 @@ async function handlePost(
         );
 
 
+    const myVote = {
+
+        option_id:
+            optionId
+
+    };
+
+
     const formattedPoll =
         formatPoll(
             poll,
             votes,
-            optionId
+            myVote
         );
 
 
     const formattedOption =
-        formattedPoll.options.find(
-            option =>
-                String(
-                    option.id
-                ) ===
-                String(
-                    optionId
-                )
-        );
+        formattedPoll
+            ?.options
+            ?.find(
+                option =>
+                    String(
+                        option.id
+                    ) ===
+                    String(
+                        optionId
+                    )
+            ) ||
+        null;
 
+
+    /* =====================================================
+       RÉPONSE
+    ====================================================== */
 
     response
         .status(200)
@@ -1081,8 +1937,7 @@ async function handlePost(
                 `Ton vote pour "${selectedOption.label}" a bien été enregistré ! 💜`,
 
             option:
-                formattedOption ??
-                null,
+                formattedOption,
 
             poll:
                 formattedPoll
@@ -1100,6 +1955,10 @@ export default async function handler(
     response
 ) {
 
+    /* =====================================================
+       CACHE
+    ====================================================== */
+
     response.setHeader(
         "Cache-Control",
         "no-store, max-age=0"
@@ -1108,9 +1967,17 @@ export default async function handler(
 
     try {
 
+        /* =================================================
+           MÉTHODE
+        ================================================= */
+
         switch (
             request.method
         ) {
+
+            /* =============================================
+               GET
+            ============================================= */
 
             case "GET":
 
@@ -1119,8 +1986,13 @@ export default async function handler(
                     response
                 );
 
+
                 return;
 
+
+            /* =============================================
+               POST
+            ============================================= */
 
             case "POST":
 
@@ -1129,8 +2001,13 @@ export default async function handler(
                     response
                 );
 
+
                 return;
 
+
+            /* =============================================
+               AUTRE
+            ============================================= */
 
             default:
 
@@ -1162,7 +2039,7 @@ export default async function handler(
     ) {
 
         console.error(
-            "[Public Poll]",
+            "[Public Polls]",
             error
         );
 
@@ -1184,7 +2061,7 @@ export default async function handler(
 
                 error:
                     error?.message ||
-                    "Impossible de charger le sondage."
+                    "Impossible de charger les sondages."
 
             });
     }
