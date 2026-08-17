@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>Couaxia - Sondages</title>
+
+
+    <!-- =====================================================
+         FAVICON
+    ====================================================== -->
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="./images/logo/Logo Transparents 2.png"
+    >
+
+
+    <!-- =====================================================
+         CSS
+    ====================================================== -->
+
+    <link
+        href="./css/polls.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="./css/style.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="./css/scroll-page.css"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="site-header">
+
+        <nav class="navbar">
+
+
+            <!-- =================================================
+                 LOGO
+            ================================================== -->
+
+            <a
+                class="navbar-logo"
+                href="./accueil.html"
+                aria-label="Accueil Couaxia"
+            >
+
+                <video
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                    aria-label="Logo animé de Couaxia"
+                >
+
+                    <source
+                        src="./images/logo/Transparents.webm"
+                        type="video/webm"
+                    >
+
+                </video>
+
+            </a>
+
+
+            <!-- =================================================
+                 NAVIGATION
+            ================================================== -->
+
+            <div class="navbar-links">
+
+                <a href="./a-propos.html">
+                    👤 Mes informations
+                </a>
+
+                <a href="./games.html">
+                    🕹️ Jeux
+                </a>
+
+                <a
+                    href="./polls.html"
+                    aria-current="page"
+                >
+                    🗳️ Sondages
+                </a>
+
+                <a href="./Histoire/debut_histoire.html">
+                    📖 Mon histoire
+                </a>
+
+                <a href="./credits.html">
+                    🎨 Crédits
+                </a>
+
+            </div>
+
+
+            <!-- =================================================
+                 ADMIN
+            ================================================== -->
+
+            <a
+                href="./admin/admin.html"
+                class="admin-access-link"
+            >
+                ⚙️ Admin
+            </a>
+
+
+            <!-- =================================================
+                 THÈME
+            ================================================== -->
+
+            <button
+                id="theme-toggle"
+                class="theme-toggle"
+                type="button"
+                aria-label="Activer le mode nuit"
+                title="Changer le thème"
+            >
+
+                <span
+                    class="theme-icon"
+                    aria-hidden="true"
+                >
+                    🌙
+                </span>
+
+                <span class="theme-text">
+                    Mode nuit
+                </span>
+
+            </button>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+
+    <main class="polls-page">
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="polls-hero">
+
+            <p class="polls-eyebrow">
+                🗳️ La voix de la communauté
+            </p>
+
+            <h1>
+                Les sondages
+            </h1>
+
+            <p class="polls-intro">
+                Participe aux décisions de la communauté,
+                découvre les sondages en cours,
+                les prochains votes et les résultats
+                des anciens sondages.
+            </p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             STATISTIQUES
+        ================================================== -->
+
+        <section
+            class="polls-stats"
+            aria-label="Statistiques des sondages"
+        >
+
+
+            <!-- EN COURS -->
+
+            <article class="polls-stat">
+
+                <span
+                    class="polls-stat-icon"
+                    aria-hidden="true"
+                >
+                    🔥
+                </span>
+
+                <strong
+                    id="polls-stat-active"
+                    class="polls-stat-number"
+                >
+                    0
+                </strong>
+
+                <span>
+                    En cours
+                </span>
+
+            </article>
+
+
+            <!-- À VENIR -->
+
+            <article class="polls-stat">
+
+                <span
+                    class="polls-stat-icon"
+                    aria-hidden="true"
+                >
+                    📅
+                </span>
+
+                <strong
+                    id="polls-stat-upcoming"
+                    class="polls-stat-number"
+                >
+                    0
+                </strong>
+
+                <span>
+                    À venir
+                </span>
+
+            </article>
+
+
+            <!-- TERMINÉS -->
+
+            <article class="polls-stat">
+
+                <span
+                    class="polls-stat-icon"
+                    aria-hidden="true"
+                >
+                    🏆
+                </span>
+
+                <strong
+                    id="polls-stat-finished"
+                    class="polls-stat-number"
+                >
+                    0
+                </strong>
+
+                <span>
+                    Terminés
+                </span>
+
+            </article>
+
+
+            <!-- PARTICIPATIONS -->
+
+            <article class="polls-stat">
+
+                <span
+                    class="polls-stat-icon"
+                    aria-hidden="true"
+                >
+                    💜
+                </span>
+
+                <strong
+                    id="polls-stat-votes"
+                    class="polls-stat-number"
+                >
+                    0
+                </strong>
+
+                <span>
+                    Votes
+                </span>
+
+            </article>
+
+        </section>
+
+
+
+        <!-- =================================================
+             BARRE DE FILTRES
+        ================================================== -->
+
+        <section class="polls-toolbar">
+
+
+            <!-- RECHERCHE -->
+
+            <div class="polls-search">
+
+                <label for="polls-search-input">
+                    🔎 Rechercher un sondage
+                </label>
+
+                <input
+                    id="polls-search-input"
+                    type="search"
+                    placeholder="Ex. prochain jeu, emote, événement..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <!-- FILTRE STATUT -->
+
+            <div class="polls-filter">
+
+                <label for="polls-status-filter">
+                    📂 Afficher
+                </label>
+
+                <select id="polls-status-filter">
+
+                    <option value="all">
+                        Tous les sondages
+                    </option>
+
+                    <option value="active">
+                        🔥 En cours
+                    </option>
+
+                    <option value="upcoming">
+                        📅 À venir
+                    </option>
+
+                    <option value="finished">
+                        🏆 Terminés
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- FILTRE CATÉGORIE -->
+
+            <div class="polls-filter">
+
+                <label for="polls-category-filter">
+                    🏷️ Catégorie
+                </label>
+
+                <select id="polls-category-filter">
+
+                    <option value="all">
+                        Toutes les catégories
+                    </option>
+
+                    <option value="games">
+                        🎮 Jeux
+                    </option>
+
+                    <option value="community">
+                        💜 Communauté
+                    </option>
+
+                    <option value="vtuber">
+                        🎨 VTuber
+                    </option>
+
+                    <option value="content">
+                        🎬 Contenu
+                    </option>
+
+                    <option value="events">
+                        🎉 Événements
+                    </option>
+
+                    <option value="fun">
+                        😂 Fun
+                    </option>
+
+                </select>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             RÉSULTAT DU FILTRE
+        ================================================== -->
+
+        <p
+            id="polls-results"
+            class="polls-results"
+            aria-live="polite"
+        ></p>
+
+
+
+        <!-- =================================================
+             SONDAGES EN COURS
+        ================================================== -->
+
+        <section
+            class="polls-section"
+            id="polls-active-section"
+        >
+
+            <div class="polls-section-header">
+
+                <div>
+
+                    <span class="polls-section-eyebrow">
+                        🔥 Maintenant
+                    </span>
+
+                    <h2>
+                        Sondages en cours
+                    </h2>
+
+                </div>
+
+                <span
+                    class="polls-section-count"
+                    id="polls-active-count"
+                >
+                    0
+                </span>
+
+            </div>
+
+
+            <div
+                class="polls-grid"
+                id="polls-active-grid"
+            >
+
+                <!--
+                    Les sondages actifs seront
+                    ajoutés dynamiquement ici.
+                -->
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             SONDAGES À VENIR
+        ================================================== -->
+
+        <section
+            class="polls-section"
+            id="polls-upcoming-section"
+        >
+
+            <div class="polls-section-header">
+
+                <div>
+
+                    <span class="polls-section-eyebrow">
+                        📅 Prochainement
+                    </span>
+
+                    <h2>
+                        Sondages à venir
+                    </h2>
+
+                </div>
+
+                <span
+                    class="polls-section-count"
+                    id="polls-upcoming-count"
+                >
+                    0
+                </span>
+
+            </div>
+
+
+            <div
+                class="polls-grid"
+                id="polls-upcoming-grid"
+            >
+
+                <!--
+                    Les sondages programmés seront
+                    ajoutés dynamiquement ici.
+                -->
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             SONDAGES TERMINÉS
+        ================================================== -->
+
+        <section
+            class="polls-section"
+            id="polls-finished-section"
+        >
+
+            <div class="polls-section-header">
+
+                <div>
+
+                    <span class="polls-section-eyebrow">
+                        🏆 Archives
+                    </span>
+
+                    <h2>
+                        Résultats des sondages
+                    </h2>
+
+                </div>
+
+                <span
+                    class="polls-section-count"
+                    id="polls-finished-count"
+                >
+                    0
+                </span>
+
+            </div>
+
+
+            <div
+                class="polls-grid"
+                id="polls-finished-grid"
+            >
+
+                <!--
+                    Les sondages terminés et leurs
+                    résultats seront ajoutés ici.
+                -->
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             PROPOSITIONS DE LA COMMUNAUTÉ
+        ================================================== -->
+
+        <section class="polls-community">
+
+            <div class="polls-community-icon">
+                💡
+            </div>
+
+
+            <div class="polls-community-content">
+
+                <span class="polls-community-eyebrow">
+                    Une idée ?
+                </span>
+
+                <h2>
+                    Propose un futur sondage
+                </h2>
+
+                <p>
+                    Tu as une idée de question,
+                    de défi, de jeu ou de choix à proposer ?
+                    Envoie-la et elle pourra être ajoutée
+                    aux prochains sondages après validation.
+                </p>
+
+            </div>
+
+
+            <button
+                id="polls-suggestion-open"
+                class="polls-community-button"
+                type="button"
+            >
+                💡 Proposer une idée
+            </button>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ÉTAT VIDE
+        ================================================== -->
+
+        <section
+            id="polls-empty-state"
+            class="polls-empty-state"
+            hidden
+        >
+
+            <span
+                class="polls-empty-icon"
+                aria-hidden="true"
+            >
+                🗳️
+            </span>
+
+            <h2>
+                Aucun sondage
+            </h2>
+
+            <p>
+                Aucun sondage ne correspond
+                aux filtres sélectionnés.
+            </p>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         MODALE — SONDAGE
+    ====================================================== -->
+
+    <div
+        id="polls-modal"
+        class="polls-modal"
+        hidden
+    >
+
+        <div
+            class="polls-modal-backdrop"
+            data-polls-close
+        ></div>
+
+
+        <section
+            class="polls-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="polls-dialog-title"
+        >
+
+            <button
+                class="polls-modal-close"
+                type="button"
+                data-polls-close
+                aria-label="Fermer le sondage"
+            >
+                ✕
+            </button>
+
+
+            <header class="polls-dialog-header">
+
+                <div
+                    class="polls-dialog-icon"
+                    id="polls-dialog-icon"
+                    aria-hidden="true"
+                >
+                    🗳️
+                </div>
+
+
+                <div>
+
+                    <span
+                        id="polls-dialog-category"
+                        class="polls-dialog-category"
+                    >
+                        Sondage
+                    </span>
+
+                    <h2
+                        id="polls-dialog-title"
+                    >
+                        Sondage
+                    </h2>
+
+                </div>
+
+            </header>
+
+
+            <p
+                id="polls-dialog-description"
+                class="polls-dialog-description"
+            ></p>
+
+
+            <!-- =================================================
+                 OPTIONS
+            ================================================== -->
+
+            <div
+                id="polls-dialog-options"
+                class="polls-dialog-options"
+            ></div>
+
+
+            <!-- =================================================
+                 CONNEXION TWITCH REQUISE UNIQUEMENT POUR VOTER
+            ================================================== -->
+
+            <div
+                id="polls-auth-required"
+                class="polls-auth-required"
+                hidden
+            >
+
+                <div
+                    class="polls-auth-required-icon"
+                    aria-hidden="true"
+                >
+                    💜
+                </div>
+
+
+                <div class="polls-auth-required-content">
+
+                    <strong>
+                        Connexion Twitch nécessaire uniquement pour voter
+                    </strong>
+
+                    <span>
+                        Tu peux consulter les sondages
+                        librement. Twitch est uniquement
+                        demandé pour enregistrer ton vote.
+                    </span>
+
+                </div>
+
+
+                <a
+                    id="polls-auth-login"
+                    class="polls-auth-login"
+                    href="/api/auth/login"
+                >
+                    Se connecter avec Twitch
+                </a>
+
+            </div>
+
+
+            <!-- =================================================
+                 MESSAGE
+            ================================================== -->
+
+            <p
+                id="polls-dialog-message"
+                class="polls-dialog-message"
+                aria-live="polite"
+            ></p>
+
+
+            <!-- =================================================
+                 ACTIONS
+            ================================================== -->
+
+            <div class="polls-dialog-actions">
+
+                <button
+                    class="polls-cancel-button"
+                    type="button"
+                    data-polls-close
+                >
+                    Fermer
+                </button>
+
+
+                <button
+                    id="polls-submit-button"
+                    class="polls-submit-button"
+                    type="button"
+                >
+                    🗳️ Voter
+                </button>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MODALE — PROPOSER UNE IDÉE
+    ====================================================== -->
+
+    <div
+        id="polls-suggestion-modal"
+        class="polls-modal"
+        hidden
+    >
+
+        <div
+            class="polls-modal-backdrop"
+            data-suggestion-close
+        ></div>
+
+
+        <section
+            class="polls-dialog polls-suggestion-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="polls-suggestion-title"
+        >
+
+            <button
+                class="polls-modal-close"
+                type="button"
+                data-suggestion-close
+                aria-label="Fermer"
+            >
+                ✕
+            </button>
+
+
+            <header class="polls-dialog-header">
+
+                <div
+                    class="polls-dialog-icon"
+                    aria-hidden="true"
+                >
+                    💡
+                </div>
+
+
+                <div>
+
+                    <span class="polls-dialog-category">
+                        Communauté
+                    </span>
+
+                    <h2
+                        id="polls-suggestion-title"
+                    >
+                        Proposer un sondage
+                    </h2>
+
+                </div>
+
+            </header>
+
+
+            <p class="polls-dialog-description">
+                Ton idée sera envoyée à Couaxia
+                et devra être validée avant d'être publiée.
+            </p>
+
+
+            <form
+                id="polls-suggestion-form"
+                class="polls-suggestion-form"
+            >
+
+
+                <!-- CATÉGORIE -->
+
+                <div class="polls-form-field">
+
+                    <label for="polls-suggestion-category">
+                        Catégorie
+                    </label>
+
+                    <select
+                        id="polls-suggestion-category"
+                        required
+                    >
+
+                        <option value="">
+                            Choisir une catégorie
+                        </option>
+
+                        <option value="games">
+                            🎮 Jeux
+                        </option>
+
+                        <option value="community">
+                            💜 Communauté
+                        </option>
+
+                        <option value="vtuber">
+                            🎨 VTuber
+                        </option>
+
+                        <option value="content">
+                            🎬 Contenu
+                        </option>
+
+                        <option value="events">
+                            🎉 Événements
+                        </option>
+
+                        <option value="fun">
+                            😂 Fun
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- QUESTION -->
+
+                <div class="polls-form-field">
+
+                    <label for="polls-suggestion-question">
+                        Ton idée de sondage
+                    </label>
+
+                    <input
+                        id="polls-suggestion-question"
+                        type="text"
+                        maxlength="150"
+                        placeholder="Ex. Quel jeu d'horreur pour le prochain live ?"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="polls-form-field">
+
+                    <label for="polls-suggestion-description">
+                        Détails
+                    </label>
+
+                    <textarea
+                        id="polls-suggestion-description"
+                        rows="5"
+                        maxlength="600"
+                        placeholder="Tu peux préciser ton idée ici..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- MESSAGE -->
+
+                <p
+                    id="polls-suggestion-message"
+                    class="polls-dialog-message"
+                    aria-live="polite"
+                ></p>
+
+
+                <!-- ACTIONS -->
+
+                <div class="polls-dialog-actions">
+
+                    <button
+                        class="polls-cancel-button"
+                        type="button"
+                        data-suggestion-close
+                    >
+                        Annuler
+                    </button>
+
+
+                    <button
+                        class="polls-submit-button"
+                        type="submit"
+                    >
+                        💜 Envoyer ma proposition
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         NAVIGATION VERTICALE
+    ====================================================== -->
+
+    <div
+        class="scroll-page-controls"
+        aria-label="Navigation verticale de la page"
+    >
+
+        <button
+            id="scrollTopButton"
+            class="scroll-page-button"
+            type="button"
+            aria-label="Retourner en haut de la page"
+            title="Retour en haut"
+        >
+            ↑
+        </button>
+
+        <button
+            id="scrollBottomButton"
+            class="scroll-page-button"
+            type="button"
+            aria-label="Aller en bas de la page"
+            title="Aller en bas"
+        >
+            ↓
+        </button>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MASCOTTE
+    ====================================================== -->
+
+    <div class="mascotte-widget">
+
+        <div
+            class="mascotte-bulle"
+            id="mascotte-bulle"
+            role="status"
+            aria-live="polite"
+        >
+            Bienvenue dans les sondages !
+        </div>
+
+
+        <button
+            class="mascotte-button"
+            id="mascotte-button"
+            type="button"
+            aria-label="Parler avec Couaxia"
+        >
+
+            <img
+                src="./images/mascotte/YCH_Dance_V2.gif"
+                data-idle-src="./images/mascotte/YCH_Dance_V2.gif"
+                data-talking-src="./images/mascotte/YCH_Dance_V1.gif"
+                alt="Mascotte Couaxia"
+                class="mascotte"
+                id="mascotte-image"
+                draggable="false"
+            >
+
+        </button>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="./js/polls.js"></script>
+    <script src="./js/scroll-page.js"></script>
+    <script src="./js/mascotte.js"></script>
+    <script src="./js/mascotte-navigation.js"></script>
+    <script src="./js/protection.js"></script>
+    <script src="./js/theme.js"></script>
+
+</body>
+
+</html>
