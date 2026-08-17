@@ -207,85 +207,94 @@
     ========================================================= */
 
     .games-toolbar {
-        display:
-            flex;
+    display: grid;
 
-        align-items:
-            end;
+    grid-template-columns:
+        320px
+        minmax(0, 1fr);
 
-        justify-content:
-            space-between;
+    align-items: start;
 
-        gap:
-            20px;
+    gap: 30px;
 
-        margin:
-            0 0 12px;
+    margin:
+        0 0 12px;
 
-        padding:
-            20px;
+    padding:
+        26px 30px;
 
-        background:
-            var(--games-surface);
+    background:
+        var(--games-surface);
 
-        border:
-            2px solid
-            var(--games-border);
+    border:
+        2px solid
+        var(--games-border);
 
-        border-radius:
-            22px;
-    }
+    border-radius:
+        22px;
+}
 
+   .games-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 6px;
+}
 
-    .games-filter {
-        display:
-            flex;
-
-        flex-direction:
-            column;
-
-        gap:
-            8px;
-    }
-
-
-    .games-filter label {
-        color:
-            var(--games-title);
-
-        font-weight:
-            900;
-    }
+   .games-filter label {
+    color:
+        var(--games-title);
+    font-size: 1.05rem;
+    font-weight: 900;
+    line-height: 1.2;
+}
 
 
     .games-filter select {
-        min-width:
-            230px;
+    width: 100%;
+    min-width: 0;
+    min-height: 58px;
 
-        padding:
-            11px 42px 11px 14px;
+    padding:
+        11px 42px 11px 14px;
 
-        color:
-            var(--games-text);
+    color:
+        var(--games-text);
 
-        background:
-            var(--games-surface-soft);
+    background:
+        var(--games-surface-soft);
 
-        border:
-            2px solid
-            var(--games-border);
+    border:
+        2px solid
+        var(--games-border);
 
-        border-radius:
-            12px;
+    border-radius:
+        15px;
 
-        font:
-            inherit;
+    font:
+        inherit;
 
-        cursor:
-            pointer;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+@media (max-width: 900px) {
+
+    .games-toolbar {
+        grid-template-columns:
+            1fr;
+
+        gap:
+            20px;
     }
 
 
+    .games-poll-button {
+        margin:
+            0;
+    }
+}
     /* =========================================================
     BOUTON ALÉATOIRE
     ========================================================= */
