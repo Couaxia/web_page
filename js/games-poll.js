@@ -487,26 +487,39 @@ document.addEventListener(
              * 409 → utilisateur ayant déjà voté
              */
             if (
-                !response.ok
-            ) {
+                    !response.ok
+                ) {
 
-                const error =
-                    new Error(
+                    /*
+                    * Connexion Twitch requise.
+                    */
+                    if (
+                        response.status === 401 &&
+                        data?.loginRequired
+                    ) {
+
+                        const loginUrl =
+                            normalizeText(
+                                data?.loginUrl
+                            ) ||
+                            "/api/auth/login";
+
+
+                        window.location.href =
+                            loginUrl;
+
+
+                        throw new Error(
+                            "Connexion Twitch requise."
+                        );
+                    }
+
+
+                    throw new Error(
                         data?.error ||
                         `Erreur HTTP ${response.status}`
                     );
-
-
-                error.status =
-                    response.status;
-
-
-                error.data =
-                    data;
-
-
-                throw error;
-            }
+                }
 
 
             return data;

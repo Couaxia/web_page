@@ -915,3 +915,1471 @@ html[data-theme="dark"]
     }
 
 }
+/* =========================================================
+   SONDAGE PUBLIC — PAGE JEUX
+   COUAXIA
+   MODE JOUR + MODE NUIT
+========================================================= */
+
+
+/* =========================================================
+   VARIABLES — MODE JOUR
+========================================================= */
+
+:root {
+    --poll-bg:
+        rgba(255, 255, 255, 0.96);
+
+    --poll-bg-soft:
+        rgba(255, 255, 255, 0.88);
+
+    --poll-bg-card:
+        rgba(250, 246, 255, 0.96);
+
+    --poll-text:
+        #29123A;
+
+    --poll-text-soft:
+        #6D5A77;
+
+    --poll-primary:
+        #6D00A3;
+
+    --poll-primary-soft:
+        rgba(109, 0, 163, 0.10);
+
+    --poll-secondary:
+        #22C8C8;
+
+    --poll-cyan:
+        #00BFC4;
+
+    --poll-border:
+        rgba(109, 0, 163, 0.28);
+
+    --poll-border-strong:
+        rgba(109, 0, 163, 0.52);
+
+    --poll-danger:
+        #B42318;
+
+    --poll-success:
+        #16794A;
+
+    --poll-shadow:
+        0 20px 50px
+        rgba(50, 15, 70, 0.18);
+
+    --poll-shadow-soft:
+        0 10px 28px
+        rgba(50, 15, 70, 0.12);
+}
+
+
+/* =========================================================
+   VARIABLES — MODE NUIT
+========================================================= */
+
+html[data-theme="dark"] {
+    --poll-bg:
+        rgba(25, 5, 38, 0.98);
+
+    --poll-bg-soft:
+        rgba(36, 8, 52, 0.96);
+
+    --poll-bg-card:
+        rgba(44, 10, 62, 0.97);
+
+    --poll-text:
+        #FFFFFF;
+
+    --poll-text-soft:
+        #D5C1E1;
+
+    --poll-primary:
+        #D17BFF;
+
+    --poll-primary-soft:
+        rgba(185, 86, 255, 0.16);
+
+    --poll-secondary:
+        #22F2EF;
+
+    --poll-cyan:
+        #22F2EF;
+
+    --poll-border:
+        rgba(211, 123, 255, 0.30);
+
+    --poll-border-strong:
+        rgba(34, 242, 239, 0.65);
+
+    --poll-danger:
+        #FF8E88;
+
+    --poll-success:
+        #79E7AD;
+
+    --poll-shadow:
+        0 26px 80px
+        rgba(0, 0, 0, 0.52);
+
+    --poll-shadow-soft:
+        0 12px 32px
+        rgba(0, 0, 0, 0.34);
+}
+
+
+/* =========================================================
+   BLOC RÉSUMÉ DU SONDAGE
+========================================================= */
+
+.games-poll-summary {
+    width: calc(100% - 48px);
+    max-width: 1200px;
+
+    margin: 34px auto 46px;
+    padding: 0;
+
+    color: var(--poll-text);
+
+    border:
+        2px solid
+        var(--poll-border-strong);
+
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--poll-bg),
+            var(--poll-bg-soft)
+        );
+
+    box-shadow:
+        var(--poll-shadow-soft);
+
+    overflow: hidden;
+}
+
+
+.games-poll-summary-content {
+    min-height: 170px;
+
+    display: grid;
+
+    grid-template-columns:
+        auto
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 22px;
+
+    padding: 26px 30px;
+}
+
+
+.games-poll-summary-icon {
+    width: 72px;
+    height: 72px;
+
+    display: grid;
+
+    place-items: center;
+
+    flex: 0 0 auto;
+
+    font-size: 2.1rem;
+
+    border:
+        1px solid
+        var(--poll-border-strong);
+
+    border-radius: 22px;
+
+    background:
+        var(--poll-primary-soft);
+}
+
+
+.games-poll-summary-content > div {
+    min-width: 0;
+}
+
+
+.games-poll-summary h2 {
+    margin: 0 0 10px;
+
+    color:
+        var(--poll-text);
+
+    font-size:
+        clamp(
+            1.4rem,
+            2.3vw,
+            2rem
+        );
+
+    font-weight: 900;
+}
+
+
+.games-poll-summary p {
+    margin: 0;
+
+    color:
+        var(--poll-text-soft);
+
+    font-size: 1rem;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   BOUTON DU RÉSUMÉ
+========================================================= */
+
+.games-poll-summary-button {
+    min-width: 150px;
+    min-height: 52px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 12px 22px;
+
+    color: #FFFFFF;
+
+    font-size: 1rem;
+
+    font-weight: 900;
+
+    border:
+        1px solid
+        var(--poll-primary);
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7A00AE,
+            #C800D8
+        );
+
+    box-shadow:
+        0 8px 24px
+        rgba(174, 0, 214, 0.24);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+
+
+.games-poll-summary-button:hover {
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 12px 30px
+        rgba(174, 0, 214, 0.34);
+
+    filter:
+        brightness(1.08);
+}
+
+
+.games-poll-summary-button:active {
+    transform:
+        translateY(0);
+}
+
+
+/* =========================================================
+   BOUTON DU MENU / CARTE
+========================================================= */
+
+#games-vote-button {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+#games-vote-button:hover {
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(34, 242, 239, 0.15);
+}
+
+
+/* =========================================================
+   MODALE — CONTENEUR
+========================================================= */
+
+body.games-poll-open {
+    overflow: hidden;
+}
+
+
+.games-poll-modal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 99999;
+
+    display: grid;
+
+    place-items: center;
+
+    padding: 24px;
+}
+
+
+.games-poll-modal[hidden] {
+    display: none !important;
+}
+
+
+/* =========================================================
+   MODALE — FOND
+========================================================= */
+
+.games-poll-modal-backdrop {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        rgba(10, 4, 18, 0.70);
+
+    backdrop-filter:
+        blur(10px);
+
+    cursor: pointer;
+}
+
+
+html[data-theme="dark"]
+.games-poll-modal-backdrop {
+    background:
+        rgba(5, 0, 10, 0.82);
+}
+
+
+/* =========================================================
+   MODALE — BOÎTE
+========================================================= */
+
+.games-poll-dialog {
+    position: relative;
+
+    z-index: 2;
+
+    width:
+        min(
+            680px,
+            100%
+        );
+
+    max-height:
+        min(
+            780px,
+            90vh
+        );
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding: 30px;
+
+    color:
+        var(--poll-text);
+
+    border:
+        2px solid
+        var(--poll-border-strong);
+
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--poll-bg),
+            var(--poll-bg-soft)
+        );
+
+    box-shadow:
+        var(--poll-shadow);
+
+    animation:
+        gamesPollAppear
+        0.22s
+        ease;
+}
+
+
+@keyframes gamesPollAppear {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(18px)
+            scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.games-poll-dialog::-webkit-scrollbar {
+    width: 10px;
+}
+
+
+.games-poll-dialog::-webkit-scrollbar-track {
+    background:
+        rgba(120, 120, 120, 0.08);
+
+    border-radius:
+        999px;
+}
+
+
+.games-poll-dialog::-webkit-scrollbar-thumb {
+    background:
+        linear-gradient(
+            var(--poll-secondary),
+            var(--poll-primary)
+        );
+
+    border-radius:
+        999px;
+}
+
+
+/* =========================================================
+   FERMETURE
+========================================================= */
+
+.games-poll-modal-close {
+    position: absolute;
+
+    top: 16px;
+    right: 16px;
+
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+
+    place-items: center;
+
+    padding: 0;
+
+    color:
+        var(--poll-text);
+
+    font-size: 1rem;
+
+    font-weight: 900;
+
+    border:
+        1px solid
+        var(--poll-border);
+
+    border-radius: 50%;
+
+    background:
+        var(--poll-primary-soft);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.games-poll-modal-close:hover {
+    transform:
+        rotate(90deg)
+        scale(1.08);
+
+    color: #FFFFFF;
+
+    border-color:
+        #FF75B5;
+
+    background:
+        rgba(255, 70, 130, 0.72);
+}
+
+
+/* =========================================================
+   EN-TÊTE
+========================================================= */
+
+.games-poll-dialog-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    padding-right: 48px;
+
+    margin-bottom: 20px;
+}
+
+
+.games-poll-dialog-icon {
+    width: 56px;
+    height: 56px;
+
+    display: grid;
+
+    place-items: center;
+
+    flex: 0 0 auto;
+
+    font-size: 1.7rem;
+
+    border:
+        1px solid
+        var(--poll-border-strong);
+
+    border-radius: 18px;
+
+    background:
+        var(--poll-primary-soft);
+}
+
+
+.games-poll-dialog-header > div {
+    min-width: 0;
+}
+
+
+.games-poll-dialog-eyebrow {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color:
+        var(--poll-secondary);
+
+    font-size: 0.78rem;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.10em;
+}
+
+
+.games-poll-dialog-title {
+    margin: 0;
+
+    color:
+        var(--poll-text);
+
+    font-size:
+        clamp(
+            1.65rem,
+            4vw,
+            2.25rem
+        );
+
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   QUESTION
+========================================================= */
+
+.games-poll-dialog-question {
+    margin:
+        0
+        0
+        24px;
+
+    padding:
+        16px
+        18px;
+
+    color:
+        var(--poll-primary);
+
+    text-align: center;
+
+    font-size:
+        clamp(
+            1.05rem,
+            2.5vw,
+            1.3rem
+        );
+
+    font-weight: 800;
+
+    line-height: 1.5;
+
+    border:
+        1px solid
+        var(--poll-border);
+
+    border-radius: 18px;
+
+    background:
+        var(--poll-primary-soft);
+}
+
+
+html[data-theme="dark"]
+.games-poll-dialog-question {
+    color:
+        #F2D9FF;
+}
+
+
+/* =========================================================
+   OPTIONS
+========================================================= */
+
+.games-poll-options {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 14px;
+}
+
+
+/* =========================================================
+   OPTION
+========================================================= */
+
+.games-poll-option {
+    position: relative;
+
+    display: block;
+
+    min-width: 0;
+
+    cursor: pointer;
+}
+
+
+.games-poll-option input {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+.games-poll-option-control {
+    min-height: 74px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding:
+        14px
+        16px;
+
+    color:
+        var(--poll-text);
+
+    border:
+        1px solid
+        var(--poll-border);
+
+    border-radius: 18px;
+
+    background:
+        var(--poll-bg-card);
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.games-poll-option:hover
+.games-poll-option-control {
+    transform:
+        translateY(-2px);
+
+    border-color:
+        var(--poll-secondary);
+
+    box-shadow:
+        var(--poll-shadow-soft);
+}
+
+
+.games-poll-option input:checked
++
+.games-poll-option-control {
+    border-color:
+        var(--poll-secondary);
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--poll-primary-soft),
+            var(--poll-bg-card)
+        );
+
+    box-shadow:
+        inset
+        0
+        0
+        0
+        1px
+        rgba(34, 242, 239, 0.22),
+        var(--poll-shadow-soft);
+}
+
+
+.games-poll-option-control strong {
+    min-width: 0;
+
+    color:
+        var(--poll-text);
+
+    font-size: 1rem;
+
+    font-weight: 900;
+
+    overflow-wrap:
+        anywhere;
+}
+
+
+/* =========================================================
+   RADIO PERSONNALISÉ
+========================================================= */
+
+.games-poll-radio {
+    position: relative;
+
+    width: 24px;
+    height: 24px;
+
+    flex: 0 0 auto;
+
+    border:
+        2px solid
+        var(--poll-border-strong);
+
+    border-radius: 50%;
+
+    background:
+        var(--poll-bg-soft);
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.games-poll-radio::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 5px;
+
+    border-radius: 50%;
+
+    background:
+        var(--poll-secondary);
+
+    transform:
+        scale(0);
+
+    transition:
+        transform 0.18s ease;
+}
+
+
+.games-poll-option input:checked
++
+.games-poll-option-control
+.games-poll-radio {
+    border-color:
+        var(--poll-secondary);
+}
+
+
+.games-poll-option input:checked
++
+.games-poll-option-control
+.games-poll-radio::after {
+    transform:
+        scale(1);
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.games-poll-message {
+    min-height: 24px;
+
+    margin:
+        18px
+        0
+        0;
+
+    color:
+        var(--poll-text-soft);
+
+    text-align: center;
+
+    font-size: 0.92rem;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.games-poll-dialog-actions {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin-top: 22px;
+}
+
+
+/* =========================================================
+   BOUTON FERMER
+========================================================= */
+
+.games-poll-cancel-button {
+    min-height: 48px;
+
+    padding:
+        11px
+        18px;
+
+    color:
+        var(--poll-text);
+
+    font-weight: 900;
+
+    border:
+        1px solid
+        var(--poll-border);
+
+    border-radius: 14px;
+
+    background:
+        var(--poll-bg-card);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.games-poll-cancel-button:hover {
+    transform:
+        translateY(-2px);
+
+    border-color:
+        var(--poll-primary);
+
+    background:
+        var(--poll-primary-soft);
+}
+
+
+/* =========================================================
+   BOUTON VOTER
+========================================================= */
+
+.games-poll-submit-button {
+    min-height: 48px;
+
+    min-width: 150px;
+
+    padding:
+        11px
+        20px;
+
+    color:
+        #FFFFFF;
+
+    font-weight: 900;
+
+    border:
+        1px solid
+        var(--poll-primary);
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #8D00BD,
+            #D300D6
+        );
+
+    box-shadow:
+        0 8px 22px
+        rgba(176, 0, 206, 0.24);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+.games-poll-submit-button:hover:not(:disabled) {
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 12px 28px
+        rgba(176, 0, 206, 0.34);
+}
+
+
+.games-poll-submit-button:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.42;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   RÉSULTATS
+========================================================= */
+
+.games-poll-result {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    padding:
+        15px
+        16px;
+
+    color:
+        var(--poll-text);
+
+    border:
+        1px solid
+        var(--poll-border);
+
+    border-radius: 17px;
+
+    background:
+        var(--poll-bg-card);
+}
+
+
+.games-poll-result.is-selected {
+    border-color:
+        var(--poll-secondary);
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--poll-primary-soft),
+            var(--poll-bg-card)
+        );
+
+    box-shadow:
+        inset
+        0
+        0
+        0
+        1px
+        rgba(34, 242, 239, 0.20);
+}
+
+
+.games-poll-result-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+
+.games-poll-result-header span {
+    min-width: 0;
+
+    color:
+        var(--poll-text);
+
+    font-weight: 900;
+
+    overflow-wrap:
+        anywhere;
+}
+
+
+.games-poll-result-header strong {
+    flex: 0 0 auto;
+
+    color:
+        var(--poll-secondary);
+
+    font-size: 0.95rem;
+}
+
+
+.games-poll-result-bar {
+    width: 100%;
+
+    height: 10px;
+
+    overflow: hidden;
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(120, 120, 120, 0.15);
+}
+
+
+.games-poll-result-bar > span {
+    height: 100%;
+
+    display: block;
+
+    border-radius:
+        inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--poll-secondary),
+            var(--poll-primary),
+            #ED42D8
+        );
+
+    transition:
+        width 0.4s ease;
+}
+
+
+.games-poll-result small {
+    color:
+        var(--poll-text-soft);
+
+    font-size: 0.78rem;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   MODE NUIT — AJUSTEMENTS VISUELS
+========================================================= */
+
+html[data-theme="dark"]
+.games-poll-summary,
+html[data-theme="dark"]
+.games-poll-dialog {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(51, 10, 72, 0.99),
+            rgba(20, 4, 34, 0.99)
+        );
+
+    border-color:
+        #22F2EF;
+}
+
+
+html[data-theme="dark"]
+.games-poll-option-control {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(45, 9, 63, 0.96),
+            rgba(28, 5, 42, 0.96)
+        );
+
+    border-color:
+        rgba(206, 117, 255, 0.32);
+}
+
+
+html[data-theme="dark"]
+.games-poll-option input:checked
++
+.games-poll-option-control {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(83, 20, 109, 0.98),
+            rgba(43, 8, 60, 0.98)
+        );
+}
+
+
+html[data-theme="dark"]
+.games-poll-result {
+    background:
+        rgba(36, 7, 52, 0.92);
+}
+
+
+html[data-theme="dark"]
+.games-poll-result.is-selected {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(72, 18, 96, 0.96),
+            rgba(34, 7, 50, 0.96)
+        );
+}
+
+
+html[data-theme="dark"]
+.games-poll-cancel-button {
+    background:
+        rgba(255, 255, 255, 0.06);
+
+    border-color:
+        rgba(255, 255, 255, 0.18);
+}
+
+
+/* =========================================================
+   FOCUS ACCESSIBILITÉ
+========================================================= */
+
+.games-poll-summary-button:focus-visible,
+.games-poll-modal-close:focus-visible,
+.games-poll-cancel-button:focus-visible,
+.games-poll-submit-button:focus-visible,
+.games-poll-option input:focus-visible
++
+.games-poll-option-control {
+    outline:
+        3px solid
+        rgba(34, 242, 239, 0.55);
+
+    outline-offset:
+        3px;
+}
+
+
+/* =========================================================
+   RESPONSIVE TABLETTE
+========================================================= */
+
+@media (
+    max-width: 850px
+) {
+
+    .games-poll-summary-content {
+        grid-template-columns:
+            auto
+            minmax(0, 1fr);
+
+        gap: 18px;
+    }
+
+
+    .games-poll-summary-button {
+        grid-column:
+            1 / -1;
+
+        width: 100%;
+    }
+
+
+    .games-poll-options {
+        grid-template-columns:
+            1fr;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE MOBILE
+========================================================= */
+
+@media (
+    max-width: 600px
+) {
+
+    .games-poll-summary {
+        width:
+            calc(
+                100%
+                -
+                24px
+            );
+
+        margin-top:
+            24px;
+
+        border-radius:
+            22px;
+    }
+
+
+    .games-poll-summary-content {
+        min-height:
+            0;
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+
+        padding:
+            20px;
+    }
+
+
+    .games-poll-summary-icon {
+        align-self:
+            center;
+
+        width:
+            60px;
+
+        height:
+            60px;
+
+        font-size:
+            1.8rem;
+    }
+
+
+    .games-poll-summary h2,
+    .games-poll-summary p {
+        text-align:
+            center;
+    }
+
+
+    .games-poll-modal {
+        padding:
+            10px;
+    }
+
+
+    .games-poll-dialog {
+        width:
+            100%;
+
+        max-height:
+            94vh;
+
+        padding:
+            24px
+            16px
+            18px;
+
+        border-radius:
+            22px;
+    }
+
+
+    .games-poll-modal-close {
+        top:
+            10px;
+
+        right:
+            10px;
+
+        width:
+            38px;
+
+        height:
+            38px;
+    }
+
+
+    .games-poll-dialog-header {
+        flex-direction:
+            column;
+
+        align-items:
+            center;
+
+        padding-right:
+            0;
+
+        text-align:
+            center;
+    }
+
+
+    .games-poll-dialog-icon {
+        width:
+            52px;
+
+        height:
+            52px;
+    }
+
+
+    .games-poll-dialog-question {
+        padding:
+            14px;
+    }
+
+
+    .games-poll-option-control {
+        min-height:
+            66px;
+
+        padding:
+            12px
+            13px;
+    }
+
+
+    .games-poll-dialog-actions {
+        flex-direction:
+            column-reverse;
+    }
+
+
+    .games-poll-cancel-button,
+    .games-poll-submit-button {
+        width:
+            100%;
+    }
+}
+
+
+/* =========================================================
+   PETIT MOBILE
+========================================================= */
+
+@media (
+    max-width: 380px
+) {
+
+    .games-poll-dialog {
+        padding-left:
+            12px;
+
+        padding-right:
+            12px;
+    }
+
+
+    .games-poll-option-control {
+        gap:
+            10px;
+    }
+
+
+    .games-poll-radio {
+        width:
+            21px;
+
+        height:
+            21px;
+    }
+}
+
+
+/* =========================================================
+   RÉDUCTION DES ANIMATIONS
+========================================================= */
+
+@media (
+    prefers-reduced-motion: reduce
+) {
+
+    .games-poll-dialog,
+    .games-poll-summary-button,
+    .games-poll-modal-close,
+    .games-poll-option-control,
+    .games-poll-submit-button,
+    .games-poll-cancel-button,
+    .games-poll-result-bar > span {
+        animation:
+            none !important;
+
+        transition:
+            none !important;
+    }
+}
