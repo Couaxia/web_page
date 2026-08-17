@@ -27,7 +27,7 @@ document.addEventListener(
 
         const voteButton =
             document.getElementById(
-                "games-vote-button"
+                "games-poll-open"
             );
 
 
@@ -491,34 +491,34 @@ document.addEventListener(
                 ) {
 
                     /*
-                    * Connexion Twitch requise.
+                    * On ne redirige PLUS automatiquement vers Twitch.
+                    *
+                    * On transmet le statut HTTP et les données
+                    * au reste du script.
+                    *
+                    * Cela permet notamment à la modale d'afficher :
+                    *
+                    * "Connexion Twitch nécessaire uniquement pour voter"
+                    *
+                    * avec un bouton de connexion.
                     */
-                    if (
-                        response.status === 401 &&
-                        data?.loginRequired
-                    ) {
 
-                        const loginUrl =
-                            normalizeText(
-                                data?.loginUrl
-                            ) ||
-                            "/api/auth/login";
-
-
-                        window.location.href =
-                            loginUrl;
-
-
-                        throw new Error(
-                            "Connexion Twitch requise."
+                    const apiError =
+                        new Error(
+                            data?.error ||
+                            `Erreur HTTP ${response.status}`
                         );
-                    }
 
 
-                    throw new Error(
-                        data?.error ||
-                        `Erreur HTTP ${response.status}`
-                    );
+                    apiError.status =
+                        response.status;
+
+
+                    apiError.data =
+                        data;
+
+
+                    throw apiError;
                 }
 
 
@@ -824,6 +824,44 @@ document.addEventListener(
                         class="games-poll-options"
                     ></div>
 
+                    <div
+                        id="games-poll-auth-required"
+                        class="games-poll-auth-required"
+                        hidden
+                    >
+
+                        <div
+                            class="games-poll-auth-required-icon"
+                            aria-hidden="true"
+                        >
+                            💜
+                        </div>
+
+
+                        <div class="games-poll-auth-required-content">
+
+                            <strong>
+                                Connexion Twitch nécessaire uniquement pour voter
+                            </strong>
+
+                            <span>
+                                Tu peux consulter le sondage et choisir un jeu
+                                sans te connecter. Twitch est demandé seulement
+                                pour enregistrer ton vote.
+                            </span>
+
+                        </div>
+
+
+                        <a
+                            id="games-poll-auth-login"
+                            class="games-poll-auth-login"
+                            href="/api/auth/login"
+                        >
+                            Se connecter avec Twitch
+                        </a>
+
+                    </div>
 
                     <p
                         id="games-poll-message"
@@ -1016,7 +1054,7 @@ document.addEventListener(
                 pollModal.querySelector(
                     "#games-poll-submit"
                 );
-
+                hideTwitchLoginRequired();
 
             if (
                 questionElement
@@ -1185,6 +1223,110 @@ document.addEventListener(
                 );
         }
 
+        /* =====================================================
+            CONNEXION TWITCH — VOTE UNIQUEMENT
+         ====================================================== */
+
+            function showTwitchLoginRequired(
+                loginUrl = "/api/auth/login"
+            ) {
+
+                if (
+                    !pollModal
+                ) {
+
+                    return;
+                }
+
+
+                const authBlock =
+                    pollModal.querySelector(
+                        "#games-poll-auth-required"
+                    );
+
+
+                const loginButton =
+                    pollModal.querySelector(
+                        "#games-poll-auth-login"
+                    );
+
+
+                const submitButton =
+                    pollModal.querySelector(
+                        "#games-poll-submit"
+                    );
+
+
+                const messageElement =
+                    pollModal.querySelector(
+                        "#games-poll-message"
+                    );
+
+
+                if (
+                    authBlock
+                ) {
+
+                    authBlock.hidden =
+                        false;
+                }
+
+
+                if (
+                    loginButton
+                ) {
+
+                    loginButton.href =
+                        normalizeText(
+                            loginUrl
+                        ) ||
+                        "/api/auth/login";
+                }
+
+
+                if (
+                    submitButton
+                ) {
+
+                    submitButton.hidden =
+                        true;
+                }
+
+
+                if (
+                    messageElement
+                ) {
+
+                    messageElement.textContent =
+                        "";
+                }
+            }
+
+
+            function hideTwitchLoginRequired() {
+
+                if (
+                    !pollModal
+                ) {
+
+                    return;
+                }
+
+
+                const authBlock =
+                    pollModal.querySelector(
+                        "#games-poll-auth-required"
+                    );
+
+
+                if (
+                    authBlock
+                ) {
+
+                    authBlock.hidden =
+                        true;
+                }
+            }
 
         /* =====================================================
            RÉSULTATS
@@ -1524,42 +1666,37 @@ document.addEventListener(
                  * si le viewer n'est pas connecté.
                  */
                 if (
-                    error?.status ===
-                        401 ||
-                    error?.data
-                        ?.loginRequired ===
-                        true
-                ) {
-
-                    const loginUrl =
-                        normalizeText(
-                            error?.data
-                                ?.loginUrl
-                        ) ||
-                        "/api/auth/login";
-
-
-                    if (
-                        messageElement
+                        error?.status === 401 ||
+                        error?.data
+                            ?.loginRequired ===
+                            true
                     ) {
 
-                        messageElement.textContent =
-                            "Connexion à Twitch nécessaire...";
+                        const loginUrl =
+                            normalizeText(
+                                error?.data
+                                    ?.loginUrl
+                            ) ||
+                            "/api/auth/login";
+
+
+                        /*
+                        * IMPORTANT :
+                        *
+                        * On ne redirige pas automatiquement.
+                        *
+                        * Le visiteur reste dans le sondage
+                        * et choisit lui-même s'il veut
+                        * se connecter à Twitch.
+                        */
+
+                        showTwitchLoginRequired(
+                            loginUrl
+                        );
+
+
+                        return;
                     }
-
-
-                    /*
-                     * Twitch prend ensuite le relais.
-                     *
-                     * Après connexion, server.js redirige
-                     * l'utilisateur vers games.html.
-                     */
-                    window.location.href =
-                        loginUrl;
-
-
-                    return;
-                }
 
 
                 /* =================================================

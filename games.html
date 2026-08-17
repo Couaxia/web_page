@@ -365,7 +365,7 @@
                 </button>
 
 
-
+        </section>
         <!-- =================================================
              RÉSULTAT DU FILTRE
         ================================================== -->
@@ -422,102 +422,130 @@
         </section>
 
         <!-- =====================================================
-            COMPTE TWITCH PUBLIC
-        ====================================================== -->
+     COMPTE TWITCH PUBLIC — FACULTATIF
+====================================================== -->
 
-        <section
-            class="public-twitch-auth"
-            id="public-twitch-auth"
-            aria-label="Compte Twitch"
+<section
+    class="public-twitch-auth"
+    id="public-twitch-auth"
+    aria-label="Connexion Twitch facultative"
+>
+
+    <!-- =================================================
+         VÉRIFICATION DE LA SESSION
+    ================================================== -->
+
+    <div
+        class="public-twitch-auth-loading"
+        id="public-twitch-auth-loading"
+    >
+
+        <span
+            class="public-twitch-auth-spinner"
+            aria-hidden="true"
+        ></span>
+
+        <span>
+            Vérification de la connexion Twitch...
+        </span>
+
+    </div>
+
+
+    <!-- =================================================
+         VISITEUR NON CONNECTÉ
+    ================================================== -->
+
+    <div
+        class="public-twitch-auth-guest"
+        id="public-twitch-auth-guest"
+        hidden
+    >
+
+        <div
+            class="public-twitch-auth-icon"
+            aria-hidden="true"
+        >
+            💜
+        </div>
+
+
+        <div class="public-twitch-auth-info">
+
+            <strong>
+                Connexion Twitch facultative
+            </strong>
+
+            <span>
+                Tu peux parcourir tous les jeux et consulter
+                les sondages sans te connecter.
+                Twitch est uniquement nécessaire
+                si tu souhaites enregistrer un vote.
+            </span>
+
+        </div>
+
+
+        <a
+            class="public-twitch-login-button"
+            href="/api/auth/login"
+        >
+            <span>
+                Se connecter avec Twitch
+            </span>
+        </a>
+
+    </div>
+
+
+    <!-- =================================================
+         VISITEUR CONNECTÉ
+    ================================================== -->
+
+    <div
+        class="public-twitch-auth-user"
+        id="public-twitch-auth-user"
+        hidden
+    >
+
+        <img
+            class="public-twitch-auth-avatar"
+            id="public-twitch-auth-avatar"
+            src=""
+            alt=""
         >
 
-            <!-- État pendant le chargement -->
 
-            <div
-                class="public-twitch-auth-loading"
-                id="public-twitch-auth-loading"
+        <div class="public-twitch-auth-info">
+
+            <span class="public-twitch-auth-label">
+                ✓ Connecté avec Twitch
+            </span>
+
+            <strong
+                id="public-twitch-auth-name"
             >
-                <span class="public-twitch-auth-spinner"></span>
+                Twitch
+            </strong>
 
-                <span>
-                    Vérification de Twitch...
-                </span>
-            </div>
+            <span>
+                Tu peux participer aux sondages.
+            </span>
 
-
-            <!-- Non connecté -->
-
-            <div
-                class="public-twitch-auth-guest"
-                id="public-twitch-auth-guest"
-                hidden
-            >
-
-                <div class="public-twitch-auth-icon">
-                    💜
-                </div>
-
-                <div class="public-twitch-auth-info">
-
-                    <strong>
-                        Compte Twitch
-                    </strong>
-
-                    <span>
-                        Connecte-toi pour pouvoir participer aux sondages.
-                    </span>
-
-                </div>
-
-                <a
-                    class="public-twitch-login-button"
-                    href="/api/auth/login"
-                >
-                    <span>
-                        Se connecter avec Twitch
-                    </span>
-                </a>
-
-            </div>
+        </div>
 
 
-            <!-- Connecté -->
+        <button
+            class="public-twitch-logout-button"
+            id="public-twitch-auth-logout"
+            type="button"
+        >
+            Se déconnecter
+        </button>
 
-            <div
-                class="public-twitch-auth-user"
-                id="public-twitch-auth-user"
-                hidden>
+    </div>
 
-                <img
-                    class="public-twitch-auth-avatar"
-                    id="public-twitch-auth-avatar"
-                    src=""
-                    alt="">
-
-                <div class="public-twitch-auth-info">
-
-                    <span class="public-twitch-auth-label">
-                        Connecté avec Twitch
-                    </span>
-
-                    <strong
-                        id="public-twitch-auth-name">
-                        Twitch
-                    </strong>
-
-                </div>
-
-                <button
-                    class="public-twitch-logout-button"
-                    id="public-twitch-auth-logout"
-                    type="button"
-                >
-                    Se déconnecter
-                </button>
-
-            </div>
-
-        </section>
+</section>
 
     </main>
 
