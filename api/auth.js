@@ -82,9 +82,12 @@ export function getTwitchClientId() {
 /**
  * Client Secret Twitch.
  *
+ * Cette fonction est exportée car elle est également
+ * utilisée par le callback OAuth public.
+ *
  * @returns {string}
  */
-function getTwitchClientSecret() {
+export function getTwitchClientSecret() {
 
     return getRequiredEnvironmentVariable(
         "TWITCH_CLIENT_SECRET"
