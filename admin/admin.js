@@ -19,15 +19,12 @@ document.addEventListener(
         const ADMIN_LOGOUT_API =
             "/api/admin/auth-logout";
 
-    
-
         /* =====================================================
            API JEUX
         ====================================================== */
 
         const ADMIN_GAMES_API =
             "/api/admin/games";
-
 
         /* =====================================================
            API GALERIE / CRÉDITS
@@ -10413,6 +10410,22 @@ document.addEventListener(
                     );
                 }
 
+                /* =================================================
+                ADMIN PRÊT
+                ================================================= */
+
+                document.documentElement
+                    .classList
+                    .add(
+                        "admin-ready"
+                    );
+
+
+                document.body
+                    .classList
+                    .add(
+                        "admin-ready"
+                    );
 
                 console.info(
                     "[Admin] Administration initialisée."
