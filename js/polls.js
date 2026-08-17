@@ -25,43 +25,6 @@ document.addEventListener(
         const DEFAULT_LOGIN_URL =
             "/api/auth/public-login";
 
-
-            /* =========================================================
-   AUTH TWITCH PUBLIQUE — ALIAS
-   Compatibilité avec les différentes pages du site
-========================================================= */
-
-app.get(
-    "/api/auth/login",
-    useHandler(
-        publicAuthLoginHandler
-    )
-);
-
-
-app.get(
-    "/api/auth/callback",
-    useHandler(
-        publicAuthCallbackHandler
-    )
-);
-
-
-app.get(
-    "/api/auth/me",
-    useHandler(
-        publicAuthMeHandler
-    )
-);
-
-
-app.post(
-    "/api/auth/logout",
-    useHandler(
-        publicAuthLogoutHandler
-    )
-);
-
         /* =====================================================
            ÉLÉMENTS — STATISTIQUES
         ====================================================== */
@@ -2153,15 +2116,16 @@ app.post(
 
                 const data =
                     await apiRequest(
-                        `${POLLS_API}/${encodeURIComponent(
-                            currentPoll.id
-                        )}/vote`,
+                        POLLS_API,
                         {
                             method:
                                 "POST",
 
                             body:
                                 JSON.stringify({
+
+                                    pollId:
+                                        currentPoll.id,
 
                                     optionId:
                                         currentOptionId

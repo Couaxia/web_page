@@ -18,26 +18,8 @@ document.addEventListener(
 
         const ADMIN_LOGOUT_API =
             "/api/admin/auth-logout";
-            
-        /* =========================================================
-        API ADMIN — ALIAS AUTH
-        Compatibilité avec admin.js
-        ========================================================= */
 
-        app.get(
-            "/api/admin/me",
-            useHandler(
-                adminAuthMeHandler
-            )
-        );
-
-
-        app.post(
-            "/api/admin/logout",
-            useHandler(
-                adminAuthLogoutHandler
-            )
-        );
+    
 
         /* =====================================================
            API JEUX
@@ -153,12 +135,12 @@ document.addEventListener(
 
         const adminName =
             document.getElementById(
-                "admin-name"
+                "admin-user-name"
             );
 
         const adminAvatar =
             document.getElementById(
-                "admin-avatar"
+                "admin-user-avatar"
             );
 
         const adminLogoutContainer =
@@ -178,7 +160,7 @@ document.addEventListener(
 
         const adminStatGallery =
             document.getElementById(
-                "admin-stat-gallery"
+                "admin-stat-artworks"
             );
 
         const adminStatPoll =

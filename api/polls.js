@@ -52,7 +52,20 @@ function normalizeText(
     ).trim();
 }
 
+function getSessionTwitchUserId(
+    session
+) {
 
+    return normalizeText(
+
+        session?.twitchUserId ??
+        session?.twitch_user_id ??
+        session?.userId ??
+        session?.user_id ??
+        session?.id
+
+    );
+}
 /**
  * Retourne le body de la requête.
  *
@@ -1230,6 +1243,10 @@ async function handleGet(
             request
         );
 
+    const twitchUserId =
+        getSessionTwitchUserId(
+            session
+        );
 
     /* =====================================================
        DONNÉES
@@ -1284,8 +1301,8 @@ async function handleGet(
                         null;
 
 
-                    if (
-                        session
+                   if (
+                        twitchUserId
                     ) {
 
                         myVote =
@@ -1295,7 +1312,7 @@ async function handleGet(
                                         vote.twitch_user_id
                                     ) ===
                                     String(
-                                        session.twitchUserId
+                                        twitchUserId
                                     )
                             ) ||
                             null;
@@ -1438,10 +1455,14 @@ async function handlePost(
         getPublicUserSession(
             request
         );
-
+    const twitchUserId =
+    getSessionTwitchUserId(
+        session
+    );    
 
     if (
-        !session
+        !session ||
+        !twitchUserId
     ) {
 
         response
@@ -1702,7 +1723,7 @@ async function handlePost(
     const existingVote =
         await getUserVote(
             poll.id,
-            session.twitchUserId
+            twitchUserId
         );
 
 
@@ -1767,7 +1788,7 @@ async function handlePost(
 
                 twitch_user_id:
                     String(
-                        session.twitchUserId
+                        twitchUserId
                     ),
 
                 option_id:
@@ -1805,7 +1826,7 @@ async function handlePost(
             const existing =
                 await getUserVote(
                     poll.id,
-                    session.twitchUserId
+                    twitchUserId
                 );
 
 

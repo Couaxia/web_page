@@ -2654,3 +2654,290 @@ body.polls-modal-open {
 
     font-weight: 700;
 }
+
+/* =========================================================
+   CORRECTIONS AFFICHAGE DES SECTIONS
+========================================================= */
+
+.polls-section {
+    width: 100%;
+
+    margin:
+        0
+        0
+        32px;
+
+    padding: 0;
+
+    min-height: 0;
+}
+
+
+/* =========================================================
+   HEADER DES SECTIONS
+========================================================= */
+
+.polls-section-header {
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 18px;
+
+    padding:
+        18px
+        22px;
+
+    border:
+        1px solid
+        var(--polls-border);
+
+    border-radius:
+        20px;
+
+    background:
+        var(--polls-bg);
+
+    box-shadow:
+        0
+        8px
+        24px
+        var(--polls-shadow);
+}
+
+
+.polls-section-header > div {
+    min-width: 0;
+}
+
+
+.polls-section-header h2 {
+    margin: 4px 0 0;
+
+    color:
+        var(--polls-title);
+
+    font-size:
+        clamp(
+            1.35rem,
+            3vw,
+            2rem
+        );
+
+    font-weight: 900;
+
+    line-height: 1.15;
+}
+
+
+.polls-section-eyebrow {
+    color:
+        var(--polls-pink);
+
+    font-size:
+        0.78rem;
+
+    font-weight: 900;
+
+    letter-spacing:
+        0.08em;
+
+    text-transform:
+        uppercase;
+}
+
+
+/* =========================================================
+   COMPTEUR
+========================================================= */
+
+.polls-section-count {
+    width: 50px;
+
+    height: 50px;
+
+    min-width: 50px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0;
+
+    color:
+        var(--polls-title);
+
+    font-size:
+        1rem;
+
+    font-weight: 900;
+
+    border:
+        2px solid
+        var(--polls-secondary);
+
+    border-radius:
+        50%;
+
+    background:
+        var(--polls-bg-card);
+
+    box-shadow:
+        0
+        5px
+        16px
+        var(--polls-shadow);
+}
+
+
+/* =========================================================
+   GRILLE
+========================================================= */
+
+.polls-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(
+                min(330px, 100%),
+                1fr
+            )
+        );
+
+    gap: 20px;
+
+    min-height: 0;
+}
+
+
+/* =========================================================
+   UNE GRILLE VIDE NE PREND PAS DE PLACE
+========================================================= */
+
+.polls-grid:empty {
+    display: none;
+}
+
+
+/* =========================================================
+   ÉTAT VIDE
+========================================================= */
+
+.polls-empty-state {
+    width:
+        min(
+            650px,
+            100%
+        );
+
+    margin:
+        30px
+        auto;
+
+    padding:
+        30px;
+
+    text-align:
+        center;
+
+    border:
+        2px dashed
+        var(--polls-border-strong);
+
+    border-radius:
+        22px;
+
+    background:
+        var(--polls-bg);
+}
+
+
+/* =========================================================
+   MODE NUIT
+========================================================= */
+
+html[data-theme="dark"]
+.polls-section-header {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(45, 10, 63, 0.96),
+            rgba(29, 5, 45, 0.96)
+        );
+
+    border-color:
+        rgba(34, 242, 239, 0.30);
+}
+
+
+html[data-theme="dark"]
+.polls-section-count {
+    color: #ffffff;
+
+    background:
+        rgba(42, 9, 59, 0.96);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .polls-section {
+        margin-bottom:
+            20px;
+    }
+
+
+    .polls-section-header {
+        padding:
+            15px;
+
+        gap:
+            12px;
+
+        border-radius:
+            17px;
+    }
+
+
+    .polls-section-header h2 {
+        font-size:
+            1.3rem;
+    }
+
+
+    .polls-section-count {
+        width:
+            42px;
+
+        height:
+            42px;
+
+        min-width:
+            42px;
+    }
+
+
+    .polls-grid {
+        grid-template-columns:
+            1fr;
+
+        gap:
+            14px;
+    }
+}
