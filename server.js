@@ -50,8 +50,11 @@ import twitchStatusHandler
 import recommendedStreamersHandler
     from "./api/recommended-streamers.js";
 
-import pollHandler
-    from "./api/poll.js";
+import pollsHandler
+    from "./api/polls.js";
+
+import pollSuggestionsHandler
+    from "./api/poll-suggestions.js";    
 
 
 /* =========================================================
@@ -88,8 +91,11 @@ import adminGamesHandler
  * NOUVEAU :
  * gestion du sondage depuis l'administration.
  */
-import adminPollHandler
-    from "./api/admin/poll.js";
+import adminPollsHandler
+    from "./api/admin/polls.js";
+
+import adminPollSuggestionsHandler
+    from "./api/admin/poll-suggestions.js";
 
 import adminAuthLoginHandler
     from "./api/admin/auth-login.js";
@@ -431,27 +437,40 @@ app.get(
 
 
 /* =========================================================
-   API PUBLIQUE — SONDAGE
+   API PUBLIQUE — SONDAGES
 
-   GET  = récupérer le sondage
+   GET  = récupérer tous les sondages
    POST = voter
 ========================================================= */
 
 app.get(
-    "/api/poll",
+    "/api/polls",
     useHandler(
-        pollHandler
+        pollsHandler
     )
 );
 
 
 app.post(
-    "/api/poll",
+    "/api/polls",
     useHandler(
-        pollHandler
+        pollsHandler
     )
 );
 
+
+/* =========================================================
+   API PUBLIQUE — PROPOSITIONS DE SONDAGES
+
+   POST = proposer un futur sondage
+========================================================= */
+
+app.post(
+    "/api/poll-suggestions",
+    useHandler(
+        pollSuggestionsHandler
+    )
+);
 
 /* =========================================================
    API ADMIN — GALERIE
@@ -538,33 +557,74 @@ app.delete(
 
 
 /* =========================================================
-   API ADMIN — SONDAGE
+   API ADMIN — SONDAGES
 
-   GET    = charger le sondage dans l'admin
-   PUT    = créer / modifier le sondage
-   DELETE = réinitialiser le sondage et ses votes
+   GET    = récupérer tous les sondages
+   POST   = créer un sondage
+   PUT    = modifier un sondage
+   DELETE = supprimer un sondage
 ========================================================= */
 
 app.get(
-    "/api/admin/poll",
+    "/api/admin/polls",
     useHandler(
-        adminPollHandler
+        adminPollsHandler
+    )
+);
+
+
+app.post(
+    "/api/admin/polls",
+    useHandler(
+        adminPollsHandler
     )
 );
 
 
 app.put(
-    "/api/admin/poll",
+    "/api/admin/polls",
     useHandler(
-        adminPollHandler
+        adminPollsHandler
     )
 );
 
 
 app.delete(
-    "/api/admin/poll",
+    "/api/admin/polls",
     useHandler(
-        adminPollHandler
+        adminPollsHandler
+    )
+);
+
+
+/* =========================================================
+   API ADMIN — PROPOSITIONS DE SONDAGES
+
+   GET    = récupérer les propositions
+   PUT    = accepter / refuser / remettre en attente
+   DELETE = supprimer une proposition
+========================================================= */
+
+app.get(
+    "/api/admin/poll-suggestions",
+    useHandler(
+        adminPollSuggestionsHandler
+    )
+);
+
+
+app.put(
+    "/api/admin/poll-suggestions",
+    useHandler(
+        adminPollSuggestionsHandler
+    )
+);
+
+
+app.delete(
+    "/api/admin/poll-suggestions",
+    useHandler(
+        adminPollSuggestionsHandler
     )
 );
 
@@ -740,6 +800,42 @@ app.get(
     }
 );
 
+/* =========================================================
+   SONDAGES
+========================================================= */
+
+app.get(
+    "/polls",
+    (
+        request,
+        response
+    ) => {
+
+        response.sendFile(
+            path.join(
+                __dirname,
+                "polls.html"
+            )
+        );
+    }
+);
+
+
+app.get(
+    "/polls.html",
+    (
+        request,
+        response
+    ) => {
+
+        response.sendFile(
+            path.join(
+                __dirname,
+                "polls.html"
+            )
+        );
+    }
+);
 
 /* =========================================================
    À PROPOS
@@ -1071,17 +1167,21 @@ app.listen(
 
 
         console.log(
-            "🗳️ Poll : /api/poll"
+            "🗳️ Poll : /api/polls"
+        );
+
+        console.log(
+            "💡 Poll Suggestions : /api/poll-suggestions"
         );
 
 
         console.log(
-            "🔑 Public Twitch Login : /api/auth/login"
+            "🔑 Public Twitch Login : /api/auth/public-login"
         );
 
 
         console.log(
-            "👤 Public Twitch Me : /api/auth/me"
+            "👤 Public Twitch Me : /api/auth/public-me"
         );
 
 
@@ -1091,9 +1191,12 @@ app.listen(
 
 
         console.log(
-            "🗳️ Admin Poll : /api/admin/poll"
+            "🗳️ Admin Poll : /api/admin/polls"
         );
 
+        console.log(
+            "💡 Admin Poll Suggestions : /api/admin/poll-suggestions"
+        );
 
         console.log(
             "🔐 Admin Gallery : /api/admin/gallery"

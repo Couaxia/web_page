@@ -102,7 +102,7 @@ export default async function handler(
                         null,
 
                     loginUrl:
-                        "/api/auth/login"
+                        "/api/auth/public-login"
 
                 });
 
@@ -143,7 +143,7 @@ export default async function handler(
                         null,
 
                     loginUrl:
-                        "/api/auth/login"
+                        "/api/auth/public-login"
 
                 });
 

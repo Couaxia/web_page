@@ -856,7 +856,7 @@ document.addEventListener(
                         <a
                             id="games-poll-auth-login"
                             class="games-poll-auth-login"
-                            href="/api/auth/login"
+                            href="/api/auth/public-login"
                         >
                             Se connecter avec Twitch
                         </a>
@@ -1228,7 +1228,7 @@ document.addEventListener(
          ====================================================== */
 
             function showTwitchLoginRequired(
-                loginUrl = "/api/auth/login"
+                loginUrl = "/api/auth/public-login"
             ) {
 
                 if (
@@ -1280,7 +1280,7 @@ document.addEventListener(
                         normalizeText(
                             loginUrl
                         ) ||
-                        "/api/auth/login";
+                        "/api/auth/public-login";
                 }
 
 
@@ -1660,7 +1660,7 @@ document.addEventListener(
                  *
                  * {
                  *     loginRequired: true,
-                 *     loginUrl: "/api/auth/login"
+                 *     loginUrl: "/api/auth/public-login"
                  * }
                  *
                  * si le viewer n'est pas connecté.
@@ -1677,7 +1677,7 @@ document.addEventListener(
                                 error?.data
                                     ?.loginUrl
                             ) ||
-                            "/api/auth/login";
+                            "/api/auth/public-login";
 
 
                         /*
@@ -1762,7 +1762,7 @@ document.addEventListener(
                          * Sinon, on récupère la dernière
                          * version depuis le serveur.
                          */
-                        await loadPoll();
+                        await loadPolls();
                     }
 
 

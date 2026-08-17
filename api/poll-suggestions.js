@@ -303,7 +303,7 @@ async function handlePost(
                     true,
 
                 loginUrl:
-                    "/api/auth/login",
+                    "/api/auth/public-login",
 
                 error:
                     "Tu dois être connecté avec Twitch pour proposer un sondage."
@@ -349,7 +349,7 @@ async function handlePost(
                     true,
 
                 loginUrl:
-                    "/api/auth/login",
+                    "/api/auth/public-login",
 
                 error:
                     "La session Twitch n'est pas valide."

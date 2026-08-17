@@ -1759,10 +1759,8 @@
 
             </section>
 
-
-
             <!-- =================================================
-                 SONDAGE
+                SONDAGES
             ================================================== -->
 
             <section
@@ -1771,9 +1769,9 @@
                 hidden
             >
 
-                <!-- =============================================
-                     EN-TÊTE
-                ============================================== -->
+                <!-- =================================================
+                    EN-TÊTE
+                ================================================== -->
 
                 <header class="admin-section-header">
 
@@ -1784,35 +1782,157 @@
                         </span>
 
                         <h1>
-                            Gestion du sondage
+                            Gestion des sondages
                         </h1>
 
                         <p>
-                            Choisis les jeux proposés à ta communauté
-                            et prépare le prochain vote.
+                            Crée plusieurs sondages, programme leurs dates,
+                            consulte les résultats et gère les propositions
+                            envoyées par la communauté.
                         </p>
 
                     </div>
 
+
+                    <button
+                        id="admin-new-poll"
+                        class="admin-primary-button"
+                        type="button"
+                    >
+                        ➕ Créer un sondage
+                    </button>
+
                 </header>
 
 
-                <!-- =============================================
-                     FORMULAIRE DU SONDAGE
-                ============================================== -->
+                <!-- =================================================
+                    STATISTIQUES DES SONDAGES
+                ================================================== -->
 
-                <section class="admin-block">
+                <div class="admin-dashboard-grid admin-polls-stats">
 
-                    <div class="admin-block-header">
+                    <!-- EN COURS -->
+
+                    <article class="admin-stat-card">
+
+                        <span
+                            class="admin-stat-icon"
+                            aria-hidden="true"
+                        >
+                            🔥
+                        </span>
+
+                        <strong
+                            id="admin-polls-stat-active"
+                            class="admin-stat-number"
+                        >
+                            0
+                        </strong>
+
+                        <span>
+                            En cours
+                        </span>
+
+                    </article>
+
+
+                    <!-- À VENIR -->
+
+                    <article class="admin-stat-card">
+
+                        <span
+                            class="admin-stat-icon"
+                            aria-hidden="true"
+                        >
+                            📅
+                        </span>
+
+                        <strong
+                            id="admin-polls-stat-upcoming"
+                            class="admin-stat-number"
+                        >
+                            0
+                        </strong>
+
+                        <span>
+                            À venir
+                        </span>
+
+                    </article>
+
+
+                    <!-- TERMINÉS -->
+
+                    <article class="admin-stat-card">
+
+                        <span
+                            class="admin-stat-icon"
+                            aria-hidden="true"
+                        >
+                            🏆
+                        </span>
+
+                        <strong
+                            id="admin-polls-stat-finished"
+                            class="admin-stat-number"
+                        >
+                            0
+                        </strong>
+
+                        <span>
+                            Terminés
+                        </span>
+
+                    </article>
+
+
+                    <!-- PROPOSITIONS -->
+
+                    <article class="admin-stat-card">
+
+                        <span
+                            class="admin-stat-icon"
+                            aria-hidden="true"
+                        >
+                            💡
+                        </span>
+
+                        <strong
+                            id="admin-polls-stat-suggestions"
+                            class="admin-stat-number"
+                        >
+                            0
+                        </strong>
+
+                        <span>
+                            Propositions
+                        </span>
+
+                    </article>
+
+                </div>
+
+
+                <!-- =================================================
+                    FORMULAIRE CRÉATION / MODIFICATION
+                ================================================== -->
+
+                <section
+                    id="admin-poll-form-panel"
+                    class="admin-form-panel"
+                    hidden
+                >
+
+                    <div class="admin-form-heading">
 
                         <div>
 
                             <span class="admin-block-eyebrow">
-                                ⚙️ Configuration
+                                ✏️ Édition
                             </span>
 
-                            <h2>
-                                Préparer le sondage
+                            <h2 id="admin-poll-form-title">
+                                Créer un sondage
                             </h2>
 
                         </div>
@@ -1825,9 +1945,74 @@
                         class="admin-form"
                     >
 
-                        <!-- =====================================
-                             QUESTION
-                        ====================================== -->
+                        <!-- =============================================
+                            ID
+                        ============================================== -->
+
+                        <input
+                            type="hidden"
+                            id="admin-poll-id"
+                            name="pollId"
+                        >
+
+
+                        <!-- =============================================
+                            TITRE
+                        ============================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label for="admin-poll-title">
+                                Titre
+                            </label>
+
+                            <input
+                                type="text"
+                                id="admin-poll-title"
+                                name="title"
+                                maxlength="150"
+                                autocomplete="off"
+                                placeholder="Ex : Prochain jeu d'horreur"
+                                required
+                            >
+
+                            <small>
+                                Ce titre sera affiché sur la carte du sondage.
+                            </small>
+
+                        </div>
+
+
+                        <!-- =============================================
+                            SLUG
+                        ============================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label for="admin-poll-slug">
+                                Identifiant / slug
+                            </label>
+
+                            <input
+                                type="text"
+                                id="admin-poll-slug"
+                                name="slug"
+                                maxlength="120"
+                                autocomplete="off"
+                                placeholder="Ex : prochain-jeu-horreur"
+                            >
+
+                            <small>
+                                Identifiant unique utilisé par le site.
+                                Il pourra être généré automatiquement depuis le titre.
+                            </small>
+
+                        </div>
+
+
+                        <!-- =============================================
+                            QUESTION
+                        ============================================== -->
 
                         <div class="admin-field admin-field-wide">
 
@@ -1841,7 +2026,7 @@
                                 name="question"
                                 maxlength="250"
                                 autocomplete="off"
-                                placeholder="Ex : Quel jeu voulez-vous voir au prochain stream ?"
+                                placeholder="Ex : Quel jeu d'horreur voulez-vous voir au prochain stream ?"
                                 required
                             >
 
@@ -1852,9 +2037,79 @@
                         </div>
 
 
-                        <!-- =====================================
-                             STATUT
-                        ====================================== -->
+                        <!-- =============================================
+                            DESCRIPTION
+                        ============================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label for="admin-poll-description">
+                                Description
+                            </label>
+
+                            <textarea
+                                id="admin-poll-description"
+                                name="description"
+                                rows="4"
+                                maxlength="600"
+                                placeholder="Ex : Choisissez ma prochaine souffrance en live 😭"
+                            ></textarea>
+
+                            <small>
+                                Facultatif — maximum 600 caractères.
+                            </small>
+
+                        </div>
+
+
+                        <!-- =============================================
+                            CATÉGORIE
+                        ============================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-poll-category">
+                                Catégorie
+                            </label>
+
+                            <select
+                                id="admin-poll-category"
+                                name="category"
+                                required
+                            >
+
+                                <option value="games">
+                                    🎮 Jeux
+                                </option>
+
+                                <option value="community">
+                                    💜 Communauté
+                                </option>
+
+                                <option value="vtuber">
+                                    🎨 VTuber
+                                </option>
+
+                                <option value="content">
+                                    🎬 Contenu
+                                </option>
+
+                                <option value="events">
+                                    🎉 Événements
+                                </option>
+
+                                <option value="fun">
+                                    😂 Fun
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- =============================================
+                            STATUT
+                        ============================================== -->
 
                         <div class="admin-field">
 
@@ -1865,156 +2120,183 @@
                             <select
                                 id="admin-poll-status"
                                 name="status"
+                                required
                             >
 
-                                <option value="closed">
-                                    🔒 Fermé
+                                <option value="active">
+                                    🔥 En cours
                                 </option>
 
-                                <option value="open">
-                                    🟢 Ouvert
+                                <option value="upcoming">
+                                    📅 À venir
+                                </option>
+
+                                <option value="finished">
+                                    🏆 Terminé
                                 </option>
 
                             </select>
 
                             <small>
-                                Le sondage doit contenir au minimum
-                                deux jeux pour pouvoir être ouvert.
+                                Tu peux aussi programmer les dates ci-dessous.
                             </small>
 
                         </div>
 
 
-                        <!-- =====================================
-                             SÉLECTION DES JEUX
-                        ====================================== -->
+                        <!-- =============================================
+                            DATE DE DÉBUT
+                        ============================================== -->
 
-                        <div
-                            class="admin-field admin-field-wide admin-poll-games-field"
-                        >
+                        <div class="admin-field">
 
-                            <div class="admin-poll-games-header">
+                            <label for="admin-poll-start-date">
+                                Date de début
+                            </label>
 
-                                <div>
-
-                                    <label>
-                                        🎮 Jeux proposés
-                                    </label>
-
-                                    <small>
-                                        Choisis les jeux qui participeront
-                                        au sondage actuel.
-                                    </small>
-
-                                </div>
-
-
-                                <div
-                                    class="admin-poll-selected-counter"
-                                    aria-live="polite"
-                                >
-
-                                    <strong
-                                        id="admin-poll-selected-count"
-                                    >
-                                        0
-                                    </strong>
-
-                                    <span>
-                                        jeu(x) sélectionné(s)
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-
-                            <!-- =================================
-                                 BARRE DE RECHERCHE
-                            ================================== -->
-
-                            <div class="admin-poll-search-wrapper">
-
-                                <label
-                                    class="sr-only"
-                                    for="admin-poll-search"
-                                >
-                                    Rechercher un jeu pour le sondage
-                                </label>
-
-                                <span
-                                    class="admin-poll-search-icon"
-                                    aria-hidden="true"
-                                >
-                                    🔎
-                                </span>
-
-                                <input
-                                    type="search"
-                                    id="admin-poll-search"
-                                    class="admin-poll-search"
-                                    placeholder="Rechercher un jeu..."
-                                    autocomplete="off"
-                                >
-
-                            </div>
-
-
-                            <!-- =================================
-                                 AIDE
-                            ================================== -->
-
-                            <div class="admin-poll-games-info">
-
-                                <span>
-                                    Seuls les jeux ayant
-                                    <strong>
-                                        « Peut participer au sondage »
-                                    </strong>
-                                    activé sont affichés ici.
-                                </span>
-
-                            </div>
-
-
-                            <!-- =================================
-                                 LISTE DES JEUX ÉLIGIBLES
-                            ================================== -->
-
-                            <div
-                                id="admin-poll-games-list"
-                                class="admin-poll-games-list"
-                                aria-live="polite"
+                            <input
+                                type="date"
+                                id="admin-poll-start-date"
+                                name="startDate"
                             >
-
-                                <div class="admin-empty-state">
-
-                                    <span
-                                        class="admin-empty-icon"
-                                        aria-hidden="true"
-                                    >
-                                        🎮
-                                    </span>
-
-                                    <h3>
-                                        Chargement des jeux...
-                                    </h3>
-
-                                    <p>
-                                        Les jeux disponibles pour le sondage
-                                        vont apparaître ici.
-                                    </p>
-
-                                </div>
-
-                            </div>
 
                         </div>
 
 
-                        <!-- =====================================
-                             JEUX SÉLECTIONNÉS
-                        ====================================== -->
+                        <!-- =============================================
+                            HEURE DE DÉBUT
+                        ============================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-poll-start-time">
+                                Heure de début
+                            </label>
+
+                            <input
+                                type="time"
+                                id="admin-poll-start-time"
+                                name="startTime"
+                            >
+
+                        </div>
+
+
+                        <!-- =============================================
+                            DATE DE FIN
+                        ============================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-poll-end-date">
+                                Date de fin
+                            </label>
+
+                            <input
+                                type="date"
+                                id="admin-poll-end-date"
+                                name="endDate"
+                            >
+
+                        </div>
+
+
+                        <!-- =============================================
+                            HEURE DE FIN
+                        ============================================== -->
+
+                        <div class="admin-field">
+
+                            <label for="admin-poll-end-time">
+                                Heure de fin
+                            </label>
+
+                            <input
+                                type="time"
+                                id="admin-poll-end-time"
+                                name="endTime"
+                            >
+
+                        </div>
+
+
+                        <!-- =============================================
+                            VISIBILITÉ DES RÉSULTATS
+                        ============================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label for="admin-poll-results-visibility">
+                                Résultats
+                            </label>
+
+                            <select
+                                id="admin-poll-results-visibility"
+                                name="resultsVisibility"
+                            >
+
+                                <option value="visible">
+                                    👁️ Résultats visibles
+                                </option>
+
+                                <option value="after">
+                                    🙈 Cachés jusqu'à la fin
+                                </option>
+
+                            </select>
+
+                            <small>
+                                Permet d'éviter d'influencer les votes pendant le sondage.
+                            </small>
+
+                        </div>
+
+
+                        <!-- =============================================
+                            PROPOSITIONS COMMUNAUTÉ
+                        ============================================== -->
+
+                        <div class="admin-field admin-field-wide">
+
+                            <label
+                                class="admin-toggle-field"
+                                for="admin-poll-allow-suggestions"
+                            >
+
+                                <input
+                                    type="checkbox"
+                                    id="admin-poll-allow-suggestions"
+                                    name="allowSuggestions"
+                                >
+
+
+                                <span
+                                    class="admin-toggle"
+                                    aria-hidden="true"
+                                ></span>
+
+
+                                <span class="admin-toggle-text">
+
+                                    <strong>
+                                        💡 Autoriser les propositions
+                                    </strong>
+
+                                    <small>
+                                        Les viewers pourront proposer leurs propres
+                                        réponses lorsque ce sondage le permet.
+                                    </small>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+                        <!-- =============================================
+                            OPTIONS
+                        ============================================== -->
 
                         <div class="admin-field admin-field-wide">
 
@@ -2023,15 +2305,23 @@
                                 <div>
 
                                     <label>
-                                        🗳️ Jeux sélectionnés
+                                        ☑️ Réponses proposées
                                     </label>
 
                                     <small>
-                                        Ces jeux seront proposés
-                                        publiquement au vote.
+                                        Ajoute au minimum deux réponses.
                                     </small>
 
                                 </div>
+
+
+                                <button
+                                    id="admin-poll-add-option"
+                                    class="admin-secondary-button"
+                                    type="button"
+                                >
+                                    ➕ Ajouter une réponse
+                                </button>
 
                             </div>
 
@@ -2042,59 +2332,35 @@
                                 aria-live="polite"
                             >
 
-                                <div class="admin-empty-state">
-
-                                    <span
-                                        class="admin-empty-icon"
-                                        aria-hidden="true"
-                                    >
-                                        🗳️
-                                    </span>
-
-                                    <h3>
-                                        Aucun jeu sélectionné
-                                    </h3>
-
-                                    <p>
-                                        Coche au moins deux jeux
-                                        dans la liste ci-dessus.
-                                    </p>
-
-                                </div>
+                                <!-- Le JS créera les champs ici. -->
 
                             </div>
 
                         </div>
 
 
-                        <!-- =====================================
-                             ANCIEN BOUTON
-                             Conservé caché pour compatibilité.
-                        ====================================== -->
-
-                        <button
-                            id="admin-poll-add-option"
-                            type="button"
-                            hidden
-                            aria-hidden="true"
-                            tabindex="-1"
-                        >
-                            Ajouter une option
-                        </button>
-
-
-                        <!-- =====================================
-                             ACTIONS
-                        ====================================== -->
+                        <!-- =============================================
+                            ACTIONS
+                        ============================================== -->
 
                         <div class="admin-form-actions">
 
                             <button
-                                id="admin-poll-reset"
-                                class="admin-danger-button"
+                                id="admin-poll-cancel"
+                                class="admin-secondary-button"
                                 type="button"
                             >
-                                🗑️ Réinitialiser
+                                Annuler
+                            </button>
+
+
+                            <button
+                                id="admin-poll-delete"
+                                class="admin-danger-button"
+                                type="button"
+                                hidden
+                            >
+                                🗑️ Supprimer
                             </button>
 
 
@@ -2113,13 +2379,150 @@
                 </section>
 
 
-                <!-- =============================================
-                     APERÇU DU SONDAGE
-                ============================================== -->
+                <!-- =================================================
+                    FILTRES
+                ================================================== -->
+
+                <section class="admin-block">
+
+                    <div class="admin-block-header">
+
+                        <div>
+
+                            <span class="admin-block-eyebrow">
+                                🔎 Recherche
+                            </span>
+
+                            <h2>
+                                Tous les sondages
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="admin-polls-toolbar">
+
+                        <!-- RECHERCHE -->
+
+                        <div class="admin-field">
+
+                            <label
+                                class="sr-only"
+                                for="admin-polls-search"
+                            >
+                                Rechercher un sondage
+                            </label>
+
+                            <input
+                                type="search"
+                                id="admin-polls-search"
+                                placeholder="Rechercher un sondage..."
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+
+                        <!-- STATUT -->
+
+                        <div class="admin-field">
+
+                            <label
+                                class="sr-only"
+                                for="admin-polls-status-filter"
+                            >
+                                Filtrer par statut
+                            </label>
+
+                            <select id="admin-polls-status-filter">
+
+                                <option value="all">
+                                    Tous les statuts
+                                </option>
+
+                                <option value="active">
+                                    🔥 En cours
+                                </option>
+
+                                <option value="upcoming">
+                                    📅 À venir
+                                </option>
+
+                                <option value="finished">
+                                    🏆 Terminés
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- CATÉGORIE -->
+
+                        <div class="admin-field">
+
+                            <label
+                                class="sr-only"
+                                for="admin-polls-category-filter"
+                            >
+                                Filtrer par catégorie
+                            </label>
+
+                            <select id="admin-polls-category-filter">
+
+                                <option value="all">
+                                    Toutes les catégories
+                                </option>
+
+                                <option value="games">
+                                    🎮 Jeux
+                                </option>
+
+                                <option value="community">
+                                    💜 Communauté
+                                </option>
+
+                                <option value="vtuber">
+                                    🎨 VTuber
+                                </option>
+
+                                <option value="content">
+                                    🎬 Contenu
+                                </option>
+
+                                <option value="events">
+                                    🎉 Événements
+                                </option>
+
+                                <option value="fun">
+                                    😂 Fun
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <p
+                        id="admin-polls-results-count"
+                        class="admin-field-help"
+                        aria-live="polite"
+                    ></p>
+
+                </section>
+
+
+                <!-- =================================================
+                    SONDAGES EN COURS
+                ================================================== -->
 
                 <section
-                    id="admin-poll-preview"
-                    class="admin-block admin-poll-preview"
+                    id="admin-polls-active-section"
+                    class="admin-block"
                 >
 
                     <div class="admin-block-header">
@@ -2127,59 +2530,374 @@
                         <div>
 
                             <span class="admin-block-eyebrow">
-                                👁️ Aperçu
+                                🔥 Maintenant
                             </span>
 
                             <h2>
-                                Aperçu du sondage
+                                Sondages en cours
                             </h2>
 
                         </div>
 
 
-                        <div
-                            id="admin-poll-preview-status"
-                            class="admin-poll-preview-status"
+                        <span
+                            id="admin-polls-active-count"
+                            class="admin-poll-section-count"
                         >
-                            🔒 Fermé
+                            0
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        id="admin-polls-active-list"
+                        class="admin-polls-list"
+                    >
+
+                        <div class="admin-empty-state">
+
+                            <span
+                                class="admin-empty-icon"
+                                aria-hidden="true"
+                            >
+                                🗳️
+                            </span>
+
+                            <h3>
+                                Chargement...
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                    SONDAGES À VENIR
+                ================================================== -->
+
+                <section
+                    id="admin-polls-upcoming-section"
+                    class="admin-block"
+                >
+
+                    <div class="admin-block-header">
+
+                        <div>
+
+                            <span class="admin-block-eyebrow">
+                                📅 Programmés
+                            </span>
+
+                            <h2>
+                                Sondages à venir
+                            </h2>
+
+                        </div>
+
+
+                        <span
+                            id="admin-polls-upcoming-count"
+                            class="admin-poll-section-count"
+                        >
+                            0
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        id="admin-polls-upcoming-list"
+                        class="admin-polls-list"
+                    >
+
+                        <div class="admin-empty-state">
+
+                            <span
+                                class="admin-empty-icon"
+                                aria-hidden="true"
+                            >
+                                📅
+                            </span>
+
+                            <h3>
+                                Aucun sondage programmé
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                    SONDAGES TERMINÉS
+                ================================================== -->
+
+                <section
+                    id="admin-polls-finished-section"
+                    class="admin-block"
+                >
+
+                    <div class="admin-block-header">
+
+                        <div>
+
+                            <span class="admin-block-eyebrow">
+                                🏆 Archives
+                            </span>
+
+                            <h2>
+                                Sondages terminés
+                            </h2>
+
+                        </div>
+
+
+                        <span
+                            id="admin-polls-finished-count"
+                            class="admin-poll-section-count"
+                        >
+                            0
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        id="admin-polls-finished-list"
+                        class="admin-polls-list"
+                    >
+
+                        <div class="admin-empty-state">
+
+                            <span
+                                class="admin-empty-icon"
+                                aria-hidden="true"
+                            >
+                                🏆
+                            </span>
+
+                            <h3>
+                                Aucun sondage terminé
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                    PROPOSITIONS DE LA COMMUNAUTÉ
+                ================================================== -->
+
+                <section
+                    id="admin-poll-suggestions-section"
+                    class="admin-block admin-poll-suggestions-block"
+                >
+
+                    <div class="admin-block-header">
+
+                        <div>
+
+                            <span class="admin-block-eyebrow">
+                                💡 Communauté
+                            </span>
+
+                            <h2>
+                                Propositions reçues
+                            </h2>
+
+                            <p>
+                                Les idées envoyées depuis la page Sondages
+                                doivent être vérifiées avant publication.
+                            </p>
+
+                        </div>
+
+
+                        <span
+                            id="admin-poll-suggestions-count"
+                            class="admin-poll-section-count"
+                        >
+                            0
+                        </span>
+
+                    </div>
+
+
+                    <!-- =============================================
+                        FILTRES PROPOSITIONS
+                    ============================================== -->
+
+                    <div class="admin-poll-suggestions-toolbar">
+
+                        <select
+                            id="admin-poll-suggestions-filter"
+                            aria-label="Filtrer les propositions"
+                        >
+
+                            <option value="pending">
+                                ⏳ En attente
+                            </option>
+
+                            <option value="approved">
+                                ✅ Acceptées
+                            </option>
+
+                            <option value="rejected">
+                                ❌ Refusées
+                            </option>
+
+                            <option value="all">
+                                Toutes
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =============================================
+                        LISTE
+                    ============================================== -->
+
+                    <div
+                        id="admin-poll-suggestions-list"
+                        class="admin-poll-suggestions-list"
+                        aria-live="polite"
+                    >
+
+                        <div class="admin-empty-state">
+
+                            <span
+                                class="admin-empty-icon"
+                                aria-hidden="true"
+                            >
+                                💡
+                            </span>
+
+                            <h3>
+                                Chargement des propositions...
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                    APERÇU / RÉSULTATS D'UN SONDAGE
+                ================================================== -->
+
+                <section
+                    id="admin-poll-results-panel"
+                    class="admin-block admin-poll-results-panel"
+                    hidden
+                >
+
+                    <div class="admin-block-header">
+
+                        <div>
+
+                            <span class="admin-block-eyebrow">
+                                📊 Résultats
+                            </span>
+
+                            <h2 id="admin-poll-results-title">
+                                Résultats du sondage
+                            </h2>
+
+                        </div>
+
+
+                        <button
+                            id="admin-poll-results-close"
+                            class="admin-secondary-button"
+                            type="button"
+                        >
+                            Fermer
+                        </button>
+
+                    </div>
+
+
+                    <!-- =============================================
+                        INFORMATIONS
+                    ============================================== -->
+
+                    <div class="admin-poll-results-summary">
+
+                        <div>
+
+                            <span>
+                                Votes
+                            </span>
+
+                            <strong id="admin-poll-results-total">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Statut
+                            </span>
+
+                            <strong id="admin-poll-results-status">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Gagnant
+                            </span>
+
+                            <strong id="admin-poll-results-winner">
+                                —
+                            </strong>
+
                         </div>
 
                     </div>
 
 
-                    <div class="admin-poll-preview-content">
+                    <!-- =============================================
+                        RÉSULTATS
+                    ============================================== -->
 
-                        <h3
-                            id="admin-poll-preview-question"
-                            class="admin-poll-preview-question"
-                        >
-                            Aucune question définie
-                        </h3>
+                    <div
+                        id="admin-poll-results"
+                        class="admin-poll-results"
+                    >
 
+                        <div class="admin-empty-state">
 
-                        <div
-                            id="admin-poll-preview-options"
-                            class="admin-poll-preview-options"
-                        >
+                            <span
+                                class="admin-empty-icon"
+                                aria-hidden="true"
+                            >
+                                📊
+                            </span>
 
-                            <div class="admin-empty-state">
-
-                                <span
-                                    class="admin-empty-icon"
-                                    aria-hidden="true"
-                                >
-                                    🎮
-                                </span>
-
-                                <h3>
-                                    Aucun jeu sélectionné
-                                </h3>
-
-                                <p>
-                                    Les jeux du sondage apparaîtront ici.
-                                </p>
-
-                            </div>
+                            <h3>
+                                Aucun résultat
+                            </h3>
 
                         </div>
 
@@ -2188,6 +2906,8 @@
                 </section>
 
             </section>
+
+         
 
         </main>
 

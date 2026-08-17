@@ -23,8 +23,44 @@ document.addEventListener(
 
 
         const DEFAULT_LOGIN_URL =
-            "/api/auth/login";
+            "/api/auth/public-login";
 
+
+            /* =========================================================
+   AUTH TWITCH PUBLIQUE — ALIAS
+   Compatibilité avec les différentes pages du site
+========================================================= */
+
+app.get(
+    "/api/auth/login",
+    useHandler(
+        publicAuthLoginHandler
+    )
+);
+
+
+app.get(
+    "/api/auth/callback",
+    useHandler(
+        publicAuthCallbackHandler
+    )
+);
+
+
+app.get(
+    "/api/auth/me",
+    useHandler(
+        publicAuthMeHandler
+    )
+);
+
+
+app.post(
+    "/api/auth/logout",
+    useHandler(
+        publicAuthLogoutHandler
+    )
+);
 
         /* =====================================================
            ÉLÉMENTS — STATISTIQUES

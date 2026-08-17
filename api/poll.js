@@ -1458,7 +1458,7 @@ async function handlePost(
                     true,
 
                 loginUrl:
-                    "/api/auth/login",
+                    "/api/auth/public-login",
 
                 error:
                     "Tu dois être connecté avec Twitch pour voter."

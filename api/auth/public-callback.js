@@ -702,7 +702,7 @@ function sendErrorPage(
             )}
         </p>
 
-        <a href="${origin}/api/auth/login">
+        <a href="${origin}/api/auth/public-login">
             Se connecter avec Twitch
         </a>
 
