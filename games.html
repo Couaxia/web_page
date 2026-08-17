@@ -342,7 +342,8 @@
                 >
                     <span
                         class="games-poll-button-icon"
-                        aria-hidden="true">
+                        aria-hidden="true"
+                    >
                         🗳️
                     </span>
 
@@ -353,14 +354,19 @@
                         </strong>
 
                         <span>
-                            Choisis le jeu que tu veux voir en stream !
+                            Choisis le jeu que tu aimerais voir en stream !
                         </span>
 
                     </span>
 
                     <span
-                        class="games-poll-button-arrow"
-                        aria-hidden="true">
+                        class="games-poll-button-action"
+                        aria-hidden="true"
+                    >
+                        Voir le sondage
+                        <span class="games-poll-button-arrow">
+                            →
+                        </span>
                     </span>
                 </button>
 
@@ -425,127 +431,7 @@
      COMPTE TWITCH PUBLIC — FACULTATIF
 ====================================================== -->
 
-<section
-    class="public-twitch-auth"
-    id="public-twitch-auth"
-    aria-label="Connexion Twitch facultative"
->
 
-    <!-- =================================================
-         VÉRIFICATION DE LA SESSION
-    ================================================== -->
-
-    <div
-        class="public-twitch-auth-loading"
-        id="public-twitch-auth-loading"
-    >
-
-        <span
-            class="public-twitch-auth-spinner"
-            aria-hidden="true"
-        ></span>
-
-        <span>
-            Vérification de la connexion Twitch...
-        </span>
-
-    </div>
-
-
-    <!-- =================================================
-         VISITEUR NON CONNECTÉ
-    ================================================== -->
-
-    <div
-        class="public-twitch-auth-guest"
-        id="public-twitch-auth-guest"
-        hidden
-    >
-
-        <div
-            class="public-twitch-auth-icon"
-            aria-hidden="true"
-        >
-            💜
-        </div>
-
-
-        <div class="public-twitch-auth-info">
-
-            <strong>
-                Connexion Twitch facultative
-            </strong>
-
-            <span>
-                Tu peux parcourir tous les jeux et consulter
-                les sondages sans te connecter.
-                Twitch est uniquement nécessaire
-                si tu souhaites enregistrer un vote.
-            </span>
-
-        </div>
-
-
-        <a
-            class="public-twitch-login-button"
-            href="/api/auth/login"
-        >
-            <span>
-                Se connecter avec Twitch
-            </span>
-        </a>
-
-    </div>
-
-
-    <!-- =================================================
-         VISITEUR CONNECTÉ
-    ================================================== -->
-
-    <div
-        class="public-twitch-auth-user"
-        id="public-twitch-auth-user"
-        hidden
-    >
-
-        <img
-            class="public-twitch-auth-avatar"
-            id="public-twitch-auth-avatar"
-            src=""
-            alt=""
-        >
-
-
-        <div class="public-twitch-auth-info">
-
-            <span class="public-twitch-auth-label">
-                ✓ Connecté avec Twitch
-            </span>
-
-            <strong
-                id="public-twitch-auth-name"
-            >
-                Twitch
-            </strong>
-
-            <span>
-                Tu peux participer aux sondages.
-            </span>
-
-        </div>
-
-
-        <button
-            class="public-twitch-logout-button"
-            id="public-twitch-auth-logout"
-            type="button"
-        >
-            Se déconnecter
-        </button>
-
-    </div>
-
-</section>
 
     </main>
 
