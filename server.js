@@ -11,9 +11,6 @@ import express
 import path
     from "path";
 
-import crypto
-    from "crypto";
-
 import {
     fileURLToPath
 } from "url";
@@ -58,17 +55,20 @@ import pollHandler
 
 
 /* =========================================================
-   AUTH PUBLIQUE
+   AUTH PUBLIQUE — TWITCH
 ========================================================= */
 
-import {
-    createPublicUserSession,
-    createPublicSessionCookie,
-    createPublicLogoutCookie,
-    getPublicUserSession,
-    getPublicUser,
-    getCookie
-} from "./api/_lib/public-auth.js";
+import publicAuthLoginHandler
+    from "./api/auth/public-login.js";
+
+import publicAuthCallbackHandler
+    from "./api/auth/public-callback.js";
+
+import publicAuthMeHandler
+    from "./api/auth/public-me.js";
+
+import publicAuthLogoutHandler
+    from "./api/auth/public-logout.js";
 
 
 /* =========================================================
@@ -141,35 +141,6 @@ const PORT =
 const HOST =
     "0.0.0.0";
 
-
-const TWITCH_CLIENT_ID =
-    String(
-        process.env.TWITCH_CLIENT_ID ||
-        ""
-    ).trim();
-
-
-const TWITCH_CLIENT_SECRET =
-    String(
-        process.env.TWITCH_CLIENT_SECRET ||
-        ""
-    ).trim();
-
-
-const TWITCH_AUTHORIZE_URL =
-    "https://id.twitch.tv/oauth2/authorize";
-
-
-const TWITCH_TOKEN_URL =
-    "https://id.twitch.tv/oauth2/token";
-
-
-const TWITCH_USERS_URL =
-    "https://api.twitch.tv/helix/users";
-
-
-const PUBLIC_OAUTH_STATE_COOKIE =
-    "couaxia_public_oauth_state";
 
 
 /* =========================================================
@@ -257,312 +228,57 @@ function useHandler(
 
 
 /* =========================================================
-   OUTILS AUTH PUBLIQUE
+   AUTH TWITCH PUBLIQUE
 ========================================================= */
 
-function getOrigin(
-    request
-) {
 
-    const forwardedProto =
-        String(
-            request.headers[
-                "x-forwarded-proto"
-            ] ||
-            ""
-        )
-            .split(",")[0]
-            .trim();
+/* ---------------------------------------------------------
+   LOGIN
+--------------------------------------------------------- */
 
+app.get(
+    "/api/auth/public-login",
+    useHandler(
+        publicAuthLoginHandler
+    )
+);
 
-    const protocol =
-        forwardedProto ||
-        request.protocol ||
-        "https";
 
+/* ---------------------------------------------------------
+   CALLBACK TWITCH
+--------------------------------------------------------- */
 
-    const host =
-        request.get(
-            "host"
-        );
+app.get(
+    "/api/auth/public-callback",
+    useHandler(
+        publicAuthCallbackHandler
+    )
+);
 
 
-    return (
-        `${protocol}://${host}`
-    );
-}
+/* ---------------------------------------------------------
+   SESSION UTILISATEUR
+--------------------------------------------------------- */
 
+app.get(
+    "/api/auth/public-me",
+    useHandler(
+        publicAuthMeHandler
+    )
+);
 
-/* =========================================================
-   CALLBACK TWITCH PUBLIC
-========================================================= */
 
-function getPublicCallbackUrl(
-    request
-) {
+/* ---------------------------------------------------------
+   DÉCONNEXION
+--------------------------------------------------------- */
 
-    return (
-        getOrigin(
-            request
-        ) +
-        "/api/auth/callback"
-    );
-}
+app.post(
+    "/api/auth/public-logout",
+    useHandler(
+        publicAuthLogoutHandler
+    )
+);
 
-
-/* =========================================================
-   OAUTH STATE
-========================================================= */
-
-function createOAuthState() {
-
-    return crypto
-        .randomBytes(
-            32
-        )
-        .toString(
-            "hex"
-        );
-}
-
-
-/* =========================================================
-   COMPARAISON SÉCURISÉE
-========================================================= */
-
-function safeStringEquals(
-    valueA,
-    valueB
-) {
-
-    const bufferA =
-        Buffer.from(
-            String(
-                valueA ||
-                ""
-            )
-        );
-
-
-    const bufferB =
-        Buffer.from(
-            String(
-                valueB ||
-                ""
-            )
-        );
-
-
-    if (
-        bufferA.length !==
-        bufferB.length
-    ) {
-
-        return false;
-    }
-
-
-    return crypto.timingSafeEqual(
-        bufferA,
-        bufferB
-    );
-}
-
-
-/* =========================================================
-   COOKIE OAUTH STATE
-========================================================= */
-
-function createOAuthStateCookie(
-    state
-) {
-
-    return [
-        `${PUBLIC_OAUTH_STATE_COOKIE}=${encodeURIComponent(state)}`,
-        "Path=/",
-        "HttpOnly",
-        "Secure",
-        "SameSite=Lax",
-        "Max-Age=600"
-    ].join("; ");
-}
-
-
-/* =========================================================
-   SUPPRESSION COOKIE OAUTH STATE
-========================================================= */
-
-function clearOAuthStateCookie() {
-
-    return [
-        `${PUBLIC_OAUTH_STATE_COOKIE}=`,
-        "Path=/",
-        "HttpOnly",
-        "Secure",
-        "SameSite=Lax",
-        "Max-Age=0"
-    ].join("; ");
-}
-
-
-/* =========================================================
-   TWITCH — ÉCHANGE DU CODE
-========================================================= */
-
-async function exchangeTwitchCode(
-    code,
-    redirectUri
-) {
-
-    if (
-        !TWITCH_CLIENT_ID ||
-        !TWITCH_CLIENT_SECRET
-    ) {
-
-        throw new Error(
-            "Configuration Twitch incomplète."
-        );
-    }
-
-
-    const parameters =
-        new URLSearchParams({
-
-            client_id:
-                TWITCH_CLIENT_ID,
-
-            client_secret:
-                TWITCH_CLIENT_SECRET,
-
-            code:
-                String(
-                    code
-                ),
-
-            grant_type:
-                "authorization_code",
-
-            redirect_uri:
-                redirectUri
-
-        });
-
-
-    const response =
-        await fetch(
-            TWITCH_TOKEN_URL,
-            {
-
-                method:
-                    "POST",
-
-                headers: {
-
-                    "Content-Type":
-                        "application/x-www-form-urlencoded"
-
-                },
-
-                body:
-                    parameters.toString()
-
-            }
-        );
-
-
-    const data =
-        await response
-            .json()
-            .catch(
-                () => ({})
-            );
-
-
-    if (
-        !response.ok ||
-        !data?.access_token
-    ) {
-
-        throw new Error(
-            data?.message ||
-            "Impossible d'obtenir le token Twitch."
-        );
-    }
-
-
-    return data;
-}
-
-
-/* =========================================================
-   TWITCH — UTILISATEUR CONNECTÉ
-========================================================= */
-
-async function getTwitchUserFromToken(
-    accessToken
-) {
-
-    const response =
-        await fetch(
-            TWITCH_USERS_URL,
-            {
-
-                method:
-                    "GET",
-
-                headers: {
-
-                    Authorization:
-                        `Bearer ${accessToken}`,
-
-                    "Client-Id":
-                        TWITCH_CLIENT_ID
-
-                }
-
-            }
-        );
-
-
-    const data =
-        await response
-            .json()
-            .catch(
-                () => ({})
-            );
-
-
-    if (
-        !response.ok
-    ) {
-
-        throw new Error(
-            data?.message ||
-            "Impossible de récupérer le compte Twitch."
-        );
-    }
-
-
-    const user =
-        Array.isArray(
-            data?.data
-        )
-            ? data.data[0]
-            : null;
-
-
-    if (
-        !user?.id
-    ) {
-
-        throw new Error(
-            "Le compte Twitch est introuvable."
-        );
-    }
-
-
-    return user;
-}
 
 
 /* =========================================================
@@ -588,383 +304,6 @@ app.get(
 
                 service:
                     "couaxia-web"
-
-            });
-    }
-);
-
-
-/* =========================================================
-   AUTH TWITCH PUBLIQUE — LOGIN
-========================================================= */
-
-app.get(
-    "/api/auth/login",
-    (
-        request,
-        response
-    ) => {
-
-        try {
-
-            if (
-                !TWITCH_CLIENT_ID ||
-                !TWITCH_CLIENT_SECRET
-            ) {
-
-                response
-                    .status(500)
-                    .send(
-                        "Configuration Twitch incomplète."
-                    );
-
-
-                return;
-            }
-
-
-            const state =
-                createOAuthState();
-
-
-            const redirectUri =
-                getPublicCallbackUrl(
-                    request
-                );
-
-
-            const authorizationUrl =
-                new URL(
-                    TWITCH_AUTHORIZE_URL
-                );
-
-
-            authorizationUrl
-                .searchParams
-                .set(
-                    "client_id",
-                    TWITCH_CLIENT_ID
-                );
-
-
-            authorizationUrl
-                .searchParams
-                .set(
-                    "redirect_uri",
-                    redirectUri
-                );
-
-
-            authorizationUrl
-                .searchParams
-                .set(
-                    "response_type",
-                    "code"
-                );
-
-
-            authorizationUrl
-                .searchParams
-                .set(
-                    "state",
-                    state
-                );
-
-
-            authorizationUrl
-                .searchParams
-                .set(
-                    "scope",
-                    ""
-                );
-
-
-            response.setHeader(
-                "Set-Cookie",
-                createOAuthStateCookie(
-                    state
-                )
-            );
-
-
-            response.redirect(
-                authorizationUrl.toString()
-            );
-
-
-        } catch (
-            error
-        ) {
-
-            console.error(
-                "[Public Auth Login]",
-                error
-            );
-
-
-            response
-                .status(500)
-                .send(
-                    "Impossible de démarrer la connexion Twitch."
-                );
-        }
-    }
-);
-
-
-/* =========================================================
-   AUTH TWITCH PUBLIQUE — CALLBACK
-========================================================= */
-
-app.get(
-    "/api/auth/callback",
-    async (
-        request,
-        response
-    ) => {
-
-        try {
-
-            const {
-                code,
-                state,
-                error,
-                error_description:
-                    errorDescription
-            } =
-                request.query;
-
-
-            /* =================================================
-               TWITCH REFUSÉ
-            ================================================= */
-
-            if (
-                error
-            ) {
-
-                console.error(
-                    "[Public Auth Twitch]",
-                    error,
-                    errorDescription
-                );
-
-
-                response.redirect(
-                    "/games.html?login=refused"
-                );
-
-
-                return;
-            }
-
-
-            /* =================================================
-               PARAMÈTRES MANQUANTS
-            ================================================= */
-
-            if (
-                !code ||
-                !state
-            ) {
-
-                response
-                    .status(400)
-                    .send(
-                        "Callback Twitch invalide."
-                    );
-
-
-                return;
-            }
-
-
-            /* =================================================
-               VÉRIFICATION STATE
-            ================================================= */
-
-            const savedState =
-                getCookie(
-                    request,
-                    PUBLIC_OAUTH_STATE_COOKIE
-                );
-
-
-            if (
-                !savedState ||
-                !safeStringEquals(
-                    state,
-                    savedState
-                )
-            ) {
-
-                response
-                    .status(400)
-                    .send(
-                        "La vérification de sécurité OAuth a échoué."
-                    );
-
-
-                return;
-            }
-
-
-            /* =================================================
-               TOKEN
-            ================================================= */
-
-            const redirectUri =
-                getPublicCallbackUrl(
-                    request
-                );
-
-
-            const tokenData =
-                await exchangeTwitchCode(
-                    code,
-                    redirectUri
-                );
-
-
-            /* =================================================
-               UTILISATEUR TWITCH
-            ================================================= */
-
-            const twitchUser =
-                await getTwitchUserFromToken(
-                    tokenData.access_token
-                );
-
-
-            /* =================================================
-               SESSION
-            ================================================= */
-
-            const sessionToken =
-                createPublicUserSession(
-                    twitchUser
-                );
-
-
-            response.setHeader(
-                "Set-Cookie",
-                [
-                    clearOAuthStateCookie(),
-
-                    createPublicSessionCookie(
-                        sessionToken
-                    )
-                ]
-            );
-
-
-            response.redirect(
-                "/games.html?login=success"
-            );
-
-
-        } catch (
-            error
-        ) {
-
-            console.error(
-                "[Public Auth Callback]",
-                error
-            );
-
-
-            response.redirect(
-                "/games.html?login=error"
-            );
-        }
-    }
-);
-
-
-/* =========================================================
-   AUTH TWITCH PUBLIQUE — UTILISATEUR ACTUEL
-========================================================= */
-
-app.get(
-    "/api/auth/me",
-    (
-        request,
-        response
-    ) => {
-
-        const session =
-            getPublicUserSession(
-                request
-            );
-
-
-        if (
-            !session
-        ) {
-
-            response
-                .status(200)
-                .json({
-
-                    authenticated:
-                        false,
-
-                    user:
-                        null,
-
-                    loginUrl:
-                        "/api/auth/login"
-
-                });
-
-
-            return;
-        }
-
-
-        response
-            .status(200)
-            .json({
-
-                authenticated:
-                    true,
-
-                user:
-                    getPublicUser(
-                        session
-                    )
-
-            });
-    }
-);
-
-
-/* =========================================================
-   AUTH TWITCH PUBLIQUE — LOGOUT
-========================================================= */
-
-app.post(
-    "/api/auth/logout",
-    (
-        request,
-        response
-    ) => {
-
-        response.setHeader(
-            "Set-Cookie",
-            createPublicLogoutCookie()
-        );
-
-
-        response
-            .status(200)
-            .json({
-
-                success:
-                    true,
-
-                message:
-                    "Déconnexion réussie."
 
             });
     }

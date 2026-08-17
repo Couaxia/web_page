@@ -53,21 +53,18 @@
             <a
                 class="navbar-logo"
                 href="./accueil.html"
-                aria-label="Accueil Couaxia"
-            >
+                aria-label="Accueil Couaxia">
 
                 <video
                     autoplay
                     muted
                     loop
                     playsinline
-                    aria-label="Logo animé de Couaxia"
-                >
+                    aria-label="Logo animé de Couaxia">
 
                     <source
                         src="./images/logo/Transparents.webm"
-                        type="video/webm"
-                    >
+                        type="video/webm">
 
                 </video>
 
@@ -102,7 +99,6 @@
                 </a>
 
             </div>
-
 
             <!-- ADMIN -->
 
@@ -340,26 +336,33 @@
             <!-- SONDAGE COMMUNAUTAIRE -->
 
             <button
-                id="games-vote-button"
-                class="games-vote-button"
-                type="button"
-                data-messages="Quel jeu voudrais-tu voir en stream ? 👀|À toi de choisir ! 🗳️|Ton vote pourrait avoir des conséquences... 😏|Voyons ce que les Poupe vont choisir ! 🐙"
-            >
-
-                <span
-                    class="games-vote-icon"
-                    aria-hidden="true"
+                    id="games-poll-open"
+                    class="games-poll-button"
+                    type="button"
                 >
-                    🗳️
-                </span>
+                    <span
+                        class="games-poll-button-icon"
+                        aria-hidden="true">
+                        🗳️
+                    </span>
 
-                <span>
-                    Vote pour le prochain jeu
-                </span>
+                    <span class="games-poll-button-content">
 
-            </button>
+                        <strong>
+                            Vote pour le prochain jeu
+                        </strong>
 
-        </section>
+                        <span>
+                            Choisis le jeu que tu veux voir en stream !
+                        </span>
+
+                    </span>
+
+                    <span
+                        class="games-poll-button-arrow"
+                        aria-hidden="true">
+                    </span>
+                </button>
 
 
 
@@ -418,58 +421,140 @@
 
         </section>
 
-
-
-        <!-- =================================================
-             SONDAGE COMMUNAUTAIRE
-        ================================================== -->
+        <!-- =====================================================
+            COMPTE TWITCH PUBLIC
+        ====================================================== -->
 
         <section
-            id="games-poll-summary"
-            class="games-poll-summary"
-            hidden
+            class="public-twitch-auth"
+            id="public-twitch-auth"
+            aria-label="Compte Twitch"
         >
 
-            <div class="games-poll-summary-content">
+            <!-- État pendant le chargement -->
 
-                <span
-                    class="games-poll-summary-icon"
-                    aria-hidden="true"
-                >
-                    🗳️
+            <div
+                class="public-twitch-auth-loading"
+                id="public-twitch-auth-loading"
+            >
+                <span class="public-twitch-auth-spinner"></span>
+
+                <span>
+                    Vérification de Twitch...
                 </span>
+            </div>
 
-                <div>
 
-                    <h2>
-                        Le vote de la communauté
-                    </h2>
+            <!-- Non connecté -->
 
-                    <p id="games-poll-summary-text">
+            <div
+                class="public-twitch-auth-guest"
+                id="public-twitch-auth-guest"
+                hidden
+            >
 
-                        Vote pour décider quelle sera
-                        notre prochaine aventure !
+                <div class="public-twitch-auth-icon">
+                    💜
+                </div>
 
-                    </p>
+                <div class="public-twitch-auth-info">
+
+                    <strong>
+                        Compte Twitch
+                    </strong>
+
+                    <span>
+                        Connecte-toi pour pouvoir participer aux sondages.
+                    </span>
+
+                </div>
+
+                <a
+                    class="public-twitch-login-button"
+                    href="/api/auth/login"
+                >
+                    <span>
+                        Se connecter avec Twitch
+                    </span>
+                </a>
+
+            </div>
+
+
+            <!-- Connecté -->
+
+            <div
+                class="public-twitch-auth-user"
+                id="public-twitch-auth-user"
+                hidden>
+
+                <img
+                    class="public-twitch-auth-avatar"
+                    id="public-twitch-auth-avatar"
+                    src=""
+                    alt="">
+
+                <div class="public-twitch-auth-info">
+
+                    <span class="public-twitch-auth-label">
+                        Connecté avec Twitch
+                    </span>
+
+                    <strong
+                        id="public-twitch-auth-name">
+                        Twitch
+                    </strong>
 
                 </div>
 
                 <button
-                    id="games-poll-summary-button"
-                    class="games-poll-summary-button"
+                    class="public-twitch-logout-button"
+                    id="public-twitch-auth-logout"
                     type="button"
                 >
-                    Voter
+                    Se déconnecter
                 </button>
 
             </div>
 
         </section>
 
-
     </main>
 
+    <!-- =====================================================
+         NAVIGATION VERTICALE
+    ====================================================== -->
 
+    <div class="scroll-page-controls" aria-label="Navigation verticale de la page">
+
+        <button id="scrollTopButton" class="scroll-page-button"
+            type="button" aria-label="Retourner en haut de la page" title="Retour en haut">
+            ↑
+        </button>
+        <button id="scrollBottomButton" class="scroll-page-button"
+            type="button" aria-label="Aller en bas de la page" title="Aller en bas">
+            ↓
+        </button>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MASCOTTE
+    ====================================================== -->
+
+    <div class="mascotte-widget">
+
+        <div class="mascotte-bulle" id="mascotte-bulle" role="status" aria-live="polite">
+            Bienvenue dans mon univers !
+        </div>
+        <button class="mascotte-button" id="mascotte-button" type="button" aria-label="Parler avec Couaxia">
+            <img src="./images/mascotte/YCH_Dance_V2.gif" data-idle-src="./images/mascotte/YCH_Dance_V2.gif" data-talking-src="./images/mascotte/YCH_Dance_V1.gif"
+                alt="Mascotte Couaxia" class="mascotte" id="mascotte-image" draggable="false">
+        </button>
+
+    </div>
 
     <!-- =====================================================
          JAVASCRIPT
