@@ -231,13 +231,6 @@ document.addEventListener(
                         game.youtubePlaylist ??
                         game.youtube_playlist
                     ),
-
-                pollEnabled:
-                    Boolean(
-                        game.pollEnabled ??
-                        game.poll_enabled
-                    )
-
             };
         }
 
@@ -547,25 +540,20 @@ document.addEventListener(
 
 
             return `
-                <article
-                    class="game-card"
-                    data-game-id="${escapeHtml(
-                        game.id
-                    )}"
-                    data-status="${escapeHtml(
-                        game.status
-                    )}"
-                    data-tags="${escapeHtml(
-                        game.tags.join(
-                            " "
-                        )
-                    )}"
-                    data-poll="${
-                        game.pollEnabled
-                            ? "true"
-                            : "false"
-                    }"
-                >
+                    <article
+                        class="game-card"
+                        data-game-id="${escapeHtml(
+                            game.id
+                        )}"
+                        data-status="${escapeHtml(
+                            game.status
+                        )}"
+                        data-tags="${escapeHtml(
+                            game.tags.join(
+                                " "
+                            )
+                        )}"
+                    >
 
                     <div class="game-cover">
 
@@ -757,11 +745,11 @@ document.addEventListener(
                     }.`;
             }
 
-
             /*
-             * Informe les autres scripts,
-             * notamment le système de sondage.
-             */
+            * Informe les autres scripts
+            * que la liste des jeux a été mise à jour.
+            */
+
             document.dispatchEvent(
                 new CustomEvent(
                     "couaxia:games-updated",

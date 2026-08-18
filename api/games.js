@@ -168,35 +168,7 @@ function formatGame(
             normalizeText(
                 game?.youtube_playlist ??
                 game?.youtubePlaylist
-            ),
-
-
-        /* =================================================
-           SONDAGE
-        ================================================= */
-
-        pollEnabled:
-            Boolean(
-                game?.poll_enabled ??
-                game?.pollEnabled
-            ),
-
-
-        /* =================================================
-           DATES
-        ================================================= */
-
-        createdAt:
-            game?.created_at ??
-            game?.createdAt ??
-            null,
-
-
-        updatedAt:
-            game?.updated_at ??
-            game?.updatedAt ??
-            null
-
+            )
     };
 }
 

@@ -1621,15 +1621,15 @@ if (
         /* ==========================================
     VOTE RÉELLEMENT ENREGISTRÉ
     ========================================== */
+    const gamePollLink =
+        document.querySelector(
+            "#games-poll-open"
+        );
 
-    window.addEventListener(
-        "couaxia:game-poll-voted",
-        event => {
-
-            const optionLabel =
-                event.detail
-                    ?.optionLabel;
-
+    gamePollLink
+        ?.addEventListener(
+            "mouseenter",
+            () => {
 
             showGamesMascotteMessage(
                 optionLabel
