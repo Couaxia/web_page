@@ -5083,186 +5083,210 @@ document.addEventListener(
 
         async function uploadArtworkFile() {
 
-                if (
-                    !selectedArtworkFile
-                ) {
+            if (
+                !selectedArtworkFile
+            ) {
+                return null;
+            }
 
-                    return null;
-                }
+
+            validateArtworkFile(
+                selectedArtworkFile
+            );
 
 
-                validateArtworkFile(
-                    selectedArtworkFile
+            /* =====================================================
+            ID DE L'ŒUVRE
+            ====================================================== */
+
+            const artId =
+                normalizeText(
+                    artworkArtIdInput
+                        ?.value
                 );
 
 
-                /* =====================================================
-                ID DE L'ŒUVRE
-                ====================================================== */
+            if (
+                !artId
+            ) {
 
-                const artId =
-                    normalizeText(
-                        artworkArtIdInput
-                            ?.value
-                    );
-
-
-                if (
-                    !artId
-                ) {
-
-                    throw new Error(
-                        "L'ID de l'œuvre est obligatoire avant l'upload."
-                    );
-                }
+                throw new Error(
+                    "L'ID de l'œuvre est obligatoire avant l'upload."
+                );
+            }
 
 
-                /* =====================================================
-                FORM DATA
-                ====================================================== */
+            /* =====================================================
+            1 — DEMANDER UNE SIGNATURE AU SERVEUR
+            ====================================================== */
 
-                const formData =
-                    new FormData();
+            const signature =
+                await adminApiRequest(
+                    ADMIN_GALLERY_UPLOAD_API,
+                    {
+                        method:
+                            "POST",
 
+                        body: {
 
-                formData.append(
-                    "file",
-                    selectedArtworkFile
+                            artId,
+
+                            filename:
+                                selectedArtworkFile.name,
+
+                            mimeType:
+                                selectedArtworkFile.type,
+
+                            fileSize:
+                                selectedArtworkFile.size
+
+                        }
+                    }
                 );
 
 
-                formData.append(
-                    "artId",
-                    artId
+            const upload =
+                signature?.upload;
+
+
+            if (
+                !upload
+            ) {
+
+                throw new Error(
+                    "La préparation de l'upload a échoué."
                 );
+            }
 
 
-                formData.append(
-                    "filename",
-                    selectedArtworkFile.name
+            if (
+                !upload.signedUrl
+            ) {
+
+                throw new Error(
+                    "L'URL d'upload Supabase est absente."
                 );
+            }
 
 
-                formData.append(
-                    "mimeType",
-                    selectedArtworkFile.type
+            if (
+                !upload.publicUrl
+            ) {
+
+                throw new Error(
+                    "L'URL publique du fichier est absente."
                 );
+            }
 
 
-                formData.append(
-                    "fileSize",
-                    String(
-                        selectedArtworkFile.size
-                    )
-                );
+            /* =====================================================
+            2 — ENVOYER LE FICHIER À SUPABASE
+            ====================================================== */
+
+            let uploadResponse;
 
 
-                /* =====================================================
-                UPLOAD
-                ====================================================== */
+            try {
 
-                const response =
+                uploadResponse =
                     await fetch(
-                        ADMIN_GALLERY_UPLOAD_API,
+                        upload.signedUrl,
                         {
                             method:
-                                "POST",
+                                "PUT",
 
-                            credentials:
-                                "same-origin",
+                            headers: {
 
-                            cache:
-                                "no-store",
+                                "Content-Type":
+                                    selectedArtworkFile.type,
+
+                                "x-upsert":
+                                    "true"
+
+                            },
 
                             body:
-                                formData
+                                selectedArtworkFile
                         }
                     );
 
 
-                /* =====================================================
-                SESSION EXPIREE
-                ====================================================== */
+            } catch (
+                error
+            ) {
 
-                if (
-                    response.status ===
-                        401 ||
-                    response.status ===
-                        403
-                ) {
-
-                    window.location.replace(
-                        "/api/admin/auth-login"
-                    );
+                console.error(
+                    "[Artwork Upload Supabase]",
+                    error
+                );
 
 
-                    throw new Error(
-                        "Session administrateur expirée."
-                    );
+                throw new Error(
+                    "Impossible de contacter Supabase Storage."
+                );
+            }
+
+
+            /* =====================================================
+            ERREUR SUPABASE
+            ====================================================== */
+
+            if (
+                !uploadResponse.ok
+            ) {
+
+                let errorData =
+                    null;
+
+
+                try {
+
+                    errorData =
+                        await uploadResponse
+                            .json();
+
+                } catch {
+
+                    errorData =
+                        null;
                 }
 
 
-                /* =====================================================
-                REPONSE JSON
-                ====================================================== */
+                console.error(
+                    "[Artwork Upload Supabase]",
+                    {
+                        status:
+                            uploadResponse.status,
 
-                const data =
-                    await response
-                        .json()
-                        .catch(
-                            () => ({})
-                        );
+                        statusText:
+                            uploadResponse.statusText,
 
-
-                /* =====================================================
-                ERREUR
-                ====================================================== */
-
-                if (
-                    !response.ok
-                ) {
-
-                    throw new Error(
-                        data?.error ||
-                        "Impossible d'envoyer le média."
-                    );
-                }
+                        data:
+                            errorData
+                    }
+                );
 
 
-                /* =====================================================
-                URL DU FICHIER
-                ====================================================== */
+                throw new Error(
+                    errorData?.message ||
+                    errorData?.error ||
+                    `Erreur Supabase (${uploadResponse.status}).`
+                );
+            }
 
-                const uploadedUrl =
+
+            /* =====================================================
+            3 — RETOURNER LES INFOS
+            ====================================================== */
+
+            return {
+
+                url:
+                    upload.publicUrl,
+
+                mediaType:
                     normalizeText(
-                        data?.url ??
-                        data?.imageUrl ??
-                        data?.image_url ??
-                        data?.fileUrl ??
-                        data?.file_url ??
-                        data?.publicUrl ??
-                        data?.public_url
-                    );
-
-
-                if (
-                    !uploadedUrl
-                ) {
-
-                    throw new Error(
-                        "Le serveur n'a pas retourné l'URL du média."
-                    );
-                }
-
-
-                /* =====================================================
-                TYPE MEDIA
-                ====================================================== */
-
-                const mediaType =
-                    normalizeText(
-                        data?.mediaType ??
-                        data?.media_type
+                        upload.mediaType
                     ) ||
                     (
                         selectedArtworkFile
@@ -5271,22 +5295,10 @@ document.addEventListener(
                                 "video/"
                             )
                             ? "video"
-                            : selectedArtworkFile
-                                .type ===
-                                "image/gif"
-                                ? "gif"
-                                : "image"
-                    );
-
-
-                return {
-
-                    url:
-                        uploadedUrl,
-                mediaType
-
-                };
-            }
+                            : "image"
+                    )
+            };
+        }
 
 
         /* =====================================================
