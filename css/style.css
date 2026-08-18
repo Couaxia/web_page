@@ -513,42 +513,81 @@ html[data-theme="dark"] .navbar-links a:hover {
 /* ==================================================
    GRAND ÉCRAN INTERMÉDIAIRE
 ================================================== */
+
 @media (max-width: 1400px) {
-    .navbar
-    {
-        gap: 18px;
-        padding: 12px 20px;
+
+    .navbar {
+        gap: 12px;
+        padding: 8px 16px;
     }
 
-    .navbar-logo
-    {
-        width: 150px;
-        height: 108px;
+
+    .navbar-logo {
+        width: 100px;
+        height: 66px;
     }
 
-    .navbar-links
-    {
+
+    .navbar-links {
         gap: 14px;
+        padding:
+            4px
+            4px;
     }
 
-    .navbar-links a
-    {
-        min-height: 50px;
-        padding: 11px 19px;
-        font-size: 0.98rem;
+
+    .navbar-links a {
+        min-height: 44px;
+
+        padding:
+            7px
+            4px;
+
+        font-size:
+            0.95rem;
     }
 
-    .theme-toggle
-    {
-        min-width: 145px;
+
+    .navbar-actions {
+        gap: 8px;
     }
 
+
+    .admin-access-link {
+        min-height: 40px;
+
+        padding:
+            8px
+            12px;
+
+        font-size:
+            0.92rem;
+    }
+
+
+    .theme-toggle {
+        min-width: 120px;
+        min-height: 42px;
+
+        padding:
+            8px
+            13px;
+
+        gap: 8px;
+
+        font-size:
+            0.92rem;
+    }
+    .theme-icon {
+        font-size:
+            1.15rem;
+    }
 }
 
 /* ==================================================
    TABLETTE ET PETIT ORDINATEUR
 ================================================== */
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
     .navbar
     {
         justify-content: center;
@@ -1126,7 +1165,7 @@ video {
    MODE NUIT
 ========================================================= */
 
-body.dark-mode .admin-access-link {
+html[data-theme="dark"] .admin-access-link {
     color: #E3B8FF;
 
     background: rgba(35, 15, 50, 0.85);
@@ -1135,7 +1174,7 @@ body.dark-mode .admin-access-link {
 }
 
 
-body.dark-mode .admin-access-link:hover {
+html[data-theme="dark"] .admin-access-link:hover {
     background: rgba(201, 122, 255, 0.16);
 
     border-color: #C97AFF;
