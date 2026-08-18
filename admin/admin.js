@@ -5083,111 +5083,183 @@ document.addEventListener(
 
         async function uploadArtworkFile() {
 
-            if (
-                !selectedArtworkFile
-            ) {
+                if (
+                    !selectedArtworkFile
+                ) {
 
-                return null;
-            }
-
-
-            validateArtworkFile(
-                selectedArtworkFile
-            );
+                    return null;
+                }
 
 
-            const formData =
-                new FormData();
-
-
-            formData.append(
-                "file",
-                selectedArtworkFile
-            );
-
-
-            const response =
-                await fetch(
-                    ADMIN_GALLERY_UPLOAD_API,
-                    {
-                        method:
-                            "POST",
-
-                        credentials:
-                            "same-origin",
-
-                        cache:
-                            "no-store",
-
-                        body:
-                            formData
-                    }
+                validateArtworkFile(
+                    selectedArtworkFile
                 );
 
 
-            if (
-                response.status ===
-                    401 ||
-                response.status ===
-                    403
-            ) {
+                /* =====================================================
+                ID DE L'ŒUVRE
+                ====================================================== */
 
-                window.location.replace(
-                    "/api/admin/auth-login"
-                );
-
-
-                throw new Error(
-                    "Session administrateur expirée."
-                );
-            }
-
-
-            const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
+                const artId =
+                    normalizeText(
+                        artworkArtIdInput
+                            ?.value
                     );
 
 
-            if (
-                !response.ok
-            ) {
+                if (
+                    !artId
+                ) {
 
-                throw new Error(
-                    data?.error ||
-                    "Impossible d'envoyer le média."
+                    throw new Error(
+                        "L'ID de l'œuvre est obligatoire avant l'upload."
+                    );
+                }
+
+
+                /* =====================================================
+                FORM DATA
+                ====================================================== */
+
+                const formData =
+                    new FormData();
+
+
+                formData.append(
+                    "file",
+                    selectedArtworkFile
                 );
-            }
 
 
-            const uploadedUrl =
-                normalizeText(
-                    data?.url ??
-                    data?.imageUrl ??
-                    data?.image_url ??
-                    data?.fileUrl ??
-                    data?.file_url
+                formData.append(
+                    "artId",
+                    artId
                 );
 
 
-            if (
-                !uploadedUrl
-            ) {
-
-                throw new Error(
-                    "Le serveur n'a pas retourné l'URL du média."
+                formData.append(
+                    "filename",
+                    selectedArtworkFile.name
                 );
-            }
 
 
-            return {
+                formData.append(
+                    "mimeType",
+                    selectedArtworkFile.type
+                );
 
-                url:
-                    uploadedUrl,
 
-                mediaType:
+                formData.append(
+                    "fileSize",
+                    String(
+                        selectedArtworkFile.size
+                    )
+                );
+
+
+                /* =====================================================
+                UPLOAD
+                ====================================================== */
+
+                const response =
+                    await fetch(
+                        ADMIN_GALLERY_UPLOAD_API,
+                        {
+                            method:
+                                "POST",
+
+                            credentials:
+                                "same-origin",
+
+                            cache:
+                                "no-store",
+
+                            body:
+                                formData
+                        }
+                    );
+
+
+                /* =====================================================
+                SESSION EXPIREE
+                ====================================================== */
+
+                if (
+                    response.status ===
+                        401 ||
+                    response.status ===
+                        403
+                ) {
+
+                    window.location.replace(
+                        "/api/admin/auth-login"
+                    );
+
+
+                    throw new Error(
+                        "Session administrateur expirée."
+                    );
+                }
+
+
+                /* =====================================================
+                REPONSE JSON
+                ====================================================== */
+
+                const data =
+                    await response
+                        .json()
+                        .catch(
+                            () => ({})
+                        );
+
+
+                /* =====================================================
+                ERREUR
+                ====================================================== */
+
+                if (
+                    !response.ok
+                ) {
+
+                    throw new Error(
+                        data?.error ||
+                        "Impossible d'envoyer le média."
+                    );
+                }
+
+
+                /* =====================================================
+                URL DU FICHIER
+                ====================================================== */
+
+                const uploadedUrl =
+                    normalizeText(
+                        data?.url ??
+                        data?.imageUrl ??
+                        data?.image_url ??
+                        data?.fileUrl ??
+                        data?.file_url ??
+                        data?.publicUrl ??
+                        data?.public_url
+                    );
+
+
+                if (
+                    !uploadedUrl
+                ) {
+
+                    throw new Error(
+                        "Le serveur n'a pas retourné l'URL du média."
+                    );
+                }
+
+
+                /* =====================================================
+                TYPE MEDIA
+                ====================================================== */
+
+                const mediaType =
                     normalizeText(
                         data?.mediaType ??
                         data?.media_type
@@ -5199,11 +5271,22 @@ document.addEventListener(
                                 "video/"
                             )
                             ? "video"
-                            : "image"
-                    )
+                            : selectedArtworkFile
+                                .type ===
+                                "image/gif"
+                                ? "gif"
+                                : "image"
+                    );
 
-            };
-        }
+
+                return {
+
+                    url:
+                        uploadedUrl,
+                mediaType
+
+                };
+            }
 
 
         /* =====================================================
