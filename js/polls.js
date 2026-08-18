@@ -2187,6 +2187,46 @@ document.addEventListener(
                             "💜 Ton vote a bien été enregistré !";
                     }
 
+                    /* =================================================
+                    MASCOTTE — VOTE ENREGISTRÉ
+                    ================================================= */
+
+                    const votedOption =
+                        updatedPoll.options
+                            ?.find(
+                                option =>
+                                    String(
+                                        option.id
+                                    ) ===
+                                    String(
+                                        currentOptionId
+                                    )
+                            );
+
+
+                    window.dispatchEvent(
+                        new CustomEvent(
+                            "couaxia:poll-voted",
+                            {
+                                detail: {
+
+                                    pollId:
+                                        updatedPoll.id,
+
+                                    pollTitle:
+                                        updatedPoll.title,
+
+                                    optionId:
+                                        currentOptionId,
+
+                                    optionLabel:
+                                        votedOption?.label ||
+                                        ""
+
+                                }
+                            }
+                        )
+                    );
 
                     if (
                         submitButton
@@ -2559,13 +2599,9 @@ document.addEventListener(
 
                         body:
                             JSON.stringify({
-
                                 category,
-
                                 question,
-
                                 description
-
                             })
                     }
                 );
@@ -2578,7 +2614,22 @@ document.addEventListener(
                     suggestionMessage.textContent =
                         "💜 Merci ! Ta proposition a bien été envoyée.";
                 }
+                /* =================================================
+                MASCOTTE — PROPOSITION ENVOYÉE
+                ================================================= */
 
+                window.dispatchEvent(
+                    new CustomEvent(
+                        "couaxia:poll-suggestion-sent",
+                        {
+                            detail: {
+                                category,
+                                question,
+                                description
+                            }
+                        }
+                    )
+                );
 
                 suggestionForm
                     ?.reset();

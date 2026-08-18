@@ -1605,6 +1605,33 @@ document.addEventListener(
                             : "Ton vote a bien été enregistré ! 💜";
                 }
 
+                /* =================================================
+                MASCOTTE — VOTE DEPUIS GAMES.HTML
+                ================================================= */
+
+                window.dispatchEvent(
+                    new CustomEvent(
+                        "couaxia:game-poll-voted",
+                        {
+                            detail: {
+
+                                pollId:
+                                    currentPoll.id,
+
+                                pollTitle:
+                                    currentPoll.title,
+
+                                optionId:
+                                    serverVote,
+
+                                optionLabel:
+                                    selectedOption?.label ||
+                                    ""
+
+                            }
+                        }
+                    )
+                );
 
                 /* =================================================
                    RÉSULTATS

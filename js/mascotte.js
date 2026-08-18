@@ -117,6 +117,94 @@ document.addEventListener("DOMContentLoaded", () => {
             ]
         },
 
+                "games.html": {
+
+            welcome: [
+                "🎮 Bienvenue dans ma bibliothèque de jeux ! Ici, tu peux découvrir toutes les aventures que je partage en stream.",
+                "Oh ! Tu viens voir à quoi je joue ? Entre, ma bibliothèque est ouverte !",
+                "Bienvenue parmi mes jeux ! Certains sont terminés, d'autres m'attendent encore…",
+                "🎮 Prête à choisir notre prochaine aventure ?",
+                "Tu trouveras ici les jeux auxquels je joue régulièrement, ceux que j'ai terminés et ceux que je veux découvrir.",
+                "Attention… cette bibliothèque contient probablement beaucoup trop de jeux pour une seule Kraduk."
+            ],
+
+            click: [
+                "🔥 Les jeux en cours sont ceux que je découvre actuellement en stream.",
+                "🔁 Certains jeux reviennent régulièrement parce que j'aime beaucoup y jouer avec les Poups.",
+                "📚 Ma liste de jeux à faire continue mystérieusement de grandir… je ne comprends vraiment pas pourquoi.",
+                "🏆 Un jeu terminé rejoint les archives de mes aventures !",
+                "💜 Tu peux consulter ma petite note personnelle sur certains jeux.",
+                "🎮 Les tags permettent de voir rapidement quel genre de jeu t'attend.",
+                "Tu préfères les jeux d'horreur, les RPG, les jeux multijoueurs ou les aventures tranquilles ?",
+                "Certains jeux ici ont donné naissance à des moments complètement chaotiques en live.",
+                "👀 Regarde bien les descriptions… j'y laisse parfois quelques commentaires très personnels.",
+                "📺 Quand des VOD sont disponibles, tu peux retrouver directement l'aventure correspondante.",
+                "Je crois que ma liste de jeux à faire se reproduit pendant la nuit.",
+                "Si tu vois beaucoup de jeux d'horreur… ce n'est absolument pas parce que le chat aime me voir souffrir.",
+                "Certains jeux sont parfaits pour jouer ensemble avec la communauté !",
+                "🗳️ Les jeux marqués comme éligibles peuvent apparaître dans les sondages.",
+                "Le prochain jeu pourrait bien être choisi par les Poups !"
+            ],
+
+            idle: [
+                "Tu hésites sur le jeu que tu préfères ? Moi aussi, ça m'arrive.",
+                "Il y a tellement de jeux à découvrir… et malheureusement seulement vingt-quatre heures dans une journée.",
+                "Tu regardes toute ma bibliothèque ? Bon courage, elle risque encore de grandir.",
+                "Certains de ces jeux ont déjà provoqué beaucoup trop de cris en live.",
+                "Je me demande quel jeu tu aimerais me voir découvrir ensuite.",
+                "🎮 Si un jeu t'intéresse, regarde ses tags pour savoir à quoi t'attendre.",
+                "Les jeux terminés restent ici comme souvenirs de nos aventures ensemble.",
+                "Peut-être que ton jeu préféré se cache quelque part dans cette page.",
+                "Tu sais… voter pour mon prochain jeu est une responsabilité très sérieuse.",
+                "J'espère juste que vous n'allez pas choisir encore un jeu d'horreur…"
+            ]
+        },
+
+
+        "polls.html": {
+
+            welcome: [
+                "🗳️ Bienvenue dans l'espace des sondages ! Ici, les Poups ont leur mot à dire.",
+                "Oh oh… tu viens voter ? Ton choix pourrait changer mes prochaines aventures !",
+                "Bienvenue au centre de décision communautaire ! Oui, ce nom est beaucoup trop sérieux.",
+                "💜 Ici, c'est la communauté qui choisit !",
+                "Tu peux retrouver les sondages en cours, les prochains votes et les résultats précédents.",
+                "Attention : chaque vote peut avoir des conséquences terribles… comme me faire jouer à un jeu d'horreur."
+            ],
+
+            click: [
+                "🔥 Les sondages en cours sont ouverts aux votes.",
+                "📅 Les sondages à venir te permettent de voir les prochaines décisions de la communauté.",
+                "🏆 Les résultats permettent de découvrir ce que les Poups ont choisi.",
+                "💜 Ton vote compte autant que celui des autres Poups !",
+                "Tu peux participer aux sondages sans forcément avoir choisi la même réponse que tout le monde.",
+                "👀 Certains résultats peuvent rester cachés jusqu'à la fin du sondage.",
+                "Une seule voix peut parfois changer complètement le résultat.",
+                "🗳️ Pour voter, tu peux te connecter avec ton compte Twitch.",
+                "Se connecter à Twitch n'est pas obligatoire pour simplement consulter les sondages.",
+                "💡 Tu peux aussi proposer tes propres idées de sondages quand les propositions sont ouvertes.",
+                "Une soirée cinéma ? Un prochain jeu ? Un défi ? Les sondages peuvent servir à plein de choses.",
+                "Les meilleures idées de la communauté peuvent devenir de vrais sondages.",
+                "Je commence légèrement à regretter de vous donner autant de pouvoir.",
+                "Vous êtes capables de transformer un simple sondage en véritable chaos.",
+                "Je surveille vos choix… 👀"
+            ],
+
+            idle: [
+                "Alors… tu réfléchis encore à ton vote ?",
+                "Choisis bien. Je pourrais devoir vivre avec les conséquences de ton clic.",
+                "Les résultats peuvent parfois être beaucoup plus serrés qu'on ne le pense.",
+                "🗳️ Un petit vote peut décider de plusieurs heures de stream.",
+                "Tu attends de voir ce que les autres vont choisir ? Petit stratège.",
+                "N'oublie pas que tu peux proposer une idée de sondage.",
+                "Je sens déjà arriver les propositions complètement chaotiques.",
+                "Les Poups ont beaucoup de pouvoir ici… peut-être même un peu trop.",
+                "Si deux choix sont presque à égalité, ton vote pourrait faire toute la différence.",
+                "Je me demande quelle sera la prochaine décision de la communauté."
+            ]
+        },
+
+
         "characters.html": {
             welcome: [            
                 "Bienvenue dans le Codex ! Ici, tu peux découvrir tous les personnages de mon univers.",
@@ -1379,6 +1467,771 @@ console.log(
 );
 
 }
+/* ==========================================
+   INTERACTIONS — GAMES.HTML
+========================================== */
+
+if (
+    currentMascottePage === "games.html"
+) {
+
+    const gamesInteractionState = {
+
+        seenGames:
+            new Set(),
+
+        lastFilter:
+            "",
+
+        pollOpened:
+            false
+
+    };
+
+
+    function showGamesMascotteMessage(
+        message,
+        duration = 4500
+    ) {
+
+        if (
+            !message
+        ) {
+
+            return;
+        }
+
+
+        showMessage(
+            message,
+            duration
+        );
+
+
+        animateMascotte();
+
+
+        resetIdleTimer();
+    }
+
+
+    /* ==========================================
+       SURVOL DES CARTES DE JEUX
+    ========================================== */
+
+    function setupGameCardInteractions() {
+
+        const gameCards =
+            document.querySelectorAll(
+                ".game-card, .games-card, [data-game-id], [data-game-card]"
+            );
+
+
+        gameCards.forEach(
+            card => {
+
+                if (
+                    card.dataset
+                        .mascotteGameReady ===
+                    "true"
+                ) {
+
+                    return;
+                }
+
+
+                card.dataset
+                    .mascotteGameReady =
+                    "true";
+
+
+                card.addEventListener(
+                    "mouseenter",
+                    () => {
+
+                        const gameName =
+                            (
+                                card.querySelector(
+                                    "h2, h3, .game-title, .games-card-title"
+                                )
+                                    ?.textContent ||
+                                ""
+                            )
+                                .trim();
+
+
+                        const gameId =
+                            card.dataset
+                                .gameId ||
+                            gameName;
+
+
+                        if (
+                            !gameId
+                        ) {
+
+                            return;
+                        }
+
+
+                        if (
+                            gamesInteractionState
+                                .seenGames
+                                .has(
+                                    gameId
+                                )
+                        ) {
+
+                            return;
+                        }
+
+
+                        gamesInteractionState
+                            .seenGames
+                            .add(
+                                gameId
+                            );
+
+
+                        const messages =
+                            gameName
+                                ? [
+                                    `🎮 Oh, ${gameName} ! Tu connais ce jeu ?`,
+                                    `👀 Tu regardes ${gameName} ? Peut-être une future aventure en stream !`,
+                                    `🎮 ${gameName} fait partie de ma bibliothèque. Tu voudrais me voir y jouer ?`,
+                                    `💜 ${gameName} t'intéresse ? Regarde ses tags pour voir à quoi t'attendre !`
+                                ]
+                                : [
+                                    "🎮 Tu regardes un de mes jeux ?",
+                                    "👀 Celui-là t'intéresse ?",
+                                    "Peut-être une future aventure en stream !"
+                                ];
+
+
+                        showGamesMascotteMessage(
+                            chooseRandom(
+                                messages
+                            )
+                        );
+                    }
+                );
+            }
+        );
+    }
+        /* ==========================================
+    VOTE RÉELLEMENT ENREGISTRÉ
+    ========================================== */
+
+    window.addEventListener(
+        "couaxia:game-poll-voted",
+        event => {
+
+            const optionLabel =
+                event.detail
+                    ?.optionLabel;
+
+
+            showGamesMascotteMessage(
+                optionLabel
+                    ? chooseRandom([
+                        `💜 Ton vote pour "${optionLabel}" est enregistré !`,
+                        `🗳️ "${optionLabel}" ? Très bon choix… enfin, je crois.`,
+                        `👀 J'ai vu ton vote pour "${optionLabel}" !`,
+                        `🎮 Une voix de plus pour "${optionLabel}" !`
+                    ])
+                    : "💜 Ton vote est bien enregistré !",
+                5000
+            );
+        }
+    );
+
+
+    /* ==========================================
+       CHANGEMENT DE FILTRE
+    ========================================== */
+
+    const gamesFilter =
+        document.querySelector(
+            "#games-filter, #game-filter, .games-filter select, [data-games-filter]"
+        );
+
+
+    if (
+        gamesFilter
+    ) {
+
+        gamesFilter.addEventListener(
+            "change",
+            () => {
+
+                const selectedText =
+                    gamesFilter
+                        .options?.[
+                            gamesFilter
+                                .selectedIndex
+                        ]
+                        ?.textContent
+                        ?.trim() ||
+                    gamesFilter.value ||
+                    "";
+
+
+                if (
+                    !selectedText ||
+                    selectedText ===
+                        gamesInteractionState
+                            .lastFilter
+                ) {
+
+                    return;
+                }
+
+
+                gamesInteractionState
+                    .lastFilter =
+                    selectedText;
+
+
+                showGamesMascotteMessage(
+                    `🔎 Tu explores maintenant : ${selectedText} !`
+                );
+            }
+        );
+    }
+
+
+    /* ==========================================
+       BOUTON SONDAGE DEPUIS LA PAGE JEUX
+    ========================================== */
+
+    const gamePollButtons =
+        document.querySelectorAll(
+            ".games-poll-button, .games-poll-link, [data-open-poll], [href*='polls']"
+        );
+
+
+    gamePollButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "mouseenter",
+                () => {
+
+                    if (
+                        gamesInteractionState
+                            .pollOpened
+                    ) {
+
+                        return;
+                    }
+
+
+                    gamesInteractionState
+                        .pollOpened =
+                        true;
+
+
+                    showGamesMascotteMessage(
+                        chooseRandom([
+                            "🗳️ Tu veux voter pour le prochain jeu ? Choisis bien !",
+                            "👀 Le sondage t'attend… vous avez beaucoup trop de pouvoir ici.",
+                            "💜 À vous de décider quelle sera ma prochaine aventure !",
+                            "🗳️ Attention, votre choix pourrait m'envoyer directement dans un jeu d'horreur."
+                        ]),
+                        5000
+                    );
+                }
+            );
+        }
+    );
+
+
+    /* ==========================================
+       CONTENU CRÉÉ DYNAMIQUEMENT
+    ========================================== */
+
+    setupGameCardInteractions();
+
+
+    const gamesContainer =
+        document.querySelector(
+            "#games-list, .games-list, .games-grid, main"
+        );
+
+
+    if (
+        gamesContainer
+    ) {
+
+        new MutationObserver(
+            () => {
+
+                setupGameCardInteractions();
+            }
+        )
+            .observe(
+                gamesContainer,
+                {
+                    childList:
+                        true,
+
+                    subtree:
+                        true
+                }
+            );
+    }
+}
+
+
+/* ==========================================
+   INTERACTIONS — POLLS.HTML
+========================================== */
+
+if (
+    currentMascottePage === "polls.html"
+) {
+
+    const pollsInteractionState = {
+
+        seenPolls:
+            new Set(),
+
+        proposalOpened:
+            false,
+
+        loginSeen:
+            false
+
+    };
+
+
+    function showPollMascotteMessage(
+        message,
+        duration = 4500
+    ) {
+
+        if (
+            !message
+        ) {
+
+            return;
+        }
+
+
+        showMessage(
+            message,
+            duration
+        );
+
+
+        animateMascotte();
+
+
+        resetIdleTimer();
+    }
+
+
+    /* ==========================================
+       SURVOL DES SONDAGES
+    ========================================== */
+
+    function setupPollCardInteractions() {
+
+        const pollCards =
+            document.querySelectorAll(
+                ".poll-card, .polls-card, [data-poll-id], [data-poll-card]"
+            );
+
+
+        pollCards.forEach(
+            card => {
+
+                if (
+                    card.dataset
+                        .mascottePollReady ===
+                    "true"
+                ) {
+
+                    return;
+                }
+
+
+                card.dataset
+                    .mascottePollReady =
+                    "true";
+
+
+                card.addEventListener(
+                    "mouseenter",
+                    () => {
+
+                        const title =
+                            (
+                                card.querySelector(
+                                    "h2, h3, .poll-title, .polls-card-title"
+                                )
+                                    ?.textContent ||
+                                ""
+                            )
+                                .trim();
+
+
+                        const pollId =
+                            card.dataset
+                                .pollId ||
+                            title;
+
+
+                        if (
+                            !pollId ||
+                            pollsInteractionState
+                                .seenPolls
+                                .has(
+                                    pollId
+                                )
+                        ) {
+
+                            return;
+                        }
+
+
+                        pollsInteractionState
+                            .seenPolls
+                            .add(
+                                pollId
+                            );
+
+
+                        showPollMascotteMessage(
+                            title
+                                ? chooseRandom([
+                                    `🗳️ Tu regardes "${title}" ? Fais ton choix !`,
+                                    `👀 "${title}"… intéressant. Tu sais déjà ce que tu vas voter ?`,
+                                    `💜 Ce sondage pourrait changer la suite de mes streams !`,
+                                    `🗳️ Réfléchis bien… chaque voix compte ici.`
+                                ])
+                                : "🗳️ Tu regardes un sondage ? Choisis bien !"
+                        );
+                    }
+                );
+            }
+        );
+    }
+
+
+    /* ==========================================
+       CLIC SUR UNE OPTION
+    ========================================== */
+
+    function setupPollOptionInteractions() {
+
+        const pollOptions =
+            document.querySelectorAll(
+                ".poll-option, .polls-option, [data-option-id], input[name='poll-option']"
+            );
+
+
+        pollOptions.forEach(
+            option => {
+
+                if (
+                    option.dataset
+                        .mascotteOptionReady ===
+                    "true"
+                ) {
+
+                    return;
+                }
+
+
+                option.dataset
+                    .mascotteOptionReady =
+                    "true";
+
+
+                option.addEventListener(
+                    "click",
+                    () => {
+
+                        showPollMascotteMessage(
+                            chooseRandom([
+                                "👀 Ooooh… tu sembles avoir fait ton choix !",
+                                "🗳️ Intéressant… je prends note de ce choix.",
+                                "💜 Celui-là ? D'accord… je ne juge pas. Enfin presque.",
+                                "Tu es sûr de toi ? Après, il faudra assumer ! 😈"
+                            ]),
+                            3500
+                        );
+                    }
+                );
+            }
+        );
+    }
+
+
+    /* ==========================================
+       BOUTON VOTER
+    ========================================== */
+
+    function setupVoteButtons() {
+
+        const voteButtons =
+            document.querySelectorAll(
+                ".poll-vote-button, .polls-vote-button, [data-vote], [data-submit-vote]"
+            );
+
+
+        voteButtons.forEach(
+            button => {
+
+                if (
+                    button.dataset
+                        .mascotteVoteReady ===
+                    "true"
+                ) {
+
+                    return;
+                }
+
+
+                button.dataset
+                    .mascotteVoteReady =
+                    "true";
+
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        showPollMascotteMessage(
+                            chooseRandom([
+                                "🗳️ Vote envoyé ! Maintenant, il faut vivre avec ton choix.",
+                                "💜 Merci d'avoir participé !",
+                                "👀 Une voix de plus… le résultat devient intéressant.",
+                                "Votre pouvoir augmente encore… je commence à m'inquiéter."
+                            ]),
+                            4500
+                        );
+                    }
+                );
+            }
+        );
+    }
+
+
+    /* ==========================================
+       CONNEXION TWITCH
+    ========================================== */
+
+    function setupPollLoginInteractions() {
+
+        const loginButtons =
+            document.querySelectorAll(
+                ".poll-login-button, .polls-login-button, [href*='public-login'], [data-twitch-login]"
+            );
+
+
+        loginButtons.forEach(
+            button => {
+
+                if (
+                    button.dataset
+                        .mascotteLoginReady ===
+                    "true"
+                ) {
+
+                    return;
+                }
+
+
+                button.dataset
+                    .mascotteLoginReady =
+                    "true";
+
+
+                button.addEventListener(
+                    "mouseenter",
+                    () => {
+
+                        if (
+                            pollsInteractionState
+                                .loginSeen
+                        ) {
+
+                            return;
+                        }
+
+
+                        pollsInteractionState
+                            .loginSeen =
+                            true;
+
+
+                        showPollMascotteMessage(
+                            "💜 La connexion Twitch sert seulement à identifier ton vote. Tu peux consulter les sondages sans te connecter !",
+                            6000
+                        );
+                    }
+                );
+            }
+        );
+    }
+
+
+    /* ==========================================
+       PROPOSITION DE SONDAGE
+    ========================================== */
+
+    function setupSuggestionInteractions() {
+
+        const suggestionButtons =
+            document.querySelectorAll(
+                ".poll-suggestion-button, .polls-suggestion-button, [data-open-suggestion], [data-poll-suggestion]"
+            );
+
+
+        suggestionButtons.forEach(
+            button => {
+
+                if (
+                    button.dataset
+                        .mascotteSuggestionReady ===
+                    "true"
+                ) {
+
+                    return;
+                }
+
+
+                button.dataset
+                    .mascotteSuggestionReady =
+                    "true";
+
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        if (
+                            pollsInteractionState
+                                .proposalOpened
+                        ) {
+
+                            return;
+                        }
+
+
+                        pollsInteractionState
+                            .proposalOpened =
+                            true;
+
+
+                        showPollMascotteMessage(
+                            chooseRandom([
+                                "💡 Tu veux proposer un sondage ? Je suis curieuse de voir ton idée !",
+                                "👀 Une idée de la communauté ? Promets-moi juste que ce n'est pas trop chaotique.",
+                                "💜 Les meilleures propositions pourront devenir de vrais sondages !",
+                                "💡 Vas-y, propose ton idée… je sens déjà que je vais le regretter."
+                            ]),
+                            5500
+                        );
+                    }
+                );
+            }
+        );
+    }
+
+
+    /* ==========================================
+       INITIALISATION
+    ========================================== */
+
+    function setupPollInteractions() {
+
+        setupPollCardInteractions();
+
+        setupPollOptionInteractions();
+
+        setupVoteButtons();
+
+        setupPollLoginInteractions();
+
+        setupSuggestionInteractions();
+    }
+
+
+    setupPollInteractions();
+
+
+    /* ==========================================
+       ÉLÉMENTS CRÉÉS PAR POLLS.JS
+    ========================================== */
+
+    const pollsContainer =
+        document.querySelector(
+            "#polls-main, .polls-main, main"
+        );
+
+
+    if (
+        pollsContainer
+    ) {
+
+        new MutationObserver(
+            () => {
+
+                setupPollInteractions();
+            }
+        )
+            .observe(
+                pollsContainer,
+                {
+                    childList:
+                        true,
+
+                    subtree:
+                        true
+                }
+            );
+    }
+
+
+    /* ==========================================
+       ÉVÉNEMENTS PERSONNALISÉS
+       utilisables depuis polls.js
+    ========================================== */
+
+    window.addEventListener(
+        "couaxia:poll-voted",
+        event => {
+
+            const optionLabel =
+                event.detail
+                    ?.optionLabel;
+
+
+            showPollMascotteMessage(
+                optionLabel
+                    ? `💜 Ton vote pour "${optionLabel}" est enregistré !`
+                    : "💜 Ton vote est enregistré ! Merci d'avoir participé.",
+                5000
+            );
+        }
+    );
+
+
+    window.addEventListener(
+        "couaxia:poll-suggestion-sent",
+        () => {
+
+            showPollMascotteMessage(
+                "💡 Proposition envoyée ! Je regarderai ce que les Poups ont imaginé.",
+                5500
+            );
+        }
+    );
+}
+
 /* ==========================================
    FIN DOMContentLoaded
 ========================================== */
