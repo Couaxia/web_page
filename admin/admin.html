@@ -227,6 +227,23 @@
                     </span>
 
                 </button>
+                <!-- =============================================
+                    ANNONCES
+                ============================================== -->
+
+                <button
+                    type="button"
+                    class="admin-nav-button"
+                    data-admin-section="announcements">
+                    <span
+                        class="admin-nav-icon"
+                        aria-hidden="true">
+                        🔔
+                    </span>
+                    <span>
+                        Annonces
+                    </span>
+                </button>
 
             </nav>
 
@@ -298,8 +315,9 @@
                         </h1>
 
                         <p>
-                            Gère les jeux, les crédits
-                            et les sondages du site Couaxia.
+                            Gère les jeux, les crédits,
+                            les sondages et les annonces
+                            du site Couaxia.
                         </p>
 
                     </div>
@@ -382,14 +400,33 @@
                         </span>
 
                     </article>
-
+                    <!-- ANNONCES -->
 
                     <article class="admin-stat-card">
 
                         <span
                             class="admin-stat-icon"
-                            aria-hidden="true"
-                        >
+                            aria-hidden="true">
+                            🔔
+                        </span>
+
+                        <strong
+                            id="admin-stat-announcements"
+                            class="admin-stat-number">
+                            0
+                        </strong>
+
+                        <span>
+                            Annonces
+                        </span>
+
+                    </article>
+
+                    <article class="admin-stat-card">
+
+                        <span
+                            class="admin-stat-icon"
+                            aria-hidden="true">
                             💜
                         </span>
 
@@ -508,7 +545,26 @@
                             </small>
 
                         </button>
+                        <!-- ANNONCE -->
 
+                        <button
+                            type="button"
+                            class="admin-quick-action"
+                            data-open-section="announcements"
+                            data-admin-action="new-announcement">
+
+                            <span
+                                class="admin-quick-action-icon"
+                                aria-hidden="true">
+                                🔔
+                            </span>
+                            <strong>
+                                Créer une annonce
+                            </strong>
+                            <small>
+                                Publier une annonce ou une nouveauté
+                            </small>
+                        </button>
                     </div>
 
                 </section>
@@ -2907,117 +2963,41 @@
 
             </section>
 
-         
-
-        </main>
-
-    </div>
-
-
-
-    <!-- =====================================================
-         CONFIRMATION SUPPRESSION
-    ====================================================== -->
-
-    <div
-        id="admin-confirm-modal"
-        class="admin-modal"
-        hidden
-    >
-
-        <div
-            class="admin-modal-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="admin-confirm-title"
-        >
-
-            <button
-                id="admin-confirm-close"
-                class="admin-modal-close"
-                type="button"
-                aria-label="Fermer"
-            >
-                ✕
-            </button>
-
-
-            <span
-                class="admin-modal-icon"
-                aria-hidden="true"
-            >
-                ⚠️
-            </span>
-
-
-            <h2 id="admin-confirm-title">
-                Confirmer la suppression
-            </h2>
-
-
-            <p id="admin-confirm-message">
-                Veux-tu vraiment supprimer cet élément ?
-            </p>
-
-
-            <div class="admin-modal-actions">
-
-                <button
-                    id="admin-confirm-cancel"
-                    class="admin-secondary-button"
-                    type="button"
-                >
-                    Annuler
-                </button>
-
-
-                <button
-                    id="admin-confirm-delete"
-                    class="admin-danger-button"
-                    type="button"
-                >
-                    🗑️ Supprimer
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-<!-- =========================================================
+         <!-- =========================================================
      ANNONCES & NOUVEAUTÉS
 ========================================================== -->
 
 <section
     id="admin-announcements-section"
     class="admin-section admin-announcements-section"
+    data-admin-panel="announcements"
+    hidden
 >
 
     <!-- =====================================================
          TITRE
     ====================================================== -->
 
-    <div class="admin-section-header">
+    <header class="admin-section-header">
 
-        <div>
+    <div>
 
-            <span class="admin-section-kicker">
-                Communication
-            </span>
+        <span class="admin-eyebrow">
+            🔔 Communication
+        </span>
 
-            <h2>
-                🔔 Annonces & Nouveautés
-            </h2>
+        <h1>
+            Annonces & Nouveautés
+        </h1>
 
-            <p>
-                Crée et gère les annonces affichées
-                dans les notifications du site.
-            </p>
-
-        </div>
+        <p>
+            Crée et gère les annonces affichées
+            dans les notifications du site.
+        </p>
 
     </div>
+
+</header>
 
 
     <!-- =====================================================
@@ -3568,6 +3548,84 @@
     </div>
 
 </section>
+
+        </main>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CONFIRMATION SUPPRESSION
+    ====================================================== -->
+
+    <div
+        id="admin-confirm-modal"
+        class="admin-modal"
+        hidden
+    >
+
+        <div
+            class="admin-modal-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="admin-confirm-title"
+        >
+
+            <button
+                id="admin-confirm-close"
+                class="admin-modal-close"
+                type="button"
+                aria-label="Fermer"
+            >
+                ✕
+            </button>
+
+
+            <span
+                class="admin-modal-icon"
+                aria-hidden="true"
+            >
+                ⚠️
+            </span>
+
+
+            <h2 id="admin-confirm-title">
+                Confirmer la suppression
+            </h2>
+
+
+            <p id="admin-confirm-message">
+                Veux-tu vraiment supprimer cet élément ?
+            </p>
+
+
+            <div class="admin-modal-actions">
+
+                <button
+                    id="admin-confirm-cancel"
+                    class="admin-secondary-button"
+                    type="button"
+                >
+                    Annuler
+                </button>
+
+
+                <button
+                    id="admin-confirm-delete"
+                    class="admin-danger-button"
+                    type="button"
+                >
+                    🗑️ Supprimer
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
 
     <!-- =====================================================
          NOTIFICATIONS

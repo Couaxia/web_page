@@ -1010,7 +1010,7 @@ video {
 
     grid-template-columns:
         repeat(
-            4,
+            5,
             minmax(0, 1fr)
         );
 
@@ -1181,7 +1181,7 @@ video {
 
     grid-template-columns:
         repeat(
-            3,
+            4,
             minmax(0, 1fr)
         );
 
@@ -5105,20 +5105,17 @@ body.admin-page:not(.admin-ready) {
         24px;
 
     border:
-        2px solid
-        rgba(109, 0, 163, 0.28);
+        1px solid
+        var(--admin-border);
 
     border-radius:
-        22px;
+        var(--admin-radius);
 
     background:
-        rgba(255, 255, 255, 0.88);
+        var(--admin-panel);
 
     box-shadow:
-        0
-        14px
-        34px
-        rgba(55, 16, 74, 0.14);
+        var(--admin-shadow-soft);
 }
 
 
@@ -5196,7 +5193,7 @@ body.admin-page:not(.admin-ready) {
         3px;
 
     color:
-        #c51b91;
+        var(--admin-primary);
 
     font-size:
         0.72rem;
@@ -5218,7 +5215,7 @@ body.admin-page:not(.admin-ready) {
         0;
 
     color:
-        #5d086f;
+        var(--admin-text);
 
     font-size:
         1.25rem;

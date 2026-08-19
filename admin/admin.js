@@ -46,7 +46,12 @@ document.addEventListener(
 
         const ADMIN_POLL_SUGGESTIONS_API =
             "/api/admin/poll-suggestions";
+        /* =====================================================
+        API ANNONCES
+        ====================================================== */
 
+        const ADMIN_ANNOUNCEMENTS_API =
+            "/api/admin/announcements";
 
         /* =====================================================
            ÉTAT GLOBAL
@@ -96,7 +101,12 @@ document.addEventListener(
 
         let currentResultsPollId =
             null;
+        /* =====================================================
+        ANNONCES
+        ====================================================== */
 
+        let adminAnnouncements =
+            [];
 
         /* =====================================================
            NAVIGATION ADMIN
@@ -170,7 +180,10 @@ document.addEventListener(
                 "admin-stat-votes"
             );
 
-
+        const adminStatAnnouncements =
+            document.getElementById(
+                "admin-stat-announcements"
+            );
         /* =====================================================
            ÉLÉMENTS — JEUX
         ====================================================== */
@@ -1670,20 +1683,67 @@ document.addEventListener(
         ====================================================== */
 
         quickActionButtons.forEach(
-            button => {
+    button => {
 
-                button.addEventListener(
-                    "click",
-                    () => {
+        button.addEventListener(
+            "click",
+            () => {
 
-                        openSection(
-                            button.dataset
-                                .openSection
-                        );
-                    }
+                const sectionName =
+                    normalizeText(
+                        button.dataset
+                            .openSection
+                    );
+
+
+                const actionName =
+                    normalizeText(
+                        button.dataset
+                            .adminAction
+                    );
+
+
+                openSection(
+                    sectionName
                 );
+
+
+                /* =========================================
+                   NOUVELLE ANNONCE
+                ========================================== */
+
+                if (
+                    actionName ===
+                    "new-announcement"
+                ) {
+
+                    resetAnnouncementForm();
+
+
+                    window.setTimeout(
+                        () => {
+
+                            announcementTitleInput
+                                ?.focus();
+
+
+                            announcementForm
+                                ?.scrollIntoView({
+                                    behavior:
+                                        "smooth",
+
+                                    block:
+                                        "start"
+                                });
+
+                        },
+                        150
+                    );
+                }
             }
         );
+    }
+);
 
 
         /* =====================================================
@@ -1821,8 +1881,20 @@ document.addEventListener(
                         totalVotes
                     );
             }
+            /* =================================================
+            ANNONCES
+            ================================================= */
 
+            if (
+                adminStatAnnouncements
+            ) {
 
+                adminStatAnnouncements.textContent =
+                    String(
+                        adminAnnouncements.length
+                    );
+            }
+                        
             /* =================================================
                STATS PAGE SONDAGES
             ================================================= */
@@ -1981,7 +2053,7 @@ document.addEventListener(
                     return "🗳️ Autre";
             }
         }
-                /* =====================================================
+        /* =====================================================
            JEUX — NORMALISATION
         ====================================================== */
 
@@ -10397,7 +10469,9 @@ document.addEventListener(
 
                     loadPolls(),
 
-                    loadPollSuggestions()
+                    loadPollSuggestions(),
+
+                    loadAdminAnnouncements()
 
                 ]);
 
@@ -10545,37 +10619,7 @@ document.addEventListener(
             }
         }
 
-
-        /* =====================================================
-           NETTOYAGE AVANT FERMETURE
-        ====================================================== */
-
-        window.addEventListener(
-            "beforeunload",
-            () => {
-
-                revokeArtworkPreviewUrl();
-            }
-        );
-
-
-        /* =====================================================
-           DÉMARRAGE
-        ====================================================== */
-
-        await initializeAdmin();
-
-    }
-);
-
-/* =========================================================
-   ADMIN — ANNONCES & NOUVEAUTÉS
-========================================================= */
-
-const ADMIN_ANNOUNCEMENTS_API =
-    "/api/admin/announcements";
-
-
+        
 /* =========================================================
    ÉLÉMENTS — ANNONCES
 ========================================================= */
@@ -10716,14 +10760,6 @@ const announcementImagePreviewImg =
     document.getElementById(
         "announcement-image-preview-img"
     );
-
-
-/* =========================================================
-   ÉTAT — ANNONCES
-========================================================= */
-
-let adminAnnouncements =
-    [];
 
 
 /* =========================================================
@@ -11681,6 +11717,7 @@ async function loadAdminAnnouncements() {
 
 
         renderAdminAnnouncements();
+        updateDashboardStats();
 
 
     } catch (
@@ -11695,7 +11732,7 @@ async function loadAdminAnnouncements() {
 
         adminAnnouncements =
             [];
-
+        updateDashboardStats();    
 
         if (
             announcementAdminCount
@@ -11989,8 +12026,25 @@ announcementImagePreviewImg
     );
 
 
-/* =========================================================
-   INITIALISATION ANNONCES
-========================================================= */
+        /* =====================================================
+           NETTOYAGE AVANT FERMETURE
+        ====================================================== */
 
-loadAdminAnnouncements();
+        window.addEventListener(
+            "beforeunload",
+            () => {
+
+                revokeArtworkPreviewUrl();
+            }
+        );
+
+
+        /* =====================================================
+           DÉMARRAGE
+        ====================================================== */
+
+        await initializeAdmin();
+        
+    }
+);
+
