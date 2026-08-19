@@ -56,6 +56,15 @@ import pollsHandler
 import pollSuggestionsHandler
     from "./api/poll-suggestions.js";    
 
+/* =========================================================
+   API — ANNONCES & NOUVEAUTÉS
+========================================================= */
+
+import announcementsHandler
+    from "./api/announcements.js";
+
+import adminAnnouncementsHandler
+    from "./api/admin/announcements.js";
 
 /* =========================================================
    AUTH PUBLIQUE — TWITCH
@@ -315,7 +324,23 @@ app.get(
     }
 );
 
+/* =========================================================
+   ANNONCES — PUBLIC
+========================================================= */
 
+app.get(
+    "/api/announcements",
+    (
+        request,
+        response
+    ) => {
+
+        return announcementsHandler(
+            request,
+            response
+        );
+    }
+);
 /* =========================================================
    API PUBLIQUE — GALERIE
 ========================================================= */
@@ -472,6 +497,68 @@ app.post(
     )
 );
 
+/* =========================================================
+   ANNONCES — ADMIN
+========================================================= */
+
+app.get(
+    "/api/admin/announcements",
+    (
+        request,
+        response
+    ) => {
+
+        return adminAnnouncementsHandler(
+            request,
+            response
+        );
+    }
+);
+
+
+app.post(
+    "/api/admin/announcements",
+    (
+        request,
+        response
+    ) => {
+
+        return adminAnnouncementsHandler(
+            request,
+            response
+        );
+    }
+);
+
+
+app.put(
+    "/api/admin/announcements",
+    (
+        request,
+        response
+    ) => {
+
+        return adminAnnouncementsHandler(
+            request,
+            response
+        );
+    }
+);
+
+
+app.delete(
+    "/api/admin/announcements",
+    (
+        request,
+        response
+    ) => {
+
+        return adminAnnouncementsHandler(
+            request,
+            response
+        );
+    }
+);
 /* =========================================================
    API ADMIN — GALERIE
 ========================================================= */

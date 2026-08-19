@@ -2985,7 +2985,589 @@
 
     </div>
 
+<!-- =========================================================
+     ANNONCES & NOUVEAUTÉS
+========================================================== -->
 
+<section
+    id="admin-announcements-section"
+    class="admin-section admin-announcements-section"
+>
+
+    <!-- =====================================================
+         TITRE
+    ====================================================== -->
+
+    <div class="admin-section-header">
+
+        <div>
+
+            <span class="admin-section-kicker">
+                Communication
+            </span>
+
+            <h2>
+                🔔 Annonces & Nouveautés
+            </h2>
+
+            <p>
+                Crée et gère les annonces affichées
+                dans les notifications du site.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FORMULAIRE
+    ====================================================== -->
+
+    <div class="announcement-admin-layout">
+
+
+        <form
+            id="announcement-form"
+            class="announcement-form admin-card"
+        >
+
+            <!-- ID utilisé pendant une modification -->
+
+            <input
+                id="announcement-id"
+                type="hidden"
+                value=""
+            >
+
+
+            <!-- =================================================
+                 TITRE FORMULAIRE
+            ================================================== -->
+
+            <div class="announcement-form-heading">
+
+                <div>
+
+                    <span class="announcement-form-icon">
+                        📢
+                    </span>
+
+                    <div>
+
+                        <span class="announcement-form-kicker">
+                            Éditeur
+                        </span>
+
+                        <h3 id="announcement-form-title">
+                            Nouvelle annonce
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="announcement-cancel-edit"
+                    class="announcement-cancel-edit"
+                    type="button"
+                    hidden
+                >
+                    ✕ Annuler
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 INFORMATIONS PRINCIPALES
+            ================================================== -->
+
+            <div class="announcement-form-section">
+
+                <h4>
+                    Informations
+                </h4>
+
+
+                <div class="announcement-form-grid">
+
+
+                    <!-- TYPE -->
+
+                    <label class="announcement-field">
+
+                        <span>
+                            Type
+                        </span>
+
+                        <select
+                            id="announcement-type"
+                            name="type"
+                            required
+                        >
+
+                            <option value="announcement">
+                                📢 Annonce
+                            </option>
+
+                            <option value="poll">
+                                🗳️ Sondage
+                            </option>
+
+                            <option value="game">
+                                🎮 Jeu
+                            </option>
+
+                            <option value="artwork">
+                                🎨 Artwork
+                            </option>
+
+                            <option value="lore">
+                                📖 Lore
+                            </option>
+
+                            <option value="event">
+                                📅 Événement
+                            </option>
+
+                            <option value="stream">
+                                🔴 Stream
+                            </option>
+
+                            <option value="other">
+                                ✨ Autre
+                            </option>
+
+                        </select>
+
+                    </label>
+
+
+                    <!-- ICÔNE -->
+
+                    <label class="announcement-field">
+
+                        <span>
+                            Icône
+                        </span>
+
+                        <input
+                            id="announcement-icon"
+                            name="icon"
+                            type="text"
+                            maxlength="20"
+                            placeholder="📢"
+                        >
+
+                        <small>
+                            Facultatif. Une icône sera choisie
+                            automatiquement si tu laisses vide.
+                        </small>
+
+                    </label>
+
+
+                    <!-- TITRE -->
+
+                    <label
+                        class="
+                            announcement-field
+                            announcement-field-full
+                        "
+                    >
+
+                        <span>
+                            Titre *
+                        </span>
+
+                        <input
+                            id="announcement-title"
+                            name="title"
+                            type="text"
+                            maxlength="160"
+                            placeholder="Ex : Soirée communautaire !"
+                            required
+                        >
+
+                    </label>
+
+
+                    <!-- MESSAGE -->
+
+                    <label
+                        class="
+                            announcement-field
+                            announcement-field-full
+                        "
+                    >
+
+                        <span>
+                            Message
+                        </span>
+
+                        <textarea
+                            id="announcement-message"
+                            name="message"
+                            rows="5"
+                            maxlength="1500"
+                            placeholder="Écris ton annonce ici..."
+                        ></textarea>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 LIEN
+            ================================================== -->
+
+            <div class="announcement-form-section">
+
+                <h4>
+                    🔗 Lien
+                </h4>
+
+
+                <div class="announcement-form-grid">
+
+
+                    <label
+                        class="
+                            announcement-field
+                            announcement-field-full
+                        "
+                    >
+
+                        <span>
+                            URL
+                        </span>
+
+                        <input
+                            id="announcement-link-url"
+                            name="linkUrl"
+                            type="text"
+                            placeholder="/polls.html ou https://..."
+                        >
+
+                    </label>
+
+
+                    <label
+                        class="
+                            announcement-field
+                            announcement-field-full
+                        "
+                    >
+
+                        <span>
+                            Texte du bouton
+                        </span>
+
+                        <input
+                            id="announcement-link-label"
+                            name="linkLabel"
+                            type="text"
+                            maxlength="80"
+                            placeholder="Ex : Participer"
+                        >
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 IMAGE
+            ================================================== -->
+
+            <div class="announcement-form-section">
+
+                <h4>
+                    🖼️ Image
+                </h4>
+
+
+                <label class="announcement-field">
+
+                    <span>
+                        URL de l'image
+                    </span>
+
+                    <input
+                        id="announcement-image-url"
+                        name="imageUrl"
+                        type="url"
+                        placeholder="https://..."
+                    >
+
+                    <small>
+                        Tu pourras utiliser ici une image
+                        de ton Supabase Storage.
+                    </small>
+
+                </label>
+
+
+                <div
+                    id="announcement-image-preview"
+                    class="announcement-image-preview"
+                    hidden
+                >
+
+                    <img
+                        id="announcement-image-preview-img"
+                        src=""
+                        alt="Aperçu de l'annonce"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 OPTIONS
+            ================================================== -->
+
+            <div class="announcement-form-section">
+
+                <h4>
+                    ⚙️ Affichage
+                </h4>
+
+
+                <div class="announcement-options">
+
+
+                    <!-- PUBLIER -->
+
+                    <label class="announcement-option">
+
+                        <input
+                            id="announcement-published"
+                            name="isPublished"
+                            type="checkbox"
+                        >
+
+                        <span class="announcement-option-content">
+
+                            <strong>
+                                👁️ Publier
+                            </strong>
+
+                            <small>
+                                Rend l'annonce visible
+                                sur le site.
+                            </small>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- ÉPINGLER -->
+
+                    <label class="announcement-option">
+
+                        <input
+                            id="announcement-pinned"
+                            name="isPinned"
+                            type="checkbox"
+                        >
+
+                        <span class="announcement-option-content">
+
+                            <strong>
+                                📌 Épingler
+                            </strong>
+
+                            <small>
+                                Place cette annonce
+                                en priorité.
+                            </small>
+
+                        </span>
+
+                    </label>
+
+
+                    <!-- IMPORTANT -->
+
+                    <label class="announcement-option">
+
+                        <input
+                            id="announcement-important"
+                            name="isImportant"
+                            type="checkbox"
+                        >
+
+                        <span class="announcement-option-content">
+
+                            <strong>
+                                ⚠️ Important
+                            </strong>
+
+                            <small>
+                                Met davantage l'annonce
+                                en évidence.
+                            </small>
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PROGRAMMATION
+            ================================================== -->
+
+            <div class="announcement-form-section">
+
+                <h4>
+                    🕒 Programmation
+                </h4>
+
+
+                <div class="announcement-form-grid">
+
+
+                    <label class="announcement-field">
+
+                        <span>
+                            Publication
+                        </span>
+
+                        <input
+                            id="announcement-published-at"
+                            name="publishedAt"
+                            type="datetime-local"
+                        >
+
+                        <small>
+                            Vide + Publier coché =
+                            publication immédiate.
+                        </small>
+
+                    </label>
+
+
+                    <label class="announcement-field">
+
+                        <span>
+                            Expiration
+                        </span>
+
+                        <input
+                            id="announcement-expires-at"
+                            name="expiresAt"
+                            type="datetime-local"
+                        >
+
+                        <small>
+                            Facultatif.
+                        </small>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+            ================================================== -->
+
+            <div class="announcement-form-actions">
+
+                <button
+                    id="announcement-submit"
+                    class="announcement-submit"
+                    type="submit"
+                >
+                    <span aria-hidden="true">
+                        💾
+                    </span>
+
+                    <span id="announcement-submit-label">
+                        Enregistrer l'annonce
+                    </span>
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 MESSAGE
+            ================================================== -->
+
+            <p
+                id="announcement-form-status"
+                class="announcement-form-status"
+                aria-live="polite"
+            ></p>
+
+        </form>
+
+
+        <!-- =====================================================
+             ANNONCES EXISTANTES
+        ====================================================== -->
+
+        <div class="announcement-list-panel admin-card">
+
+            <div class="announcement-list-heading">
+
+                <div>
+
+                    <span class="announcement-form-kicker">
+                        Publications
+                    </span>
+
+                    <h3>
+                        Annonces existantes
+                    </h3>
+
+                </div>
+
+
+                <span
+                    id="announcement-admin-count"
+                    class="announcement-admin-count"
+                >
+                    0
+                </span>
+
+            </div>
+
+
+            <div
+                id="announcement-admin-list"
+                class="announcement-admin-list"
+            >
+
+                <p class="announcement-admin-empty">
+                    Chargement des annonces...
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
 
     <!-- =====================================================
          NOTIFICATIONS

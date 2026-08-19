@@ -8,6 +8,7 @@
     <link href="./css/a-propos.css" rel="stylesheet">
     <link href="./css/style.css" rel="stylesheet">
     <link href="./css/scroll-page.css" rel="stylesheet">
+    <link href="./css/announcements.css" rel="stylesheet">
 </head>
          <body>
 
@@ -27,11 +28,100 @@
                 <a href="./Histoire/debut_histoire.html" >📖 Mon histoire</a>
                 <a href="./credits.html" >🎨 Crédits</a>
             </div>  
+
+            <div class="navbar-actions">
+
+        <!-- =============================================
+            ANNONCES & NOUVEAUTÉS
+        ============================================== -->
+
+        <div id="notifications" class="notifications">
+
+            <button id="notification-button" class="notification-button" type="button" aria-label="Ouvrir les annonces et nouveautés"
+                aria-expanded="false" aria-controls="notification-panel">
+
+                <!--
+                    TEMPORAIRE
+
+                    Cette cloche sera remplacée plus tard
+                    par l'illustration de Couaxia.
+                -->
+
+                <span id="notification-placeholder" class="notification-placeholder" aria-hidden="true">
+                    🔔
+                </span>
+
+
+                <!--
+                    FUTURE MASCOTTE
+
+                    On laisse déjà l'élément dans le HTML.
+                    Il sera activé lorsque ton illustration
+                    sera terminée.
+                -->
+
+                <img
+                    id="notification-mascotte"
+                    class="notification-mascotte" src="" alt="" hidden>
+
+
+                <!-- COMPTEUR -->
+
+                <span id="notification-count" class="notification-count" aria-label="0 nouveauté" hidden>
+                    0
+                </span>
+
+            </button>
+
+                    <!-- =========================================
+                        PANNEAU DES NOUVEAUTÉS
+                    ========================================== -->
+
+                    <div id="notification-panel" class="notification-panel" hidden>
+                        <div class="notification-panel-header">
+                            <div>
+                                <span class="notification-panel-eyebrow">
+                                    Couaxia
+                                </span>
+                                <h2>
+                                    🔔 Nouveautés
+                                </h2>
+                            </div>
+
+
+                            <button id="notification-read-all" class="notification-read-all" type="button" hidden>
+                                Tout marquer comme lu
+                            </button>
+
+                        </div>
+
+                        <!-- =====================================
+                            LISTE
+                        ====================================== -->
+                        <div id="notification-list" class="notification-list">
+                            <p class="notification-empty">
+                                Aucune nouveauté pour le moment. 💜
+                            </p>
+                        </div>
+
+                        <!-- =====================================
+                            PIED DU PANNEAU
+                        ====================================== -->
+
+                        <div class="notification-panel-footer">
+                            <span id="notification-status" class="notification-status">
+                                Tu es à jour !
+                            </span>
+
+                    </div>
+                </div>
+            </div>
                 <a href="./admin/admin.html" class="admin-access-link">⚙️ Admin</a>
                 <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Activer le mode nuit" title="Changer le thème">
                     <span class="theme-icon" aria-hidden="true">🌙</span>
                     <span class="theme-text">Mode nuit</span>
                 </button>
+                </div>
         </nav>
     </header>
                  <main class="about-page">
@@ -980,6 +1070,7 @@
             <script src="./js/mascotte.js"></script>
             <script src="./js/mascotte-navigation.js"></script>
             <script src="./js/protection.js"></script>
+            <script src="./js/announcements.js"></script>
             <script src="./js/theme.js"></script>
             <script src="./js/artist.js"></script>
 

@@ -5058,3 +5058,1213 @@ body.admin-page:not(.admin-ready) .scroll-page-controls {
 body.admin-page:not(.admin-ready) {
     background: #12051c;
 }
+
+/* =========================================================
+   ADMIN — ANNONCES & NOUVEAUTÉS
+========================================================= */
+
+.admin-announcements-section {
+    width:
+        100%;
+}
+
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+.announcement-admin-layout {
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(0, 1.05fr)
+        minmax(340px, 0.95fr);
+
+    align-items:
+        start;
+
+    gap:
+        24px;
+
+    margin-top:
+        24px;
+}
+
+
+/* =========================================================
+   CARTES
+========================================================= */
+
+.announcement-form,
+.announcement-list-panel {
+    min-width:
+        0;
+
+    padding:
+        24px;
+
+    border:
+        2px solid
+        rgba(109, 0, 163, 0.28);
+
+    border-radius:
+        22px;
+
+    background:
+        rgba(255, 255, 255, 0.88);
+
+    box-shadow:
+        0
+        14px
+        34px
+        rgba(55, 16, 74, 0.14);
+}
+
+
+/* =========================================================
+   ENTÊTE FORMULAIRE
+========================================================= */
+
+.announcement-form-heading,
+.announcement-list-heading {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        16px;
+
+    margin-bottom:
+        24px;
+}
+
+
+.announcement-form-heading > div {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+}
+
+
+.announcement-form-icon {
+    width:
+        46px;
+
+    height:
+        46px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    flex:
+        0 0 auto;
+
+    font-size:
+        1.35rem;
+
+    border:
+        1px solid
+        rgba(109, 0, 163, 0.25);
+
+    border-radius:
+        14px;
+
+    background:
+        rgba(109, 0, 163, 0.08);
+}
+
+
+.announcement-form-kicker {
+    display:
+        block;
+
+    margin-bottom:
+        3px;
+
+    color:
+        #c51b91;
+
+    font-size:
+        0.72rem;
+
+    font-weight:
+        900;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.08em;
+}
+
+
+.announcement-form-heading h3,
+.announcement-list-heading h3 {
+    margin:
+        0;
+
+    color:
+        #5d086f;
+
+    font-size:
+        1.25rem;
+
+    font-weight:
+        900;
+}
+
+
+/* =========================================================
+   ANNULER MODIFICATION
+========================================================= */
+
+.announcement-cancel-edit {
+    padding:
+        8px
+        11px;
+
+    color:
+        #6d00a3;
+
+    font:
+        inherit;
+
+    font-size:
+        0.76rem;
+
+    font-weight:
+        900;
+
+    border:
+        1px solid
+        rgba(109, 0, 163, 0.28);
+
+    border-radius:
+        10px;
+
+    background:
+        rgba(109, 0, 163, 0.06);
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.announcement-cancel-edit:hover {
+    transform:
+        translateY(-1px);
+
+    background:
+        rgba(109, 0, 163, 0.12);
+}
+
+
+.announcement-cancel-edit[hidden] {
+    display:
+        none;
+}
+
+
+/* =========================================================
+   SECTIONS DU FORMULAIRE
+========================================================= */
+
+.announcement-form-section {
+    padding:
+        20px
+        0;
+
+    border-top:
+        1px solid
+        rgba(109, 0, 163, 0.16);
+}
+
+
+.announcement-form-section h4 {
+    margin:
+        0
+        0
+        16px;
+
+    color:
+        #6d00a3;
+
+    font-size:
+        0.92rem;
+
+    font-weight:
+        900;
+}
+
+
+/* =========================================================
+   GRILLE
+========================================================= */
+
+.announcement-form-grid {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap:
+        16px;
+}
+
+
+.announcement-field {
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        7px;
+
+    min-width:
+        0;
+}
+
+
+.announcement-field-full {
+    grid-column:
+        1 / -1;
+}
+
+
+.announcement-field > span {
+    color:
+        #44204e;
+
+    font-size:
+        0.78rem;
+
+    font-weight:
+        900;
+}
+
+
+.announcement-field small {
+    color:
+        #725d78;
+
+    font-size:
+        0.68rem;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.4;
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+.announcement-field input,
+.announcement-field select,
+.announcement-field textarea {
+    width:
+        100%;
+
+    box-sizing:
+        border-box;
+
+    padding:
+        11px
+        12px;
+
+    color:
+        #35143e;
+
+    font:
+        inherit;
+
+    font-size:
+        0.84rem;
+
+    font-weight:
+        700;
+
+    border:
+        1px solid
+        rgba(109, 0, 163, 0.28);
+
+    border-radius:
+        11px;
+
+    outline:
+        none;
+
+    background:
+        rgba(255, 255, 255, 0.92);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.announcement-field textarea {
+    min-height:
+        115px;
+
+    resize:
+        vertical;
+}
+
+
+.announcement-field input:focus,
+.announcement-field select:focus,
+.announcement-field textarea:focus {
+    border-color:
+        #c51b91;
+
+    box-shadow:
+        0
+        0
+        0
+        3px
+        rgba(197, 27, 145, 0.12);
+}
+
+
+/* =========================================================
+   OPTIONS
+========================================================= */
+
+.announcement-options {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap:
+        12px;
+}
+
+
+.announcement-option {
+    position:
+        relative;
+
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    gap:
+        10px;
+
+    min-width:
+        0;
+
+    padding:
+        14px;
+
+    border:
+        1px solid
+        rgba(109, 0, 163, 0.22);
+
+    border-radius:
+        13px;
+
+    background:
+        rgba(109, 0, 163, 0.04);
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.announcement-option:hover {
+    transform:
+        translateY(-1px);
+
+    border-color:
+        rgba(197, 27, 145, 0.50);
+
+    background:
+        rgba(197, 27, 145, 0.06);
+}
+
+
+.announcement-option input {
+    width:
+        17px;
+
+    height:
+        17px;
+
+    flex:
+        0 0 auto;
+
+    margin-top:
+        2px;
+
+    accent-color:
+        #c51b91;
+}
+
+
+.announcement-option-content {
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        4px;
+}
+
+
+.announcement-option-content strong {
+    color:
+        #5d086f;
+
+    font-size:
+        0.78rem;
+
+    font-weight:
+        900;
+}
+
+
+.announcement-option-content small {
+    color:
+        #725d78;
+
+    font-size:
+        0.66rem;
+
+    line-height:
+        1.35;
+}
+
+
+/* =========================================================
+   APERÇU IMAGE
+========================================================= */
+
+.announcement-image-preview {
+    margin-top:
+        14px;
+
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        rgba(109, 0, 163, 0.22);
+
+    border-radius:
+        14px;
+}
+
+
+.announcement-image-preview img {
+    display:
+        block;
+
+    width:
+        100%;
+
+    max-height:
+        240px;
+
+    object-fit:
+        cover;
+}
+
+
+.announcement-image-preview[hidden] {
+    display:
+        none;
+}
+
+
+/* =========================================================
+   BOUTON ENREGISTRER
+========================================================= */
+
+.announcement-form-actions {
+    display:
+        flex;
+
+    justify-content:
+        flex-end;
+
+    padding-top:
+        20px;
+
+    border-top:
+        1px solid
+        rgba(109, 0, 163, 0.16);
+}
+
+
+.announcement-submit {
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        8px;
+
+    min-height:
+        44px;
+
+    padding:
+        10px
+        18px;
+
+    color:
+        #ffffff;
+
+    font:
+        inherit;
+
+    font-size:
+        0.84rem;
+
+    font-weight:
+        900;
+
+    border:
+        0;
+
+    border-radius:
+        12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6d00a3,
+            #c51b91
+        );
+
+    box-shadow:
+        0
+        8px
+        20px
+        rgba(109, 0, 163, 0.22);
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.announcement-submit:hover {
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0
+        11px
+        25px
+        rgba(109, 0, 163, 0.30);
+}
+
+
+.announcement-submit:disabled {
+    opacity:
+        0.55;
+
+    cursor:
+        wait;
+
+    transform:
+        none;
+}
+
+
+/* =========================================================
+   MESSAGE FORMULAIRE
+========================================================= */
+
+.announcement-form-status {
+    min-height:
+        20px;
+
+    margin:
+        12px
+        0
+        0;
+
+    color:
+        #5d086f;
+
+    font-size:
+        0.76rem;
+
+    font-weight:
+        800;
+
+    text-align:
+        right;
+}
+
+
+.announcement-form-status.is-success {
+    color:
+        #157347;
+}
+
+
+.announcement-form-status.is-error {
+    color:
+        #b42318;
+}
+
+
+/* =========================================================
+   COMPTEUR
+========================================================= */
+
+.announcement-admin-count {
+    min-width:
+        34px;
+
+    height:
+        34px;
+
+    display:
+        inline-grid;
+
+    place-items:
+        center;
+
+    padding:
+        0
+        8px;
+
+    color:
+        #ffffff;
+
+    font-size:
+        0.76rem;
+
+    font-weight:
+        900;
+
+    border-radius:
+        999px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6d00a3,
+            #c51b91
+        );
+}
+
+
+/* =========================================================
+   LISTE ADMIN
+========================================================= */
+
+.announcement-admin-list {
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        12px;
+
+    max-height:
+        760px;
+
+    padding-right:
+        4px;
+
+    overflow-y:
+        auto;
+}
+
+
+.announcement-admin-empty {
+    margin:
+        0;
+
+    padding:
+        30px
+        15px;
+
+    color:
+        #725d78;
+
+    text-align:
+        center;
+
+    font-size:
+        0.82rem;
+
+    font-weight:
+        700;
+}
+
+
+/* =========================================================
+   FUTURES CARTES GÉNÉRÉES PAR ADMIN.JS
+========================================================= */
+
+.announcement-admin-item {
+    padding:
+        16px;
+
+    border:
+        1px solid
+        rgba(109, 0, 163, 0.22);
+
+    border-radius:
+        15px;
+
+    background:
+        rgba(109, 0, 163, 0.035);
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.announcement-admin-item:hover {
+    transform:
+        translateY(-1px);
+
+    border-color:
+        rgba(197, 27, 145, 0.42);
+
+    box-shadow:
+        0
+        7px
+        18px
+        rgba(75, 20, 90, 0.10);
+}
+
+
+.announcement-admin-item.is-unpublished {
+    opacity:
+        0.70;
+}
+
+
+.announcement-admin-item.is-important {
+    border-color:
+        rgba(242, 34, 146, 0.42);
+
+    background:
+        rgba(242, 34, 146, 0.055);
+}
+
+
+.announcement-admin-item-header {
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+}
+
+
+.announcement-admin-item-title {
+    margin:
+        0;
+
+    color:
+        #5d086f;
+
+    font-size:
+        0.94rem;
+
+    font-weight:
+        900;
+}
+
+
+.announcement-admin-item-message {
+    margin:
+        8px
+        0
+        0;
+
+    color:
+        #725d78;
+
+    font-size:
+        0.76rem;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.45;
+}
+
+
+.announcement-admin-item-badges {
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        6px;
+
+    margin-top:
+        11px;
+}
+
+
+.announcement-admin-badge {
+    padding:
+        4px
+        8px;
+
+    font-size:
+        0.64rem;
+
+    font-weight:
+        900;
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(109, 0, 163, 0.09);
+
+    color:
+        #6d00a3;
+}
+
+
+.announcement-admin-item-actions {
+    display:
+        flex;
+
+    gap:
+        8px;
+
+    margin-top:
+        13px;
+}
+
+
+.announcement-admin-edit,
+.announcement-admin-delete {
+    padding:
+        7px
+        10px;
+
+    font:
+        inherit;
+
+    font-size:
+        0.72rem;
+
+    font-weight:
+        900;
+
+    border-radius:
+        9px;
+
+    cursor:
+        pointer;
+}
+
+
+.announcement-admin-edit {
+    color:
+        #6d00a3;
+
+    border:
+        1px solid
+        rgba(109, 0, 163, 0.28);
+
+    background:
+        rgba(109, 0, 163, 0.06);
+}
+
+
+.announcement-admin-delete {
+    color:
+        #b42318;
+
+    border:
+        1px solid
+        rgba(180, 35, 24, 0.28);
+
+    background:
+        rgba(180, 35, 24, 0.06);
+}
+
+
+/* =========================================================
+   MODE NUIT
+========================================================= */
+
+html[data-theme="dark"]
+.announcement-form,
+
+html[data-theme="dark"]
+.announcement-list-panel {
+    border-color:
+        rgba(201, 122, 255, 0.30);
+
+    background:
+        rgba(30, 7, 47, 0.92);
+
+    box-shadow:
+        0
+        16px
+        40px
+        rgba(0, 0, 0, 0.35);
+}
+
+
+html[data-theme="dark"]
+.announcement-form-heading h3,
+
+html[data-theme="dark"]
+.announcement-list-heading h3,
+
+html[data-theme="dark"]
+.announcement-form-section h4,
+
+html[data-theme="dark"]
+.announcement-field > span,
+
+html[data-theme="dark"]
+.announcement-option-content strong,
+
+html[data-theme="dark"]
+.announcement-admin-item-title {
+    color:
+        #ffffff;
+}
+
+
+html[data-theme="dark"]
+.announcement-field small,
+
+html[data-theme="dark"]
+.announcement-option-content small,
+
+html[data-theme="dark"]
+.announcement-admin-empty,
+
+html[data-theme="dark"]
+.announcement-admin-item-message {
+    color:
+        #d8c7e5;
+}
+
+
+html[data-theme="dark"]
+.announcement-field input,
+
+html[data-theme="dark"]
+.announcement-field select,
+
+html[data-theme="dark"]
+.announcement-field textarea {
+    color:
+        #ffffff;
+
+    border-color:
+        rgba(201, 122, 255, 0.30);
+
+    background:
+        rgba(49, 15, 68, 0.95);
+}
+
+
+html[data-theme="dark"]
+.announcement-field input::placeholder,
+
+html[data-theme="dark"]
+.announcement-field textarea::placeholder {
+    color:
+        rgba(255, 255, 255, 0.48);
+}
+
+
+html[data-theme="dark"]
+.announcement-option,
+
+html[data-theme="dark"]
+.announcement-admin-item {
+    border-color:
+        rgba(201, 122, 255, 0.25);
+
+    background:
+        rgba(201, 122, 255, 0.055);
+}
+
+
+html[data-theme="dark"]
+.announcement-cancel-edit,
+
+html[data-theme="dark"]
+.announcement-admin-edit {
+    color:
+        #d9a4ff;
+
+    border-color:
+        rgba(201, 122, 255, 0.34);
+
+    background:
+        rgba(201, 122, 255, 0.08);
+}
+
+
+html[data-theme="dark"]
+.announcement-form-status {
+    color:
+        #d9a4ff;
+}
+
+
+html[data-theme="dark"]
+.announcement-form-status.is-success {
+    color:
+        #72e3a4;
+}
+
+
+html[data-theme="dark"]
+.announcement-form-status.is-error {
+    color:
+        #ff9b95;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1050px) {
+
+    .announcement-admin-layout {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .announcement-admin-list {
+        max-height:
+            none;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .announcement-form,
+    .announcement-list-panel {
+        padding:
+            18px;
+    }
+
+
+    .announcement-form-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .announcement-field-full {
+        grid-column:
+            auto;
+    }
+
+
+    .announcement-options {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .announcement-form-heading {
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+
+    .announcement-cancel-edit {
+        width:
+            100%;
+    }
+
+
+    .announcement-form-actions {
+        justify-content:
+            stretch;
+    }
+
+
+    .announcement-submit {
+        width:
+            100%;
+    }
+
+}

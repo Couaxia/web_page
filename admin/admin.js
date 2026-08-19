@@ -10567,3 +10567,1430 @@ document.addEventListener(
 
     }
 );
+
+/* =========================================================
+   ADMIN — ANNONCES & NOUVEAUTÉS
+========================================================= */
+
+const ADMIN_ANNOUNCEMENTS_API =
+    "/api/admin/announcements";
+
+
+/* =========================================================
+   ÉLÉMENTS — ANNONCES
+========================================================= */
+
+const announcementForm =
+    document.getElementById(
+        "announcement-form"
+    );
+
+
+const announcementIdInput =
+    document.getElementById(
+        "announcement-id"
+    );
+
+
+const announcementTypeInput =
+    document.getElementById(
+        "announcement-type"
+    );
+
+
+const announcementIconInput =
+    document.getElementById(
+        "announcement-icon"
+    );
+
+
+const announcementTitleInput =
+    document.getElementById(
+        "announcement-title"
+    );
+
+
+const announcementMessageInput =
+    document.getElementById(
+        "announcement-message"
+    );
+
+
+const announcementLinkUrlInput =
+    document.getElementById(
+        "announcement-link-url"
+    );
+
+
+const announcementLinkLabelInput =
+    document.getElementById(
+        "announcement-link-label"
+    );
+
+
+const announcementImageUrlInput =
+    document.getElementById(
+        "announcement-image-url"
+    );
+
+
+const announcementPublishedInput =
+    document.getElementById(
+        "announcement-published"
+    );
+
+
+const announcementPinnedInput =
+    document.getElementById(
+        "announcement-pinned"
+    );
+
+
+const announcementImportantInput =
+    document.getElementById(
+        "announcement-important"
+    );
+
+
+const announcementPublishedAtInput =
+    document.getElementById(
+        "announcement-published-at"
+    );
+
+
+const announcementExpiresAtInput =
+    document.getElementById(
+        "announcement-expires-at"
+    );
+
+
+const announcementSubmitButton =
+    document.getElementById(
+        "announcement-submit"
+    );
+
+
+const announcementSubmitLabel =
+    document.getElementById(
+        "announcement-submit-label"
+    );
+
+
+const announcementCancelEditButton =
+    document.getElementById(
+        "announcement-cancel-edit"
+    );
+
+
+const announcementFormTitle =
+    document.getElementById(
+        "announcement-form-title"
+    );
+
+
+const announcementFormStatus =
+    document.getElementById(
+        "announcement-form-status"
+    );
+
+
+const announcementAdminList =
+    document.getElementById(
+        "announcement-admin-list"
+    );
+
+
+const announcementAdminCount =
+    document.getElementById(
+        "announcement-admin-count"
+    );
+
+
+const announcementImagePreview =
+    document.getElementById(
+        "announcement-image-preview"
+    );
+
+
+const announcementImagePreviewImg =
+    document.getElementById(
+        "announcement-image-preview-img"
+    );
+
+
+/* =========================================================
+   ÉTAT — ANNONCES
+========================================================= */
+
+let adminAnnouncements =
+    [];
+
+
+/* =========================================================
+   OUTILS — ANNONCES
+========================================================= */
+
+function escapeAnnouncementHtml(
+    value
+) {
+
+    return String(
+        value ??
+        ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+}
+
+
+function formatAnnouncementDateTimeLocal(
+    value
+) {
+
+    if (
+        !value
+    ) {
+
+        return "";
+    }
+
+
+    const date =
+        new Date(
+            value
+        );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "";
+    }
+
+
+    const pad =
+        number =>
+            String(
+                number
+            )
+                .padStart(
+                    2,
+                    "0"
+                );
+
+
+    return [
+        date.getFullYear(),
+        "-",
+        pad(
+            date.getMonth() +
+            1
+        ),
+        "-",
+        pad(
+            date.getDate()
+        ),
+        "T",
+        pad(
+            date.getHours()
+        ),
+        ":",
+        pad(
+            date.getMinutes()
+        )
+    ].join("");
+}
+
+
+function formatAnnouncementDisplayDate(
+    value
+) {
+
+    if (
+        !value
+    ) {
+
+        return "";
+    }
+
+
+    const date =
+        new Date(
+            value
+        );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "";
+    }
+
+
+    return new Intl.DateTimeFormat(
+        "fr-FR",
+        {
+            dateStyle:
+                "medium",
+
+            timeStyle:
+                "short"
+        }
+    )
+        .format(
+            date
+        );
+}
+
+
+function getAnnouncementTypeLabel(
+    type
+) {
+
+    switch (
+        String(
+            type ??
+            ""
+        )
+            .toLowerCase()
+    ) {
+
+        case "announcement":
+            return "📢 Annonce";
+
+        case "poll":
+            return "🗳️ Sondage";
+
+        case "game":
+            return "🎮 Jeu";
+
+        case "artwork":
+            return "🎨 Artwork";
+
+        case "lore":
+            return "📖 Lore";
+
+        case "event":
+            return "📅 Événement";
+
+        case "stream":
+            return "🔴 Stream";
+
+        default:
+            return "✨ Autre";
+    }
+}
+
+
+/* =========================================================
+   STATUT FORMULAIRE
+========================================================= */
+
+function setAnnouncementFormStatus(
+    message,
+    type = ""
+) {
+
+    if (
+        !announcementFormStatus
+    ) {
+
+        return;
+    }
+
+
+    announcementFormStatus.textContent =
+        message;
+
+
+    announcementFormStatus.classList.remove(
+        "is-success",
+        "is-error"
+    );
+
+
+    if (
+        type ===
+        "success"
+    ) {
+
+        announcementFormStatus.classList.add(
+            "is-success"
+        );
+    }
+
+
+    if (
+        type ===
+        "error"
+    ) {
+
+        announcementFormStatus.classList.add(
+            "is-error"
+        );
+    }
+}
+
+
+/* =========================================================
+   APERÇU IMAGE
+========================================================= */
+
+function updateAnnouncementImagePreview() {
+
+    if (
+        !announcementImagePreview ||
+        !announcementImagePreviewImg ||
+        !announcementImageUrlInput
+    ) {
+
+        return;
+    }
+
+
+    const imageUrl =
+        announcementImageUrlInput
+            .value
+            .trim();
+
+
+    if (
+        !imageUrl
+    ) {
+
+        announcementImagePreview.hidden =
+            true;
+
+
+        announcementImagePreviewImg.src =
+            "";
+
+
+        return;
+    }
+
+
+    announcementImagePreviewImg.src =
+        imageUrl;
+
+
+    announcementImagePreview.hidden =
+        false;
+}
+
+
+/* =========================================================
+   RESET FORMULAIRE
+========================================================= */
+
+function resetAnnouncementForm() {
+
+    announcementForm
+        ?.reset();
+
+
+    if (
+        announcementIdInput
+    ) {
+
+        announcementIdInput.value =
+            "";
+    }
+
+
+    if (
+        announcementFormTitle
+    ) {
+
+        announcementFormTitle.textContent =
+            "Nouvelle annonce";
+    }
+
+
+    if (
+        announcementSubmitLabel
+    ) {
+
+        announcementSubmitLabel.textContent =
+            "Enregistrer l'annonce";
+    }
+
+
+    if (
+        announcementCancelEditButton
+    ) {
+
+        announcementCancelEditButton.hidden =
+            true;
+    }
+
+
+    if (
+        announcementImagePreview
+    ) {
+
+        announcementImagePreview.hidden =
+            true;
+    }
+
+
+    if (
+        announcementImagePreviewImg
+    ) {
+
+        announcementImagePreviewImg.src =
+            "";
+    }
+
+
+    setAnnouncementFormStatus(
+        ""
+    );
+}
+
+
+/* =========================================================
+   REMPLIR FORMULAIRE POUR MODIFICATION
+========================================================= */
+
+function editAnnouncement(
+    announcementId
+) {
+
+    const announcement =
+        adminAnnouncements.find(
+            item =>
+                String(
+                    item.id
+                ) ===
+                String(
+                    announcementId
+                )
+        );
+
+
+    if (
+        !announcement
+    ) {
+
+        return;
+    }
+
+
+    if (
+        announcementIdInput
+    ) {
+
+        announcementIdInput.value =
+            announcement.id ??
+            "";
+    }
+
+
+    if (
+        announcementTypeInput
+    ) {
+
+        announcementTypeInput.value =
+            announcement.type ??
+            "announcement";
+    }
+
+
+    if (
+        announcementIconInput
+    ) {
+
+        announcementIconInput.value =
+            announcement.icon ??
+            "";
+    }
+
+
+    if (
+        announcementTitleInput
+    ) {
+
+        announcementTitleInput.value =
+            announcement.title ??
+            "";
+    }
+
+
+    if (
+        announcementMessageInput
+    ) {
+
+        announcementMessageInput.value =
+            announcement.message ??
+            "";
+    }
+
+
+    if (
+        announcementLinkUrlInput
+    ) {
+
+        announcementLinkUrlInput.value =
+            announcement.linkUrl ??
+            "";
+    }
+
+
+    if (
+        announcementLinkLabelInput
+    ) {
+
+        announcementLinkLabelInput.value =
+            announcement.linkLabel ??
+            "";
+    }
+
+
+    if (
+        announcementImageUrlInput
+    ) {
+
+        announcementImageUrlInput.value =
+            announcement.imageUrl ??
+            "";
+    }
+
+
+    if (
+        announcementPublishedInput
+    ) {
+
+        announcementPublishedInput.checked =
+            announcement.isPublished ===
+            true;
+    }
+
+
+    if (
+        announcementPinnedInput
+    ) {
+
+        announcementPinnedInput.checked =
+            announcement.isPinned ===
+            true;
+    }
+
+
+    if (
+        announcementImportantInput
+    ) {
+
+        announcementImportantInput.checked =
+            announcement.isImportant ===
+            true;
+    }
+
+
+    if (
+        announcementPublishedAtInput
+    ) {
+
+        announcementPublishedAtInput.value =
+            formatAnnouncementDateTimeLocal(
+                announcement.publishedAt
+            );
+    }
+
+
+    if (
+        announcementExpiresAtInput
+    ) {
+
+        announcementExpiresAtInput.value =
+            formatAnnouncementDateTimeLocal(
+                announcement.expiresAt
+            );
+    }
+
+
+    if (
+        announcementFormTitle
+    ) {
+
+        announcementFormTitle.textContent =
+            "Modifier l'annonce";
+    }
+
+
+    if (
+        announcementSubmitLabel
+    ) {
+
+        announcementSubmitLabel.textContent =
+            "Enregistrer les modifications";
+    }
+
+
+    if (
+        announcementCancelEditButton
+    ) {
+
+        announcementCancelEditButton.hidden =
+            false;
+    }
+
+
+    updateAnnouncementImagePreview();
+
+
+    setAnnouncementFormStatus(
+        ""
+    );
+
+
+    announcementForm
+        ?.scrollIntoView({
+            behavior:
+                "smooth",
+
+            block:
+                "start"
+        });
+}
+
+
+/* =========================================================
+   RENDER LISTE
+========================================================= */
+
+function renderAdminAnnouncements() {
+
+    if (
+        !announcementAdminList
+    ) {
+
+        return;
+    }
+
+
+    if (
+        announcementAdminCount
+    ) {
+
+        announcementAdminCount.textContent =
+            String(
+                adminAnnouncements.length
+            );
+    }
+
+
+    if (
+        adminAnnouncements.length ===
+        0
+    ) {
+
+        announcementAdminList.innerHTML = `
+            <p class="announcement-admin-empty">
+                Aucune annonce pour le moment.
+            </p>
+        `;
+
+
+        return;
+    }
+
+
+    announcementAdminList.innerHTML =
+        adminAnnouncements
+            .map(
+                announcement => {
+
+                    const badges =
+                        [];
+
+
+                    if (
+                        announcement.isPublished
+                    ) {
+
+                        badges.push(
+                            "👁️ Publiée"
+                        );
+
+                    } else {
+
+                        badges.push(
+                            "🙈 Brouillon"
+                        );
+                    }
+
+
+                    if (
+                        announcement.isPinned
+                    ) {
+
+                        badges.push(
+                            "📌 Épinglée"
+                        );
+                    }
+
+
+                    if (
+                        announcement.isImportant
+                    ) {
+
+                        badges.push(
+                            "⚠️ Importante"
+                        );
+                    }
+
+
+                    const dateText =
+                        announcement.publishedAt
+                            ? formatAnnouncementDisplayDate(
+                                announcement.publishedAt
+                            )
+                            : "";
+
+
+                    return `
+                        <article
+                            class="
+                                announcement-admin-item
+                                ${
+                                    announcement.isPublished
+                                        ? ""
+                                        : "is-unpublished"
+                                }
+                                ${
+                                    announcement.isImportant
+                                        ? "is-important"
+                                        : ""
+                                }
+                            "
+                        >
+
+                            <div class="announcement-admin-item-header">
+
+                                <div>
+
+                                    <span class="announcement-form-kicker">
+                                        ${escapeAnnouncementHtml(
+                                            getAnnouncementTypeLabel(
+                                                announcement.type
+                                            )
+                                        )}
+                                    </span>
+
+                                    <h4 class="announcement-admin-item-title">
+                                        ${escapeAnnouncementHtml(
+                                            announcement.title
+                                        )}
+                                    </h4>
+
+                                </div>
+
+                                <span>
+                                    ${escapeAnnouncementHtml(
+                                        announcement.icon ??
+                                        ""
+                                    )}
+                                </span>
+
+                            </div>
+
+
+                            ${
+                                announcement.message
+                                    ? `
+                                        <p class="announcement-admin-item-message">
+                                            ${escapeAnnouncementHtml(
+                                                announcement.message
+                                            )}
+                                        </p>
+                                    `
+                                    : ""
+                            }
+
+
+                            ${
+                                dateText
+                                    ? `
+                                        <p class="announcement-admin-item-message">
+                                            🕒 ${escapeAnnouncementHtml(
+                                                dateText
+                                            )}
+                                        </p>
+                                    `
+                                    : ""
+                            }
+
+
+                            <div class="announcement-admin-item-badges">
+
+                                ${badges
+                                    .map(
+                                        badge => `
+                                            <span class="announcement-admin-badge">
+                                                ${escapeAnnouncementHtml(
+                                                    badge
+                                                )}
+                                            </span>
+                                        `
+                                    )
+                                    .join("")}
+
+                            </div>
+
+
+                            <div class="announcement-admin-item-actions">
+
+                                <button
+                                    class="announcement-admin-edit"
+                                    type="button"
+                                    data-announcement-edit="${escapeAnnouncementHtml(
+                                        announcement.id
+                                    )}"
+                                >
+                                    ✏️ Modifier
+                                </button>
+
+
+                                <button
+                                    class="announcement-admin-delete"
+                                    type="button"
+                                    data-announcement-delete="${escapeAnnouncementHtml(
+                                        announcement.id
+                                    )}"
+                                >
+                                    🗑️ Supprimer
+                                </button>
+
+                            </div>
+
+                        </article>
+                    `;
+                }
+            )
+            .join("");
+
+
+    setupAnnouncementAdminButtons();
+}
+
+
+/* =========================================================
+   BOUTONS LISTE
+========================================================= */
+
+function setupAnnouncementAdminButtons() {
+
+    const editButtons =
+        document.querySelectorAll(
+            "[data-announcement-edit]"
+        );
+
+
+    editButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    editAnnouncement(
+                        button.dataset
+                            .announcementEdit
+                    );
+                }
+            );
+        }
+    );
+
+
+    const deleteButtons =
+        document.querySelectorAll(
+            "[data-announcement-delete]"
+        );
+
+
+    deleteButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                async () => {
+
+                    const announcementId =
+                        button.dataset
+                            .announcementDelete;
+
+
+                    if (
+                        !announcementId
+                    ) {
+
+                        return;
+                    }
+
+
+                    const announcement =
+                        adminAnnouncements.find(
+                            item =>
+                                String(
+                                    item.id
+                                ) ===
+                                String(
+                                    announcementId
+                                )
+                        );
+
+
+                    const confirmed =
+                        window.confirm(
+                            announcement?.title
+                                ? `Supprimer l'annonce "${announcement.title}" ?`
+                                : "Supprimer cette annonce ?"
+                        );
+
+
+                    if (
+                        !confirmed
+                    ) {
+
+                        return;
+                    }
+
+
+                    try {
+
+                        button.disabled =
+                            true;
+
+
+                        await adminApiRequest(
+                            `${ADMIN_ANNOUNCEMENTS_API}?id=${encodeURIComponent(
+                                announcementId
+                            )}`,
+                            {
+                                method:
+                                    "DELETE"
+                            }
+                        );
+
+
+                        if (
+                            String(
+                                announcementIdInput?.value
+                            ) ===
+                            String(
+                                announcementId
+                            )
+                        ) {
+
+                            resetAnnouncementForm();
+                        }
+
+
+                        await loadAdminAnnouncements();
+
+
+                    } catch (
+                        error
+                    ) {
+
+                        console.error(
+                            "[Admin Announcements Delete]",
+                            error
+                        );
+
+
+                        window.alert(
+                            error?.message ||
+                            "Impossible de supprimer l'annonce."
+                        );
+
+
+                    } finally {
+
+                        button.disabled =
+                            false;
+                    }
+                }
+            );
+        }
+    );
+}
+
+
+/* =========================================================
+   CHARGEMENT
+========================================================= */
+
+async function loadAdminAnnouncements() {
+
+    if (
+        !announcementAdminList
+    ) {
+
+        return;
+    }
+
+
+    announcementAdminList.innerHTML = `
+        <p class="announcement-admin-empty">
+            Chargement des annonces...
+        </p>
+    `;
+
+
+    try {
+
+        const data =
+            await adminApiRequest(
+                ADMIN_ANNOUNCEMENTS_API
+            );
+
+
+        adminAnnouncements =
+            Array.isArray(
+                data?.announcements
+            )
+                ? data.announcements
+                : [];
+
+
+        renderAdminAnnouncements();
+
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "[Admin Announcements Load]",
+            error
+        );
+
+
+        adminAnnouncements =
+            [];
+
+
+        if (
+            announcementAdminCount
+        ) {
+
+            announcementAdminCount.textContent =
+                "0";
+        }
+
+
+        announcementAdminList.innerHTML = `
+            <p class="announcement-admin-empty">
+                Impossible de charger les annonces.
+            </p>
+        `;
+    }
+}
+
+
+/* =========================================================
+   ENREGISTREMENT
+========================================================= */
+
+async function submitAnnouncement(
+    event
+) {
+
+    event.preventDefault();
+
+
+    if (
+        !announcementForm
+    ) {
+
+        return;
+    }
+
+
+    const id =
+        announcementIdInput
+            ?.value
+            .trim() ||
+        "";
+
+
+    const payload = {
+
+        type:
+            announcementTypeInput
+                ?.value ||
+            "announcement",
+
+        icon:
+            announcementIconInput
+                ?.value
+                .trim() ||
+            "",
+
+        title:
+            announcementTitleInput
+                ?.value
+                .trim() ||
+            "",
+
+        message:
+            announcementMessageInput
+                ?.value
+                .trim() ||
+            "",
+
+        linkUrl:
+            announcementLinkUrlInput
+                ?.value
+                .trim() ||
+            "",
+
+        linkLabel:
+            announcementLinkLabelInput
+                ?.value
+                .trim() ||
+            "",
+
+        imageUrl:
+            announcementImageUrlInput
+                ?.value
+                .trim() ||
+            "",
+
+        isPublished:
+            announcementPublishedInput
+                ?.checked ===
+            true,
+
+        isPinned:
+            announcementPinnedInput
+                ?.checked ===
+            true,
+
+        isImportant:
+            announcementImportantInput
+                ?.checked ===
+            true,
+
+        publishedAt:
+            announcementPublishedAtInput
+                ?.value ||
+            null,
+
+        expiresAt:
+            announcementExpiresAtInput
+                ?.value ||
+            null
+
+    };
+
+
+    if (
+        !payload.title
+    ) {
+
+        setAnnouncementFormStatus(
+            "Le titre est obligatoire.",
+            "error"
+        );
+
+
+        return;
+    }
+
+
+    try {
+
+        if (
+            announcementSubmitButton
+        ) {
+
+            announcementSubmitButton.disabled =
+                true;
+        }
+
+
+        setAnnouncementFormStatus(
+            id
+                ? "Modification en cours..."
+                : "Création en cours..."
+        );
+
+
+        if (
+            id
+        ) {
+
+            await adminApiRequest(
+                `${ADMIN_ANNOUNCEMENTS_API}?id=${encodeURIComponent(
+                    id
+                )}`,
+                {
+                    method:
+                        "PUT",
+
+                    body:
+                        payload
+                }
+            );
+
+
+            setAnnouncementFormStatus(
+                "Annonce modifiée avec succès. 💜",
+                "success"
+            );
+
+
+        } else {
+
+            await adminApiRequest(
+                ADMIN_ANNOUNCEMENTS_API,
+                {
+                    method:
+                        "POST",
+
+                    body:
+                        payload
+                }
+            );
+
+
+            setAnnouncementFormStatus(
+                "Annonce créée avec succès. 💜",
+                "success"
+            );
+        }
+
+
+        await loadAdminAnnouncements();
+
+
+        setTimeout(
+            () => {
+
+                resetAnnouncementForm();
+            },
+            900
+        );
+
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            "[Admin Announcements Submit]",
+            error
+        );
+
+
+        setAnnouncementFormStatus(
+            error?.message ||
+            "Impossible d'enregistrer l'annonce.",
+            "error"
+        );
+
+
+    } finally {
+
+        if (
+            announcementSubmitButton
+        ) {
+
+            announcementSubmitButton.disabled =
+                false;
+        }
+    }
+}
+
+
+/* =========================================================
+   ÉVÉNEMENTS
+========================================================= */
+
+announcementForm
+    ?.addEventListener(
+        "submit",
+        submitAnnouncement
+    );
+
+
+announcementCancelEditButton
+    ?.addEventListener(
+        "click",
+        resetAnnouncementForm
+    );
+
+
+announcementImageUrlInput
+    ?.addEventListener(
+        "input",
+        updateAnnouncementImagePreview
+    );
+
+
+announcementImagePreviewImg
+    ?.addEventListener(
+        "error",
+        () => {
+
+            if (
+                announcementImagePreview
+            ) {
+
+                announcementImagePreview.hidden =
+                    true;
+            }
+        }
+    );
+
+
+announcementImagePreviewImg
+    ?.addEventListener(
+        "load",
+        () => {
+
+            if (
+                announcementImagePreview &&
+                announcementImagePreviewImg.src
+            ) {
+
+                announcementImagePreview.hidden =
+                    false;
+            }
+        }
+    );
+
+
+/* =========================================================
+   INITIALISATION ANNONCES
+========================================================= */
+
+loadAdminAnnouncements();
