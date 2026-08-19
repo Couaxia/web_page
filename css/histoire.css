@@ -603,7 +603,8 @@ body > img {
    BOUTONS DE L’HISTOIRE
 ========================= */
 
-button {
+.history1 button,
+.page_histoire1 button {
     margin: 10px;
     padding: 0;
 
@@ -611,7 +612,9 @@ button {
     border: none;
 }
 
-button a {
+
+.history1 button a,
+.page_histoire1 button a {
     display: inline-block;
 
     padding: 13px 22px;
@@ -632,14 +635,20 @@ button a {
         box-shadow 0.3s ease;
 }
 
-button a:hover {
-    color: #000000;
-    background: var(--accent-color, #22F2EF);
 
-    transform: scale(1.08);
+.history1 button a:hover,
+.page_histoire1 button a:hover {
+    color: #000000;
+
+    background:
+        var(--accent-color, #22F2EF);
+
+    transform:
+        scale(1.08);
 
     box-shadow:
-        0 0 20px var(--accent-color, #22F2EF);
+        0 0 20px
+        var(--accent-color, #22F2EF);
 }
 
 /* =========================
@@ -703,7 +712,8 @@ button a:hover {
         max-width: 100%;
     }
 
-    button a {
+    .history1 button a,
+    .page_histoire1 button a {
         width: 100%;
     }
 }
@@ -724,11 +734,12 @@ button a:hover {
     .history1,
     .page_histoire1,
     body > img,
-    button a {
+    .history1 button a,
+    .page_histoire1 button a {
         transition: none;
     }
-
-    button a:hover {
+    .history1 button a:hover,
+    .page_histoire1 button a:hover {
         transform: none;
     }
 }
