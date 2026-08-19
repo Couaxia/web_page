@@ -10,7 +10,7 @@ import {
 } from "../_lib/supabase.js";
 
 import {
-    requireAdminSession
+    requireAdmin
 } from "../_lib/admin-auth.js";
 
 
@@ -1309,7 +1309,7 @@ export default async function handler(
     try {
 
         const authenticated =
-            await requireAdminSession(
+            await requireAdmin(
                 request,
                 response
             );
