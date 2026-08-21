@@ -32,6 +32,16 @@ const TWITCH_CHANNEL_LOGIN =
         .trim()
         .toLowerCase();
 
+/* =========================================================
+   CACHE TOKEN TWITCH
+========================================================= */
+
+let cachedAccessToken =
+    null;
+
+
+let cachedAccessTokenExpiresAt =
+    0;
 
 /* =========================================================
    OUTILS
@@ -78,6 +88,22 @@ function getTwitchCredentials() {
 ========================================================= */
 
 async function getAppAccessToken() {
+    /* =====================================================
+   TOKEN EN CACHE
+===================================================== */
+
+const now =
+    Date.now();
+
+
+if (
+    cachedAccessToken &&
+    cachedAccessTokenExpiresAt >
+        now + 60_000
+) {
+
+    return cachedAccessToken;
+}
 
     const {
         clientId,
@@ -177,7 +203,32 @@ async function getAppAccessToken() {
     }
 
 
-    return accessToken;
+    /* =====================================================
+   MÉMORISATION DU TOKEN
+===================================================== */
+
+const expiresIn =
+    Number(
+        payload?.expires_in
+    );
+
+
+cachedAccessToken =
+    accessToken;
+
+
+cachedAccessTokenExpiresAt =
+    Date.now() +
+    (
+        Number.isFinite(
+            expiresIn
+        )
+            ? expiresIn * 1000
+            : 3_600_000
+    );
+
+
+return cachedAccessToken;
 }
 
 
