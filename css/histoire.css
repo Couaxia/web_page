@@ -1,8 +1,13 @@
 /* =========================
    TITRES
 ========================= */
-h1,
-h2 {
+#page_histoire0,
+#page_histoire1,
+#page_histoire2,
+#page_histoire3,
+#page_histoire4,
+#page_annexe_chp1,
+#page_annexe_chp2{
     display: block;
 
     width: 90%;
@@ -40,9 +45,13 @@ h2 {
         border-color 0.35s ease,
         box-shadow 0.35s ease;
 }
-
-h1::after,
-h2::after {
+#page_histoire0::after,
+#page_histoire1::after,
+#page_histoire2::after,
+#page_histoire3::after,
+#page_histoire4::after,
+#page_annexe_chp1::after,
+#page_annexe_chp2::after{
     content: "";
 
     display: block;
@@ -219,7 +228,9 @@ html[data-theme="dark"] {
 
 #page_histoire0,
 #page_histoire1,
+#page_histoire2,
 #page_histoire3,
+#page_histoire4,
 #page_annexe_chp1,
 #page_annexe_chp2 {
     font-size: clamp(1.8rem, 4vw, 3rem);
@@ -656,11 +667,13 @@ body > img {
 ========================= */
 
 @media (max-width: 700px) {
-    #page_histoire0,
-    #page_histoire1,
-    #page_histoire3,
-    #page_annexe_chp1,
-    #page_annexe_chp2 {
+#page_histoire0,
+#page_histoire1,
+#page_histoire2,
+#page_histoire3,
+#page_histoire4,
+#page_annexe_chp1,
+#page_annexe_chp2 {
         padding: 15px 25px;
 
         font-size: 1.8rem;

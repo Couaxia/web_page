@@ -1638,3 +1638,84 @@ html[data-theme="dark"]
     }
 
 }
+/* =========================================================
+   CORRECTION — TITRE DU PANNEAU DE NOTIFICATIONS
+   Empêche les CSS des pages Histoire de modifier le h2
+========================================================= */
+
+.notification-panel-header h2 {
+    display:
+        block;
+
+    width:
+        auto;
+
+    max-width:
+        none;
+
+    margin:
+        0;
+
+    padding:
+        0;
+
+    color:
+        var(--announcement-title);
+
+    font-family:
+        inherit;
+
+    font-size:
+        1.25rem;
+
+    font-weight:
+        900;
+
+    line-height:
+        1.25;
+
+    text-align:
+        left;
+
+    background:
+        none;
+
+    background-image:
+        none;
+
+    border:
+        none;
+
+    border-radius:
+        0;
+
+    box-shadow:
+        none;
+
+    text-shadow:
+        none;
+
+    white-space:
+        normal;
+
+    overflow-wrap:
+        anywhere;
+
+    animation:
+        none;
+
+    transform:
+        none;
+}
+
+
+/* Désactive également la barre décorative
+   créée par histoire.css */
+
+.notification-panel-header h2::after {
+    content:
+        none;
+
+    display:
+        none;
+}
