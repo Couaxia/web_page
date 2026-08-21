@@ -3686,7 +3686,8 @@ html[data-theme="dark"] {
 
 
 /* =========================================================
-   FLÈCHES
+   FLÈCHES DE NAVIGATION — BULLES D'ÉNERGIE
+   Même design que scroll-page
 ========================================================= */
 
 .gallery-navigation-arrow {
@@ -3697,7 +3698,7 @@ html[data-theme="dark"] {
         10;
 
     display:
-        flex;
+        inline-flex;
 
     align-items:
         center;
@@ -3706,10 +3707,16 @@ html[data-theme="dark"] {
         center;
 
     width:
-        62px;
+        52px;
 
     height:
-        62px;
+        52px;
+
+    min-width:
+        52px;
+
+    min-height:
+        52px;
 
     margin:
         0;
@@ -3718,43 +3725,80 @@ html[data-theme="dark"] {
         0;
 
     color:
-        var(--gallery-nav-arrow-text);
+        var(--scroll-energy-icon);
+
+    background:
+        var(--scroll-energy-background);
 
     border:
-        2px solid
-        var(--gallery-nav-arrow-border);
+        1px solid
+        var(--scroll-energy-border);
 
     border-radius:
         50%;
 
-    background:
-        var(--gallery-nav-arrow-bg);
-
-    box-shadow:
-        0 8px 20px
-        rgba(0, 0, 0, 0.35),
-        0 0 18px
-        rgba(34, 242, 239, 0.16);
-
-    font:
-        inherit;
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
     font-size:
-        2rem;
+        1.55rem;
 
     font-weight:
         900;
 
+    line-height:
+        1;
+
+    box-shadow:
+        var(--scroll-energy-shadow);
+
+    backdrop-filter:
+        blur(8px);
+
+    -webkit-backdrop-filter:
+        blur(8px);
+
     cursor:
         pointer;
 
+    overflow:
+        visible;
+
+    opacity:
+        1;
+
+    visibility:
+        visible;
+
+    pointer-events:
+        auto;
+
+    transform:
+        translateY(0)
+        scale(1);
+
+    animation:
+        galleryNavigationEnergyFloat
+        3.8s
+        ease-in-out
+        infinite;
+
     transition:
-        transform 0.22s ease,
-        background 0.22s ease,
-        border-color 0.22s ease,
-        box-shadow 0.22s ease;
+        opacity 0.3s ease,
+        visibility 0.3s ease,
+        color 0.3s ease,
+        background 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.3s ease;
 }
 
+
+/* =========================================================
+   POSITION
+========================================================= */
 
 .gallery-navigation-previous {
     grid-column:
@@ -3777,48 +3821,289 @@ html[data-theme="dark"] {
 
     justify-self:
         center;
+
+    animation-delay:
+        -1.9s;
 }
 
 
-.gallery-navigation-arrow:hover {
-    transform:
-        scale(1.10);
+/* =========================================================
+   ANNEAU D'ÉNERGIE
+========================================================= */
 
-    background:
-        rgba(242, 34, 146, 0.90);
+.gallery-navigation-arrow::before {
+    content:
+        "";
 
-    border-color:
-        #ffffff;
+    position:
+        absolute;
+
+    inset:
+        -5px;
+
+    border:
+        1px solid
+        var(--scroll-energy-ring);
+
+    border-radius:
+        50%;
 
     box-shadow:
-        0 10px 25px
-        rgba(0, 0, 0, 0.38),
-        0 0 24px
-        rgba(242, 34, 146, 0.38);
+        0 0 6px
+        rgba(
+            34,
+            242,
+            239,
+            0.2
+        );
+
+    opacity:
+        0.65;
+
+    transform:
+        scale(0.92)
+        rotate(0deg);
+
+    pointer-events:
+        none;
+
+    animation:
+        galleryNavigationEnergyRing
+        5s
+        linear
+        infinite;
+
+    transition:
+        opacity 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.3s ease;
 }
 
+
+/* =========================================================
+   REFLET
+========================================================= */
+
+.gallery-navigation-arrow::after {
+    content:
+        "";
+
+    position:
+        absolute;
+
+    top:
+        8px;
+
+    left:
+        11px;
+
+    width:
+        10px;
+
+    height:
+        7px;
+
+    background:
+        radial-gradient(
+            ellipse,
+            var(--scroll-energy-particle),
+            transparent 72%
+        );
+
+    border-radius:
+        50%;
+
+    opacity:
+        0.8;
+
+    transform:
+        rotate(-25deg);
+
+    pointer-events:
+        none;
+}
+
+
+/* =========================================================
+   ICÔNE ← →
+========================================================= */
+
+.gallery-navigation-arrow span {
+    position:
+        relative;
+
+    z-index:
+        2;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    line-height:
+        1;
+
+    pointer-events:
+        none;
+}
+
+
+/* =========================================================
+   SURVOL
+========================================================= */
+
+.gallery-navigation-arrow:hover {
+    color:
+        #ffffff;
+
+    background:
+        var(--scroll-energy-hover-background);
+
+    border-color:
+        rgba(
+            34,
+            242,
+            239,
+            0.88
+        );
+
+    box-shadow:
+        var(--scroll-energy-hover-shadow);
+
+    transform:
+        translateY(-4px)
+        scale(1.08);
+
+    animation-play-state:
+        paused;
+}
+
+
+.gallery-navigation-arrow:hover::before {
+    border-color:
+        rgba(
+            242,
+            34,
+            146,
+            0.8
+        );
+
+    box-shadow:
+        0 0 8px
+        rgba(
+            34,
+            242,
+            239,
+            0.52
+        ),
+        0 0 13px
+        rgba(
+            242,
+            34,
+            146,
+            0.32
+        );
+
+    opacity:
+        1;
+}
+
+
+/* =========================================================
+   CLIC
+========================================================= */
 
 .gallery-navigation-arrow:active {
     transform:
-        scale(0.94);
+        translateY(-1px)
+        scale(0.92);
 }
 
+
+/* =========================================================
+   CLAVIER
+========================================================= */
 
 .gallery-navigation-arrow:focus-visible {
     outline:
-        3px solid
-        #22f2ef;
+        2px solid
+        rgba(
+            34,
+            242,
+            239,
+            0.95
+        );
 
     outline-offset:
-        4px;
+        5px;
 }
 
+
+/* =========================================================
+   BOUTON CACHÉ
+========================================================= */
 
 .gallery-navigation-arrow[hidden] {
     display:
         none !important;
 }
 
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes galleryNavigationEnergyFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0)
+            rotate(-1deg);
+    }
+
+    50% {
+        transform:
+            translateY(-4px)
+            rotate(1deg);
+    }
+}
+
+
+@keyframes galleryNavigationEnergyRing {
+
+    0% {
+        transform:
+            scale(0.92)
+            rotate(0deg);
+
+        border-color:
+            var(--scroll-energy-ring);
+    }
+
+    50% {
+        transform:
+            scale(1.03)
+            rotate(180deg);
+
+        border-color:
+            var(--scroll-energy-ring-secondary);
+    }
+
+    100% {
+        transform:
+            scale(0.92)
+            rotate(360deg);
+
+        border-color:
+            var(--scroll-energy-ring);
+    }
+}
 
 /* =========================================================
    BOUTON FERMER
@@ -4001,15 +4286,70 @@ html[data-theme="dark"] {
 }
 
 
+/* =========================================================
+   INFORMATIONS DE L'ARTISTE
+========================================================= */
+
+.gallery-navigation-info {
+    grid-column:
+        2;
+
+    grid-row:
+        3;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        6px;
+
+    min-height:
+        65px;
+
+    text-align:
+        center;
+}
+
+
 .gallery-navigation-title {
     color:
         var(--gallery-nav-title);
 
     font-size:
-        1rem;
+        clamp(
+            1.25rem,
+            1.5vw,
+            1.65rem
+        );
 
     font-weight:
         900;
+
+    line-height:
+        1.15;
+
+    text-align:
+        center;
+
+    text-shadow:
+        0
+        2px
+        8px
+        rgba(
+            0,
+            0,
+            0,
+            0.18
+        );
 }
 
 
@@ -4018,12 +4358,21 @@ html[data-theme="dark"] {
         var(--gallery-nav-artist);
 
     font-size:
-        0.88rem;
+        clamp(
+            0.95rem,
+            1vw,
+            1.1rem
+        );
 
     font-weight:
         800;
-}
 
+    line-height:
+        1.2;
+
+    text-align:
+        center;
+}
 
 /* =========================================================
    MOBILE
