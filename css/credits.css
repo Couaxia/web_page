@@ -564,7 +564,7 @@ html[data-theme="dark"] {
 
 .credits-gallery-section[data-gallery="couaxia"] {
     --gallery-background:
-        url("../images/Arts/Anwedia.png");
+        url("https://qudeuzkwvwprlhqtzsct.supabase.co/storage/v1/object/public/artworks/Couaxia/forme-3/Anwedia.png");
 
     --gallery-background-size:
         cover;
@@ -575,7 +575,7 @@ html[data-theme="dark"] {
 
 .credits-gallery-section[data-gallery="compagnons"] {
     --gallery-background:
-        url("../images/Arts/DelvaRelva.png");
+        url("https://qudeuzkwvwprlhqtzsct.supabase.co/storage/v1/object/public/artworks/Couaxia/forme-3/DelvaRelva.png");
 
     --gallery-background-size:
         cover;
@@ -586,7 +586,7 @@ html[data-theme="dark"] {
 
 .credits-gallery-section[data-gallery="stream"] {
     --gallery-background:
-        url("../images/Arts/Couaxia_flat.jpg");
+        url("https://qudeuzkwvwprlhqtzsct.supabase.co/storage/v1/object/public/artworks/Couaxia/forme-3/Couaxia_flat.jpg");
 
     --gallery-background-size:
         cover;
@@ -597,7 +597,7 @@ html[data-theme="dark"] {
 
 .credits-gallery-section[data-gallery="collab"] {
     --gallery-background:
-        url("../images/Arts/Anghyuwu_Chibi_trio.png");
+        url("https://qudeuzkwvwprlhqtzsct.supabase.co/storage/v1/object/public/artworks/collab/Anghyuwu_Chibi_trio.png");
 
     --gallery-background-size:
         cover;
@@ -608,7 +608,7 @@ html[data-theme="dark"] {
 
 .credits-gallery-section[data-gallery="couple"] {
     --gallery-background:
-        url("../images/Arts/Couaxia_Myo_Bar_YYuuikura.png");
+        url("https://qudeuzkwvwprlhqtzsct.supabase.co/storage/v1/object/public/artworks/couple/Couaxia_Myo_Bar_YYuuikura.png");
 
     --gallery-background-size:
         115% auto;
@@ -619,7 +619,7 @@ html[data-theme="dark"] {
 
 .credits-gallery-section[data-gallery="fanart"] {
     --gallery-background:
-        url("../images/Arts/couaxiaboobiii_kao.png");
+        url("https://qudeuzkwvwprlhqtzsct.supabase.co/storage/v1/object/public/artworks/fan-art/couaxiaboobiii_kao.png");
 
     --gallery-background-size:
         cover;
@@ -631,7 +631,7 @@ html[data-theme="dark"] {
 /* Galerie spéciale ♥ Mes favoris */
 .credits-gallery-section[data-gallery="favorites"] {
     --gallery-background:
-        url("../images/Arts/YYuuikura.png");
+        url("https://qudeuzkwvwprlhqtzsct.supabase.co/storage/v1/object/public/artworks/Couaxia/forme-3/YYuuikura.png");
 
     --gallery-background-size:
         cover;
