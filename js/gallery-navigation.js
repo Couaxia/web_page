@@ -92,7 +92,22 @@ document.addEventListener(
                     1 / 1
                 </div>
 
+                <!-- =========================================
+                    FAVORI
+                ========================================== -->
 
+                <button
+                    type="button"
+                    class="gallery-navigation-favorite"
+                    aria-label="Ajouter aux favoris"
+                    aria-pressed="false"
+                    title="Ajouter aux favoris">
+                    <span
+                        class="gallery-navigation-favorite-icon"
+                        aria-hidden="true">
+                        ♡
+                    </span>
+                </button>
                 <!-- =========================================
                      PRÉCÉDENT
                 ========================================== -->
@@ -128,8 +143,13 @@ document.addEventListener(
 
                     <video
                         class="gallery-navigation-video"
-                        controls
+                        autoplay
+                        muted
+                        loop
                         playsinline
+                        preload="auto"
+                        disablepictureinpicture
+                        controlslist="nodownload noplaybackrate nofullscreen"
                         hidden
                     ></video>
 
@@ -219,7 +239,17 @@ document.addEventListener(
             lightbox.querySelector(
                 ".gallery-navigation-counter"
             );
+        
+        const favoriteButton =
+            lightbox.querySelector(
+                ".gallery-navigation-favorite"
+            );
 
+
+        const favoriteIcon =
+            lightbox.querySelector(
+                ".gallery-navigation-favorite-icon"
+            );    
 
         const image =
             lightbox.querySelector(
@@ -409,19 +439,22 @@ document.addEventListener(
                                     ".artist-content h3"
                                 );
 
-
                             const artistElement =
                                 card.querySelector(
                                     ".artist-role"
                                 );
-
+                            
+                            const favoriteElement =
+                                card.querySelector(
+                                    ".gallery-favorite-button"
+                                );    
 
                             return {
 
                                 card,
 
                                 container,
-
+                                favoriteElement,
                                 type:
                                     artworkVideo
                                         ? "video"
@@ -463,7 +496,7 @@ document.addEventListener(
                                     normalizeText(
                                         watermarkElement?.src
                                     )
-
+                                
                             };
                         }
                     )
@@ -474,7 +507,93 @@ document.addEventListener(
                     );
         }
 
+        /* =========================================================
+        FAVORI — SYNCHRONISATION
+        ========================================================= */
 
+        function updateFavoriteButton() {
+
+            if (
+                currentIndex < 0 ||
+                !artworks[currentIndex]
+            ) {
+
+                favoriteButton.hidden =
+                    true;
+
+                return;
+            }
+
+
+            const artwork =
+                artworks[currentIndex];
+
+
+            const originalButton =
+                artwork.favoriteElement;
+
+
+            if (
+                !originalButton
+            ) {
+
+                favoriteButton.hidden =
+                    true;
+
+                return;
+            }
+
+
+            favoriteButton.hidden =
+                false;
+
+
+            /*
+            * On récupère l'état du vrai bouton de la carte.
+            */
+            const isFavorite =
+                originalButton.classList.contains(
+                    "is-favorite"
+                ) ||
+                originalButton.getAttribute(
+                    "aria-pressed"
+                ) ===
+                    "true";
+
+
+            favoriteButton.classList.toggle(
+                "is-favorite",
+                isFavorite
+            );
+
+
+            favoriteButton.setAttribute(
+                "aria-pressed",
+                String(
+                    isFavorite
+                )
+            );
+
+
+            favoriteButton.setAttribute(
+                "aria-label",
+                isFavorite
+                    ? "Retirer des favoris"
+                    : "Ajouter aux favoris"
+            );
+
+
+            favoriteButton.title =
+                isFavorite
+                    ? "Retirer des favoris"
+                    : "Ajouter aux favoris";
+
+
+            favoriteIcon.textContent =
+                isFavorite
+                    ? "♥"
+                    : "♡";
+        }
         /* =====================================================
            AFFICHER UN ARTWORK
         ====================================================== */
@@ -541,60 +660,129 @@ document.addEventListener(
             /* =================================================
                IMAGE / VIDÉO
             ================================================= */
+/* =================================================
+   IMAGE / VIDÉO
+================================================= */
 
-            if (
-                artwork.type ===
-                "video"
-            ) {
+if (
+    artwork.type ===
+    "video"
+) {
 
-                image.hidden =
-                    true;
+    /* =============================================
+       CACHE L'IMAGE
+    ============================================== */
 
+    image.hidden =
+        true;
 
-                image.src =
-                    "";
-
-
-                video.hidden =
-                    false;
-
-
-                video.src =
-                    artwork.source;
+    image.src =
+        "";
 
 
-                video.load();
+    /* =============================================
+       ARRÊTE UNE ÉVENTUELLE ANCIENNE VIDÉO
+    ============================================== */
+
+    video.pause();
+
+    video.currentTime =
+        0;
 
 
-            } else {
+    /* =============================================
+       PRÉPARE LA VIDÉO
+    ============================================== */
 
-                video.pause();
+    video.hidden =
+        false;
+
+    video.muted =
+        true;
+
+    video.loop =
+        true;
+
+    video.autoplay =
+        true;
+
+    video.playsInline =
+        true;
+
+    video.controls =
+        false;
 
 
-                video.removeAttribute(
-                    "src"
+    /* =============================================
+       CHARGE LE MP4
+    ============================================== */
+
+    video.src =
+        artwork.source;
+
+    video.load();
+
+
+    /* =============================================
+       LECTURE AUTOMATIQUE
+    ============================================== */
+
+    const playPromise =
+        video.play();
+
+
+    if (
+        playPromise &&
+        typeof playPromise.catch ===
+            "function"
+    ) {
+
+        playPromise.catch(
+            error => {
+
+                console.debug(
+                    "[Gallery Navigation] Autoplay vidéo bloqué :",
+                    error
                 );
-
-
-                video.load();
-
-
-                video.hidden =
-                    true;
-
-
-                image.hidden =
-                    false;
-
-
-                image.src =
-                    artwork.source;
-
-
-                image.alt =
-                    artwork.alt;
             }
+        );
+    }
 
+
+} else {
+
+    /* =============================================
+       ARRÊTE LA VIDÉO PRÉCÉDENTE
+    ============================================== */
+
+    video.pause();
+
+    video.currentTime =
+        0;
+
+    video.removeAttribute(
+        "src"
+    );
+
+    video.load();
+
+    video.hidden =
+        true;
+
+
+    /* =============================================
+       AFFICHE L'IMAGE
+    ============================================== */
+
+    image.hidden =
+        false;
+
+    image.src =
+        artwork.source;
+
+    image.alt =
+        artwork.alt;
+}
 
             /* =================================================
                WATERMARK
@@ -644,6 +832,11 @@ document.addEventListener(
             artist.hidden =
                 !artwork.artist;
 
+            /* =================================================
+            FAVORI
+            ================================================= */  
+
+            updateFavoriteButton();
 
             /* =================================================
                COMPTEUR
@@ -745,29 +938,54 @@ document.addEventListener(
             }
 
 
+            /* =================================================
+            VIDÉO
+            ================================================= */
+
             video.pause();
 
+            video.currentTime =
+                0;
 
             video.removeAttribute(
                 "src"
             );
 
-
             video.load();
 
+            video.hidden =
+                true;
+
+
+            /* =================================================
+            IMAGE
+            ================================================= */
 
             image.src =
                 "";
 
+            image.hidden =
+                false;
+
+
+            /* =================================================
+            WATERMARK
+            ================================================= */
 
             watermark.src =
                 "";
 
+            watermark.hidden =
+                true;
+
+
+            /* =================================================
+            LIGHTBOX
+            ================================================= */
 
             lightbox.classList.remove(
                 "is-open"
             );
-
 
             lightbox.hidden =
                 true;
@@ -781,7 +999,6 @@ document.addEventListener(
             currentIndex =
                 -1;
         }
-
 
         /* =====================================================
            PRÉCÉDENT / SUIVANT
@@ -910,7 +1127,6 @@ document.addEventListener(
                             }
                         );
 
-
                         /* =========================================
                            CLAVIER
                         ========================================== */
@@ -947,24 +1163,15 @@ document.addEventListener(
            BOUTONS
         ====================================================== */
 
-        closeButton.addEventListener(
-            "click",
-            closeLightbox
-        );
-
-
         backdrop.addEventListener(
             "click",
             closeLightbox
         );
 
-
         previousButton.addEventListener(
             "click",
             event => {
-
                 event.stopPropagation();
-
                 previousArtwork();
             }
         );
@@ -978,6 +1185,72 @@ document.addEventListener(
 
                 nextArtwork();
             }
+        );
+
+        /* =====================================================
+        FAVORI
+        ===================================================== */
+
+        favoriteButton.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+
+                if (
+                    currentIndex < 0 ||
+                    !artworks[currentIndex]
+                ) {
+
+                    return;
+                }
+
+
+                const artwork =
+                    artworks[currentIndex];
+
+
+                const originalButton =
+                    artwork.favoriteElement;
+
+
+                if (
+                    !originalButton
+                ) {
+
+                    return;
+                }
+
+
+                /*
+                * Le bouton de la visionneuse utilise le vrai
+                * bouton favori de la carte.
+                */
+                originalButton.click();
+
+
+                /*
+                * Synchronise ensuite l'affichage du cœur.
+                */
+                window.requestAnimationFrame(
+                    () => {
+
+                        updateFavoriteButton();
+
+                    }
+                );
+            }
+        );
+
+
+        /* =====================================================
+        FERMETURE
+        ===================================================== */
+
+        closeButton.addEventListener(
+            "click",
+            closeLightbox
         );
 
 

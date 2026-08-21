@@ -4595,3 +4595,202 @@ html[data-theme="dark"] {
     }
 
 }
+/* =========================================================
+   VIDÉOS DE LA VISIONNEUSE
+   Comportement visuel proche d'un GIF
+========================================================= */
+
+.gallery-navigation-video {
+    display:
+        block;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    max-width:
+        100%;
+
+    max-height:
+        100%;
+
+    object-fit:
+        contain;
+
+    object-position:
+        center;
+
+    border:
+        none;
+
+    outline:
+        none;
+
+    background:
+        transparent;
+
+    pointer-events:
+        none;
+
+    user-select:
+        none;
+
+    -webkit-user-select:
+        none;
+}
+
+
+.gallery-navigation-video::-webkit-media-controls {
+    display:
+        none !important;
+}
+
+
+.gallery-navigation-video::-webkit-media-controls-enclosure {
+    display:
+        none !important;
+}
+
+
+.gallery-navigation-video::-webkit-media-controls-panel {
+    display:
+        none !important;
+}
+
+
+.gallery-navigation-video::-webkit-media-controls-play-button,
+.gallery-navigation-video::-webkit-media-controls-timeline,
+.gallery-navigation-video::-webkit-media-controls-current-time-display,
+.gallery-navigation-video::-webkit-media-controls-time-remaining-display,
+.gallery-navigation-video::-webkit-media-controls-mute-button,
+.gallery-navigation-video::-webkit-media-controls-volume-slider,
+.gallery-navigation-video::-webkit-media-controls-fullscreen-button {
+    display:
+        none !important;
+}
+
+/* =========================================================
+   FAVORI — VISIONNEUSE
+========================================================= */
+
+.gallery-navigation-favorite {
+    position:
+        absolute;
+
+    top:
+        18px;
+
+    right:
+        82px;
+
+    z-index:
+        20;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    width:
+        48px;
+
+    height:
+        48px;
+
+    padding:
+        0;
+
+    color:
+        #f22292;
+
+    border:
+        2px solid
+        var(--gallery-nav-border);
+
+    border-radius:
+        50%;
+
+    background:
+        var(--gallery-nav-close-bg);
+
+    box-shadow:
+        0 6px 18px
+        rgba(0, 0, 0, 0.18);
+
+    font:
+        inherit;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.gallery-navigation-favorite-icon {
+    display:
+        block;
+
+    font-size:
+        1.65rem;
+
+    font-weight:
+        900;
+
+    line-height:
+        1;
+
+    pointer-events:
+        none;
+}
+
+
+.gallery-navigation-favorite:hover {
+    transform:
+        scale(1.10);
+
+    box-shadow:
+        0 7px 22px
+        rgba(242, 34, 146, 0.30);
+}
+
+
+.gallery-navigation-favorite.is-favorite {
+    color:
+        #f22292;
+
+    background:
+        rgba(242, 34, 146, 0.14);
+}
+
+
+.gallery-navigation-favorite.is-favorite
+.gallery-navigation-favorite-icon {
+    transform:
+        scale(1.08);
+}
+
+
+.gallery-navigation-favorite:focus-visible {
+    outline:
+        3px solid
+        #22f2ef;
+
+    outline-offset:
+        4px;
+}
+
+
+.gallery-navigation-favorite[hidden] {
+    display:
+        none !important;
+}
