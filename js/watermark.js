@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         logo.src =
-            "./images/logo/Logo_Glow.png";
+            "https://qudeuzkwvwprlhqtzsct.supabase.co/storage/v1/object/public/site-asset/logo/Logo_Glow.png";
 
 
         logo.className =

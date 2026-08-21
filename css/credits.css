@@ -3045,46 +3045,35 @@ html[data-theme="dark"]
     outline-offset: 4px;
 }
 
+
 /* =========================================================
    LOGO WATERMARK PENDANT LE ZOOM
 ========================================================= */
 
 .image-zoom-watermark {
     position: absolute !important;
-
     top: 50%;
     left: 50%;
-
     z-index: 75;
-
     width: clamp(150px, 18vw, 280px) !important;
     height: auto !important;
-
     opacity: 0;
-
     visibility: hidden;
-
     transform:
         translate(-50%, -50%)
         scale(0.94);
-
     pointer-events: none;
-
     user-select: none;
-
     -webkit-user-select: none;
     -webkit-user-drag: none;
-
     object-fit: contain !important;
     object-position: center !important;
     border-radius: 0 !important;
-
     filter:
         drop-shadow(
             0 0 14px
             rgba(34, 242, 239, 0.30)
         );
-
     transition:
         opacity 0.30s ease,
         visibility 0.30s ease,
